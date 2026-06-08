@@ -62,7 +62,7 @@ No installation required.
 
 ```bash
 # Clone the repository
-git clone https://github.com/Nx-Nass/Nasscad_4..2.17.git
+git clone https://github.com/Nx-Nass/Nasscad_4.2.7.git
 
 # Open in your browser
 open nasscad.html   # macOS
