@@ -70,7 +70,7 @@ start nasscad.html  # Windows
 xdg-open nasscad.html  # Linux
 ```
 
-Or download the ZIP and open `nasscad.html` directly in Chrome, Firefox, or Edge.
+Or download the ZIP and open `open NASSCAD_V4_2_7_AIO.htm` directly in Chrome (best performance), Firefox, or Edge.
 
 > ⚠️ For full WASM support, open via a local server or a browser that allows local file access (Chrome with `--allow-file-access-from-files`, or VS Code Live Server).
 
