@@ -65,9 +65,9 @@ No installation required.
 git clone https://github.com/Nx-Nass/Nasscad_4.2.7.git
 
 # Open in your browser
-open nasscad.html   # macOS
-start nasscad.html  # Windows
-xdg-open nasscad.html  # Linux
+open NASSCAD_V4_2_7_AIO.htm   # macOS
+start NASSCAD_V4_2_7_AIO.htm  # Windows
+xdg-open NASSCAD_V4_2_7_AIO.htm  # Linux
 ```
 
 Or download the ZIP and open `open NASSCAD_V4_2_7_AIO.htm` directly in Chrome (best performance), Firefox, or Edge.
