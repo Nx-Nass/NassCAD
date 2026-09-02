@@ -1,0 +1,34 @@
+# ─── OS ───────────────────────────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ─── Gros binaires OCCT — distribués en assets de release ─────────────────────
+# ~154 Mo au total : au-dessus du seuil d'avertissement GitHub (50 Mo/fichier)
+# et définitifs dans l'historique s'ils sont commités. Récupérés par
+# scripts/fetch-assets.ps1 ou scripts/fetch-assets.sh
+opencascade.wasm.data.js
+opencascade.wasm.wasm
+
+# ─── Dossiers privés NassLab ──────────────────────────────────────────────────
+_NASSCAD_REFERENCE/
+NASSCAD_4.X.X_MEDUSA_OCCT/
+
+# ─── Bundler & scripts locaux ─────────────────────────────────────────────────
+build.py
+bundle.py
+*.local.py
+
+# ─── Éditeur ──────────────────────────────────────────────────────────────────
+.vscode/
+*.swp
+*.swo
+
+# ─── Notes et outils locaux (pas destinés au repo) ────────────────────────────
+_PUSH_GITHUB.md
+_RELEASE_NOTES_v4.7.0.md
+_PUBLISH_RELEASE.ps1
+
+# ─── Divers ───────────────────────────────────────────────────────────────────
+*.log
+node_modules/

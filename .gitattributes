@@ -1,0 +1,24 @@
+# Normalise les fins de ligne
+* text=auto
+
+*.sh   text eol=lf
+*.ps1  text eol=crlf
+*.bat  text eol=crlf
+*.cpp  text eol=lf
+*.md   text eol=lf
+
+*.zip  binary
+*.wasm binary
+*.png  binary
+*.ico  binary
+
+# Bibliothèques tierces : exclues des statistiques de langage GitHub
+three.js            linguist-vendored
+nasscad-draco.js    linguist-vendored
+nasscad-fonts.js    linguist-vendored
+occt-import-js.js   linguist-vendored
+occt-loader-b64.js  linguist-vendored
+nasscad_occt_wasm.js linguist-vendored
+
+# L'application principale porte le langage du repo
+NASSCAD_V4_7_0.htm linguist-detectable

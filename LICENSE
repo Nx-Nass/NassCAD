@@ -1,0 +1,69 @@
+NASSCAD 4.7.0 "MEDUSA"
+© 2026 NassLab — Nasser, France
+
+================================================================================
+NassLab code — Creative Commons Attribution-NonCommercial 4.0 International
+                                (CC BY-NC 4.0)
+================================================================================
+
+You are free to:
+
+  Share  — copy and redistribute the material in any medium or format
+  Adapt  — remix, transform, and build upon the material
+
+Under the following terms:
+
+  Attribution   — You must give appropriate credit to NassLab (Nasser, France),
+                  provide a link to the license, and indicate if changes were
+                  made. You may do so in any reasonable manner, but not in any
+                  way that suggests NassLab endorses you or your use.
+
+  NonCommercial — You may not use the material for commercial purposes.
+                  Commercial use requires a prior written agreement with
+                  NassLab.
+
+  No additional restrictions — You may not apply legal terms or technological
+                  measures that legally restrict others from doing anything the
+                  license permits.
+
+Full legal text: https://creativecommons.org/licenses/by-nc/4.0/legalcode
+Summary:         https://creativecommons.org/licenses/by-nc/4.0/
+
+Commercial licensing enquiries: NassLab — https://www.nasscad.com/
+
+--------------------------------------------------------------------------------
+Prior art / filings
+--------------------------------------------------------------------------------
+INPI Soleau envelopes:
+  DSO2026022493 — filed 18/06/2026 — valid until 18/06/2036
+  DSO2026016593 — filed 06/05/2026 — valid until 06/05/2031
+  DSO2026011841 — filed 01/04/2026 — valid until 01/04/2031
+  DSO2026010838 — filed 25/03/2026 — valid until 25/03/2036
+
+================================================================================
+Third-party components
+================================================================================
+
+This distribution bundles third-party software that is NOT covered by
+CC BY-NC 4.0. Each component remains under its own license, and those licenses
+prevail for the corresponding files. See THIRD-PARTY.md for the complete list,
+which includes (non-exhaustively):
+
+  three.js                 MIT                       Mr.doob and contributors
+  OpenCASCADE Technology   LGPL 2.1 with exception   Open Cascade SAS
+  occt-import-js           MIT                       Viktor Kovács
+  Draco                    Apache 2.0                Google
+  Manifold                 Apache 2.0                Emmett Lalish et al.
+  oneTBB                   Apache 2.0                Intel / UXL Foundation
+  Clipper2                 BSL 1.0                   Angus Johnson
+  hwloc                    BSD 3-Clause              Inria / Open MPI project
+  helvetiker, optimer      MgOpen License            MAGENTA Ltd
+  gentilis                 SIL OFL 1.1               J. V. Gaultney / SIL Intl.
+
+================================================================================
+Warranty
+================================================================================
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED. The author cannot be held liable for any damage resulting from the use
+of this software.
