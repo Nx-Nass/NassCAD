@@ -15,7 +15,7 @@ NASSCAD 4.7.0 bundles the components below. **All of them are local — zero CDN
 | **gentilis** regular / bold | J. Victor Gaultney / SIL International | SIL OFL 1.1 | Text geometry |
 | **nasscad_logs.js** | NassLab | CC BY-NC 4.0 | Structured logging module |
 
-## In the NASSCAD Engine (MEDUSA) companion — optional, runs on your own machine
+## In the NASSCAD Engine (MEDUSA) — required for booleans, runs on your own machine
 
 | Component | Author | License | Used for |
 |-----------|--------|---------|----------|

@@ -9,7 +9,9 @@
 
 **NASSCAD** is a fully offline, browser-based 3D CAD modeler and STL viewer. No server, no install, no login, nothing uploaded. Open the HTML file — it works.
 
-Version 4.7.0 takes its name from its companion. It replaces the local WASM pool of the 4.2.x line with a real B-Rep kernel — **OpenCASCADE** in the browser for STEP, fillet and chamfer — and adds **MEDUSA**, an optional native engine (C++ / oneTBB) that runs on your own machine and takes over the heavy CSG.
+Version 4.7.0 takes its name from its companion. It replaces the local WASM pool of the 4.2.x line with a real B-Rep kernel — **OpenCASCADE** in the browser for STEP, fillet and chamfer — and moves every boolean operation into **MEDUSA**, a native engine (C++ / oneTBB) that runs on your own machine.
+
+> **MEDUSA is required for boolean operations.** Manifold no longer runs in the browser at all, and there is no WASM fallback: with MEDUSA stopped, Union / Subtraction / Intersection stop with an explicit error. Everything else — viewing, primitives, fillet, chamfer, STEP and mesh I/O — runs in the browser alone. See [NASSCAD Engine](#-nasscad-engine--medusa).
 
 ---
 
@@ -29,7 +31,9 @@ cd Nasscad_4.7.0
 ./scripts/fetch-assets.sh         # Linux / macOS
 ```
 
-Then open `NASSCAD_V4_7_0.htm`.
+Then build and start **MEDUSA** — booleans do not work without it. The build bundles are in the `DEPLOY_*` folders (`BUILD.md` for Windows/MSVC, `install-linux.sh` for Ubuntu, `deploy.bat` for WSL); see [NASSCAD Engine](#-nasscad-engine--medusa) below.
+
+Then open `NASSCAD_V4_7_0.htm`. The CSG panel shows the engine state: green `· MEDUSA` when it is reachable, red `· MEDUSA OFF` when it is not.
 
 > ⚠️ **Serve it, don't double-click it.** WASM streaming and the OCCT data file need a real HTTP origin. Any static server works:
 > ```bash
@@ -48,7 +52,7 @@ Then open `NASSCAD_V4_7_0.htm`.
 | **STEP AP203 / AP214 / AP242** | Import **and** export, with per-part *and* per-face colours read from the file itself |
 | **PMI & GD&T** | Product manufacturing information read from STEP assemblies |
 | **Non-destructive CSG tree** | Union / Subtraction / Intersection keep their construction tree — change a source and Re-run |
-| **Native CSG engine** | Optional NASSCAD Engine (MEDUSA) companion — C++, multithreaded, runs locally |
+| **Native CSG engine** | All booleans run in MEDUSA — C++, multithreaded, on your own machine. **Required**, no browser fallback |
 | **Sketch.Gen** | 2D sketcher |
 | **Generators** | Screw.Gen & Nut.Gen (ISO / ASME), Gear.Gen, Pipe.Gen, CircularText.Gen |
 | **NassScript** | Full-access JS console over the scene graph |
@@ -91,9 +95,15 @@ DEPLOY_UBUNTU_WSL/          MEDUSA engine — WSL deployment
 
 ---
 
-## 🐙 NASSCAD Engine — MEDUSA companion
+## 🐙 NASSCAD Engine — MEDUSA
 
-Optional. A small native binary that runs **on your own machine** and listens only to it — nothing is uploaded, no account, no server. It takes over the heavy work: native STEP reading and tessellation, and boolean CSG through Manifold with oneTBB multithreading.
+**Required for boolean operations.** Since 4.7.0, `manifold.js` and `manifold_worker.js` are gone: Manifold no longer runs in the browser at all. Every boolean goes to MEDUSA over local HTTP (`POST /csg` for a flat operation, `POST /csgtree` for a whole tree), and reachability is re-probed before each one. There is **no WASM fallback** — with MEDUSA stopped, the engine badge turns red (`MEDUSA OFF`) and the operation stops with an explicit error rather than silently degrading.
+
+MEDUSA is a small native binary that runs **on your own machine** and listens only to it — nothing is uploaded, no account, no remote server. It links Manifold in native C++ with oneTBB, so booleans run at compiled-native speed across your cores instead of single-threaded WASM, and it also does native STEP reading and tessellation.
+
+**Works without MEDUSA** — viewing, the 18 primitives, selection, gizmos, fillet and chamfer, and import/export of STEP, STL, OBJ, 3MF, GLB and PLY. All of that is OpenCASCADE WASM in the browser and needs nothing installed.
+
+**Needs MEDUSA** — Union, Subtraction and Intersection, Deep Re-run of a CSG tree, and auto-union repair.
 
 Build bundles are in the `DEPLOY_*` folders:
 
@@ -102,8 +112,6 @@ Build bundles are in the `DEPLOY_*` folders:
 | `DEPLOY_WINDOWS_11_MSVC` | `nasscad_medusa.cpp`, `CMakeLists.txt`, `vcpkg.json`, `build_msvc.bat`, `BUILD.md` |
 | `DEPLOY_UBUNTU_LINUX` | `install-linux.sh`, `nasscad.sh`, desktop launcher + icons, `README-LINUX.md` |
 | `DEPLOY_UBUNTU_WSL` | `deploy.bat` / `deploy.sh`, `Medusa_Engine_3.1.bat`, uninstallers |
-
-NASSCAD runs without it — the companion only makes it faster.
 
 ---
 
