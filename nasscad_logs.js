@@ -161,16 +161,19 @@ function toggleLogWin(){
 // ══════════════════════════════════════════════════════════════
 // Deux sources, essayées dans cet ordre :
 //
-//   1) GET /log sur le moteur. Le binaire 3.1 ne sert PAS cet endpoint : le
-//      fetch échoue, on passe à la suite. Écrit dès maintenant pour que le jour
-//      où il existera, ce bouton s'en serve sans qu'on retouche l'interface.
-//      Contrat visé, à respecter côté C++ : text/plain, une ligne par ligne,
-//      ?n=<max> pour borner, réponse la plus récente en dernier.
+//   1) GET /log sur le moteur — la voie normale depuis la version du 04/09.
+//      Le moteur n'écrit plus de fichier par défaut : il garde ses 20 000
+//      dernières lignes en mémoire et les sert ici, en text/plain, une ligne
+//      par ligne, la plus récente en dernier, ?n=<max> pour borner.
+//      [05/09] Ce commentaire a dit le contraire pendant un temps ("le binaire
+//      3.1 ne sert PAS cet endpoint") : c'était vrai le jour où le bouton a été
+//      écrit, en avance sur le C++, et faux depuis que le C++ a suivi.
 //
-//   2) Sélecteur de fichier — la seule voie ouverte au navigateur aujourd'hui.
-//      Le moteur écrit medusa-logs-<horodatage>.txt (dans Téléchargements). En
-//      file://, aucune API ne permet de lire ce fichier sans que l'utilisateur
-//      le désigne : même repli que celui du kernel OCCT dans quick-fillet.js.
+//   2) Sélecteur de fichier — repli, pour un moteur éteint, un binaire
+//      antérieur, ou une session lancée avec --logfile dont on veut relire le
+//      medusa-logs-<horodatage>.txt. En file://, aucune API ne permet de lire
+//      ce fichier sans que l'utilisateur le désigne : même repli que celui du
+//      kernel OCCT dans quick-fillet.js.
 //
 // Dans les deux cas le résultat atterrit au même endroit, sous le filtre MEDUSA,
 // à côté de ce que NASSCAD sait déjà du moteur — les deux journaux d'une même
@@ -188,8 +191,11 @@ async function medusaLogPull(nMax){
       _medusaLogIngest(await res.text(), 'engine GET /log');
       return;
     }
-  }catch(e){ /* endpoint absent, ou moteur éteint : le sélecteur prend le relais */ }
-  nasLog('MEDUSA','This engine build serves no /log endpoint — pick the medusa-logs-*.txt file instead');
+  }catch(e){ /* moteur éteint, ou binaire antérieur au /log : le sélecteur prend le relais */ }
+  // Le message ne peut pas trancher entre "moteur éteint" et "binaire trop
+  // ancien" : le fetch échoue pareil dans les deux cas. Il dit donc les deux,
+  // plutôt que d'accuser à tort le binaire comme il le faisait avant.
+  nasLog('MEDUSA','No answer on GET /log — engine stopped, or a build older than the /log endpoint. Pick a medusa-logs-*.txt file instead (the engine only writes one when started with --logfile).');
   const inp = document.createElement('input');
   inp.type = 'file';
   inp.accept = '.txt,.log,text/plain';
