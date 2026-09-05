@@ -473,12 +473,63 @@ function _qfScanChains(targetObj){
 const _OCCT_CDN='https://nasscad.com/occt/';
 const _OCCT_MAX_TRIS=50000;
 let _occt=null,_occtLoading=null,_occtNeedLocal=false;
+let _occtWasmCache=null;   // binaire wasm gardé en RAM → un reset kernel est gratuit
+
+// [FIX 04/09 — CAUSE RACINE du plantage récurrent "___cxa_is_pointer_type is
+// not defined"] Ce build d'opencascade.js (emscripten 2.0.x) référence deux
+// symboles de l'ABI d'exceptions C++ qu'il ne définit NULLE PART :
+//   · ___cxa_is_pointer_type — appelé par CatchInfo.get_exception_ptr()
+//   · ___cxa_can_catch       — appelé par ___cxa_find_matching_catch_2..5
+// Vérifié par scan statique du loader décodé (référencés 1 fois chacun, 0
+// déclaration) ET par lecture de la table d'exports du .wasm (26 exports, aucun
+// __cxa_*). Conséquence : dès qu'OCCT lève une Standard_Failure — y compris
+// quand OCCT la rattrape LUI-MÊME dans son propre try/catch de robustesse —
+// le glue JS explose en ReferenceError avant qu'aucun handler C++ ne s'exécute.
+// Le kernel ne peut donc jamais faire sa propre récupération d'erreur : ce qui
+// devrait être un simple `IsDone()===false` remonte en crash opaque.
+// Correctif : injecter les deux symboles manquants dans le code du loader AVANT
+// le new Function(). Sémantique choisie, conforme à l'ABI Itanium :
+//   · is_pointer_type → 0 : OCCT lève des OBJETS (Standard_Failure), jamais des
+//     pointeurs ; 0 est la réponse exacte, pas une approximation.
+//   · can_catch → 1 : sans RTTI exporté on ne peut pas tester la parenté de
+//     types ; 1 revient au comportement d'un catch(...) — le handler le plus
+//     interne attrape, ce qui est précisément la sémantique d'OCCT dont les
+//     clauses sont quasi toutes catch(Standard_Failure&) ou catch(...).
+// Non-régression mesurée sur 8 cas de référence (slab/plaque/cylindre/marche,
+// R de 1 à 15) : volumes identiques au bit près avec et sans stubs. Le seul
+// changement observable est que le cas qui crashait rend maintenant IsDone=false.
+const _OCCT_ABI_ANCHOR='function ___cxa_free_exception(';
+const _OCCT_ABI_STUBS=
+  'function ___cxa_is_pointer_type(t){return 0;}\n'+
+  'function ___cxa_can_catch(c,t,buf){return 1;}\n';
 // Loader factory from the inlined base64 (no import(), no CORS, works file://)
 function _occtGetFactory(){
   if(window._occtFactory)return window._occtFactory;
-  const code=atob(_OCCT_LOADER_B64);
+  let code=atob(_OCCT_LOADER_B64);
+  if(code.indexOf('function ___cxa_is_pointer_type')>=0){
+    nasLog('OCCT','Loader already provides the C++ exception ABI — no patch needed');
+  }else if(code.indexOf(_OCCT_ABI_ANCHOR)>=0){
+    code=code.replace(_OCCT_ABI_ANCHOR,_OCCT_ABI_STUBS+_OCCT_ABI_ANCHOR);
+    nasLog('OCCT','C++ exception ABI patched (__cxa_is_pointer_type / __cxa_can_catch were missing from this build)');
+  }else{
+    nasLog('WARN','OCCT: exception ABI anchor not found in the loader — kernel failures may still surface as an opaque ReferenceError');
+  }
   window._occtFactory=new Function(code+'\nreturn opencascade;')();
   return window._occtFactory;
+}
+// Un abort WASM (heap saturé, unwind impossible) laisse le module inutilisable :
+// toute opération suivante échoue jusqu'au rechargement de la page. Comme le
+// binaire est gardé en cache, on peut réinstancier un module neuf en ~2 s au
+// lieu d'imposer un F5 à l'utilisateur.
+function _occtResetKernel(why){
+  _occt=null;_occtLoading=null;
+  try{window._occtFactory=null;}catch(_){/* environnement sans window en test */}
+  nasLog('WARN','OCCT: kernel discarded and will be re-instantiated on next use — '+why);
+}
+// true si le message d'erreur trahit un module WASM mort (par opposition à un
+// simple échec géométrique, dont on se remet sans rien jeter).
+function _occtIsFatal(msg){
+  return /out of memory|Cannot enlarge memory|memory access out of bounds|unreachable|abort\(|RuntimeError|table index is out of bounds/i.test(String(msg||''));
 }
 // WASM binary acquisition chain (first success wins):
 //  1) fetch from nasscad.com/occt/ (hosted kernel)
@@ -492,6 +543,7 @@ function _occtGetFactory(){
 // straight to the local paths.
 async function _occtWasmBinary(){
   const _sane=b=>(b&&b.byteLength>1e6)?b:null;
+  if(_occtWasmCache) return _occtWasmCache;   // reset kernel → zéro re-téléchargement
   if(!_occtNeedLocal){
     try{
       const r=await fetch(_OCCT_CDN+'opencascade.wasm.wasm');
@@ -548,6 +600,7 @@ function _occtLoad(){
     const t0=performance.now();
     try{
       const wasmBinary=await _occtWasmBinary();
+      _occtWasmCache=wasmBinary;
       showSpinner('OCCT kernel','Compiling WASM…');
       await new Promise(r=>setTimeout(r,30));
       const oc=await _occtGetFactory()({wasmBinary});
@@ -570,20 +623,149 @@ function _occtLoad(){
 // pour un gain marginal, le kernel finit de toute façon par détecter ce cas-
 // là). Attrape les cas flagrants (R comparable ou plus grand que l'arête),
 // pas les cas subtils où l'arête est longue mais la face est étroite ailleurs.
+// [FIX 04/09 — faux positifs] La version du 25/07 mesurait maxR sur CHAQUE
+// segment de MAILLAGE. Or une arête franche est presque toujours découpée en
+// plusieurs segments par la tessellation ou par les sommets d'intersection d'un
+// CSG : sur une union de cubes de 20 mm, un sous-segment de 3 mm donnait
+// "R ≤ 1.50 mm" alors que l'arête topologique réelle fait 20 mm. Résultat : le
+// garde-fou criait au loup à chaque union, on prenait l'habitude de cliquer
+// "Continue anyway", et il ne protégeait plus de rien.
+// OCCT ne voit pas les segments de maillage : ShapeUpgrade_UnifySameDomain
+// refusionne les sous-segments colinéaires en UNE arête. On mesure donc la même
+// chose que lui — des RUNS de segments quasi colinéaires (< 5° de cassure) —
+// au lieu du segment isolé. Le reste de l'heuristique est inchangé (conservatrice,
+// basée sur la longueur de l'arête et non sur la largeur réelle de la face
+// adjacente ; l'échelle de repli du kernel couvre désormais ce qu'elle rate).
+const _QF_RUN_COS=Math.cos(5*Math.PI/180);
 function _qfCheckRadiusFits(chains, R){
   let worst=null;
+  const dirOf=(a,b)=>{const dx=b.x-a.x,dy=b.y-a.y,dz=b.z-a.z;
+    const l=Math.sqrt(dx*dx+dy*dy+dz*dz);
+    return l>1e-9?{x:dx/l,y:dy/l,z:dz/l,l}:null;};
   for(const c of chains){
-    const n=c.segN1.length;
+    const n=c.segN1.length, np=c.pts.length;
+    let runLen=0, runAngMin=Math.PI, prevDir=null;
+    const flush=()=>{
+      if(runLen<=0) return;
+      const maxR=0.5*runLen*Math.tan(runAngMin/2);
+      if(R>maxR*1.05 && (!worst||maxR<worst.maxR)) worst={segLen:runLen,angDeg:runAngMin*180/Math.PI,maxR};
+      runLen=0; runAngMin=Math.PI; prevDir=null;
+    };
     for(let i=0;i<n;i++){
-      const p1=c.pts[i], p2=c.pts[(i+1)%c.pts.length];
-      const segLen=Math.sqrt((p2.x-p1.x)**2+(p2.y-p1.y)**2+(p2.z-p1.z)**2);
+      const p1=c.pts[i], p2=c.pts[(i+1)%np];
+      const dir=dirOf(p1,p2);
+      if(!dir){ continue; }
       const d=c.segN1[i].x*c.segN2[i].x+c.segN1[i].y*c.segN2[i].y+c.segN1[i].z*c.segN2[i].z;
       const ang=Math.acos(Math.max(-1,Math.min(1,d)));
-      const maxR=0.5*segLen*Math.tan(ang/2);
-      if(R>maxR*1.05 && (!worst || maxR<worst.maxR)) worst={segLen,angDeg:ang*180/Math.PI,maxR};
+      // cassure de direction → l'arête topologique se termine ici
+      if(prevDir && (dir.x*prevDir.x+dir.y*prevDir.y+dir.z*prevDir.z)<_QF_RUN_COS) flush();
+      runLen+=dir.l;
+      if(ang<runAngMin) runAngMin=ang;   // le pire angle du run commande
+      prevDir=dir;
     }
+    flush();
   }
   return worst; // null si tout est ok, sinon le pire cas trouvé (le plus contraignant)
+}
+
+// ══ Garde-fous kernel — helpers ══════════════════════════════════════════
+// [NEW 04/09] Les instances embind ne sont plus laissées au ramasse-miettes :
+// elles n'en ont pas. Mesuré sur 8 passes d'un maillage de 2 208 triangles —
+// heap WASM 64 → 133 Mo sans delete() (et l'accélération est superlinéaire),
+// 64 Mo stable avec. À 50 000 triangles le plafond de 2 Go tombait en quelques
+// opérations : c'est le "après N fillets, plus rien ne marche jusqu'au F5".
+function _occtDrop(...xs){ for(const x of xs){ try{ x&&x.delete&&x.delete(); }catch(_){} } }
+
+// Volume signé du solide — NaN si l'API diffère (best-effort, jamais bloquant).
+function _occtVolume(oc, shape){
+  try{
+    const g=new oc.GProp_GProps_1();
+    oc.BRepGProp.VolumeProperties_1(shape,g,false,false,false);
+    const m=g.Mass(); _occtDrop(g); return m;
+  }catch(_){ return NaN; }
+}
+// [FIX 04/09] Le check BRepCheck_Analyzer ajouté le 25/07 n'a JAMAIS tourné :
+// dans ce binding la méthode s'appelle IsValid_1(shape)/IsValid_2(), pas
+// IsValid(). Le try/catch best-effort avalait silencieusement le TypeError, donc
+// le garde-fou anti-"trou invisible" était mort depuis le premier jour. Vérifié :
+// sur une plaque de 4 mm filetée à R=3, IsValid_2() rend bien false.
+function _occtIsValid(oc, shape){
+  try{
+    const a=new oc.BRepCheck_Analyzer(shape,true);
+    const v=(typeof a.IsValid_2==='function')?a.IsValid_2()
+           :(typeof a.IsValid==='function')?a.IsValid()
+           :(typeof a.IsValid_1==='function')?a.IsValid_1(shape):null;
+    _occtDrop(a); return v;
+  }catch(_){ return null; }   // API différente → on retombe sur les autres gardes
+}
+// Longueur d'une arête OCCT (corde sommet→sommet — suffisant pour trier les
+// arêtes trop courtes pour accueillir R).
+function _occtEdgeLen(oc, edge){
+  try{
+    const a=oc.BRep_Tool.Pnt(oc.TopExp.FirstVertex(edge,false));
+    const b=oc.BRep_Tool.Pnt(oc.TopExp.LastVertex(edge,false));
+    const d=Math.hypot(a.X()-b.X(),a.Y()-b.Y(),a.Z()-b.Z());
+    _occtDrop(a,b); return d;
+  }catch(_){ return Infinity; }  // dans le doute on garde l'arête
+}
+// Échelle de repli — essayée dans l'ordre jusqu'au premier résultat VALIDE.
+// f = facteur sur R demandé ; skip = ignorer les arêtes plus courtes que skip×R
+// (celles qui ne peuvent physiquement pas accueillir le congé), 0 = tout garder.
+const _OCCT_FALLBACK=[
+  {f:1,    skip:0},
+  {f:1,    skip:2},
+  {f:0.6,  skip:2},
+  {f:0.4,  skip:2},
+  {f:0.25, skip:2},
+  {f:0.15, skip:0}
+];
+// Une tentative = un MakeFillet/MakeChamfer complet + validation.
+// Renvoie {ok, shape, mk, R, nAdded, nSkipped, nEdges, why}.
+function _occtAttempt(oc, unified, R, skipK, round, volBefore, keepSegs, segOnEdge){
+  const mk=round
+    ?new oc.BRepFilletAPI_MakeFillet(unified,oc.ChFi3d_FilletShape.ChFi3d_Rational)
+    :new oc.BRepFilletAPI_MakeChamfer(unified);
+  const minLen=skipK>0?skipK*R:0;
+  let nEdges=0,nAdded=0,nSkipped=0;
+  const ex=new oc.TopExp_Explorer_2(unified,oc.TopAbs_ShapeEnum.TopAbs_EDGE,oc.TopAbs_ShapeEnum.TopAbs_SHAPE);
+  while(ex.More()){
+    const edge=oc.TopoDS.Edge_1(ex.Current());
+    nEdges++;
+    let take=true;
+    if(keepSegs){
+      const vF=oc.TopExp.FirstVertex(edge,false),vL=oc.TopExp.LastVertex(edge,false);
+      const pF=oc.BRep_Tool.Pnt(vF),pL=oc.BRep_Tool.Pnt(vL);
+      const v1={x:pF.X(),y:pF.Y(),z:pF.Z()},v2={x:pL.X(),y:pL.Y(),z:pL.Z()};
+      _occtDrop(pF,pL,vF,vL);
+      take=keepSegs.some(s=>segOnEdge(v1,v2,s.p0,s.p1));
+    }
+    if(take&&minLen>0&&_occtEdgeLen(oc,edge)<minLen){ take=false; nSkipped++; }
+    if(take){ mk.Add_2(R,edge); nAdded++; }
+    _occtDrop(edge);
+    ex.Next();
+  }
+  _occtDrop(ex);
+  if(!nAdded){ _occtDrop(mk); return {ok:false,nEdges,nAdded,nSkipped,why:'no edge left to fillet'}; }
+  try{ mk.Build(); }
+  catch(err){ const m=(err&&err.message)||String(err); _occtDrop(mk); return {ok:false,nEdges,nAdded,nSkipped,why:m,raw:err}; }
+  if(!mk.IsDone()){ _occtDrop(mk); return {ok:false,nEdges,nAdded,nSkipped,why:'kernel Build failed'}; }
+  const shape=mk.Shape();
+  // Deux vérités indépendantes, parce que IsDone()===true ne garantit rien :
+  //  · le B-Rep est-il topologiquement valide (BRepCheck_Analyzer) ;
+  //  · un congé/chanfrein ne peut QU'ENLEVER de la matière — un volume qui
+  //    augmente est la signature d'un solide auto-intersecté ou retourné.
+  //    Mesuré : plaque 60×4×40 (9 600 mm³) filetée R=3 → IsDone=true et
+  //    volume 15 328 mm³. Cas que le check mesh-side laissait passer.
+  const vol=_occtVolume(oc,shape);
+  const valid=_occtIsValid(oc,shape);
+  const grew=isFinite(vol)&&isFinite(volBefore)&&vol>volBefore*1.001;
+  if(valid===false||grew){
+    _occtDrop(shape,mk);
+    return {ok:false,nEdges,nAdded,nSkipped,
+      why:grew?`result volume grew ${volBefore.toFixed(0)} → ${vol.toFixed(0)} mm³ (self-intersecting solid)`
+              :'BRepCheck_Analyzer rejected the resulting B-Rep'};
+  }
+  return {ok:true,shape,mk,R,nEdges,nAdded,nSkipped,vol};
 }
 
 async function _occtFilletAll(selectedOnly){
@@ -669,33 +851,49 @@ async function _occtFilletAll(selectedOnly){
   showSpinner('OCCT '+(mode==='round'?'Fillet':'Chamfer'),`${nTris} tris → B-Rep — all edges R=${R}`);
   await new Promise(r=>setTimeout(r,30)); // let the spinner paint (OCCT runs sync on main thread)
   const t0=performance.now();
+  const _keep=[];                       // instances embind vivantes jusqu'au finally
   try{
     // 1. triangles → wires → planar faces → sewing (tolerance welds borders)
+    //    [FIX 04/09] chaque gp_Pnt / MakePolygon / MakeFace / Face est libéré dès
+    //    qu'il est copié dans le sewing — 4 objets embind par triangle, soit
+    //    200 000 fuites par passe à la limite de 50 000 triangles.
     const sew=new oc.BRepBuilderAPI_Sewing(1e-4,true,true,true,false);
+    _keep.push(sew);
     for(let i=0;i<pos.length;i+=9){
-      const poly=new oc.BRepBuilderAPI_MakePolygon_3(
-        new oc.gp_Pnt_3(pos[i],pos[i+1],pos[i+2]),
-        new oc.gp_Pnt_3(pos[i+3],pos[i+4],pos[i+5]),
-        new oc.gp_Pnt_3(pos[i+6],pos[i+7],pos[i+8]),true);
-      if(poly.IsDone())sew.Add(new oc.BRepBuilderAPI_MakeFace_15(poly.Wire(),true).Face());
+      const q0=new oc.gp_Pnt_3(pos[i],pos[i+1],pos[i+2]);
+      const q1=new oc.gp_Pnt_3(pos[i+3],pos[i+4],pos[i+5]);
+      const q2=new oc.gp_Pnt_3(pos[i+6],pos[i+7],pos[i+8]);
+      const poly=new oc.BRepBuilderAPI_MakePolygon_3(q0,q1,q2,true);
+      if(poly.IsDone()){
+        const mf=new oc.BRepBuilderAPI_MakeFace_15(poly.Wire(),true);
+        const fc=mf.Face();
+        sew.Add(fc);                    // le sewing en garde sa propre copie
+        _occtDrop(fc,mf);
+      }
+      _occtDrop(poly,q0,q1,q2);
     }
-    sew.Perform(new oc.Handle_Message_ProgressIndicator_1());
+    const prog=new oc.Handle_Message_ProgressIndicator_1();
+    sew.Perform(prog);
+    _occtDrop(prog);
     const tSew=performance.now();
     // 2. shell → solid → UnifySameDomain (coplanar facets → real faces)
-    const solid=new oc.BRepBuilderAPI_MakeSolid_3(oc.TopoDS.Shell_1(sew.SewedShape())).Solid();
+    const shell=oc.TopoDS.Shell_1(sew.SewedShape());
+    const mkSolid=new oc.BRepBuilderAPI_MakeSolid_3(shell);
+    const solid=mkSolid.Solid();
     const unify=new oc.ShapeUpgrade_UnifySameDomain_2(solid,true,true,true);
     unify.Build();
     const unified=unify.Shape();
+    _keep.push(unify,unified);
+    _occtDrop(shell,mkSolid,solid);
     const tUnify=performance.now();
+    // Volume de référence : un congé ou un chanfrein ne peut qu'en retirer.
+    const volBefore=_occtVolume(oc,unified);
     // 3. Add edges — ALL of them, or only those matching the picked chains
     //    (edges shared by 2 faces are explored twice — OCCT merges
     //    duplicates into one contour, harmless and validated).
     //    Match test: geometric, not index-based (robust to UnifySameDomain
     //    merging several mesh sub-segments into one longer OCCT edge —
     //    a picked segment can be an interior sub-part of a merged edge).
-    const mk=(mode==='round')
-      ?new oc.BRepFilletAPI_MakeFillet(unified,oc.ChFi3d_FilletShape.ChFi3d_Rational)
-      :new oc.BRepFilletAPI_MakeChamfer(unified);
     const segTol=Math.max(0.02,diag*0.0015);
     const segOnEdge=(v1,v2,p0,p1)=>{
       const dx=v2.x-v1.x,dy=v2.y-v1.y,dz=v2.z-v1.z,len2=dx*dx+dy*dy+dz*dz;
@@ -707,42 +905,48 @@ async function _occtFilletAll(selectedOnly){
       const r0=proj(p0),r1=proj(p1);
       return r0.d<segTol&&r1.d<segTol&&r0.t>-0.02&&r0.t<1.02&&r1.t>-0.02&&r1.t<1.02;
     };
-    let nEdges=0,nKept=0;
-    {
-      const ex=new oc.TopExp_Explorer_2(unified,oc.TopAbs_ShapeEnum.TopAbs_EDGE,oc.TopAbs_ShapeEnum.TopAbs_SHAPE);
-      while(ex.More()){
-        const edge=oc.TopoDS.Edge_1(ex.Current());
-        nEdges++;
-        let take=true;
-        if(keepSegs){
-          const vF=oc.TopExp.FirstVertex(edge,false),vL=oc.TopExp.LastVertex(edge,false);
-          const pF=oc.BRep_Tool.Pnt(vF),pL=oc.BRep_Tool.Pnt(vL);
-          const v1={x:pF.X(),y:pF.Y(),z:pF.Z()},v2={x:pL.X(),y:pL.Y(),z:pL.Z()};
-          take=keepSegs.some(s=>segOnEdge(v1,v2,s.p0,s.p1));
-        }
-        if(take){mk.Add_2(R,edge);nKept++;}
-        ex.Next();
+    // [NEW 04/09] Échelle de repli au lieu d'un throw sec. Un Build en échec
+    // n'est plus une erreur terminale : on retente en écartant les arêtes trop
+    // courtes pour accueillir R (typiquement les micro-arêtes de couture d'une
+    // union CSG), puis en réduisant R. Chaque tentative est validée par
+    // BRepCheck_Analyzer ET par l'invariant de volume avant d'être retenue —
+    // un "succès" qui gonfle le volume est rejeté comme un échec.
+    // Budget de temps : la ligne de repli s'arrête si le cumul dépasse 6× la
+    // première tentative (plancher 8 s), pour ne jamais transformer une pièce
+    // lourde en gel d'interface.
+    let att=null,attempts=[],tLadder0=performance.now(),budget=0;
+    for(let k=0;k<_OCCT_FALLBACK.length;k++){
+      const st=_OCCT_FALLBACK[k], Rk=R*st.f;
+      if(Rk<0.02) break;
+      const tA=performance.now();
+      const a=_occtAttempt(oc,unified,Rk,st.skip,mode==='round',volBefore,keepSegs,segOnEdge);
+      const dtA=performance.now()-tA;
+      if(k===0) budget=Math.max(8000,dtA*6);
+      attempts.push(`R=${Rk.toFixed(3)}${st.skip?` skip<${(st.skip*Rk).toFixed(2)}mm`:''} → ${a.ok?'valid':a.why} (${Math.round(dtA)}ms)`);
+      if(a.ok){ att=a; break; }
+      if(keepSegs&&a.nAdded===0&&!a.nSkipped) break;   // la sélection ne matche aucune arête OCCT
+      if(_occtIsFatal(a.why)) throw new Error(a.why);   // module mort → sortie immédiate
+      if(performance.now()-tLadder0>budget){
+        nasLog('WARN','OCCT: fallback ladder stopped on time budget after '+attempts.length+' attempt(s)');
+        break;
       }
     }
-    if(keepSegs&&nKept===0)throw new Error('no OCCT edge matched the picked selection — try picking again');
-    mk.Build();
-    if(!mk.IsDone())throw new Error(`kernel Build failed — R=${R} too large for local geometry?`);
-    const result=mk.Shape();
+    if(!att){
+      if(keepSegs&&attempts.length===1&&/no edge left/.test(attempts[0]))
+        throw new Error('no OCCT edge matched the picked selection — try picking again');
+      throw new Error(`kernel could not build a valid ${mode==='round'?'fillet':'chamfer'} at R=${R} `
+        +`nor at any reduced radius — ${attempts.join(' | ')}`);
+    }
+    const result=att.shape, nEdges=att.nEdges, nKept=att.nAdded, Reff=att.R;
+    _keep.push(att.mk,result);
     const tFillet=performance.now();
-    // [NEW 25/07] BRepCheck_Analyzer confirmé présent dans ce build WASM
-    // (vérifié via NassScript : Object.keys(_occt) le liste — BRepCheck_Analyzer,
-    // BRepCheck_Edge/Face/Shell/Solid/Vertex/Wire, etc.). Check géométrique du
-    // B-Rep ICI, avant triangulation — plus tôt et plus fiable que le check
-    // mesh-side (post-triangulation) plus bas. Best-effort : signature exacte
-    // non re-vérifiée au-delà de la présence de la classe (constructeur/IsValid
-    // pourraient porter un suffixe numéroté différent dans ce binding précis)
-    // — try/catch dédié pour qu'un mauvais nom ne fasse jamais échouer une
-    // opération qui aurait sinon réussi ; dégrade silencieusement vers le seul
-    // check mesh-side si l'API diffère du standard OCCT documenté.
-    let _brepInvalid=false;
-    try{
-      _brepInvalid=!(new oc.BRepCheck_Analyzer(result,true)).IsValid();
-    }catch(e){/* API différente du standard OCCT — ignoré, best-effort */}
+    if(attempts.length>1){
+      const dropped=att.nSkipped?` and left ${att.nSkipped} edge(s) sharp (shorter than ${(2*Reff).toFixed(2)}mm)`:'';
+      _qfSetStatus(`⚠ R=${R} impossible here — applied R=${Reff.toFixed(2)}${dropped}`,'var(--warn)');
+      nasLog('WARN',`OCCT: R=${R} rejected by the kernel — fell back to R=${Reff.toFixed(3)} on ${nKept}/${nEdges} edges${dropped}`);
+      nasLog('DBG','  ladder: '+attempts.join(' | '));
+    }
+    const _brepInvalid=false;   // déjà validé dans _occtAttempt (B-Rep + volume)
     // 4. B-Rep → triangles. Deflection derived from R and the Segments
     // slider — same physical quantity as the mesh sweep path: sagitta of
     // an arc of radius R split into N segments ≈ R·π²/(2N²). This makes
@@ -751,9 +955,9 @@ async function _occtFilletAll(selectedOnly){
     // had zero effect on. Clamped to avoid pathological mesh sizes on
     // extreme R/segments combos.
     const arcSegs=Math.max(3,Math.min(192,Math.round(_qfSegs)));
-    const sagitta=R*Math.PI*Math.PI/(2*arcSegs*arcSegs);
+    const sagitta=Reff*Math.PI*Math.PI/(2*arcSegs*arcSegs);
     const defl=Math.min(0.5,Math.max(0.005,sagitta));
-    new oc.BRepMesh_IncrementalMesh_2(result,defl,false,0.5,false);
+    const mesher=new oc.BRepMesh_IncrementalMesh_2(result,defl,false,0.5,false);
     const out=[];
     const fex=new oc.TopExp_Explorer_2(result,oc.TopAbs_ShapeEnum.TopAbs_FACE,oc.TopAbs_ShapeEnum.TopAbs_SHAPE);
     while(fex.More()){
@@ -765,8 +969,9 @@ async function _occtFilletAll(selectedOnly){
         const rev=face.Orientation_1()===oc.TopAbs_Orientation.TopAbs_REVERSED;
         const nv=tri.NbNodes(),nt=tri.NbTriangles(),pts=new Float32Array(nv*3);
         for(let i=1;i<=nv;i++){
-          const p=tri.Node(i).Transformed(trsf);
+          const nd=tri.Node(i), p=nd.Transformed(trsf);
           pts[(i-1)*3]=p.X();pts[(i-1)*3+1]=p.Y();pts[(i-1)*3+2]=p.Z();
+          _occtDrop(p,nd);
         }
         for(let i=1;i<=nt;i++){
           const t=tri.Triangle(i);
@@ -775,10 +980,14 @@ async function _occtFilletAll(selectedOnly){
           out.push(pts[(a-1)*3],pts[(a-1)*3+1],pts[(a-1)*3+2],
                    pts[(b-1)*3],pts[(b-1)*3+1],pts[(b-1)*3+2],
                    pts[(c-1)*3],pts[(c-1)*3+1],pts[(c-1)*3+2]);
+          _occtDrop(t);
         }
+        _occtDrop(trsf,triH);
       }
+      _occtDrop(loc,face);
       fex.Next();
     }
+    _occtDrop(fex,mesher);
     if(!out.length)throw new Error('empty triangulation from kernel');
     const tMesh=performance.now();
     // 5. Result object — doCSG pattern, single source consumed
@@ -816,7 +1025,10 @@ async function _occtFilletAll(selectedOnly){
     rMesh.position.set(cg.x,cg.y,cg.z);rMesh.castShadow=true;
     scene.add(rMesh);
     objCnt++;
-    const ro={id:objCnt,name:'OCCT_'+(mode==='round'?'Fillet':'Chamfer')+'_'+objCnt,type:'csg',mesh:rMesh,isHole:false,color:_col,isOcctResult:true,isManifold};
+    // Le rayon réellement appliqué apparaît dans le nom quand il diffère du rayon
+    // demandé — sans ça l'info disparaît avec le panneau QF à la fermeture.
+    const _suffix=(Reff!==R)?('_R'+Reff.toFixed(2)):'';
+    const ro={id:objCnt,name:'OCCT_'+(mode==='round'?'Fillet':'Chamfer')+'_'+objCnt+_suffix,type:'csg',mesh:rMesh,isHole:false,color:_col,isOcctResult:true,isManifold};
     if(GeometryPool.initialized){ro._poolSlot=GeometryPool.geoStore(rGeo);updPoolStats();}
     scene.remove(obj.mesh);obj.mesh.geometry.dispose();obj.mesh.material.dispose();
     objs=objs.filter(x=>x!==obj);
@@ -824,23 +1036,28 @@ async function _occtFilletAll(selectedOnly){
     updProps();updOList();updStats();
     const dt=Math.round(performance.now()-t0);
     const _fmtMs=ms=>ms<1000?Math.round(ms)+'ms':(ms/1000).toFixed(1)+'s';
-    nasLog('OCCT',`✓ ${mode==='round'?'fillet':'chamfer'} ${keepSegs?nKept+'/'+nEdges+' picked edges':'ALL edges ('+nEdges+' explored)'} R=${R} — ${nTris}→${(out.length/9)|0} tris, defl=${defl.toFixed(3)} — ⏱ ${_fmtMs(dt)}`);
+    nasLog('OCCT',`✓ ${mode==='round'?'fillet':'chamfer'} ${keepSegs?nKept+'/'+nEdges+' picked edges':'ALL edges ('+nEdges+' explored)'} R=${Reff}${Reff!==R?` (requested ${R})`:''} — ${nTris}→${(out.length/9)|0} tris, defl=${defl.toFixed(3)} — ⏱ ${_fmtMs(dt)}`);
     nasLog('DBG',`  detail: sewing ${_fmtMs(tSew-t0)} · unify ${_fmtMs(tUnify-tSew)} · ${mode==='round'?'fillet':'chamfer'} ${_fmtMs(tFillet-tUnify)} · meshing ${_fmtMs(tMesh-tFillet)}`);
     _qfExit();
   }catch(e){
     const raw=String(e&&e.message||e);
-    // Emscripten stubs missing C++ exception-RTTI symbols with a throwing
-    // JS function when this WASM build can't fully unwind a C++ exception
-    // (e.g. OCCT's Standard_Failure). We still catch it fine — the crash
-    // is just an opaque runtime symbol name instead of the real geometric
-    // reason. Translate the known signatures into something actionable.
+    // [04/09] Ce build d'opencascade.js ne déclarait pas __cxa_is_pointer_type /
+    // __cxa_can_catch : toute exception C++ d'OCCT remontait en ReferenceError
+    // opaque. _occtGetFactory() injecte désormais les deux symboles, donc ce
+    // message ne devrait plus jamais apparaître — on le garde pour signaler net
+    // que le patch n'a pas pris (ancre introuvable, loader régénéré, etc.).
     const isOpaqueRuntime=/^_+cxa_|^___|is not defined$/.test(raw)&&/cxa|dynamic_cast|RTTI/i.test(raw);
     const msg=isOpaqueRuntime
-      ?`Kernel internal exception (opaque — this WASM build can't report the exact OCCT reason). Likely: R too large for the local geometry, or re-filleting an already-curved OCCT result. Try a smaller R${obj.isOcctResult?', or fillet from the original (pre-OCCT) object instead':''}.`
+      ?`Kernel exception ABI not patched (${raw}) — the loader signature changed, the fix in _occtGetFactory() needs a new anchor.`
       :raw;
     _qfSetStatus('⚠ '+msg,'var(--danger)');
     nasLog('ERROR','OCCT: '+msg+(isOpaqueRuntime?' [raw: '+raw+']':''));
+    // Module WASM mort (heap saturé, abort) → on le jette pour que la prochaine
+    // opération reparte sur une instance saine, sans recharger la page ni
+    // re-télécharger les 65 Mo (binaire en cache).
+    if(_occtIsFatal(raw)||isOpaqueRuntime) _occtResetKernel(raw);
   }finally{
+    _occtDrop(..._keep);
     geo.dispose();hideSpinner();
   }
 }
