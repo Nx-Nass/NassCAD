@@ -105,6 +105,8 @@ MEDUSA is a small native binary that runs **on your own machine** and listens on
 
 **Needs MEDUSA** — Union, Subtraction and Intersection, Deep Re-run of a CSG tree, and auto-union repair.
 
+**Engine log — on demand, not on disk.** MEDUSA writes no log file. The last 20 000 lines are kept in memory and served as plain text by `GET /log?n=<max>` — the jellyfish button in the NASSCAD Logs panel pulls them into the panel, next to the browser-side log of the same session. Pass `--logfile` to also write a timestamped `medusa-logs-<date>.txt`, as earlier builds did.
+
 Build bundles are in the `DEPLOY_*` folders:
 
 | Target | Contents |

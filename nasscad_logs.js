@@ -18,6 +18,12 @@ const LOG_IDB_MAX = 2000;   // Entrées max dans log_history IDB
 let _logEntries = [];        // Historique session courante
 let _logFilter  = 'ALL';     // Filtre actif
 let _logVisible = false;     // Fenêtre ouverte ?
+// Instantané du journal du MOTEUR (MEDUSA), rapporté à la demande. Stocké à part
+// de _logEntries EXPRÈS : un journal moteur fait couramment plusieurs milliers de
+// lignes, et LOG_MAX vaut 2000 — l'injecter dans l'historique client chasserait
+// tout le reste. Ici il ne concurrence rien, il n'est ni tronqué ni persisté.
+let _medusaSnap = null;      // { source, when, lines[], total }
+const MEDUSA_SNAP_RENDER = 3000;   // lignes affichées au maximum (l'export garde tout)
 
 // ── Patch console — capture console.log/warn/error → nasLog ──
 (function(){
@@ -32,7 +38,7 @@ let _logVisible = false;     // Fenêtre ouverte ?
 })();
 
 // ── nasLog(level, msg) — point d'entrée unique ─────────────────
-// Niveaux : ERROR · WARN · OK · INFO · CSG · IDB · DBG
+// Niveaux : ERROR · WARN · OK · INFO · CSG · IDB · MEDUSA · DBG
 // DBG n'est pas sauvegardé en IDB (trop verbeux)
 function nasLog(level, msg){
   const ts = new Date().toLocaleTimeString('en-US',{
@@ -44,14 +50,27 @@ function nasLog(level, msg){
   if(_logVisible) _logAppendDOM(entry);
   // Sauvegarde IDB — DBG exclu volontairement
   if(typeof idbLogSave === 'function' &&
-     ['ERROR','WARN','OK','INFO','CSG','IDB'].includes(level)){
+     ['ERROR','WARN','OK','INFO','CSG','IDB','MEDUSA'].includes(level)){
     idbLogSave(entry);
   }
 }
 
+// ── Correspondance entrée / filtre ─────────────────────────────
+// MEDUSA est le seul filtre TRANSVERSAL : il retient les entrées de niveau
+// MEDUSA, mais aussi toutes celles qui parlent du moteur sous un autre niveau
+// (les 'OK Machine facts via MEDUSA', 'WARN MEDUSA unreachable', 'CSG ✓ … native
+// MEDUSA' déjà en place). Ça évite de réétiqueter une quinzaine d'appels
+// existants — et de déplacer ces lignes hors des filtres où tu les cherches
+// aujourd'hui. Un filtre qui rassemble, pas qui déménage.
+function _logMatch(e){
+  if(_logFilter === 'ALL') return true;
+  if(_logFilter === 'MEDUSA') return e.level === 'MEDUSA' || /MEDUSA/i.test(e.msg);
+  return _logFilter === e.level;
+}
+
 // ── Rendu DOM d'une entrée ─────────────────────────────────────
 function _logAppendDOM(e){
-  if(_logFilter !== 'ALL' && _logFilter !== e.level) return;
+  if(!_logMatch(e)) return;
   const body = document.getElementById('log-body');
   if(!body) return;
   const div = document.createElement('div');
@@ -78,7 +97,7 @@ function _logRebuild(){
   if(!body) return;
   body.innerHTML = '';
   _logEntries.forEach(e => {
-    if(_logFilter === 'ALL' || _logFilter === e.level){
+    if(_logMatch(e)){
       const div = document.createElement('div');
       div.className = 'log-entry log-' + e.level;
       div.innerHTML =
@@ -88,9 +107,34 @@ function _logRebuild(){
       body.appendChild(div);
     }
   });
+  // Instantané moteur — après les entrées client, jamais mélangé : c'est un
+  // relevé pris à un instant T, pas un flux chronologique du même horloge.
+  if(_logFilter === 'MEDUSA' && _medusaSnap) _medusaSnapRender(body);
   body.scrollTop = body.scrollHeight;
   const el = document.getElementById('log-count');
-  if(el) el.textContent = _logEntries.length + ' entries';
+  if(el) el.textContent = _logEntries.length + ' entries'
+    + (_medusaSnap ? ' + ' + _medusaSnap.total + ' engine' : '');
+}
+
+// Rendu du bloc moteur. Les lignes portent déjà leur propre horodatage : on ne
+// leur en recolle pas un second, et on ne réserve pas la colonne de niveau.
+function _medusaSnapRender(body){
+  const s = _medusaSnap;
+  const head = document.createElement('div');
+  head.className = 'log-entry log-MEDUSA';
+  head.innerHTML = `<span class="log-msg"><b>── engine log · ${_escHtml(s.source)} · ${s.when}`
+    + ` · ${s.lines.length}/${s.total} line(s) ──</b></span>`;
+  body.appendChild(head);
+  for(const l of s.lines){
+    const d = document.createElement('div');
+    d.className = 'log-entry log-MEDUSA log-eng';
+    d.innerHTML = `<span class="log-msg">${_escHtml(l)}</span>`;
+    body.appendChild(d);
+  }
+  const foot = document.createElement('div');
+  foot.className = 'log-entry log-MEDUSA';
+  foot.innerHTML = '<span class="log-msg"><b>── end of engine log ──</b></span>';
+  body.appendChild(foot);
 }
 
 // ── Filtre ────────────────────────────────────────────────────
@@ -110,6 +154,70 @@ function toggleLogWin(){
     _logRebuild();
     if(typeof idbUpdateQuotaDisplay === 'function') idbUpdateQuotaDisplay();
   }
+}
+
+// ══════════════════════════════════════════════════════════════
+// ██  JOURNAL DU MOTEUR MEDUSA — à la demande
+// ══════════════════════════════════════════════════════════════
+// Deux sources, essayées dans cet ordre :
+//
+//   1) GET /log sur le moteur. Le binaire 3.1 ne sert PAS cet endpoint : le
+//      fetch échoue, on passe à la suite. Écrit dès maintenant pour que le jour
+//      où il existera, ce bouton s'en serve sans qu'on retouche l'interface.
+//      Contrat visé, à respecter côté C++ : text/plain, une ligne par ligne,
+//      ?n=<max> pour borner, réponse la plus récente en dernier.
+//
+//   2) Sélecteur de fichier — la seule voie ouverte au navigateur aujourd'hui.
+//      Le moteur écrit medusa-logs-<horodatage>.txt (dans Téléchargements). En
+//      file://, aucune API ne permet de lire ce fichier sans que l'utilisateur
+//      le désigne : même repli que celui du kernel OCCT dans quick-fillet.js.
+//
+// Dans les deux cas le résultat atterrit au même endroit, sous le filtre MEDUSA,
+// à côté de ce que NASSCAD sait déjà du moteur — les deux journaux d'une même
+// session enfin lisibles en parallèle.
+async function medusaLogPull(nMax){
+  const N = nMax || 4000;
+  const url = (typeof _BOOSTER_URL !== 'undefined')
+    ? _BOOSTER_URL : 'http://127.0.0.1:8765';
+  try{
+    const ctrl = new AbortController();
+    const t = setTimeout(() => ctrl.abort(), 1500);
+    const res = await fetch(`${url}/log?n=${N}`, { signal: ctrl.signal });
+    clearTimeout(t);
+    if(res.ok){
+      _medusaLogIngest(await res.text(), 'engine GET /log');
+      return;
+    }
+  }catch(e){ /* endpoint absent, ou moteur éteint : le sélecteur prend le relais */ }
+  nasLog('MEDUSA','This engine build serves no /log endpoint — pick the medusa-logs-*.txt file instead');
+  const inp = document.createElement('input');
+  inp.type = 'file';
+  inp.accept = '.txt,.log,text/plain';
+  inp.onchange = () => {
+    const f = inp.files && inp.files[0];
+    if(!f) return;
+    const rd = new FileReader();
+    rd.onload  = () => _medusaLogIngest(String(rd.result), f.name);
+    rd.onerror = () => nasLog('ERROR','MEDUSA log: cannot read ' + f.name);
+    rd.readAsText(f);
+  };
+  inp.oncancel = () => nasLog('MEDUSA','Engine log: selection cancelled');
+  inp.click();
+}
+
+function _medusaLogIngest(text, source){
+  const all = String(text).replace(/\r/g,'').split('\n');
+  while(all.length && !all[all.length-1].trim()) all.pop();   // queue vide
+  if(!all.length){ nasLog('WARN','MEDUSA log: ' + source + ' is empty'); return; }
+  _medusaSnap = {
+    source,
+    when : new Date().toLocaleTimeString('en-US',{hour12:false,hour:'2-digit',minute:'2-digit',second:'2-digit'}),
+    lines: all.length > MEDUSA_SNAP_RENDER ? all.slice(-MEDUSA_SNAP_RENDER) : all,
+    total: all.length,
+    text                                   // intégral, pour l'export
+  };
+  nasLog('MEDUSA', `Engine log loaded — ${all.length} line(s) from ${source}`);
+  setLogFilter('MEDUSA');                  // rebuild + bascule sur le filtre
 }
 
 // ── Vider ─────────────────────────────────────────────────────
@@ -133,14 +241,21 @@ function _fmtLogFilename(){
 
 // ── Export .txt ───────────────────────────────────────────────
 function logExport(){
-  const lines = _logEntries
+  let lines = _logEntries
     .map(e => `[${e.ts}][${e.level}] ${e.msg}`)
     .join('\n');
+  // Le journal moteur part avec, INTÉGRAL (pas la troncature d'affichage) :
+  // un rapport d'incident où les deux côtés manquent l'un à l'autre ne sert à rien.
+  if(_medusaSnap){
+    lines += `\n\n════ MEDUSA engine log · ${_medusaSnap.source} · pulled at ${_medusaSnap.when}`
+           + ` · ${_medusaSnap.total} line(s) ════\n` + _medusaSnap.text;
+  }
   const a = document.createElement('a');
   a.href = URL.createObjectURL(new Blob([lines], {type:'text/plain'}));
   a.download = 'nasscad-logs-' + _fmtLogFilename() + '.txt';
   a.click();
-  nasLog('OK', 'Logs exported (' + _logEntries.length + ' entries).');
+  nasLog('OK', 'Logs exported (' + _logEntries.length + ' entries'
+    + (_medusaSnap ? ' + ' + _medusaSnap.total + ' engine lines' : '') + ').');
 }
 
 // ── Copie presse-papier ─────────────────────────────────────────

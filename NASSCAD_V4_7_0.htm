@@ -452,8 +452,14 @@ canvas{display:block;width:100%;height:100%;}
 .log-entry{display:flex;gap:5px;padding:0 2px;border-bottom:1px solid transparent;border-radius:2px;}
 .log-entry:hover{background:rgba(69,39,160,0.06);}
 .log-ts{color:var(--muted);flex-shrink:0;font-size:10px;}
-.log-lvl{flex-shrink:0;font-weight:700;font-size:10px;width:38px;text-align:right;}
+/* 52px : [MEDUSA] et [ERROR] débordaient des 38px d'origine et décalaient la
+   colonne des messages d'une ligne à l'autre. Toutes les étiquettes tiennent. */
+.log-lvl{flex-shrink:0;font-weight:700;font-size:10px;width:52px;text-align:right;}
 .log-msg{flex:1;word-break:break-word;white-space:pre-wrap;}
+.log-MEDUSA .log-lvl,.log-MEDUSA .log-msg{color:#14a098;}
+/* Lignes brutes du moteur : elles portent déjà leur horodatage, on ne réserve
+   donc ni colonne d'heure ni colonne de niveau — juste un léger retrait. */
+.log-eng .log-msg{padding-left:10px;opacity:0.92;}
 .log-INFO  .log-lvl{color:var(--text);}
 .log-WARN  .log-lvl,.log-WARN  .log-msg{color:var(--warn);}
 .log-ERROR .log-lvl,.log-ERROR .log-msg{color:var(--danger);}
@@ -2361,7 +2367,7 @@ canvas{display:block;width:100%;height:100%;}
         <span id="p-sres-lbl" style="font-size:12px;font-weight:700;color:var(--text);margin-left:auto;flex-shrink:0">32</span>
         <span style="font-size:10px;color:var(--muted);flex-shrink:0">segs</span>
       </div>
-      <!-- [V4.7.0 MEDUSA] Slider INDEXÉ sur l'échelle _RES_LADDER (8 → 256 segs).
+      <!-- [V4.7.0 SHOGUN] Slider INDEXÉ sur l'échelle _RES_LADDER (8 → 256 segs).
            Linéaire jusqu'à 32 (pas 4), puis pas géométriques. 19 crans, donc
            max="18" : toute modification de _RES_LADDER doit être répercutée ici. -->
       <input type="range" id="p-sres" min="0" max="18" step="1" value="6"
@@ -2521,6 +2527,7 @@ canvas{display:block;width:100%;height:100%;}
     <div class="vb-tbar-btns">
       <button class="vb-tbtn" onclick="logClear()" title="Clear logs">🗑</button>
       <button class="vb-tbtn" onclick="logExport()" title="Export logs .txt">💾</button>
+      <button class="vb-tbtn" onclick="medusaLogPull()" title="Pull the MEDUSA engine log — tries GET /log, falls back to picking medusa-logs-*.txt">🪼</button>
       <button class="vb-tbtn" onclick="logCopyClipboard()" title="Copy logs to clipboard">📋</button>
       <button class="vb-tbtn" onclick="logRecallIDB(200)" title="Restore last 200 entries from IDB (previous sessions)">📂</button>
       <button class="vb-tbtn" onclick="toggleLogWin()" title="Close">✕</button>
@@ -2533,6 +2540,7 @@ canvas{display:block;width:100%;height:100%;}
     <button class="log-fbtn"        data-filter="ERROR" onclick="setLogFilter('ERROR')">ERR</button>
     <button class="log-fbtn"        data-filter="CSG"  onclick="setLogFilter('CSG')">CSG</button>
     <button class="log-fbtn"        data-filter="IDB"  onclick="setLogFilter('IDB')">IDB</button>
+    <button class="log-fbtn"        data-filter="MEDUSA" onclick="setLogFilter('MEDUSA')" title="MEDUSA engine — everything NASSCAD knows about it, plus the engine log once pulled">MEDUSA</button>
     <button class="log-fbtn"        data-filter="OK"   onclick="setLogFilter('OK')">OK</button>
     <button class="log-fbtn"        data-filter="DBG"  onclick="setLogFilter('DBG')" title="Debug — detailed operations">DBG</button>
     <label style="margin-left:auto;font-size:10px;display:flex;align-items:center;gap:3px;cursor:pointer;">
@@ -2591,7 +2599,7 @@ canvas{display:block;width:100%;height:100%;}
 </div>
 
 <script src="three.js"></script>
-<!-- [V4.7.0 MEDUSA — 27/08] manifold.js + manifold_worker.js RETIRES.
+<!-- [V4.7.0 SHOGUN — 27/08] manifold.js + manifold_worker.js RETIRES.
      Tout le calcul Manifold (booleens simples, arbres CSG du Deep Re-run,
      repair par auto-union) est deporte sur MEDUSA, qui linke Manifold en C++
      natif avec TBB. Plus de pool de Workers WASM cote navigateur : ~890 Ko de
@@ -3247,7 +3255,7 @@ const SEG_VIEW  = { sphere:[32,32], cylinder:64, cone:64, roofarc:48, halfsphere
 // pas au moment du booléen.
 let _newPrimRes = 32;
 
-// ── [V4.7.0 MEDUSA] Échelle de résolution 8 → 256 segs ────────────────────
+// ── [V4.7.0 SHOGUN] Échelle de résolution 8 → 256 segs ────────────────────
 // Le slider ◎ Resolution n'est plus linéaire : il indexe cette échelle. Pas
 // de 4 jusqu'à 32 (réglage fin de la zone de travail courante), puis paliers
 // géométriques jusqu'à 256. 19 crans — une flèche clavier = un cran.
@@ -4390,7 +4398,7 @@ function init(){
   scene.add(new THREE.HemisphereLight(0x87ceeb,0x362907,0.3));
 
   buildGrid();buildAxes();buildNavCube();
-  scene.add(_gizmoGroup);
+  _gizBuildOverlay();   // le gizmo vit dans sa propre scène orthographique, pas dans scene
   scene.add(_rotArcMesh); scene.add(_rotArcLine); // secteur angulaire — après init scène
   _initGridDrag(ren.domElement);
 
@@ -5104,6 +5112,7 @@ function anim(){
   if(_camDirty){
     ren.render(scene,cam);
     _navRender();   // overlay NavCube — après la scène, avant le canvas 2D de cotation
+    _gizRender();   // overlay gizmo rotation — même passe orthographique
     _camDirty=false;
   }
   updateCotation();
@@ -5156,67 +5165,144 @@ const _GIZMO_AXES = [
   _gizmoGroup.visible=false;_gizmoGroup.renderOrder=999;
 })();
 
-// Gizmo déporté — vecteurs pré-alloués (updGizmo tourne à chaque frame, zéro GC)
-const _gizSize   = new THREE.Vector3();
-const _gizOffDir = new THREE.Vector3();
-const _gizFwd    = new THREE.Vector3();
-const _gizProj   = new THREE.Vector3();
+// ══ Gizmo ancré à l'écran, rendu en passe orthographique ═══════════════════
+// [04/09] L'ancrage écran avait déjà été tenté (GIZMO_ANCHOR_NDC {0.74,-0.68})
+// puis annulé : la caméra perspective biaisait les anneaux, « plus le même
+// aspect orthogonal ». Ce n'était pas un bug mais de la géométrie — un cercle
+// aligné sur les axes monde, posé hors de l'axe optique d'un frustum perspectif,
+// EST déformé. À 50° de FOV, l'emplacement demandé est à ~21° hors axe (l'ancien
+// coin était à ~37°) : visible dans les deux cas.
+// La solution était déjà dans le fichier, écrite pour le NavCube : scène propre,
+// caméra orthographique, setViewport dans une zone carrée, autoClear=false +
+// clearDepth(). En orthographique il n'y a pas d'axe optique privilégié — le
+// widget garde exactement le même aspect où qu'on le pose, et sa taille est
+// constante par construction (plus de compensation de distance).
+// Le frustum ±1.40 sur un viewport de 280 px place l'anneau (rayon 1.0) à
+// exactement 100 px, soit le TARGET_PX de la version déportée : aspect ET
+// dimension identiques à ce qui était affiché avant. Le rapport taille/frustum
+// est ce qui fixe l'échelle — les deux se règlent ensemble, jamais séparément.
+const GIZ_SIZE     = 280;     // côté du viewport gizmo, en px CSS
+const GIZ_FRUSTUM  = 1.40;    // demi-hauteur ortho — anneau 1.0, ticks 1.14, prise 1.22, fond 1.32
+const GIZ_PLATE_R  = 1.32;    // rayon du disque de fond
+const GIZ_CENTER_X = 0.652;   // centre du widget, fraction de la largeur du viewport
+const GIZ_CENTER_Y = 0.800;   // idem hauteur, comptée depuis le HAUT
+let _gizScene = null, _gizCam = null;
+let _gizPlate = null, _gizPlateRim = null;
+const _gizRay = new THREE.Raycaster();
+const _gizTmp = new THREE.Vector3();
+const _gizNrm = new THREE.Vector3();
+const _gizFwd = new THREE.Vector3();
+
+function _gizBuildOverlay(){
+  if(_gizScene) return;
+  _gizScene = new THREE.Scene();
+  _gizCam = new THREE.OrthographicCamera(-GIZ_FRUSTUM,GIZ_FRUSTUM,GIZ_FRUSTUM,-GIZ_FRUSTUM,0.1,20);
+  _gizCam.position.set(0,0,6);
+  _gizCam.lookAt(0,0,0);
+  _gizCam.updateMatrixWorld();
+  _gizmoGroup.position.set(0,0,0);
+  _gizmoGroup.scale.setScalar(1);
+  _gizScene.add(_gizmoGroup);
+  _gizBuildPlate();
+}
+
+// ── Fond du widget ─────────────────────────────────────────────────────────
+// [04/09] Sans lui le gizmo flotte : selon l'angle de caméra il se retrouve sur
+// la grille, sur la pièce ou — en vue rasante — sur le vide sous l'horizon, et
+// il cesse de se lire comme un élément d'interface. Le disque règle ça sans
+// toucher à la mécanique : il n'appartient PAS à _gizmoGroup, donc il ne tourne
+// pas avec la caméra ; posé en retrait sur Z face à la caméra orthographique, il
+// reste parfaitement circulaire quelle que soit la vue. Palette alignée sur celle
+// du NavCube pour que les deux overlays se ressemblent.
+function _gizBuildPlate(){
+  if(!_gizScene) return;
+  const dk=document.documentElement.getAttribute('data-theme')==='dark';
+  for(const o of [_gizPlate,_gizPlateRim]){
+    if(o){ _gizScene.remove(o); o.geometry.dispose(); o.material.dispose(); }
+  }
+  const fill=new THREE.Mesh(
+    new THREE.CircleGeometry(GIZ_PLATE_R,96),
+    new THREE.MeshBasicMaterial({color:dk?0x223046:0xeef2f8,transparent:true,
+      opacity:dk?0.42:0.55,depthTest:false,depthWrite:false}));
+  const pts=[];
+  for(let i=0;i<=96;i++){const a=i*2*Math.PI/96;pts.push(Math.cos(a)*GIZ_PLATE_R,Math.sin(a)*GIZ_PLATE_R,0);}
+  const rimGeo=new THREE.BufferGeometry();
+  rimGeo.setAttribute('position',new THREE.Float32BufferAttribute(pts,3));
+  const rim=new THREE.Line(rimGeo,new THREE.LineBasicMaterial({color:dk?0x4a6090:0x8aa0bb,
+      transparent:true,opacity:0.85,depthTest:false}));
+  // Derrière la sphère des anneaux (rayon max 1.22) ; l'ordre de peinture est
+  // donné par renderOrder puisque tout le monde est en depthTest:false.
+  fill.position.z=-1.6; fill.renderOrder=990; fill.raycast=()=>{};
+  rim.position.z =-1.6; rim.renderOrder =991; rim.raycast =()=>{};
+  _gizScene.add(fill); _gizScene.add(rim);
+  _gizPlate=fill; _gizPlateRim=rim;
+  _camDirty=true;
+}
+
+// Rectangle du viewport gizmo, en px CSS. left/top depuis le coin haut-gauche,
+// bottom depuis le BAS (c'est ce qu'attend setViewport). null si la fenêtre est
+// trop petite pour loger le widget proprement.
+function _gizRect(){
+  const w = ren.domElement.clientWidth, h = ren.domElement.clientHeight;
+  if(w < GIZ_SIZE*1.2 || h < GIZ_SIZE*1.2) return null;
+  const half = GIZ_SIZE/2;
+  const cx = Math.min(w-half, Math.max(half, GIZ_CENTER_X*w));
+  const cy = Math.min(h-half, Math.max(half, GIZ_CENTER_Y*h));
+  const left = Math.round(cx-half), top = Math.round(cy-half);
+  return {w, h, size:GIZ_SIZE, left, top, bottom: h-top-GIZ_SIZE};
+}
+
+// Passe overlay — appelée depuis anim(), juste après le NavCube
+function _gizRender(){
+  if(!_gizmoGroup.visible || !_gizScene) return;
+  const R = _gizRect(); if(!R) return;
+  ren.autoClear = false;
+  ren.clearDepth();
+  ren.setViewport(R.left, R.bottom, R.size, R.size);
+  ren.render(_gizScene, _gizCam);
+  ren.setViewport(0,0,R.w,R.h);
+  ren.autoClear = true;
+}
+
+// Angle du curseur dans le plan de l'anneau actif, exprimé en AXES MONDE.
+// Le groupe porte la rotation inverse de la caméra, donc passer du repère de
+// l'overlay au repère monde revient à appliquer cam.quaternion — pas de
+// worldToLocal ni de mise à jour de matrice, et zéro allocation.
+// Volontairement sans test de bornes : pendant un glisser le curseur sort du
+// carré du widget et la rotation doit continuer.
+function _gizAngleAt(e){
+  const R = _gizRect(); if(!R) return null;
+  const r = ren.domElement.getBoundingClientRect();
+  const x = e.clientX-r.left, y = e.clientY-r.top;
+  _gizRay.setFromCamera({x:((x-R.left)/R.size)*2-1, y:-((y-R.top)/R.size)*2+1}, _gizCam);
+  const axDef = _GIZMO_AXES.find(a=>a.key===_rotAxis); if(!axDef) return null;
+  _gizNrm.copy(axDef.normal).applyQuaternion(_gizmoGroup.quaternion).normalize();
+  _rotPlane.setFromNormalAndCoplanarPoint(_gizNrm,_gizmoGroup.position);
+  if(!_gizRay.ray.intersectPlane(_rotPlane,_gizTmp)) return null;
+  _gizTmp.applyQuaternion(cam.quaternion);      // overlay → axes monde
+  if(_rotAxis==='x') return Math.atan2(_gizTmp.z,_gizTmp.y);
+  if(_rotAxis==='y') return Math.atan2(_gizTmp.x,_gizTmp.z);
+  return Math.atan2(_gizTmp.y,_gizTmp.x);
+}
 
 // Auto-shown on selection — no button needed
 function updGizmo(){
   if(!_rotMode||!selObjs.length||selObjs.length>1){_gizmoGroup.visible=false;return;}
-  const obj=selObjs[0];
   _gizmoGroup.visible=true;
-  // [OPT PERF-240724-2] updGizmo() tourne à chaque frame (anim()) tant que le
-  // mode rotation est actif — sans ce cache, Box3.setFromObject() complet est
-  // refait 60x/s même objet+caméra parfaitement immobiles. _bboxCache est déjà
-  // tenu à jour par _invalidateBbox() sur tout move/scale/rotate.
-  const box=_bboxCache.get(obj.mesh) || new THREE.Box3().setFromObject(obj.mesh);
-  const center=new THREE.Vector3();
-  box.getCenter(center);
-  const distToCam=cam.position.distanceTo(center);
-  const vp=_vpEl;
-  const vpH=vp?vp.clientHeight:600;
-  const fovRad=cam.fov*Math.PI/180;
-  const TARGET_PX=100;
-  const r=2*Math.tan(fovRad/2)*distToCam*TARGET_PX/vpH;
-  const s=Math.max(r,6);
-  _gizmoGroup.scale.setScalar(s);
-  // ── Gizmo déporté : posé à côté de l'objet, jamais superposé à sa silhouette ──
-  // Pendant un drag la position est figée : l'AABB change en tournant, sinon le
-  // widget glisserait sous le curseur et le centre de référence des angles dériverait.
-  if(_rotActive){
-    _gizmoGroup.position.copy(_rotAngleCenter);
-  }else{
-    box.getSize(_gizSize);
-    const off=_gizSize.length()*0.5 + s*1.14 + s*0.30; // rayon englobant objet + rayon ticks + marge
-    _gizOffDir.setFromMatrixColumn(cam.matrixWorld,0).normalize(); // droite caméra
-    _gizmoGroup.position.copy(center).addScaledVector(_gizOffDir,off);
-    // Sortie du viewport à droite → bascule du côté gauche. Test NDC.x fait à la
-    // main (ratio droite/profondeur vs tan(fov/2)*aspect) : cam.matrixWorldInverse
-    // n'est rafraîchi que dans ren.render(), or updGizmo() tourne AVANT le render
-    // — project() travaillerait donc sur la matrice de la frame précédente.
-    cam.getWorldDirection(_gizFwd);
-    _gizProj.copy(_gizmoGroup.position).sub(cam.position);
-    const _depth=_gizProj.dot(_gizFwd);
-    if(_depth>1e-6 && _gizProj.dot(_gizOffDir)/_depth > Math.tan(fovRad/2)*cam.aspect*0.85){
-      _gizmoGroup.position.copy(center).addScaledVector(_gizOffDir,-off);
-    }
-  }
-  // Taille écran réellement constante : le déport éloigne le widget de la caméra
-  // (déport perpendiculaire à la vue → distance = √(d²+off²) ≥ d). On recalcule
-  // l'échelle à la distance finale ; une itération suffit, et comme la distance ne
-  // peut qu'augmenter, l'anneau ne peut que rétrécir → la marge reste acquise.
-  const dGiz=cam.position.distanceTo(_gizmoGroup.position);
-  _gizmoGroup.scale.setScalar(Math.max(2*Math.tan(fovRad/2)*dGiz*TARGET_PX/vpH,6));
-  // World-space : anneaux alignés sur les axes mondiaux (world-space standard)
-  _gizmoGroup.quaternion.identity();
-  // Opacité dynamique selon la caméra — anneau quasi-parallèle à la vue = peu utile = estompé
+  // Position et échelle ne sont plus calculées : le widget est à l'origine de sa
+  // propre scène, et c'est le viewport orthographique qui décide où il se pose et
+  // quelle taille il fait. Disparaissent avec le déport : la lecture d'AABB par
+  // frame, la compensation de distance en deux passes, et la bascule de côté
+  // quand le widget sortait du cadre.
+  // Reste le seul calcul qui compte — montrer les axes MONDE tels que la caméra
+  // principale les voit. Même trucage que le NavCube.
+  _gizmoGroup.quaternion.copy(cam.quaternion).invert();
+  // Opacité dynamique : un anneau vu par la tranche est peu manipulable, on l'estompe.
   if(!_rotActive){
-    const viewDir=center.clone().sub(cam.position).normalize();
+    cam.getWorldDirection(_gizFwd);
     _GIZMO_AXES.forEach(ax=>{
-      const dot=Math.abs(viewDir.dot(ax.normal));        // 0=de profil, 1=de face
-      const op=Math.max(0.15, 0.15+0.73*dot);           // [0.15 … 0.88] world-space standard
+      const dot=Math.abs(_gizFwd.dot(ax.normal));       // 0=de profil, 1=de face
+      const op=Math.max(0.15, 0.15+0.73*dot);          // [0.15 … 0.88]
       if(_gizmoRings[ax.key])  _gizmoRings[ax.key].material.opacity=op;
       if(_gizmoTicks[ax.key])  _gizmoTicks[ax.key].material.opacity=op;
     });
@@ -5231,7 +5317,8 @@ let _rotCenterStart=new THREE.Vector3(); // centre géométrique bbox au début 
 let _rotStartPos=new THREE.Vector3();    // mesh.position au début de la rotation
 let _rotStartQuat=new THREE.Quaternion(); // quaternion initial — rotation world-space propre
 let _rotAxisVec=new THREE.Vector3();      // vecteur axe monde (1,0,0 / 0,1,0 / 0,0,1)
-let _rotAngleCenter=new THREE.Vector3();  // centre de référence des angles = centre du gizmo déporté (≠ pivot)
+let _rotAngleCenter=new THREE.Vector3();  // centre de référence des angles = centre du widget (≠ pivot)
+let _rotStartAngle=0;                     // angle du curseur au clic, dans le plan de l'anneau (axes monde)
 
 // ── Secteur angulaire 3D NASSCAD style ────────────────────────────────────
 // Géométrie dans le plan de l'anneau actif — pas de distorsion perspective
@@ -5299,25 +5386,29 @@ function _updateRotArcMesh(angle){
 // Label angle — bulle blanche à l'extérieur du secteur (style TK)
 function _drawRotLabel(){
   if(!_rotActive||!_rotObj||!cotCtx||Math.abs(_rotAngle)<1e-4) return;
-  const midAngle=_rotAngle/2;
-  // R label depuis la caméra, légèrement au-delà de l'anneau
-  const _vpH2=(_vpEl||{clientHeight:600}).clientHeight;
-  const _dist2=cam.position.distanceTo(_rotCenterStart);
-  const R=Math.max(2*Math.tan(cam.fov*Math.PI/180/2)*_dist2*118/_vpH2, 7);
-  const startDir=_rotStart.clone().sub(_rotCenterStart);
-  const axComp=startDir.dot(_rotAxisVec);
-  startDir.sub(_rotAxisVec.clone().multiplyScalar(axComp));
-  if(startDir.length()<0.001) return;
-  startDir.normalize();
-  const perpDir=new THREE.Vector3().crossVectors(_rotAxisVec,startDir);
-  const midPt=new THREE.Vector3(
-    _rotCenterStart.x+R*(startDir.x*Math.cos(midAngle)+perpDir.x*Math.sin(midAngle)),
-    _rotCenterStart.y+R*(startDir.y*Math.cos(midAngle)+perpDir.y*Math.sin(midAngle)),
-    _rotCenterStart.z+R*(startDir.z*Math.cos(midAngle)+perpDir.z*Math.sin(midAngle))
-  );
-  const mp=midPt.clone().project(cam);
-  const sx=(mp.x*0.5+0.5)*cotCanvas.width;
-  const sy=(-mp.y*0.5+0.5)*cotCanvas.height;
+  // [04/09] La bulle suivait l'objet ; le widget étant maintenant ancré à l'écran,
+  // elle se place à mi-angle sur l'anneau du widget. Le paramètre d'angle utilisé
+  // par _gizAngleAt() EST l'angle de rotation autour de l'axe positif (vérifié pour
+  // les trois axes), donc l'ancre est simplement _rotStartAngle + _rotAngle/2.
+  const R=_gizRect(); if(!R) return;
+  const a=_rotStartAngle+_rotAngle/2;
+  const ca=Math.cos(a), sa=Math.sin(a);
+  if(_rotAxis==='x')      _gizTmp.set(0,ca,sa);
+  else if(_rotAxis==='y') _gizTmp.set(sa,0,ca);
+  else                    _gizTmp.set(ca,sa,0);
+  _gizTmp.applyQuaternion(_gizmoGroup.quaternion);   // axes monde → repère overlay
+  // La direction désigne le bon endroit de l'arc, mais sur un anneau très incliné
+  // le point à mi-angle se projette près du centre : la bulle se poserait SUR le
+  // widget. On garde la direction et on fixe le rayon écran, juste au-delà des
+  // bord du disque de fond — la bulle déborde du carré, elle est dessinée sur le
+  // canvas 2D qui n'est pas découpé par le viewport du widget.
+  const _l=Math.hypot(_gizTmp.x,_gizTmp.y);
+  const _ux=_l>1e-4?_gizTmp.x/_l:0, _uy=_l>1e-4?_gizTmp.y/_l:1;
+  const RL=(GIZ_PLATE_R+0.10)/GIZ_FRUSTUM;
+  // Caméra orthographique alignée sur -Z : la projection est une simple division
+  // par la demi-hauteur du frustum, sans division perspective.
+  const sx=(R.left+((_ux*RL)*0.5+0.5)*R.size)*(cotCanvas.width /R.w);
+  const sy=(R.top +(0.5-(_uy*RL)*0.5)*R.size)*(cotCanvas.height/R.h);
   const deg=Math.round(_rotAngle*180/Math.PI);
   const txt=(deg>=0?'+':'')+deg+'°';
   cotCtx.save();
@@ -5340,15 +5431,28 @@ function _drawRotLabel(){
   cotCtx.restore();
 }
 
+// Picking dans le carré du widget, contre la caméra orthographique — même
+// mécanique que _navHit(). Hors du carré : null, donc un clic ailleurs part
+// normalement vers la sélection d'objet.
 function _gizmoHit(e){
+  if(!_gizmoGroup.visible||!_gizScene) return null;
+  const R=_gizRect(); if(!R) return null;
   const r=ren.domElement.getBoundingClientRect();
-  const mx=((e.clientX-r.left)/r.width)*2-1;
-  const my=-((e.clientY-r.top)/r.height)*2+1;
-  const tmpRay=new THREE.Raycaster();
-  tmpRay.setFromCamera({x:mx,y:my},cam);
+  const x=e.clientX-r.left, y=e.clientY-r.top;
+  if(x<R.left||x>R.left+R.size||y<R.top||y>R.top+R.size) return null;
+  _gizRay.setFromCamera({x:((x-R.left)/R.size)*2-1, y:-((y-R.top)/R.size)*2+1}, _gizCam);
   const hitzones=_gizmoGroup.children.filter(c=>!c.material.visible);
-  const hits=tmpRay.intersectObjects(hitzones);
-  return hits.length?hits[0]:null;
+  const hits=_gizRay.intersectObjects(hitzones);
+  if(!hits.length) return null;
+  // Anneau vu quasiment par la tranche : son plan contient la direction de vue,
+  // l'intersection rayon/plan dégénère et l'angle part en vrille. On refuse la
+  // prise plutôt que de la rater en silence — le clic redescend alors vers la
+  // sélection d'objet normale. C'est la même mesure que celle de l'opacité, donc
+  // ne sont refusés que les anneaux déjà affichés au plus estompé.
+  const axDef=_GIZMO_AXES.find(a=>a.key===hits[0].object._axis);
+  cam.getWorldDirection(_gizFwd);
+  if(axDef && Math.abs(_gizFwd.dot(axDef.normal))<0.08) return null;
+  return hits[0];
 }
 
 function _rotStart_(e,hit){
@@ -5362,23 +5466,14 @@ function _rotStart_(e,hit){
   // Centre géométrique — même référence que le gizmo visuel
   const _bbox=new THREE.Box3().setFromObject(_rotObj.mesh);
   _bbox.getCenter(_rotCenterStart);
-  const axDef=_GIZMO_AXES.find(a=>a.key===_rotAxis);
-  // Gizmo déporté : le centre de référence des angles est celui du widget, figé
-  // pour toute la durée du drag. Le pivot de rotation, lui, reste _rotCenterStart
-  // (centre géométrique de l'objet) — les deux sont volontairement découplés.
-  _rotAngleCenter.copy(_gizmoGroup.position);
-  // Plan passant par le gizmo — c'est là que le curseur attrape réellement l'anneau
-  _rotPlane.setFromNormalAndCoplanarPoint(axDef.normal,_rotAngleCenter);
-  const r=ren.domElement.getBoundingClientRect();
-  const mx=((e.clientX-r.left)/r.width)*2-1;
-  const my=-((e.clientY-r.top)/r.height)*2+1;
-  ray.setFromCamera({x:mx,y:my},cam);
-  ray.ray.intersectPlane(_rotPlane,_rotStart);
-  // Angle initial basé sur le centre du gizmo déporté
-  {const _rc=_rotAngleCenter;
-   if(_rotAxis==='x')      _rotPrev=Math.atan2(_rotStart.z-_rc.z,_rotStart.y-_rc.y);
-   else if(_rotAxis==='y') _rotPrev=Math.atan2(_rotStart.x-_rc.x,_rotStart.z-_rc.z);
-   else                    _rotPrev=Math.atan2(_rotStart.y-_rc.y,_rotStart.x-_rc.x);}
+  // Le centre de référence des angles est celui du widget — désormais l'origine
+  // de la scène overlay. Le pivot de rotation, lui, reste _rotCenterStart (centre
+  // géométrique de l'objet) : les deux restent volontairement découplés.
+  _rotAngleCenter.set(0,0,0);
+  _rotStart.set(0,0,0);
+  const _a0=_gizAngleAt(e);
+  if(_a0===null){ _rotActive=false; _rotObj=null; _rotAxis=null; return; }
+  _rotPrev=_a0; _rotStartAngle=_a0;
   _GIZMO_AXES.forEach(ax=>{
     const active=ax.key===_rotAxis;
     if(_gizmoRings[ax.key]){
@@ -5394,18 +5489,10 @@ function _rotStart_(e,hit){
 
 function _rotMove_(e){
   if(!_rotActive||!_rotObj)return;
-  const r=ren.domElement.getBoundingClientRect();
-  const mx=((e.clientX-r.left)/r.width)*2-1;
-  const my=-((e.clientY-r.top)/r.height)*2+1;
-  ray.setFromCamera({x:mx,y:my},cam);
-  const cur=new THREE.Vector3();
-  if(!ray.ray.intersectPlane(_rotPlane,cur))return;
-  // Angle calculé depuis le centre du gizmo déporté (le pivot reste _rotCenterStart)
-  const c=_rotAngleCenter;
-  let angle;
-  if(_rotAxis==='x') angle=Math.atan2(cur.z-c.z,cur.y-c.y);
-  else if(_rotAxis==='y') angle=Math.atan2(cur.x-c.x,cur.z-c.z);
-  else angle=Math.atan2(cur.y-c.y,cur.x-c.x);
+  // Angle lu dans le plan de l'anneau, en axes monde — le curseur peut sortir du
+  // carré du widget, la rotation continue.
+  const angle=_gizAngleAt(e);
+  if(angle===null)return;
   let delta=angle-_rotPrev;
   if(delta>Math.PI)delta-=2*Math.PI;
   if(delta<-Math.PI)delta+=2*Math.PI;
@@ -5882,7 +5969,7 @@ function applyCotDim(axis){
   updProps();updStats();_cotApplying=false;
 }
 
-function toggleTheme(){const dk=document.documentElement.getAttribute('data-theme')!=='dark';document.documentElement.setAttribute('data-theme',dk?'dark':'light');document.getElementById('thm-btn').textContent=dk?'☀ Day':'🌙 Night';updColors();buildGrid();buildAxes();buildNavCube();_camDirty=true;idbSaveSettings('theme',dk?'dark':'light');}
+function toggleTheme(){const dk=document.documentElement.getAttribute('data-theme')!=='dark';document.documentElement.setAttribute('data-theme',dk?'dark':'light');document.getElementById('thm-btn').textContent=dk?'☀ Day':'🌙 Night';updColors();buildGrid();buildAxes();buildNavCube();_gizBuildPlate();_camDirty=true;idbSaveSettings('theme',dk?'dark':'light');}
 
 // ── X-Ray mode — tous les objets semi-transparents, depth-write off ──────────
 let _xrayActive=false;
@@ -6395,7 +6482,7 @@ self.postMessage({type:'ready'});
 
 
 // ══════════════════════════════════════════════════════════════════════════
-// [V4.7.0 MEDUSA — 27/08] TRANSPORT MEDUSA — remplace le pool de Workers
+// [V4.7.0 SHOGUN — 27/08] TRANSPORT MEDUSA — remplace le pool de Workers
 // Manifold WASM, supprimé avec manifold.js/manifold_worker.js.
 //
 // CE QUI A DISPARU. _workerPool / _createPoolWorker / _execWorkerJob /
@@ -6512,6 +6599,17 @@ async function _medusaDecodeMeshResponse(res){
   const dv  = new DataView(buf);
   const jl  = dv.getUint32(0, true);
   const meta = JSON.parse(new TextDecoder().decode(new Uint8Array(buf, 4, jl)));
+  // [04/09] Le moteur renvoie ses propres chiffres dans ce meta à CHAQUE
+  // aller-retour ; jusqu'ici seul csgMs en ressortait, dans une seule ligne CSG,
+  // et le reste était décodé puis jeté. C'est pourtant le journal opérationnel du
+  // moteur, gratuit et déjà là. Passage unique pour /csg comme /csgtree, donc un
+  // seul point à instrumenter.
+  try{
+    const _m = Object.keys(meta).filter(k=>k!=='success')
+      .map(k=>`${k}=${typeof meta[k]==='number'?(Number.isInteger(meta[k])?meta[k]:meta[k].toFixed(2)):meta[k]}`)
+      .join(' · ');
+    if(_m) nasLog('MEDUSA', _m);
+  }catch(e){ /* journalisation best-effort : jamais bloquante */ }
   if(!meta.success) throw new Error(meta.error || 'MEDUSA: operation failed (unknown reason)');
   const vc = meta.vertCount, tc = meta.triCount;
   const verts = new Float32Array(buf.slice(4 + jl, 4 + jl + vc * 12));
@@ -6794,7 +6892,7 @@ function _shuffleInPlace(arr){
   return arr;
 }
 
-// [V4.7.0 MEDUSA — 27/08] Hydra est DÉMONTÉE, et c'est la bonne nouvelle du
+// [V4.7.0 SHOGUN — 27/08] Hydra est DÉMONTÉE, et c'est la bonne nouvelle du
 // déport. Son divide & conquer existait pour une seule raison : un Worker WASM
 // ne traitait qu'une union à la fois, donc il fallait découper en K chunks pour
 // occuper K Workers, puis refusionner les partiels — au prix d'un cycle
@@ -7476,7 +7574,7 @@ function setSphereResLive(v){
   if(o && (o.type==='sphere' || o.type==='halfsphere')){
     if(!_sresUndoPushed){ _sresUndoPushed=true; undoPush('sphere resolution'); }
     o.sphereRes = v;
-    // [V4.7.0 MEDUSA] Au-delà de 128 segs le rebuild coûte plusieurs dizaines
+    // [V4.7.0 SHOGUN] Au-delà de 128 segs le rebuild coûte plusieurs dizaines
     // de ms (2·v² triangles) : on le diffère de 140 ms pour que le drag du
     // slider reste fluide. En dessous, rebuild immédiat comme avant.
     if(v > 128){
@@ -8512,7 +8610,7 @@ let _journalBusy = false;
 let _journalQueue = [];
 
 // ── undoPush(label) ─────────────────────────────────────────────────
-// [FIX 01/08 — réappliqué, perdu dans cette branche MEDUSA] Bug "union
+// [FIX 01/08 — réappliqué, perdu dans cette branche SHOGUN] Bug "union
 // booléenne déplace les objets" (29/07) : la capture _journalData() se
 // faisait APRÈS `await _yield()` — entre l'appel à undoPush() et la capture
 // réelle, le thread rendait la main, et un mMove() synchrone en cours
