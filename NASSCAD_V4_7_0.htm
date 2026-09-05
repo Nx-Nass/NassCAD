@@ -3908,7 +3908,14 @@ function makeGeoHD(obj) {
   // "Hard dimensions" approach: read the REAL dimensions of the mesh
   // and recreate the HD geometry with those exact dimensions.
   // No ratio, no matrixWorld to apply → guaranteed 1:1 export.
-  if (obj.type === 'csg') return obj.mesh.geometry.clone();
+  //
+  // [FIX 05/09 — Nass] Même défaut que makeGeoCSG : le switch ci-dessous ne
+  // connaît pas 'hollowbox', qui tombait donc sur `default: BoxGeometry(W,H,D)`.
+  // makeGeoHD étant la source de TOUS les exports (STL, OBJ, 3MF, GLB, PLY,
+  // Section), une boîte creuse s'exportait en bloc PLEIN et 10 mm trop bas —
+  // c'est-à-dire qu'on imprimait du plein. Même règle qu'ailleurs : ce qu'on ne
+  // sait pas reconstruire, on ne l'invente pas.
+  if (!_csgCanRebuild(obj)) return obj.mesh.geometry.clone();
   const SEG_PRINT = _getSEGPRINT();
 
   // PATCH #1 — Utiliser la bbox LOCALE × scale au lieu de Box3.setFromObject()
@@ -4104,8 +4111,34 @@ function makeGeoHD(obj) {
 // Réduction triangles : segs² → 32 segs = ~2K tri, 64 = ~8K tri, 128 = ~32K tri
 // Le résultat CSG est affiché et stocké à cette résolution.
 // Export STL/OBJ : les primitives non-CSG passent toujours par makeGeoHD (SEG_PRINT).
+// ── [FIX 05/09 — Nass : « l'union déplace les objets »] ────────────────────
+// Types que le switch de makeGeoCSG sait REELLEMENT reconstruire. Tout ce qui
+// n'est pas dans cette liste tombait sur `default: new BoxGeometry(W,H,D)` —
+// une boîte PLEINE et CENTRÉE SUR L'ORIGINE — au lieu d'être refusé.
+//
+// Repro du 05/09 : Tube_1 + HollowBox_2 → Union.
+//   • hollowbox n'est pas dans le switch → remplacé par une boîte pleine :
+//     la cavité disparaît du booléen (volume mesuré 12547 ≈ 8000 boîte pleine
+//     + 4712 tube, au lieu du volume creux attendu) ;
+//   • _makeHollowBox est la SEULE primitive dont la géo locale a son origine
+//     à la BASE (y ∈ [0,S]) — toutes les autres finissent par translate(0,-S/2,0).
+//     BoxGeometry étant centrée, l'opérande partait 10 mm (= S/2) trop bas.
+//     Résultat : CSG_Union_3 à Pos Y −10.000, Dim Y 30 au lieu de 20, CG Y 3.6.
+// Règle : ce qu'on ne sait pas reconstruire, on ne l'invente pas — on prend la
+// géométrie d'affichage telle quelle (elle est exacte par définition).
+const _CSG_REBUILD_TYPES = new Set([
+  'cube','sphere','cylinder','cone','pyramid','roof','roofarc',
+  'halfsphere','tube','wedge','arcsphere','lathe'
+]);
+// true  → makeGeoCSG reconstruit la primitive (échelle bakée dans W/H/D,
+//         donc _prepCSGMeshes ne doit appliquer QUE rotation+position).
+// false → on utilise la géo d'affichage brute (type 'csg', hollowbox, et toute
+//         primitive future non déclarée) ; la matrice monde COMPLETE (scale
+//         inclus) doit alors être appliquée.
+function _csgCanRebuild(o){ return o && o.type !== 'csg' && _CSG_REBUILD_TYPES.has(o.type); }
+
 function makeGeoCSG(obj, _cache) {
-  if (obj.type === 'csg') return obj.mesh.geometry.clone();
+  if (!_csgCanRebuild(obj)) return obj.mesh.geometry.clone();
   const SEG_CSG = _getSEGCSG();
 
   const _localGeo = obj.mesh.geometry;
@@ -4271,6 +4304,31 @@ function makeGeoCSG(obj, _cache) {
     }
   }
 
+  // ── [FIX 05/09 — Nass] Filet de sécurité anti-décalage ───────────────────
+  // Chaque `case` ci-dessus reproduit à la main le translate() d'origine de
+  // makeGeo (translate(0,-S/2,0), -H, +H/2 selon les cas). Si l'un d'eux
+  // diverge — ou si une primitive future arrive avec une origine locale
+  // différente — l'opérande part décalé dans le booléen SANS AUCUNE ERREUR :
+  // exactement le symptôme « l'union déplace les objets », impossible à voir
+  // autrement qu'en mesurant le résultat. On recale donc systématiquement le
+  // centre de l'AABB reconstruite sur celui de la géo d'affichage (mise à
+  // l'échelle : _prepCSGMeshes n'appliquera que rotation+position ensuite).
+  // Coût : une bounding box, une fois par opérande.
+  {
+    const _sx=Math.abs(_sc.x), _sy=Math.abs(_sc.y), _sz=Math.abs(_sc.z);
+    const _wantX=(_lb.min.x+_lb.max.x)/2*_sx;
+    const _wantY=(_lb.min.y+_lb.max.y)/2*_sy;
+    const _wantZ=(_lb.min.z+_lb.max.z)/2*_sz;
+    g.computeBoundingBox();
+    const _gb=g.boundingBox;
+    const _dX=_wantX-(_gb.min.x+_gb.max.x)/2;
+    const _dY=_wantY-(_gb.min.y+_gb.max.y)/2;
+    const _dZ=_wantZ-(_gb.min.z+_gb.max.z)/2;
+    if(Math.abs(_dX)>1e-4||Math.abs(_dY)>1e-4||Math.abs(_dZ)>1e-4){
+      g.translate(_dX,_dY,_dZ);
+      nasLog('WARN',`makeGeoCSG[${obj.type}]: opérande recalé de (${_dX.toFixed(3)},${_dY.toFixed(3)},${_dZ.toFixed(3)})mm — origine locale divergente`);
+    }
+  }
   g.computeVertexNormals();
   // [FIX 29/07] Stocker un CLONE vierge — pas g lui-même. Le miss retournait le
   // MÊME objet que celui mis en cache, et _prepCSGMeshes lui applique ensuite
@@ -6270,10 +6328,22 @@ function toggleBody(id){document.getElementById(id).querySelector('.vb-body').cl
 
 
 // ── Snap objet-à-objet — face-à-face + alignement de bord (XZ plane)
-// Threshold : 3mm. Calcule les offsets bbox → mesh.position pour être
-// indépendant de la rotation et compatible avec le cache _bboxCache.
+// Calcule les offsets bbox → mesh.position pour être indépendant de la
+// rotation et compatible avec le cache _bboxCache.
+//
+// [FIX 05/09 — Nass : « les objets qui se déplacent »] Le DIAG posé le 01/08
+// a fini par attraper le coupable : c'est bien ce snap-ci, pour deux raisons.
+//   1. Il ignorait complètement le toggle `snap` (touche S). Magnétisme OFF,
+//      un objet était quand même happé jusqu'à 3 mm. Aucun moyen de le couper.
+//   2. THRESH était figé à 3 mm alors que le pas de grille vaut 1 mm (ou
+//      0.001). Le magnétisme écrasait donc un placement grille délibéré, sur
+//      3× la distance du pas — d'où les sauts du log : (22,11)→(20,11),
+//      (17,2)→(17,0), (13,-2)→(13,0)… L'objet « partait tout seul ».
+// Règle désormais : le tirage magnétique ne peut JAMAIS dépasser un pas de
+// grille, donc il ne peut plus jamais contredire ce que l'utilisateur a posé.
 function _objectSnap(dObj,nx,nz){
-  const THRESH=3;
+  if(!snap) return {x:nx,z:nz};        // magnétisme OFF → on ne touche à rien
+  const THRESH=Math.min(3,snapSz);
   const b0=_bboxCache.get(dObj.mesh);
   if(!b0||objs.length<2)return{x:nx,z:nz};
   // Offsets fixes (dépendent de la géo, pas de la position)
@@ -6298,10 +6368,12 @@ function _objectSnap(dObj,nx,nz){
     d=Math.abs(pz0-b.min.z);if(d<dz){dz=d;rz=b.min.z-oz0;}
     d=Math.abs(pz1-b.max.z);if(d<dz){dz=d;rz=b.max.z-oz1;}
   });
-  // [DIAG 01/08 — réappliqué, 29/07] Aucune trace n'existait quand le snap
-  // déclenche réellement — autre cause candidate (aux côtés de la race
-  // undoPush ci-dessus) pour le bug "union déplace les objets" (THRESH=3mm,
-  // valeur qui matchait exactement l'écart observé sur le repro d'origine).
+  // [DIAG 01/08 → RÉSOLU 05/09] Cette trace est ce qui a permis d'identifier
+  // le bug "union déplace les objets" : le repro du 05/09 montre 18 tirages
+  // sur un seul déplacement, dont un (2.000,1.000)→(0.000,0.000) déclenché
+  // par un simple clic. Cause confirmée = THRESH 3mm non borné + snap OFF
+  // non respecté (corrigés en tête de fonction). Trace conservée : si un
+  // objet bouge encore sans raison, c'est ici que ça se verra.
   if(rx!==nx || rz!==nz)
     nasLog('DBG',`_objectSnap [${dObj.name||'?'}]: (${nx.toFixed(3)},${nz.toFixed(3)}) → (${rx.toFixed(3)},${rz.toFixed(3)})`);
   return{x:rx,z:rz};
@@ -6791,15 +6863,23 @@ async function _prepCSGMeshes(workObjs, sub) {
     const o = workObjs[i];
     o.mesh.updateMatrixWorld(true);
     // SEG_CSG — résolution Manifold configurable (32/64/128 via bouton CSG⚡ menubar)
-    const geo = (o.type === 'csg') ? o.mesh.geometry.clone() : makeGeoCSG(o, _piCache);
+    // [FIX 05/09 — Nass] Le test était `o.type === 'csg'` des DEUX côtés : un
+    // hollowbox (ni 'csg', ni reconstructible) prenait donc la géo inventée par
+    // le `default` de makeGeoCSG ET la matrice sans scale. Les deux décisions
+    // découlent en fait de la même question — a-t-on reconstruit, oui ou non —
+    // d'où le prédicat commun _csgCanRebuild.
+    const _rebuilt = _csgCanRebuild(o);
+    const geo = _rebuilt ? makeGeoCSG(o, _piCache) : o.mesh.geometry.clone();
     {
       const _pos = new THREE.Vector3(), _q = new THREE.Quaternion(), _sc = new THREE.Vector3();
       o.mesh.matrixWorld.decompose(_pos, _q, _sc);
-      if(o.type !== 'csg'){
+      if(_rebuilt){
+        // échelle déjà bakée dans W/H/D par makeGeoCSG → rotation + position
         const mPR = new THREE.Matrix4().makeRotationFromQuaternion(_q);
         mPR.setPosition(_pos);
         geo.applyMatrix4(mPR);
       } else {
+        // géo d'affichage brute → matrice monde COMPLETE, scale inclus
         const mPRS = new THREE.Matrix4().compose(_pos, _q, _sc);
         geo.applyMatrix4(mPRS);
       }
@@ -8012,6 +8092,7 @@ function mDown(e){
           _multiDragPivotStart={x:o.mesh.position.x, z:o.mesh.position.z};
           _multiDragStartPositions=selObjs.map(so=>({x:so.mesh.position.x, z:so.mesh.position.z}));
           _multiDrag=true; _dragUndoPushed=false; dragging=true;
+          _dragDownX=e.clientX; _dragDownY=e.clientY; _dragArmed=false; // deadzone
         } else {
           // Clic simple = juste sélectionner. Le cycle handles/cotation/gizmo
           // est piloté par le double-clic (mDblClick) — changer d'objet
@@ -8030,6 +8111,7 @@ function mDown(e){
           ray.ray.intersectPlane(dPlane,pt);
           dOff.copy(o.mesh.position).sub(pt);
           _dragUndoPushed=false; // will push on first actual move
+          _dragDownX=e.clientX; _dragDownY=e.clientY; _dragArmed=false; // deadzone
           dragging=true;
         }
       }
@@ -8185,6 +8267,12 @@ function mMove(e){
     if(camA.phi<-Math.PI) camA.phi+=2*Math.PI;   // complet, donc aucun saut visuel
     orbS={x:e.clientX,y:e.clientY};updCam();return;}
   if(dragging&&_multiDrag){
+    // deadzone : tant que la souris n'a pas franchi le seuil, ce n'est pas un
+    // déplacement — on ne touche ni aux positions ni à l'historique.
+    if(!_dragArmed){
+      if(Math.hypot(e.clientX-_dragDownX,e.clientY-_dragDownY)<_DRAG_DEADZONE)return;
+      _dragArmed=true;
+    }
     if(!_dragUndoPushed){_dragUndoPushed=true;undoPush('move');}
     ray.setFromCamera(mouse,cam);const pt=new THREE.Vector3();
     if(ray.ray.intersectPlane(dPlane,pt)){
@@ -8208,6 +8296,11 @@ function mMove(e){
     }
   }
   if(dragging&&dObj){
+    // deadzone : idem drag simple — un clic de sélection ne doit rien bouger.
+    if(!_dragArmed){
+      if(Math.hypot(e.clientX-_dragDownX,e.clientY-_dragDownY)<_DRAG_DEADZONE)return;
+      _dragArmed=true;
+    }
     if(!_dragUndoPushed){_dragUndoPushed=true;undoPush('move');}
     ray.setFromCamera(mouse,cam);const pt=new THREE.Vector3();if(ray.ray.intersectPlane(dPlane,pt)){const np=pt.add(dOff);np.x=_sv(np.x);np.z=_sv(np.z);
       const _snp=_objectSnap(dObj,np.x,np.z);np.x=_snp.x;np.z=_snp.z;
@@ -8269,6 +8362,15 @@ function mMove(e){
 
 let _arrowUndoPushed=false;
 let _dragUndoPushed=false;
+// [FIX 05/09 — Nass] Zone morte de clic. Avant : mDown posait dragging=true,
+// et le PREMIER mousemove — 1 pixel de tremblement de souris suffit — écrivait
+// déjà mesh.position ET poussait un undo [move]. Combiné au snap objet à 3mm,
+// un simple clic de sélection téléportait l'objet sur son voisin (cf. log :
+// selObj [HollowBox_2] → _objectSnap (2,1)→(0,0) → snapshot [move]).
+// Désormais le drag ne s'arme qu'au-delà de _DRAG_DEADZONE pixels : en deçà,
+// un clic reste un clic — aucun déplacement, aucune entrée d'undo.
+let _dragDownX=0,_dragDownY=0,_dragArmed=false;
+const _DRAG_DEADZONE=4; // px
 // ── Multi-drag — déplacement groupé de la sélection multiple ────────────────
 let _multiDrag=false, _multiDragPivotStart={x:0,z:0}, _multiDragStartPositions=[];
 // BOX-SELECT
@@ -8278,7 +8380,7 @@ function mUp(e){
   if(_hDrag){_hDrag=null;_camDirty=true;updProps();updStats();return;}
   if(_rotActive){_rotEnd_();return;}
   orbiting=false;panning=false;
-  if(dragging){dragging=false;if(_multiDrag){_multiDrag=false;_multiDragStartPositions=[];}updProps();updStats();dObj=null;_dragUndoPushed=false;}
+  if(dragging){dragging=false;_dragArmed=false;if(_multiDrag){_multiDrag=false;_multiDragStartPositions=[];}updProps();updStats();dObj=null;_dragUndoPushed=false;}
   // Box-select : s'applique UNIQUEMENT si relâchement du bouton gauche
   if(_boxSelActive && (!e || e.button===0)){
     _boxSelActive=false;
@@ -9426,8 +9528,11 @@ async function doCSG(op) {
             const _isPureTrans =
               Math.abs(_sc2.x-1)<1e-5 && Math.abs(_sc2.y-1)<1e-5 && Math.abs(_sc2.z-1)<1e-5 &&
               Math.abs(_q2.x)<1e-5    && Math.abs(_q2.y)<1e-5    && Math.abs(_q2.z)<1e-5;
+            // [FIX 05/09 — Nass] même correction que dans _prepCSGMeshes :
+            // c'est « a-t-on reconstruit ? » qui décide, pas « type==='csg' ».
+            const _rebuilt = _csgCanRebuild(o);
             if(_isPureTrans){
-              const _srcGeo = (o.type==='csg') ? o.mesh.geometry : makeGeoCSG(o);
+              const _srcGeo = _rebuilt ? makeGeoCSG(o) : o.mesh.geometry;
               const _srcNI  = _srcGeo.index ? _srcGeo.toNonIndexed() : _srcGeo;
               const _srcPos = _srcNI.attributes.position.array;
               const _v = new Float32Array(_srcPos.length);
@@ -9437,12 +9542,15 @@ async function doCSG(op) {
               const _nAttr = _srcNI.attributes.normal;
               const _n = _nAttr ? new Float32Array(_nAttr.array) : null;
               if(_srcNI !== _srcGeo) _srcNI.dispose();
-              if(o.type !== 'csg') _srcGeo.dispose();
+              // CRUCIAL : ne disposer que ce qu'on a fabriqué. Quand _rebuilt
+              // est faux, _srcGeo EST la géométrie vivante du mesh affiché —
+              // la libérer ici viderait l'objet à l'écran.
+              if(_rebuilt) _srcGeo.dispose();
               return {verts:_v, idx:null, norms:_n};
             }
             // Fallback : chemin complet clone+applyMatrix4 (rotation ou scale non-unitaire)
-            const _g = (o.type==='csg') ? o.mesh.geometry.clone() : makeGeoCSG(o);
-            const _m=(o.type==='csg')
+            const _g = _rebuilt ? makeGeoCSG(o) : o.mesh.geometry.clone();
+            const _m=(!_rebuilt)
               ? new THREE.Matrix4().compose(_pos2,_q2,_sc2)
               : (()=>{ const m=new THREE.Matrix4().makeRotationFromQuaternion(_q2); m.setPosition(_pos2); return m; })();
             _g.applyMatrix4(_m); // transforme positions + normales (matrice normale incluse)
@@ -9516,8 +9624,21 @@ async function doCSG(op) {
             // micro-optim pure-translation d'Hydra-Flat) : le vrai gain est
             // déjà d'avoir sauté tout Manifold, pas la peine d'ajouter du
             // risque pour un gain marginal supplémentaire ici.
-            const _srcGeo = (_tgt.type==='csg') ? _tgt.mesh.geometry.clone() : makeGeoCSG(_tgt);
-            _srcGeo.applyMatrix4(_tgt.mesh.matrixWorld.clone());
+            // [FIX 05/09 — Nass] Même famille de bug : la cible était
+            // reconstruite via le `default` de makeGeoCSG si son type n'était
+            // pas géré, et matrixWorld (scale inclus) était appliquée même sur
+            // une géo reconstruite qui avait DÉJÀ l'échelle bakée dans W/H/D
+            // → double mise à l'échelle sur les primitives redimensionnées.
+            const _tgtRebuilt = _csgCanRebuild(_tgt);
+            const _srcGeo = _tgtRebuilt ? makeGeoCSG(_tgt) : _tgt.mesh.geometry.clone();
+            if(_tgtRebuilt){
+              const _tp=new THREE.Vector3(),_tq=new THREE.Quaternion(),_ts=new THREE.Vector3();
+              _tgt.mesh.matrixWorld.decompose(_tp,_tq,_ts);
+              const _tm=new THREE.Matrix4().makeRotationFromQuaternion(_tq); _tm.setPosition(_tp);
+              _srcGeo.applyMatrix4(_tm);
+            } else {
+              _srcGeo.applyMatrix4(_tgt.mesh.matrixWorld.clone());
+            }
             resultGeo = await postProcessCSGGeo(_srcGeo, undefined, t0, document.getElementById('csg-spinner-sub'));
             _trivialSubtractDone = true;
             nasLog('CSG',`Subtract trivial — no cutter touches the target (bbox), Manifold skipped (${_cutters.length} cutter(s))`);
@@ -10259,8 +10380,30 @@ async function _buildLeafGeo(c){
       // Type CSG intermédiaire OU type gen (cc/frustum/tore/pipe/gear…) :
       // géométrie sérialisée disponible → désérialiser directement.
       g = deserializeGeo(c._csgGeo);
-      // _csgGeo est déjà dans l'espace monde (matrixWorld appliqué à la sérialisation)
-      // → on n'applique PAS de matrix4 supplémentaire.
+      // [FIX 05/09 — Nass] Le commentaire d'origine affirmait ici que _csgGeo
+      // était « déjà dans l'espace monde (matrixWorld appliqué à la
+      // sérialisation) » et sautait donc toute matrice. C'est FAUX :
+      // serializeGeo(g) ne fait que base64-er g.attributes.position, et les
+      // trois sites qui écrivent _csgGeo passent tous `o.mesh.geometry`,
+      // c'est-à-dire la géométrie LOCALE. Les branches voisines (lathe,
+      // arcsphere, screw) appliquent bien leur matrice, et le chemin fakeObj
+      // plus bas applique position+rotation — seule celle-ci ne faisait rien.
+      //
+      // Mesuré le 05/09 via NassScript, union HollowBox(p=[140,0,0]) + Cube :
+      //     enfant Cube_6   [fakeObj]  écart 0.00, 0.00, 0.00        ✓
+      //     enfant HollowBox[_csgGeo]  écart -140.00, 0.00, 0.00     ⚠ == -p
+      // Le payload d'une feuille est un simple {verts,idx} sans transformation
+      // jointe (cf. _buildTreePayload) : les sommets DOIVENT donc sortir d'ici
+      // en coordonnées monde. Tout enfant générateur d'un Deep Re-run repartait
+      // à son origine locale — « l'union déplace les objets », version Deep.
+      {
+        const _m4c = new THREE.Matrix4().compose(
+          new THREE.Vector3(_p[0], _p[1], _p[2]),
+          new THREE.Quaternion().setFromEuler(new THREE.Euler(_r[0], _r[1], _r[2])),
+          new THREE.Vector3(_s[0], _s[1], _s[2])
+        );
+        g.applyMatrix4(_m4c);
+      }
       const src = g.index ? g.toNonIndexed() : g;
       const pa  = src.attributes.position;
       // [OPT V4.6.1] slice() native memcpy — remplace boucle getX/Y/Z
@@ -10441,7 +10584,12 @@ async function rerunCSG(){
   const restored=[];
   for(const c of node.children){
     let g;
-    if(c.type==='csg'&&c._csgGeo) g=deserializeGeo(c._csgGeo);
+    // [FIX 05/09 — Nass] _shouldSerializeGeo() stocke _csgGeo pour TOUT type non
+    // standard (hollowbox compris), mais la relecture exigeait type==='csg' : un
+    // hollowbox repartait donc sur makeGeo(type,PS,SEG_VIEW), où SEG_VIEW ne
+    // porte ni hboxOw ni hboxIw → épaisseur de paroi perdue au Re-run.
+    // Dès qu'une géo est stockée, elle fait foi.
+    if(c._csgGeo) g=deserializeGeo(c._csgGeo);
     else if(c.type==='tube'&&c.tubeRo){
       g=_makeTube(PS,SEG_VIEW.tube||48,c.tubeRo,c.tubeRi);
       g.translate(0,-PS/2,0);
@@ -10513,7 +10661,8 @@ function _explodeMakeLeaf(c, o, node){
   _finalMat.decompose(_pos,_quat,_scale);
 
   let g;
-  if(c.type==='csg'&&c._csgGeo) g=deserializeGeo(c._csgGeo);
+  // [FIX 05/09 — Nass] idem : géo stockée = géo qui fait foi (cf. Re-run).
+  if(c._csgGeo) g=deserializeGeo(c._csgGeo);
   else if(c.type==='tube'&&c.tubeRo){ g=_makeTube(PS,SEG_VIEW.tube||48,c.tubeRo,c.tubeRi); g.translate(0,-PS/2,0); }
   else g=makeGeo(c.type,PS,SEG_VIEW);
   const col=typeof c.color==='string'?parseInt(c.color.replace('#',''),16):c.color;
@@ -11569,6 +11718,12 @@ function saveProject(){
       objects:objs.map(o=>({
         id:o.id,name:o.name,type:o.type,color:o.color,isHole:o.isHole||false,
         tubeRo:o.tubeRo,tubeRi:o.tubeRi,
+        // [FIX 05/09 — Nass] hboxOw/hboxIw n'étaient sérialisés QUE dans le
+        // journal undo (_journalData), jamais dans le fichier projet. Le loader
+        // n'ayant pas de case 'hollowbox', une boîte creuse rechargée revenait
+        // en cube PLEIN de 20mm centré (donc aussi 10 mm trop bas) : perte de
+        // données définitive. Même champs que le journal, même défauts.
+        ...(o.type==='hollowbox' ? { hboxOw:o.hboxOw, hboxIw:o.hboxIw } : {}),
         genType:o.genType||null,genParams:o.genParams||null,
         // BUG-B FIX V4.2.5 : sphereRes absent → sphère custom perdait sa résolution au reload
         // Alignement avec _journalData() qui le sérialise depuis la V4.2.x.
@@ -11616,6 +11771,12 @@ async function saveProjectAs(){
       objects:objs.map(o=>({
         id:o.id,name:o.name,type:o.type,color:o.color,isHole:o.isHole||false,
         tubeRo:o.tubeRo,tubeRi:o.tubeRi,
+        // [FIX 05/09 — Nass] hboxOw/hboxIw n'étaient sérialisés QUE dans le
+        // journal undo (_journalData), jamais dans le fichier projet. Le loader
+        // n'ayant pas de case 'hollowbox', une boîte creuse rechargée revenait
+        // en cube PLEIN de 20mm centré (donc aussi 10 mm trop bas) : perte de
+        // données définitive. Même champs que le journal, même défauts.
+        ...(o.type==='hollowbox' ? { hboxOw:o.hboxOw, hboxIw:o.hboxIw } : {}),
         genType:o.genType||null,genParams:o.genParams||null,
         ...(o.sphereRes ? { sphereRes: o.sphereRes } : {}),
         ...(o.stepGroupId ? { stepGroupId: o.stepGroupId, stepGroupLabel: o.stepGroupLabel } : {}),
@@ -11741,6 +11902,13 @@ function _buildSceneFromData(d, keepJournal=false){
       case'tube':
         g=_makeTube(S,SEG_VIEW.tube||48,od.tubeRo||S/2,od.tubeRi!=null?od.tubeRi:S/4);
         g.translate(0,-S/2,0);break;
+      // ── Boîte creuse (parois hboxOw/hboxIw persistées dans l'objet) ──
+      // [FIX 05/09 — Nass] absente du switch → tombait dans `default`, et sans
+      // geoPos (le fichier projet n'en stocke que pour type 'csg') finissait en
+      // BoxGeometry(S,S,S) pleine et centrée. Aligné sur le restore du journal
+      // (mêmes défauts S/2 et S/4 pour les projets antérieurs au correctif).
+      case'hollowbox':
+        g=_makeHollowBox(S,od.hboxOw||S/2,od.hboxIw!=null?od.hboxIw:S/4);break;
       // ── Résultat CSG ou import STL/OBJ/3MF (géométrie sérialisée) ────
       case'csg':
         if(od.geoPos){                                     // format journal IDB (TypedArrays)
@@ -11790,6 +11958,10 @@ function _buildSceneFromData(d, keepJournal=false){
       ...(od.origTf ? { origTf: od.origTf } : {}),
       ...(od.pinTf ? { pinTf: od.pinTf } : {})};
     if(od.type==='tube'){ _lo.tubeRo=od.tubeRo||S/2; _lo.tubeRi=od.tubeRi!=null?od.tubeRi:S/4; }
+    // [FIX 05/09 — Nass] sans ça, l'objet rechargé n'a plus hboxOw/hboxIw :
+    // « Edit size / wall » rouvrait un dialog vide et la prochaine sauvegarde
+    // reperdait les parois.
+    if(od.type==='hollowbox'){ _lo.hboxOw=od.hboxOw!=null?od.hboxOw:S/2; _lo.hboxIw=od.hboxIw!=null?od.hboxIw:S/4; }
     if(od.type==='sphere'||od.type==='halfsphere'){ _lo.sphereRes=od.sphereRes||32; }
     // FIX V4.2.43 — genType/genParams non restaurés → double-clic .gen après loadFile rouvrait un dialog vide
     if(od.genType){ _lo.genType=od.genType; _lo.genParams=od.genParams||null; }
@@ -11952,7 +12124,9 @@ function _doSectionExp(fmt){
   let mnX=Infinity,mnZ=Infinity,mxX=-Infinity,mxZ=-Infinity;
   objs.forEach(so => {
     const _g = makeGeoHD(so);
-    if(so.type !== 'csg'){
+    // [FIX 05/09 — Nass] _csgCanRebuild : géo reconstruite (échelle bakée dans
+    // W/H/D) → rotation+position seules ; géo brute → matrice monde complète.
+    if(_csgCanRebuild(so)){
       const _p=new THREE.Vector3(),_q=new THREE.Quaternion(),_s=new THREE.Vector3();
       so.mesh.matrixWorld.decompose(_p,_q,_s);
       const mPR=new THREE.Matrix4().makeRotationFromQuaternion(_q); mPR.setPosition(_p);

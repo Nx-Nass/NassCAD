@@ -34,6 +34,17 @@
 // sélectif OCCT (drag-paint + présélection Top/Bottom). Le sweep-cutter
 // mesh d'origine (v2→v4.3) a été retiré le 21/07 — tout fillet/chamfer
 // passe désormais par le kernel B-Rep OCCT (_occtFilletAll).
+
+// ── [FIX 05/09 — Nass] Meme couple (geo, matrice) que dans le host ──────────
+// makeGeoCSG ne reconstruit plus les types qu'il ne connait pas (hollowbox et
+// tout type futur) : il rend la geo d'affichage BRUTE, qui a besoin de la
+// matrice monde COMPLETE, scale inclus. Le test `type==='csg'` d'origine
+// aurait donc perdu le scale d'une boite creuse redimensionnee.
+function _qfCanRebuild(o){
+  return (typeof _csgCanRebuild === 'function')
+    ? _csgCanRebuild(o)
+    : (o && o.type !== 'csg');
+}
 let _qfActive     = false;
 let _qfSrcObj     = null;      // objet source
 let _qfChains     = [];        // chaînes courbes {pts,segN1,segN2,convex,closed,len,cum}
@@ -303,11 +314,12 @@ function _qfOnClick(){
 
 function _qfScanChains(targetObj){
   targetObj.mesh.updateMatrixWorld(true);
-  const geoSrc=(targetObj.type==='csg')?targetObj.mesh.geometry.clone():makeGeoCSG(targetObj);
+  const _qfRebuilt=_qfCanRebuild(targetObj);
+  const geoSrc=_qfRebuilt?makeGeoCSG(targetObj):targetObj.mesh.geometry.clone();
   {
     const _pos=new THREE.Vector3(),_q=new THREE.Quaternion(),_sc=new THREE.Vector3();
     targetObj.mesh.matrixWorld.decompose(_pos,_q,_sc);
-    const _m=(targetObj.type==='csg')
+    const _m=(!_qfRebuilt)
       ? new THREE.Matrix4().compose(_pos,_q,_sc)
       : (()=>{const m=new THREE.Matrix4().makeRotationFromQuaternion(_q);m.setPosition(_pos);return m;})();
     geoSrc.applyMatrix4(_m);
@@ -804,11 +816,12 @@ async function _occtFilletAll(selectedOnly){
   }
   // World-space non-indexed geometry — same transform pattern as _qfScanChains
   obj.mesh.updateMatrixWorld(true);
-  let geo=(obj.type==='csg')?obj.mesh.geometry.clone():makeGeoCSG(obj);
+  const _qfRebuilt2=_qfCanRebuild(obj);
+  let geo=_qfRebuilt2?makeGeoCSG(obj):obj.mesh.geometry.clone();
   {
     const _p=new THREE.Vector3(),_q=new THREE.Quaternion(),_s=new THREE.Vector3();
     obj.mesh.matrixWorld.decompose(_p,_q,_s);
-    const _m=(obj.type==='csg')
+    const _m=(!_qfRebuilt2)
       ?new THREE.Matrix4().compose(_p,_q,_s)
       :(()=>{const m=new THREE.Matrix4().makeRotationFromQuaternion(_q);m.setPosition(_p);return m;})();
     geo.applyMatrix4(_m);
