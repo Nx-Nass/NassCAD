@@ -46,6 +46,21 @@
 // showSaveDialog déjà géré par _nasDownload lui-même en Electron).
 // ══════════════════════════════════════════════════════════════════════════
 
+// ── [FIX 05/09 — Nass] Choix de la matrice d'export ─────────────────────────
+// Les 6 exports (3MF, GLB, OBJ, PLY, STL bin, STL ascii) testaient
+// `so.type !== 'csg'` pour decider d'appliquer rotation+position seules (geo
+// reconstruite par makeGeoHD, echelle deja bakee dans W/H/D) ou la matrice
+// monde complete (geo brute). Or makeGeoHD ne sait pas reconstruire tous les
+// types : un 'hollowbox' recoit desormais sa geo d'affichage BRUTE, qui a
+// besoin du scale. La vraie question est « makeGeoHD a-t-il reconstruit ? »,
+// et c'est _csgCanRebuild() (defini dans le host) qui y repond.
+// Repli defensif : si le host est plus ancien, on retombe sur l'ancien test.
+function _ioCanRebuild(o){
+  return (typeof _csgCanRebuild === 'function')
+    ? _csgCanRebuild(o)
+    : (o && o.type !== 'csg');
+}
+
 // ═══════════════════════════════ 3MF ════════════════════════════════════
 // ── io-3mf-export.js ──────────────────────────────────────────────────────
 // ── Export 3MF ──────────────────────────────────────────────────────────────
@@ -246,7 +261,7 @@ async function exp3MF(){
   let bxMax=-Infinity,byMax=-Infinity,bzMax=-Infinity;
   objs.forEach(so=>{
     const gHD=makeGeoHD(so);
-    if(so.type!=='csg'){
+    if(_ioCanRebuild(so)){
       const _p=new THREE.Vector3(),_q=new THREE.Quaternion(),_s=new THREE.Vector3();
       so.mesh.matrixWorld.decompose(_p,_q,_s);
       const mPR=new THREE.Matrix4().makeRotationFromQuaternion(_q);mPR.setPosition(_p);
@@ -679,7 +694,7 @@ async function expGLB(useDraco){
   const geoList = [];
   objs.forEach(so => {
     const _g = makeGeoHD(so);
-    if(so.type !== 'csg'){
+    if(_ioCanRebuild(so)){
       const _p=new THREE.Vector3(),_q=new THREE.Quaternion(),_s=new THREE.Vector3();
       so.mesh.matrixWorld.decompose(_p,_q,_s);
       const mPR=new THREE.Matrix4().makeRotationFromQuaternion(_q); mPR.setPosition(_p);
@@ -1129,7 +1144,7 @@ async function expOBJ(){
   scene.updateMatrixWorld(true);
   objs.forEach(so=>{
     const _gHD = makeGeoHD(so);
-    if(so.type!=='csg'){
+    if(_ioCanRebuild(so)){
       const _p=new THREE.Vector3(),_q=new THREE.Quaternion(),_s=new THREE.Vector3();
       so.mesh.matrixWorld.decompose(_p,_q,_s);
       const mPR=new THREE.Matrix4().makeRotationFromQuaternion(_q);mPR.setPosition(_p);
@@ -1217,7 +1232,7 @@ async function expPLY(){
 
   objs.forEach(so => {
     const _g = makeGeoHD(so);
-    if(so.type !== 'csg'){
+    if(_ioCanRebuild(so)){
       const _p=new THREE.Vector3(),_q=new THREE.Quaternion(),_s=new THREE.Vector3();
       so.mesh.matrixWorld.decompose(_p,_q,_s);
       const mPR=new THREE.Matrix4().makeRotationFromQuaternion(_q); mPR.setPosition(_p);
@@ -1343,7 +1358,7 @@ async function expSTL(){
   const geos=[];
   objs.forEach(so=>{
     const gHD=makeGeoHD(so);
-    if(so.type!=='csg'){
+    if(_ioCanRebuild(so)){
       const _p=new THREE.Vector3(),_q=new THREE.Quaternion(),_s=new THREE.Vector3();
       so.mesh.matrixWorld.decompose(_p,_q,_s);
       const mPR=new THREE.Matrix4().makeRotationFromQuaternion(_q);mPR.setPosition(_p);
@@ -1416,7 +1431,7 @@ async function expSTLascii(){
   scene.updateMatrixWorld(true);
   objs.forEach(so=>{
     const _gHD=makeGeoHD(so);
-    if(so.type!=='csg'){
+    if(_ioCanRebuild(so)){
       const _p=new THREE.Vector3(),_q=new THREE.Quaternion(),_s=new THREE.Vector3();
       so.mesh.matrixWorld.decompose(_p,_q,_s);
       const mPR=new THREE.Matrix4().makeRotationFromQuaternion(_q);mPR.setPosition(_p);
