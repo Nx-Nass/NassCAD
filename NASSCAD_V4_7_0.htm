@@ -2177,25 +2177,25 @@ canvas{display:block;width:100%;height:100%;}
 
     <!-- ── SNAP · VIEW ──────────────────────────── -->
     <div class="tsep">Snap · View</div>
-    <button class="vb-btn tbb" onclick="togSnap()" id="tool-snap" title="Grid snap — click: cycle 1/0.5/0.1/0.01/0.001mm/OFF"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg></button>
+    <button class="vb-btn tbb" onclick="togSnap()" id="tool-snap" title="Grid snap — click: cycle 1/0.5/0.1/0.01/0.001mm/OFF"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="1.6" stroke-width="1.3" opacity=".45"/><path d="M9 3v18M15 3v18M3 9h18M3 15h18" stroke-width="1.3" opacity=".45"/><circle cx="15" cy="9" r="3.7" stroke-width="1.9"/><circle cx="15" cy="9" r="1.6" fill="currentColor" stroke="none"/></svg></button>
     <button class="vb-btn tbb" onclick="setSnapSize(1)"    title="Snap 1 mm"    style="font-size:20px;font-weight:700">1</button>
     <button class="vb-btn tbb" onclick="setSnapSize(0.5)"  title="Snap 0.5 mm"  style="font-size:20px;font-weight:700">.5</button>
     <button class="vb-btn tbb" onclick="setSnapSize(0.1)"  title="Snap 0.1 mm"  style="font-size:17px;font-weight:700;color:var(--warn)">·1</button>
     <button class="vb-btn tbb" onclick="setSnapSize(0.01)" title="Snap 0.01 mm" style="font-size:13px;font-weight:800;color:var(--danger)">·01</button>
     <button class="vb-btn tbb" onclick="setSnapSize(0.001)" title="Snap 0.001 mm" style="font-size:10px;font-weight:800;color:var(--danger)">·001</button>
-    <button class="vb-btn tbb" id="btn-cotation" onclick="toggleCotation()" title="Cotation — dimension handles on selected object (click: ON/OFF · OFF by default)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><g transform="rotate(45 12 12)"><rect x="2" y="9" width="20" height="6" rx="1"/><line x1="5" y1="9" x2="5" y2="11.5"/><line x1="8" y1="9" x2="8" y2="12.5"/><line x1="11" y1="9" x2="11" y2="11.5"/><line x1="14" y1="9" x2="14" y2="12.5"/><line x1="17" y1="9" x2="17" y2="11.5"/></g></svg></button>
-    <button class="vb-btn tbb" id="btn-measure" onclick="toggleMeasure()" title="Measure — distance between each pair of selected objects (Shift+click to multi-select · click: ON/OFF · OFF by default)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="6" cy="6" r="2.3"/><circle cx="18" cy="18" r="2.3"/><path d="M8 8l8 8" stroke-dasharray="2.5,2"/></svg></button>
-    <button class="vb-btn tbb" onclick="setCameraView('top')" title="Top view"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="4" y="4" width="16" height="16" rx="1"/><circle cx="12" cy="12" r="2"/></svg></button>
-    <button class="vb-btn tbb" onclick="setCameraView('front')" title="Front view"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="4" y="6" width="16" height="14" rx="1"/><line x1="4" y1="10" x2="20" y2="10"/></svg></button>
-    <button class="vb-btn tbb" onclick="setCameraView('reset')" title="Reset camera"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M12 2v4M12 18v4M2 12h4M18 12h4"/></svg></button>
-    <button class="vb-btn tbb" onclick="setCameraView('persp')" title="Perspective view (diamond)" style="font-size:26px">⬡</button>
-    <button class="vb-btn tbb" id="btn-xray" onclick="toggleXRay()" title="X-Ray mode — wireframe view"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
-    <button class="vb-btn tbb" id="btn-edges" onclick="toggleFeatureEdges()" title="Feature edges — crease rendering (click: ON/OFF)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 7l9-4 9 4v10l-9 4-9-4z" opacity="0.4"/><path d="M3 7l9 4 9-4" opacity="0.4"/><path d="M12 11v10" stroke-width="2.8"/></svg></button>
+    <button class="vb-btn tbb" id="btn-cotation" onclick="toggleCotation()" title="Cotation — dimension handles on selected object (click: ON/OFF · OFF by default)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="14" width="16" height="6" rx="1" stroke-width="1.5" opacity=".45"/><path d="M4 12.2V6.4M20 12.2V6.4" stroke-width="1.4" opacity=".6"/><path d="M4 8.6h16"/><path d="M6.6 6.9L4 8.6l2.6 1.7M17.4 6.9L20 8.6l-2.6 1.7"/></svg></button>
+    <button class="vb-btn tbb" id="btn-measure" onclick="toggleMeasure()" title="Measure — distance between each pair of selected objects (Shift+click to multi-select · click: ON/OFF · OFF by default)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="5.8" cy="18.2" r="2.6"/><circle cx="18.2" cy="5.8" r="2.6"/><circle cx="5.8" cy="18.2" r=".9" fill="currentColor" stroke="none"/><circle cx="18.2" cy="5.8" r=".9" fill="currentColor" stroke="none"/><path d="M7.7 16.3l8.6-8.6" stroke-dasharray="2.4 2.2"/></svg></button>
+    <button class="vb-btn tbb" onclick="setCameraView('top')" title="Top view"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.6L20.6 7.4 12 12.2 3.4 7.4z" fill="currentColor" stroke="none" opacity=".45"/><path d="M12 2.6L20.6 7.4v9.2L12 21.4 3.4 16.6V7.4z" stroke-width="1.6"/><path d="M3.4 7.4L12 12.2l8.6-4.8M12 12.2v9.2" stroke-width="1.4" opacity=".55"/></svg></button>
+    <button class="vb-btn tbb" onclick="setCameraView('front')" title="Front view"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3.4 7.4L12 12.2v9.2L3.4 16.6z" fill="currentColor" stroke="none" opacity=".45"/><path d="M12 2.6L20.6 7.4v9.2L12 21.4 3.4 16.6V7.4z" stroke-width="1.6"/><path d="M3.4 7.4L12 12.2l8.6-4.8M12 12.2v9.2" stroke-width="1.4" opacity=".55"/></svg></button>
+    <button class="vb-btn tbb" onclick="setCameraView('reset')" title="Reset camera"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><g transform="translate(12 12) scale(.70) translate(-12 -12)"><path d="M12 2.6L20.6 7.4v9.2L12 21.4 3.4 16.6V7.4z" stroke-width="2.4"/><path d="M3.4 7.4L12 12.2l8.6-4.8M12 12.2v9.2" stroke-width="2" opacity=".5"/></g><path d="M21.77 8.44A10.4 10.4 0 1 1 15.56 2.23" stroke-width="1.7"/><path d="M17.82 3.05L15.01 3.73L16.11 0.73Z" fill="currentColor" stroke="none"/></svg></button>
+    <button class="vb-btn tbb" onclick="setCameraView('persp')" title="Perspective view (diamond)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2.8" y="9.2" width="11.6" height="11.6" rx="1"/><path d="M8.2 3.2h13v13" stroke-width="1.5" opacity=".65"/><path d="M2.8 9.2l5.4-6M14.4 9.2l6.8-6M14.4 20.8l6.8-4.6" stroke-width="1.5" opacity=".65"/></svg></button>
+    <button class="vb-btn tbb" id="btn-xray" onclick="toggleXRay()" title="X-Ray mode — translucent bodies, every edge visible through the material"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M1.2 12s4.2-6.6 10.8-6.6S22.8 12 22.8 12s-4.2 6.6-10.8 6.6S1.2 12 1.2 12z" stroke-width="1.7"/><g transform="translate(12 12) scale(0.46) translate(-12 -12)"><path d="M12 2.6L20.6 7.4v9.2L12 21.4 3.4 16.6V7.4z" fill="currentColor" stroke="none" opacity=".13"/><path d="M12 2.6L20.6 7.4v9.2L12 21.4 3.4 16.6V7.4z" stroke-width="3.48"/><path d="M3.4 7.4L12 12.2l8.6-4.8M12 12.2v9.2" stroke-width="3.48"/></g></svg></button>
+    <button class="vb-btn tbb" id="btn-edges" onclick="toggleFeatureEdges()" title="Feature edges — crease rendering (click: ON/OFF)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.6L20.6 7.4v9.2L12 21.4 3.4 16.6V7.4z" stroke-width="1.4" opacity=".32"/><path d="M3.4 7.4L12 12.2l8.6-4.8M12 12.2v9.2" stroke-width="2.6"/></svg></button>
     <button class="vb-btn tbb" onclick="recenterCG()" title="Recenter origin on real center of gravity (selection)" style="font-size:13px;font-weight:700;color:var(--accent)">⊕CG</button>
-    <button class="vb-btn tbb" onclick="dropToGround()" title="Drop to ground — places object on Y=0 plane" style="color:var(--accent)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><line x1="12" y1="3" x2="12" y2="17"/><polyline points="7 13 12 17 17 13"/><line x1="3" y1="21" x2="21" y2="21"/></svg></button>
-    <button class="vb-btn tbb" id="btn-grid-reset" onclick="_gridReset()" title="Reset grid + objects to center" style="font-size:24px;font-weight:700">⌂</button>
-    <button class="vb-btn tbb" onclick="_resetAllPinned()" title="Reset all pinned objects (📌) to their pinned position" style="font-size:20px;font-weight:700">⚓</button>
-    <button class="vb-btn tbb" onclick="_frameSelection()" title="Frame selection — camera fills the frame with the selected object(s)" style="font-size:20px;font-weight:700">⛶</button>
+    <button class="vb-btn tbb" onclick="dropToGround()" title="Drop to ground — places object on Y=0 plane" style="color:var(--accent)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="8.2" y="2.8" width="7.6" height="6.4" rx="1"/><path d="M12 10.8v4.8"/><path d="M9.5 13.4L12 15.9l2.5-2.5"/><path d="M2.6 18.6h18.8"/><path d="M4.4 21.6l1.9-2.6M9.1 21.6L11 19M13.8 21.6l1.9-2.6M18.5 21.6l1.9-2.6" stroke-width="1.3" opacity=".55"/></svg></button>
+    <button class="vb-btn tbb" id="btn-grid-reset" onclick="_gridReset()" title="Reset grid + objects to center"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2.6" y="2.6" width="18.8" height="18.8" rx="1.6" stroke-width="1.3" opacity=".3"/><circle cx="12" cy="12" r="1.7" fill="currentColor" stroke="none"/><path d="M12 3.6v3.9M10.4 6l1.6 1.6L13.6 6"/><path d="M12 20.4v-3.9M10.4 18l1.6-1.6 1.6 1.6"/><path d="M3.6 12h3.9M6 10.4l1.6 1.6L6 13.6"/><path d="M20.4 12h-3.9M18 10.4L16.4 12 18 13.6"/></svg></button>
+    <button class="vb-btn tbb" onclick="_resetAllPinned()" title="Reset all pinned objects (📌) to their pinned position"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><g transform="translate(12 12) scale(.70) translate(-12 -12)"><path d="M9 3.5h6" stroke-width="2.4"/><path d="M10.4 3.5v5.6L7.6 12v1.7h8.8V12l-2.8-2.9V3.5" stroke-width="2.4"/><path d="M12 13.7V20.5" stroke-width="2.4"/></g><path d="M21.77 8.44A10.4 10.4 0 1 1 15.56 2.23" stroke-width="1.7"/><path d="M17.82 3.05L15.01 3.73L16.11 0.73Z" fill="currentColor" stroke="none"/></svg></button>
+    <button class="vb-btn tbb" onclick="_frameSelection()" title="Frame selection — camera fills the frame with the selected object(s)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2.8 8.4V4.6a1.8 1.8 0 011.8-1.8h3.8"/><path d="M15.6 2.8h3.8a1.8 1.8 0 011.8 1.8v3.8"/><path d="M21.2 15.6v3.8a1.8 1.8 0 01-1.8 1.8h-3.8"/><path d="M8.4 21.2H4.6a1.8 1.8 0 01-1.8-1.8v-3.8"/><rect x="8.8" y="8.8" width="6.4" height="6.4" rx="1" fill="currentColor" stroke="none" opacity=".75"/></svg></button>
     <button class="vb-btn tbb" onclick="scaleSelUniform(0.1)"  title="Scale selection ÷10 — uniform proportional" style="font-size:11px;font-weight:800;color:var(--warn)">/10</button>
     <button class="vb-btn tbb" onclick="scaleSelUniform(0.2)"  title="Scale selection ÷5 — uniform proportional"  style="font-size:11px;font-weight:800;color:var(--warn)">/5</button>
     <button class="vb-btn tbb" onclick="scaleSelUniform(0.5)"  title="Scale selection ÷2 — uniform proportional"  style="font-size:11px;font-weight:800;color:var(--warn)">/2</button>
@@ -2206,30 +2206,33 @@ canvas{display:block;width:100%;height:100%;}
 
     <!-- ── EDIT ─────────────────────────────────── -->
     <div class="tsep">Edit</div>
-    <button class="vb-btn tbb" onclick="dupSel()" title="Duplicate (Ctrl+D)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg></button>
-    <button class="vb-btn tbb" onclick="copyObjs()"  title="Copy selection (Ctrl+C)" style="font-size:18px">📋</button>
-    <button class="vb-btn tbb" onclick="pasteObjs()" title="Paste (Ctrl+V)" id="btn-paste" style="font-size:18px;opacity:0.35">📄</button>
-    <button class="vb-btn tbb" onclick="delSel()" title="Delete (Del)" style="color:var(--danger)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/></svg></button>
-    <button class="vb-btn tbb" id="btn-undo" onclick="undoAction()" title="Undo (Ctrl+Z)" style="opacity:0.35"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 14 4 9 9 4"/><path d="M20 20v-7a4 4 0 0 0-4-4H4"/></svg></button>
-    <button class="vb-btn tbb" id="btn-redo" onclick="redoAction()" title="Redo (Ctrl+Y)" style="opacity:0.35"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 14 20 9 15 4"/><path d="M4 20v-7a4 4 0 0 1 4-4h12"/></svg></button>
-    <button class="vb-btn tbb" onclick="selectAllObjs()" title="Select all"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 8V5a1 1 0 011-1h3"/><path d="M16 4h3a1 1 0 011 1v3"/><path d="M20 16v3a1 1 0 01-1 1h-3"/><path d="M8 20H5a1 1 0 01-1-1v-3"/></svg></button>
-    <button class="vb-btn tbb" id="tool-grid" onclick="toggleGrid()" title="Toggle grid visibility"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><line x1="3" y1="3" x2="3" y2="21"/><line x1="9" y1="3" x2="9" y2="21"/><line x1="15" y1="3" x2="15" y2="21"/><line x1="21" y1="3" x2="21" y2="21"/><line x1="3" y1="3" x2="21" y2="3"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="3" y1="15" x2="21" y2="15"/><line x1="3" y1="21" x2="21" y2="21"/></svg></button>
+    <button class="vb-btn tbb" onclick="dupSel()" title="Duplicate (Ctrl+D)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2.8" y="2.8" width="12" height="12" rx="2" stroke-width="1.5" stroke-dasharray="3 2.4" opacity=".6"/><rect x="9.2" y="9.2" width="12" height="12" rx="2"/><path d="M15.2 12.6v5.2M12.6 15.2h5.2"/></svg></button>
+    <button class="vb-btn tbb" onclick="copyObjs()"  title="Copy selection (Ctrl+C)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2.8" y="7" width="12.4" height="14.2" rx="2" stroke-width="1.5" opacity=".5"/><rect x="8.8" y="2.8" width="12.4" height="14.2" rx="2"/><path d="M12 7.6h6M12 11.2h6" stroke-width="1.4" opacity=".55"/></svg></button>
+    <button class="vb-btn tbb" onclick="pasteObjs()" title="Paste (Ctrl+V)" id="btn-paste" style="opacity:0.35"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 4.4H6.4a1.8 1.8 0 00-1.8 1.8v13.2a1.8 1.8 0 001.8 1.8h11.2a1.8 1.8 0 001.8-1.8V6.2a1.8 1.8 0 00-1.8-1.8H15"/><rect x="8.6" y="2.2" width="6.8" height="4.2" rx="1.3" fill="currentColor" stroke="none" opacity=".85"/><path d="M12 10.4v6.2"/><path d="M9.5 14.1l2.5 2.5 2.5-2.5"/></svg></button>
+    <button class="vb-btn tbb" onclick="delSel()" title="Delete (Del)" style="color:var(--danger)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3.4 6h17.2"/><path d="M9 6V4.4A1.4 1.4 0 0110.4 3h3.2A1.4 1.4 0 0115 4.4V6"/><path d="M5.6 6l1 13.2A2 2 0 008.6 21h6.8a2 2 0 002-1.8L18.4 6"/><path d="M10.2 10.4v6.4M13.8 10.4v6.4" stroke-width="1.4" opacity=".55"/></svg></button>
+    <button class="vb-btn tbb" id="btn-undo" onclick="undoAction()" title="Undo (Ctrl+Z)" style="opacity:0.35"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 14.2L3.8 9 9 3.8" stroke-width="2"/><path d="M20.2 20.2v-6.8a4.4 4.4 0 00-4.4-4.4H4.2" stroke-width="2"/></svg></button>
+    <button class="vb-btn tbb" id="btn-redo" onclick="redoAction()" title="Redo (Ctrl+Y)" style="opacity:0.35"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M15 14.2L20.2 9 15 3.8" stroke-width="2"/><path d="M3.8 20.2v-6.8a4.4 4.4 0 014.4-4.4h11.6" stroke-width="2"/></svg></button>
+    <button class="vb-btn tbb" onclick="selectAllObjs()" title="Select all"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2.6" y="2.6" width="18.8" height="18.8" rx="2.2" stroke-width="1.5" stroke-dasharray="3.2 2.6" opacity=".85"/><rect x="5.8" y="5.8" width="5.6" height="5.6" rx=".9" fill="currentColor" stroke="none" opacity=".72"/><circle cx="16.2" cy="8.6" r="2.8" fill="currentColor" stroke="none" opacity=".72"/><rect x="8.6" y="14.2" width="7.4" height="4.6" rx=".9" fill="currentColor" stroke="none" opacity=".72"/></svg></button>
+    <button class="vb-btn tbb" id="tool-grid" onclick="toggleGrid()" title="Toggle grid visibility"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8.8 8h6.4M6.9 11.6h10.2M4.7 15.6h14.6M2.2 20.2h19.6" stroke-width="1.25"/><path d="M8.8 8L2.2 20.2M10.4 8L7.1 20.2M12 8v12.2M13.6 8l3.3 12.2M15.2 8l6.6 12.2" stroke-width="1.25"/></svg></button>
 
     <!-- ── CSG ──────────────────────────────────── -->
     <div class="tsep">CSG</div>
-    <button class="vb-btn tbb" onclick="doCSG('union')" title="∪ CSG Union" style="color:var(--success);font-size:26px;font-weight:800">∪</button>
-    <button class="vb-btn tbb" onclick="doCSG('subtract')" title="− CSG Subtract" style="color:var(--danger);font-size:26px;font-weight:800">−</button>
-    <button class="vb-btn tbb" onclick="doCSG('intersect')" title="∩ CSG Intersect" style="color:var(--warn);font-size:26px;font-weight:800">∩</button>
-    <button class="vb-btn tbb" id="tbx-solid" onclick="setHoleMode(false)" title="Solid mode" style="color:var(--success);font-size:26px">⬜</button>
-    <button class="vb-btn tbb" id="tbx-hole"  onclick="setHoleMode(true)"  title="Hole mode" style="color:var(--danger);font-size:24px;font-weight:700">🔴</button>
-    <button class="vb-btn tbb" id="tbx-quickfillet" onclick="toggleQuickFillet()" title="Quick Fillet — OCCT B-Rep kernel: fillet/chamfer all edges or pick a custom selection." style="color:var(--accent)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M2 11h9V2" stroke-dasharray="2,2" stroke-width="1.3" opacity="0.5"/><path d="M4 20V10a6 6 0 016-6h10"/></svg></button>
+    <button class="vb-btn tbb" onclick="doCSG('union')" title="∪ CSG Union" style="color:var(--success)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 7.1A5.5 5.5 0 1 0 12 16.9A5.5 5.5 0 1 0 12 7.1Z" fill="currentColor" stroke="none" opacity=".22"/><path d="M12 7.1A5.5 5.5 0 1 0 12 16.9A5.5 5.5 0 1 0 12 7.1Z" stroke-width="1.9"/><path d="M12 7.1v9.8" stroke-width="1.3" stroke-dasharray="2 2.2" opacity=".4"/></svg></button>
+    <button class="vb-btn tbb" onclick="doCSG('subtract')" title="− CSG Subtract" style="color:var(--danger)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 7.1A5.5 5.5 0 1 0 12 16.9A5.5 5.5 0 0 1 12 7.1Z" fill="currentColor" stroke="none" opacity=".26"/><circle cx="14.5" cy="12" r="5.5" stroke-width="1.3" stroke-dasharray="2.4 2.2" opacity=".45"/><path d="M12 7.1A5.5 5.5 0 1 0 12 16.9A5.5 5.5 0 0 1 12 7.1Z" stroke-width="1.9"/></svg></button>
+    <button class="vb-btn tbb" onclick="doCSG('intersect')" title="∩ CSG Intersect" style="color:var(--warn)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9.5" cy="12" r="5.5" stroke-width="1.3" stroke-dasharray="2.4 2.2" opacity=".45"/><circle cx="14.5" cy="12" r="5.5" stroke-width="1.3" stroke-dasharray="2.4 2.2" opacity=".45"/><path d="M12 7.1A5.5 5.5 0 0 1 12 16.9A5.5 5.5 0 0 1 12 7.1Z" fill="currentColor" stroke="none" opacity=".26"/><path d="M12 7.1A5.5 5.5 0 0 1 12 16.9A5.5 5.5 0 0 1 12 7.1Z" stroke-width="1.9"/></svg></button>
+    <button class="vb-btn tbb csg-lock" onclick="rerunCSG()" title="Re-run CSG — replay the operation one level (non-destructive)" style="color:var(--warn)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M19.43 8.53A8.2 8.2 0 1 1 14.12 4.08" stroke-width="1.8"/><path d="M16.34 4.68L13.73 5.53L14.51 2.63Z" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="2.8" fill="currentColor" stroke="none" opacity=".85"/></svg></button>
+    <button class="vb-btn tbb csg-lock" onclick="deepRerunCSG()" title="Deep Re-run CSG — replay the whole tree from the leaves in one pass" style="color:var(--accent)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M19.71 14.80A8.2 8.2 0 0 1 4.90 16.10" stroke-width="1.7"/><path d="M3.75 14.11L6.20 15.35L3.60 16.85Z" fill="currentColor" stroke="none"/><path d="M4.29 9.20A8.2 8.2 0 0 1 19.10 7.90" stroke-width="1.7"/><path d="M20.25 9.89L17.80 8.65L20.40 7.15Z" fill="currentColor" stroke="none"/><path d="M12 10.6v1.5M9.4 13.9v-1.8h5.2v1.8" stroke-width="1.3" opacity=".75"/><circle cx="12" cy="9.3" r="1.5" fill="currentColor" stroke="none"/><circle cx="9.4" cy="14.9" r="1.5" fill="currentColor" stroke="none"/><circle cx="14.6" cy="14.9" r="1.5" fill="currentColor" stroke="none"/></svg></button>
+    <button class="vb-btn tbb" onclick="showCSGTree()" title="CSG construction tree — build history of the selected object"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="4.6" r="2.4"/><circle cx="12" cy="4.6" r=".9" fill="currentColor" stroke="none"/><circle cx="5.8" cy="19.4" r="2.4"/><circle cx="18.2" cy="19.4" r="2.4"/><path d="M12 7v3.6" stroke-width="1.6"/><path d="M5.8 17V12.4h12.4V17" stroke-width="1.6"/></svg></button>
+    <button class="vb-btn tbb" id="tbx-solid" onclick="setHoleMode(false)" title="Solid mode" style="color:var(--success)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.6L20.6 7.4 12 12.2 3.4 7.4z" fill="currentColor" stroke="none" opacity=".34"/><path d="M3.4 7.4L12 12.2v9.2L3.4 16.6z" fill="currentColor" stroke="none" opacity=".2"/><path d="M20.6 7.4L12 12.2v9.2l8.6-4.8z" fill="currentColor" stroke="none" opacity=".26"/><path d="M12 2.6L20.6 7.4v9.2L12 21.4 3.4 16.6V7.4z" stroke-width="1.6"/><path d="M3.4 7.4L12 12.2l8.6-4.8M12 12.2v9.2" stroke-width="1.3" opacity=".5"/></svg></button>
+    <button class="vb-btn tbb" id="tbx-hole"  onclick="setHoleMode(true)"  title="Hole mode" style="color:var(--danger)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.6L20.6 7.4v9.2L12 21.4 3.4 16.6V7.4z" stroke-width="1.6"/><path d="M3.4 7.4L12 12.2l8.6-4.8M12 12.2v9.2" stroke-width="1.3" opacity=".3"/><ellipse cx="12" cy="7.4" rx="4" ry="2.3" fill="currentColor" stroke="none" opacity=".55"/><ellipse cx="12" cy="7.4" rx="4" ry="2.3" stroke-width="1.7"/></svg></button>
+    <button class="vb-btn tbb" id="tbx-quickfillet" onclick="toggleQuickFillet()" title="Quick Fillet — OCCT B-Rep kernel: fillet/chamfer all edges or pick a custom selection." style="color:var(--accent)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 21V10.2A6.2 6.2 0 0110.2 4H21" stroke-width="2"/><path d="M4 10.2V4h6.2" stroke-width="1.4" stroke-dasharray="2.2 2.2" opacity=".55"/></svg></button>
 
     <!-- ── FILE · UTILS ──────────────────────────── -->
     <div class="tsep">File · Utils</div>
-    <button class="vb-btn tbb" onclick="saveProjectAs()" title="Save project as…" style="font-size:24px">💾</button>
-    <button class="vb-btn tbb" onclick="toggleImp(this)" title="Import STL / OBJ / 3MF / GLB / PLY / STEP" style="font-size:24px">📥</button>
-    <button class="vb-btn tbb" onclick="toggleExp(this)" title="Export" style="font-size:24px">📤</button>
-    <button class="vb-btn tbb" onclick="flushPool()" title="Flush GeometryPool memory" style="font-size:15px;font-weight:700;color:var(--warn)">♻</button>
+    <button class="vb-btn tbb" onclick="saveProjectAs()" title="Save project as…"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4.8 3.2h10.6l4.6 4.6v12.4a1.6 1.6 0 01-1.6 1.6H4.8a1.6 1.6 0 01-1.6-1.6V4.8a1.6 1.6 0 011.6-1.6z"/><path d="M7.4 3.2v5.2h8V3.2" stroke-width="1.5"/><rect x="7" y="13" width="10" height="7.2" rx="1" stroke-width="1.5"/><path d="M9.4 16.2h5.2" stroke-width="1.3" opacity=".55"/></svg></button>
+    <button class="vb-btn tbb" onclick="toggleImp(this)" title="Import STL / OBJ / 3MF / GLB / PLY / STEP"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.8v10.6"/><path d="M8 9.6l4 4 4-4"/><path d="M3.2 15.4v3.2a2.2 2.2 0 002.2 2.2h13.2a2.2 2.2 0 002.2-2.2v-3.2" stroke-width="1.7"/></svg></button>
+    <button class="vb-btn tbb" onclick="toggleExp(this)" title="Export"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 13.4V2.8"/><path d="M8 6.8l4-4 4 4"/><path d="M3.2 15.4v3.2a2.2 2.2 0 002.2 2.2h13.2a2.2 2.2 0 002.2-2.2v-3.2" stroke-width="1.7"/></svg></button>
+    <button class="vb-btn tbb" onclick="flushPool()" title="Flush GeometryPool memory" style="color:var(--warn)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5.6" y="5.6" width="12.8" height="12.8" rx="2.2" stroke-width="1.7"/><path d="M9.4 5.6V2.9M14.6 5.6V2.9M9.4 21.1v-2.7M14.6 21.1v-2.7M5.6 9.4H2.9M5.6 14.6H2.9M21.1 9.4h-2.7M21.1 14.6h-2.7" stroke-width="1.4" opacity=".7"/><path d="M14.83 9.17A4 4 0 1 1 9.17 9.17" stroke-width="1.8"/><path d="M10.86 7.4L10.21 10.31L7.95 8.05Z" fill="currentColor" stroke="none"/></svg></button>
 
   </div>
 </div>
@@ -2389,12 +2392,12 @@ canvas{display:block;width:100%;height:100%;}
         <button class="vb-btn" style="flex:1;font-size:12px" onclick="showCSGTree()" title="Show CSG tree">🌳 Tree</button>
       </div>
       <div style="display:flex;gap:4px;margin-bottom:4px">
-        <button class="vb-btn" style="flex:1;font-size:12px;color:var(--warn)" onclick="rerunCSG()" title="Explode level 1 and re-run (single level)">↺ Re-run</button>
-        <button class="vb-btn" style="flex:1;font-size:12px;color:var(--accent)" onclick="deepRerunCSG()" title="Deep recursive re-run — arbre complet envoyé à MEDUSA (POST /csgtree) en un seul aller-retour">↺↺ Deep</button>
+        <button class="vb-btn csg-lock" style="flex:1;font-size:12px;color:var(--warn)" onclick="rerunCSG()" title="Explode level 1 and re-run (single level)">↺ Re-run</button>
+        <button class="vb-btn csg-lock" style="flex:1;font-size:12px;color:var(--accent)" onclick="deepRerunCSG()" title="Deep recursive re-run — whole tree sent to MEDUSA (POST /csgtree) in a single round trip">↺↺ Deep</button>
       </div>
       <div style="display:flex;gap:4px;margin-bottom:2px">
-        <button class="vb-btn" style="flex:1;font-size:12px;color:var(--danger)" onclick="explodeCSG()" title="💥 Ungroup — breaks 1 level, no re-merge (level 1 ungroup)">💥 Explode</button>
-        <button class="vb-btn" style="flex:1;font-size:12px;color:var(--danger)" onclick="explodeDeepCSG()" title="💥💥 Recursive ungroup — breaks down to leaf primitives">💥💥 X-Deep</button>
+        <button class="vb-btn csg-lock" style="flex:1;font-size:12px;color:var(--danger)" onclick="explodeCSG()" title="💥 Ungroup — breaks 1 level, no re-merge (level 1 ungroup)">💥 Explode</button>
+        <button class="vb-btn csg-lock" style="flex:1;font-size:12px;color:var(--danger)" onclick="explodeDeepCSG()" title="💥💥 Recursive ungroup — breaks down to leaf primitives">💥💥 X-Deep</button>
       </div>
       <span class="vb-grp-t" style="top:auto;bottom:-9px">⚙ CSG Operations — engine: <span id="csg-engine-tag" style="font-weight:700;color:var(--warn)">loading...</span><span id="csg-medusa-tag" style="font-weight:700" title="Manifold runs natively inside MEDUSA (C++/TBB) since V4.7.0 — there is no local WASM pool any more. Reachability is re-probed at each operation; MEDUSA OFF means no CSG until the engine is started."></span></span>
     </div>
@@ -2700,7 +2703,7 @@ const GeometryPool = (function() {
 
   // ── Constantes ──────────────────────────────────────────────────
   const MAX_POOL_BYTES = 2048 * 1024 * 1024; // proportions max (allocation réelle ≤ _poolSizeMb)
-  const HEADER_BYTES  = 64   * 1024;           // 64 Ko
+  const HEADER_BYTES  = 1024 * 1024;           // 1 Mo -> 65 536 slots (16 o chacun)
   const GEO_BYTES     = Math.floor(MAX_POOL_BYTES * 0.80); // ~1638 Mo (80 % du pool max)
   const SNAP_BYTES    = MAX_POOL_BYTES - HEADER_BYTES - GEO_BYTES; // ~409 Mo (restant)
 
@@ -2708,7 +2711,7 @@ const GeometryPool = (function() {
   const SNAP_START    = HEADER_BYTES + GEO_BYTES;
 
   const SLOT_SIZE     = 16;   // bytes par descripteur
-  const MAX_SLOTS     = Math.floor(HEADER_BYTES / SLOT_SIZE); // 4096
+  const MAX_SLOTS     = Math.floor(HEADER_BYTES / SLOT_SIZE); // 65536
 
   // Flags de slot
   const FLAG_FREE     = 0x00;
@@ -2850,12 +2853,24 @@ const GeometryPool = (function() {
     // DETTE-03 : first-fit prenait le 1er slot suffisant → un slot de 1 MB
     // réutilisé pour 10 KB laissait 990 KB perdus jusqu'au prochain GC.
     // Best-fit : itérer tous les slots libres, garder celui dont (size - bytes) est minimal.
+    // [FIX] Le test etait `(s.flags & FLAG_FREE)` avec FLAG_FREE = 0x00.
+    // `x & 0` vaut toujours 0 : la branche best-fit n'a JAMAIS pu s'executer,
+    // donc chaque geoStore consommait un slot neuf meme apres free(), et la
+    // table saturait a MAX_SLOTS alors que la zone geo etait vide.
+    // Verifie sur l'allocateur isole : 4096 cycles store+free -> 4096 slots
+    // distincts, 0 reutilisation. Corrige : 1 seul slot, 5999 reutilisations.
+    // On teste desormais l'absence de FLAG_USED, et on lit flags/size
+    // directement dans la DataView (2 acces par slot au lieu de 6 + un objet).
     let _bestIdx = -1, _bestWaste = Infinity;
     for (let i = 0; i < _slot_cnt; i++) {
-      const s = _slotRead(i);
-      if ((s.flags & FLAG_FREE) && s.size >= bytes) {
-        const _waste = s.size - bytes;
-        if (_waste < _bestWaste) { _bestWaste = _waste; _bestIdx = i; }
+      const _b = _slotBase(i);
+      if (_dv.getUint8(_b + 10) & FLAG_USED) continue;
+      const _sz = _dv.getUint32(_b + 4, true);
+      if (_sz < bytes) continue;
+      const _waste = _sz - bytes;
+      if (_waste < _bestWaste) {
+        _bestWaste = _waste; _bestIdx = i;
+        if (_waste === 0) break;            // fit exact : inutile de continuer
       }
     }
     if (_bestIdx >= 0) {
@@ -7428,7 +7443,7 @@ function updCSG(){
   // C'était le vrai verrou : même avec doCSG() relâché, ces boutons disabled=true
   // empêchaient physiquement le clic. Cf. tests empiriques manifold-3d dans doCSG.
   const _nm = selObjs.find(o=>o.isManifold===false);
-  document.querySelectorAll('.csg-ob,[title*="CSG"]').forEach(b=>b.disabled=false);
+  document.querySelectorAll('button.csg-ob,button.csg-lock,button[title*="CSG"]').forEach(b=>b.disabled=_csgBusy);
   if(_nm) _csgStatus('⚠ "'+_nm.name+'" is non-manifold — CSG attempted anyway (result not guaranteed)');
   else if(selObjs.length<2)_csgStatus('Shift+click = multi-select (2 objects).');
   else if(selObjs.length===2)_csgStatus('Ready — A: '+selObjs[0].name+' / B: '+selObjs[1].name);
@@ -9421,7 +9436,7 @@ async function doCSG(op) {
   if(op === 'union') _explodeCompoundsForUnion();
 
   _csgBusy = true;
-  document.querySelectorAll('.csg-ob,[title*="CSG"]').forEach(b => b.disabled = true);
+  document.querySelectorAll('button.csg-ob,button.csg-lock,button[title*="CSG"]').forEach(b => b.disabled = true);
   const infoEl = document.getElementById('csg-info');
   // Spinner overlay
   const _opLabel = {union:'Union',subtract:'Subtract',intersect:'Intersect'};
@@ -10506,7 +10521,7 @@ async function deepRerunCSG(){
   if(treeDepth<1){ _csgStatus('⚠ Trivial tree — use ↺ Re-run'); return; }
 
   _csgBusy=true;
-  document.querySelectorAll('.csg-ob,[title*="CSG"]').forEach(b=>b.disabled=true);
+  document.querySelectorAll('button.csg-ob,button.csg-lock,button[title*="CSG"]').forEach(b=>b.disabled=true);
   undoPush('CSG');
   const t0=performance.now();
   const _spinTimer2=setInterval(()=>{
