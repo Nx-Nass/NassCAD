@@ -1,13 +1,13 @@
 # NASSCAD 4.7.0 — MEDUSA
 
-> Free browser-based parametric 3D CAD & STL viewer — OpenCASCADE WASM · STEP AP242 · Three.js
+> Free browser-based parametric 3D CAD — OpenCASCADE WASM · STEP AP242 · PMI · Three.js
 
 [![License: CC BY-NC 4.0](https://img.shields.io/badge/License-CC%20BY--NC%204.0-lightgrey.svg)](https://creativecommons.org/licenses/by-nc/4.0/)
 [![Version](https://img.shields.io/badge/version-4.7.0%20MEDUSA-blue.svg)](https://www.nasscad.com/)
 [![Live Demo](https://img.shields.io/badge/demo-nasscad.com-brightgreen.svg)](https://www.nasscad.com/)
 [![Previous](https://img.shields.io/badge/previous-4.2.7-lightblue.svg)](https://github.com/Nx-Nass/Nasscad_4.2.7)
 
-**NASSCAD** is a fully offline, browser-based 3D CAD modeler and STL viewer. No server, no install, no login, nothing uploaded. Open the HTML file — it works.
+**NASSCAD** is a fully offline, browser-based parametric 3D CAD modeler. Design solids, cut them with boolean CSG, import and export native STEP AP242 with PMI. It also opens STL, OBJ, 3MF, GLB and PLY. No server, no install, no login, nothing uploaded. Open the HTML file — it works.
 
 Version 4.7.0 takes its name from its companion. It replaces the local WASM pool of the 4.2.x line with a real B-Rep kernel — **OpenCASCADE** in the browser for STEP, fillet and chamfer — and moves every boolean operation into **MEDUSA**, a native engine (C++ / oneTBB) that runs on your own machine.
 
