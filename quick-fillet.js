@@ -282,7 +282,7 @@ function _qfOnHover(){
   }
 
   const tag=best.convex?'▲ convex':'▼ concave';
-  const loop=best.closed?' ⟳boucle':'';
+  const loop=best.closed?' ⟳loop':'';
   _qfSetStatus(`${tag}${loop} len=${best.len.toFixed(1)}mm`);
   _camDirty=true;
 }
