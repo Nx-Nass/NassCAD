@@ -8,7 +8,7 @@
 //   Note : NassScript fonctionne par eval() sur le scope global à l'exécution
 //   (accès à TOUTES les fonctions globales NASSCAD par design). Cette liste
 //   de dépendances statique ne couvre que le code de l'infra NassScript
-//   elle-même (verrou d'accès, historique, stringify sûr, flux de logs,
+//   elle-même (historique, stringify sûr, flux de logs,
 //   stop coopératif) — pas le code que l'utilisateur tape et exécute.
 // ══════════════════════════════════════════════════════════════════════════
 // ── NassScript — Console JS intégrée ─────────────────────────────────────
@@ -16,43 +16,19 @@
 // Usage : coller un script dans le modal ⚡ Script → Run
 // ──────────────────────────────────────────────────────────────────────────
 
-// ── NassScript — verrou d'accès (25/07, futur point d'entrée API IA) ──────
-// IMPORTANT — à garder en tête pour la suite : un mot de passe en dur dans du
-// JS 100% client-side (zéro serveur, c'est toute l'archi NASSCAD) n'est PAS
-// une vraie barrière de sécurité — n'importe qui ouvre les devtools, tape
-// n'importe quel JS dans CE MÊME scope global (celui que NassScript utilise
-// déjà), ou contourne le check directement en mémoire. Ça filtre le clic
-// casual d'un utilisateur non-technique, pas un attaquant motivé de 30
-// secondes. Le jour où une vraie clé d'API IA passe par ce point d'entrée,
-// ELLE ne doit jamais être codée en dur ici (même derrière ce verrou) : il
-// faudra un proxy serveur qui la garde côté back, sinon n'importe qui la
-// récupère et consomme ton quota. Le verrou ici sert à documenter/geler
-// l'intention ("ceci est une surface dev, pas un bouton public"), pas à
-// protéger un secret réel.
-const _SCRIPT_PW_KEY='nasscad_script_unlocked';
-// Hash (FNV-1a 32-bit) du mot de passe — aucun littéral en clair dans le
-// fichier, ni ici ni en commentaire, donc ça résiste au moins à un simple
-// Ctrl+U / grep. Volontairement synchrone et sans dépendance à crypto.subtle
-// (disponibilité incertaine en file://, pas la peine de parier dessus pour
-// un gain de robustesse nul face au vrai bypass : cf paragraphe au-dessus).
-const _SCRIPT_PW_HASH='7d7bb92f';
-function _scriptHashHex(s){
-  let h=0x811c9dc5;
-  for(let i=0;i<s.length;i++){ h^=s.charCodeAt(i); h=Math.imul(h,0x01000193); }
-  return (h>>>0).toString(16).padStart(8,'0');
-}
-function _scriptUnlocked(){ try{return sessionStorage.getItem(_SCRIPT_PW_KEY)==='1';}catch(e){return false;} }
-function _scriptTryUnlock(){
-  if(_scriptUnlocked())return true;
-  const pw=prompt('🔒 NassScript — password required:');
-  if(pw===null)return false; // cancelled — not a failed attempt, no log
-  if(_scriptHashHex(pw)!==_SCRIPT_PW_HASH){ nasLog('WARN','NassScript: incorrect password'); return false; }
-  try{sessionStorage.setItem(_SCRIPT_PW_KEY,'1');}catch(e){}
-  return true;
-}
+// ── NassScript — accès (verrou mot de passe retiré le 12/09) ──────────────
+// Le prompt de mot de passe a été supprimé : en 100% client-side (zéro
+// serveur, c'est toute l'archi NASSCAD) il ne filtrait que le clic casual,
+// et n'importe qui pouvait le contourner via les devtools dans ce même scope
+// global. L'avertissement UI « ⚠ Dev tool / full JS scope » du modal reste la
+// bonne barrière : elle informe sans prétendre protéger.
+//
+// À GARDER EN TÊTE : le jour où une vraie clé d'API IA passe par ce point
+// d'entrée, elle ne doit JAMAIS être codée en dur ici — il faudra un proxy
+// serveur qui la garde côté back, sinon n'importe qui la récupère et
+// consomme ton quota. Un verrou client-side n'y aurait rien changé.
 
 function showScriptEditor(){
-  if(!_scriptTryUnlock())return;
   const el = document.getElementById('script-modal');
   el.style.left = Math.max(0, (innerWidth  - 560) / 2) + 'px';
   el.style.top  = Math.max(28,(innerHeight - 460) / 2) + 'px';
