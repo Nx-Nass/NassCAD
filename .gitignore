@@ -3,12 +3,9 @@
 Thumbs.db
 desktop.ini
 
-# ─── Gros binaires OCCT — distribués en assets de release ─────────────────────
-# ~154 Mo au total : au-dessus du seuil d'avertissement GitHub (50 Mo/fichier)
-# et définitifs dans l'historique s'ils sont commités. Récupérés par
-# scripts/fetch-assets.ps1 ou scripts/fetch-assets.sh
-opencascade.wasm.data.js
-opencascade.wasm.wasm
+# ─── Gros binaires OCCT ───────────────────────────────────────────────────────
+# opencascade.wasm.data.js (88 Mo) et opencascade.wasm.wasm (66 Mo) sont
+# VERSIONNES depuis le 23/09/2026 : clone -> ca tourne, sans etape de release.
 
 # ─── Dossiers privés NassLab ──────────────────────────────────────────────────
 _NASSCAD_REFERENCE/
@@ -28,6 +25,8 @@ bundle.py
 _PUSH_GITHUB.md
 _RELEASE_NOTES_v4.7.0.md
 _PUBLISH_RELEASE.ps1
+NASSCAD_github_update.bat
+_BACKUPS*/
 
 # ─── Divers ───────────────────────────────────────────────────────────────────
 *.log
