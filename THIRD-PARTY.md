@@ -26,12 +26,6 @@ NASSCAD 4.7.0 bundles the components below. **All of them are local — zero CDN
 | **Clipper2** | 1.5.4 | Angus Johnson | Boost Software License 1.0 | 2D polygon clipping, used by Manifold |
 | **hwloc** | 2.11.2 | Inria and the Open MPI project | BSD 3-Clause | CPU topology detection, shipped with oneTBB |
 
-## Web version only (nasscad.com)
-
-| Component | Author | Used for |
-|-----------|--------|----------|
-| **Google Analytics 4** | Google | Audience measurement — loaded only when NASSCAD is opened from nasscad.com, never when the file is opened locally |
-
 ## Source code of the LGPL / MPL components
 
 - OpenCASCADE Technology — https://github.com/Open-Cascade-SAS/OCCT (tag `V8_0_1`)
