@@ -171,8 +171,6 @@ Build bundles are in the `DEPLOY_*` folders:
 | Clipper2 1.5.4 | Angus Johnson | Boost Software License 1.0 |
 | hwloc 2.11.2 | Inria and the Open MPI project | BSD 3-Clause |
 
-**Web version only (nasscad.com)** — Google Analytics 4 measures the audience when NASSCAD is opened from nasscad.com. It is never loaded when the file is opened locally.
-
 Each third-party component stays under its own license. See [`THIRD-PARTY.md`](THIRD-PARTY.md).
 
 ---
