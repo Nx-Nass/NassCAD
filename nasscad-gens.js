@@ -222,7 +222,7 @@ function _ctRebuild(){
   const depth = +document.getElementById('ct-depth').value;
   const fontKey = document.getElementById('ct-font').value;
   const font = _fontCaches[fontKey];
-  if(!font){ document.getElementById('ct-stats').textContent = 'chargement police…'; return; }
+  if(!font){ document.getElementById('ct-stats').textContent = 'loading font…'; return; }
 
   const {vPos, tris, R, spanDeg, L} = _ctBuildGeo(font, text, size, depth, curveVal);
   if(!vPos.length){
@@ -419,7 +419,7 @@ function _ccRebuild(){
   const vtxCount=mesh.vPos.length/3;
   const vol=(W*H*D/1000).toFixed(1);
   document.getElementById('cc-stats').textContent=
-    `▲ ${triCount.toLocaleString('fr-FR')} triangles · ◎ ${vtxCount.toLocaleString('fr-FR')} sommets · Vol ≈ ${vol} cm³`;
+    `▲ ${triCount.toLocaleString('fr-FR')} triangles · ◎ ${vtxCount.toLocaleString('fr-FR')} vertices · Vol ≈ ${vol} cm³`;
   _genLiveUpdate(mesh);
 }
 
@@ -432,8 +432,8 @@ function _cubeChanfreinToScene(){
   if(c>maxC) c=maxC;
 
   if(!_numsOK(W,H,D,c) || W<=0 || H<=0 || D<=0){
-    nasLog('ERROR','Cubic.Gen : valeurs invalides (W='+W+', H='+H+', D='+D+')');
-    _nasAlert('⚠ Cubic.Gen : vérifie les champs numériques (valeur vide, non numérique ou hors plage).');
+    nasLog('ERROR','Cubic.Gen: invalid values (W='+W+', H='+H+', D='+D+')');
+    _nasAlert('⚠ Cubic.Gen: check the numeric fields (empty, non-numeric or out-of-range value).');
     return;
   }
 
@@ -717,7 +717,7 @@ function _arcSphRebuild() {
   const vtxCount = geo.vPos.length / 3;
   const vol = (4/3 * Math.PI * R * R * R * arc / 360) / 1000;
   document.getElementById('as-stats').textContent =
-    `▲ ${triCount.toLocaleString('fr-FR')} triangles · ◎ ${vtxCount.toLocaleString('fr-FR')} sommets · Vol ≈ ${vol.toFixed(1)} cm³`;
+    `▲ ${triCount.toLocaleString('fr-FR')} triangles · ◎ ${vtxCount.toLocaleString('fr-FR')} vertices · Vol ≈ ${vol.toFixed(1)} cm³`;
   // Décalage Y pour poser sur grille (preview)
   const n = geo.vPos.length;
   const vS = new Float32Array(n), nS = new Float32Array(geo.normals.length);
@@ -776,8 +776,8 @@ function _arcSphereToScene() {
   const Htheta = +document.getElementById('as-shtheta').value;
 
   if(!_numsOK(R,arc,Wphi,Htheta) || R<=0){
-    nasLog('ERROR','ArcSphere.Gen : valeurs invalides (R='+R+', arc='+arc+')');
-    _nasAlert('⚠ ArcSphere.Gen : vérifie les champs numériques (valeur vide, non numérique ou hors plage).');
+    nasLog('ERROR','ArcSphere.Gen: invalid values (R='+R+', arc='+arc+')');
+    _nasAlert('⚠ ArcSphere.Gen: check the numeric fields (empty, non-numeric or out-of-range value).');
     return;
   }
 
@@ -1209,8 +1209,8 @@ function _screwToScene() {
   const spec = db[Math.min(specIdx, db.length-1)] || {};
 
   if(!_numsOK(specIdx,length) || length<=0){
-    nasLog('ERROR','Screw.Gen : valeurs invalides (spec='+specIdx+', longueur='+length+')');
-    _nasAlert('⚠ Screw.Gen : vérifie la spécification et la longueur.');
+    nasLog('ERROR','Screw.Gen: invalid values (spec='+specIdx+', length='+length+')');
+    _nasAlert('⚠ Screw.Gen: check the specification and the length.');
     return;
   }
 
@@ -1600,8 +1600,8 @@ function _nutToScene() {
   const spec = db[Math.min(specIdx, db.length - 1)] || {};
 
   if(!_numsOK(specIdx)){
-    nasLog('ERROR','Nut.Gen : spécification invalide');
-    _nasAlert('⚠ Nut.Gen : vérifie le champ de spécification.');
+    nasLog('ERROR','Nut.Gen: invalid specification');
+    _nasAlert('⚠ Nut.Gen: check the specification field.');
     return;
   }
 
@@ -1779,7 +1779,7 @@ function _latheRebuild() {
   const vtxCount = geo.vPos.length / 3;
   const vol = (Math.PI * R * R * H * (arc / 360)) / 1000;
   document.getElementById('lt-stats').textContent =
-    `▲ ${triCount.toLocaleString('fr-FR')} triangles · ◎ ${vtxCount.toLocaleString('fr-FR')} sommets · Vol ≈ ${vol.toFixed(1)} cm³`;
+    `▲ ${triCount.toLocaleString('fr-FR')} triangles · ◎ ${vtxCount.toLocaleString('fr-FR')} vertices · Vol ≈ ${vol.toFixed(1)} cm³`;
   // Recentrage pour preview (base à Y=0) — normales inchangées (directionnelles)
   const vShifted = geo.vPos.map((v, i) => (i % 3 === 1) ? v + H/2 : v);
   _genLiveUpdateNorm({ vPos: vShifted, normals: geo.normals, tris: geo.tris });
@@ -1851,8 +1851,8 @@ function _latheToScene() {
   const arc = +document.getElementById('lt-sarc').value;
 
   if(!_numsOK(R,H,arc) || R<=0 || H<=0 || arc<=0){
-    nasLog('ERROR','RevSolid.Gen : valeurs invalides (R='+R+', H='+H+', arc='+arc+')');
-    _nasAlert('⚠ RevSolid.Gen : vérifie les champs numériques (valeur vide, non numérique ou hors plage).');
+    nasLog('ERROR','RevSolid.Gen: invalid values (R='+R+', H='+H+', arc='+arc+')');
+    _nasAlert('⚠ RevSolid.Gen: check the numeric fields (empty, non-numeric or out-of-range value).');
     return;
   }
 
@@ -1996,7 +1996,7 @@ function _cylRebuild(){
   const vtxCount = mesh.vPos.length/3;
   const vol = (Math.PI/3)*H*(Rt**2+Rt*Rb+Rb**2)/1000;
   document.getElementById('cy-stats').textContent =
-    `▲ ${triCount.toLocaleString('fr-FR')} triangles · ◎ ${vtxCount.toLocaleString('fr-FR')} sommets · Vol ≈ ${vol.toFixed(1)} cm³`;
+    `▲ ${triCount.toLocaleString('fr-FR')} triangles · ◎ ${vtxCount.toLocaleString('fr-FR')} vertices · Vol ≈ ${vol.toFixed(1)} cm³`;
   _genLiveUpdate(mesh);
 }
 
@@ -2008,8 +2008,8 @@ function _cylindToScene(){
   const cb = _cylClamp('cy-scb','cy-vcb', Rb, H/2);
 
   if(!_numsOK(H,Rt,Rb,ct,cb) || H<=0 || (Rt<=0 && Rb<=0)){
-    nasLog('ERROR','Cylind.Gen : valeurs invalides (H='+H+', Rt='+Rt+', Rb='+Rb+')');
-    _nasAlert('⚠ Cylind.Gen : vérifie les champs numériques (valeur vide, non numérique ou hors plage).');
+    nasLog('ERROR','Cylind.Gen: invalid values (H='+H+', Rt='+Rt+', Rb='+Rb+')');
+    _nasAlert('⚠ Cylind.Gen: check the numeric fields (empty, non-numeric or out-of-range value).');
     return;
   }
 
@@ -2210,7 +2210,7 @@ function _toreRebuild(){
   const vtxCount = N * M;
   const vol = (2 * Math.PI * Math.PI * R * r * r / 1000).toFixed(1);
   document.getElementById('tore-stats').textContent =
-    '\u25b2 ' + triCount.toLocaleString('fr-FR') + ' triangles \u00b7 \u25ce ' + vtxCount.toLocaleString('fr-FR') + ' sommets \u00b7 Vol \u2248 ' + vol + ' cm\u00b3';
+    '\u25b2 ' + triCount.toLocaleString('fr-FR') + ' triangles \u00b7 \u25ce ' + vtxCount.toLocaleString('fr-FR') + ' vertices \u00b7 Vol \u2248 ' + vol + ' cm\u00b3';
   _genLiveUpdate(_toreBuild(R, r, N, M));
 }
 
@@ -2222,8 +2222,8 @@ function _toreToScene(){
   if(r >= R) r = R * 0.9999;
 
   if(!_numsOK(R,r,N,M) || R<=0 || r<=0 || N<3 || M<3){
-    nasLog('ERROR','Tore.Gen : valeurs invalides (R='+R+', r='+r+', N='+N+', M='+M+')');
-    _nasAlert('⚠ Tore.Gen : vérifie les champs numériques (valeur vide, non numérique ou hors plage).');
+    nasLog('ERROR','Tore.Gen: invalid values (R='+R+', r='+r+', N='+N+', M='+M+')');
+    _nasAlert('⚠ Tore.Gen: check the numeric fields (empty, non-numeric or out-of-range value).');
     return;
   }
 
@@ -2537,8 +2537,8 @@ function _pipeToScene(){
   const tag = 'pipe_Re'+p.rayonExterieur+'_e'+p.epaisseurMur+'_L'+p.longueur1+'+'+p.longueur2+'+'+p.longueur3;
 
   if(!_numsOK(...Object.values(p)) || p.rayonExterieur<=0 || p.epaisseurMur<=0){
-    nasLog('ERROR','Pipe.Gen : valeurs invalides');
-    _nasAlert('⚠ Pipe.Gen : vérifie les champs numériques (valeur vide, non numérique ou hors plage).');
+    nasLog('ERROR','Pipe.Gen: invalid values');
+    _nasAlert('⚠ Pipe.Gen: check the numeric fields (empty, non-numeric or out-of-range value).');
     return;
   }
 
@@ -3156,8 +3156,8 @@ function _gearToScene(){
   const _pNums = Object.values(p).filter(v => typeof v === 'number');
   const _pairOn = (p.gearMode === 'gear' && p.gearPair && !_genEditObj);
   if(!_numsOK(..._pNums) || (p.gearMode==='gear' && p.gearTeeth<3) || (_pairOn && p.gearTeeth2 < 3)){
-    nasLog('ERROR','Gear.Gen : valeurs invalides');
-    _nasAlert('⚠ Gear.Gen : vérifie les champs numériques (valeur vide, non numérique ou hors plage).');
+    nasLog('ERROR','Gear.Gen: invalid values');
+    _nasAlert('⚠ Gear.Gen: check the numeric fields (empty, non-numeric or out-of-range value).');
     return;
   }
 

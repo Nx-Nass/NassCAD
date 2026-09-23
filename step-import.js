@@ -97,7 +97,7 @@ function _ensureOcctB64Companion(){
     s.src = 'nasscad_occt_wasm.js';
     s.onload = () => resolve();
     s.onerror = () => {
-      nasLog('WARN', 'nasscad_occt_wasm.js companion introuvable — repli sur le fetch direct du .wasm');
+      nasLog('WARN', 'nasscad_occt_wasm.js companion not found — falling back to fetching the .wasm directly');
       resolve();
     };
     document.head.appendChild(s);
@@ -173,7 +173,144 @@ const _STEP_CACHE_DB    = 'nasscad_step_cache';
 const _STEP_CACHE_STORE = 'nstp';
 const _STEP_CACHE_MAX   = 400 * 1024 * 1024;  // 400 MB total — éviction LRU au-delà
 let _stepCacheDbP = null;   // promesse d'ouverture (lazy singleton)
-let _stepCacheOff = false;  // panne IDB → cache désactivé pour la session, import inchangé
+let _stepCacheOff = false;  // [RESTAURÉ 17/09] forcé à true par le test CAP du 16/09
+                            // (« À REMETTRE À false »), remis à sa valeur d'origine. Tant
+                            // qu'il vaut true, AUCUN réimport ne ressort du cache : chaque
+                            // ouverture du même fichier repaie le parsing complet. C'est la
+                            // première chose à regarder devant un « import lent ».
+
+// ══════════════════════════════════════════════════════════════════════════
+// [PERF 17/09] RÉGLAGES D'IMPORT — rassemblés ici, modifiables à chaud depuis
+// la console Script via window.NASSCAD_STEP_TUNING. Chacun est là parce qu'il
+// était soit codé en dur, soit absent, et qu'il pèse mesurablement.
+// ══════════════════════════════════════════════════════════════════════════
+
+// ── Tessellation du chemin WASM (occt-import-js) ──────────────────────────
+// Jusqu'ici RIEN n'était passé hormis linearUnit : le lecteur retombait donc
+// sur ses défauts, vérifiés dans SON source (importer.cpp / importer-utils.cpp,
+// dépôt kovacsv/occt-import-js) — linearDeflectionType 'bounding_box_ratio',
+// linearDeflection 0.001, angularDeflection 0.5 rad.
+// Ce 0.001 est un ratio de ((dx+dy+dz)/3) de la bbox de CHAQUE shape libre, et
+// le coût de tout l'aval (couture, réparation, lissage, upload GPU) est presque
+// linéaire en nombre de triangles : c'est le levier le moins cher du pipeline.
+// 0.002 = deux fois moins fin sur les surfaces courbes, invisible à l'œil sur
+// une pièce mécanique ; remettre 0.001 rend EXACTEMENT le maillage d'avant.
+// Ne concerne QUE le chemin WASM : MEDUSA ignore ces paramètres (il POSTe le
+// buffer brut et calcule sa propre déflexion adaptative PAR CORPS, cf.
+// adaptiveBodyDeflection côté C++ — ce que le WASM, lui, n'a pas).
+// [17/09] Valeur = celle de FreeCAD, littéralement. La propriété Deviation
+// d'un Part Feature vaut 0,5 % par défaut et s'applique, dit sa doc, à
+// « the dimensions in millimeters of the bounding box of the object », soit
+// (w+h+d)/3 × Deviation/100. Or le mode 'bounding_box_ratio' d'occt-import-js
+// calcule exactement ((dx+dy+dz)/3) × ratio : mettre 0.005 ici, c'est faire
+// tourner le lecteur WASM avec le réglage de FreeCAD, au chiffre près.
+// Le défaut d'occt-import-js (0.001) était cinq fois plus fin que FreeCAD, et
+// personne ne l'avait jamais comparé à quoi que ce soit.
+// Seule différence restante : occt-import-js applique le ratio par SHAPE LIBRE
+// (par racine), là où FreeCAD l'applique par objet. MEDUSA, lui, l'applique
+// bien par corps (cf. freecadBodyDeflection côté C++).
+let _STEP_WASM_DEFLECTION = 0.005;  // = Deviation 0,5 % de FreeCAD
+// 28,5° = 0,4974 rad : l'Angular Deflection par défaut de FreeCAD. L'ancien
+// 0,5 rad valait 28,65° — le même réglage, écrit par quelqu'un qui ne savait
+// pas qu'il recopiait FreeCAD.
+let _STEP_WASM_ANGULAR    = 0.497419;
+
+// ── [17/09] IMPORT LÉGER — ne pas post-traiter ce qu'OCCT a déjà fait ─────
+// FreeCAD lit le STEP, garde le B-Rep, et maille pour l'affichage. Il ne coud
+// pas, ne répare pas, ne relisse pas : les normales viennent de la surface,
+// exactes et gratuites, et chaque face porte sa propre triangulation — donc
+// une arête vive est vive par construction, sans heuristique d'angle.
+//
+// NASSCAD faisait l'inverse : il soudait par position (ce qui détruit les
+// arêtes vives), jetait les normales d'OCCT, puis les reconstruisait par un
+// BFS d'angle de crête, et réparait chaque corps par une auto-union Manifold.
+// Mesuré sur Scania-8x4 : réparation 33,8 s, couture plusieurs dizaines de
+// secondes sur le thread principal — pour un résultat qu'OCCT donnait déjà.
+//
+// En mode FreeCAD :
+//   - pas de couture ni de bouche-trou à l'import (le buffer d'index reste
+//     celui d'OCCT, donc les plages de couleurs par face restent exactes) ;
+//   - pas de réparation manifold, jamais — le CSG l'évaluera le jour où il en
+//     aura besoin, corps par corps (cf. nasEnsureManifold dans le host) ;
+//   - les normales d'OCCT sont ADOPTÉES quand la source les fournit
+//     (occt-import-js les renvoie), et le lissage BFS est alors sauté ;
+//   - isManifold vaut null = « pas évalué », et non false : un corps sain ne
+//     doit pas porter un ⚠ que personne n'a calculé.
+// false = pipeline d'avant le 17/09, à l'identique.
+let _STEP_LEAN_IMPORT = true;
+
+// ── Réparation manifold à l'import (auto-union Manifold, un corps = une union) ──
+// Mesuré (Scania-Engine-V8-XT-Turbo, 1297 corps) : 234,6 s par le pool client,
+// contre 17,5 s pour le lissage natif du MÊME lot. Or la réparation ne sert pas
+// à AFFICHER : elle sert à rendre un corps utilisable par le CSG. Le pipeline le
+// reconnaît déjà pour les corps multicolores, dont la géométrie NON réparée est
+// reprise telle quelle en phase 2b, sans aucune régression visuelle.
+//   - MEDUSA présent : /repair en un seul batch, quelques secondes → toujours fait.
+//   - MEDUSA absent  : le pool client coûte plus cher que tout le reste de
+//                      l'import réuni → différé. Les corps restent marqués
+//                      non-manifold et _manifoldRepair sera appelé par le CSG
+//                      le jour où il en a besoin, exactement comme aujourd'hui
+//                      pour les corps multicolores.
+// true = comportement d'avant le 17/09 (réparation systématique à l'import).
+let _STEP_REPAIR_CLIENT_POOL = false;
+
+// ── Bouche-trou de couture (_capStepGaps) ─────────────────────────────────
+// Neutralisé par un `false &&` le 16/09 (« À REMETTRE EN ÉTAT ») pour savoir
+// s'il était responsable du soudage des lumières. Rétabli — mais derrière un
+// interrupteur nommé : le test se refait en mettant ce drapeau à false, sans
+// plus jamais toucher au code.
+let _STEP_CAP_GAPS = true;
+
+if(typeof window !== 'undefined'){
+  window.NASSCAD_STEP_TUNING = {
+    get cacheOff(){ return _stepCacheOff; },                     set cacheOff(v){ _stepCacheOff = !!v; },
+    get deflection(){ return _STEP_WASM_DEFLECTION; },           set deflection(v){ _STEP_WASM_DEFLECTION = +v; },
+    get angular(){ return _STEP_WASM_ANGULAR; },                 set angular(v){ _STEP_WASM_ANGULAR = +v; },
+    get repairClientPool(){ return _STEP_REPAIR_CLIENT_POOL; },  set repairClientPool(v){ _STEP_REPAIR_CLIENT_POOL = !!v; },
+    get capGaps(){ return _STEP_CAP_GAPS; },                     set capGaps(v){ _STEP_CAP_GAPS = !!v; },
+    get leanImport(){ return _STEP_LEAN_IMPORT; },               set leanImport(v){ _STEP_LEAN_IMPORT = !!v; },
+    // Déviation exprimée comme dans FreeCAD : en POURCENTS de la bbox.
+    get deviation(){ return _STEP_WASM_DEFLECTION * 100; },      set deviation(v){ _STEP_WASM_DEFLECTION = (+v) / 100; },
+    get geoCache(){ return _STEP_GEO_CACHE; },                   set geoCache(v){ _STEP_GEO_CACHE = !!v; }
+  };
+}
+
+// ══════════════════════════════════════════════════════════════════════════
+// [PERF 17/09] CHRONOMÈTRE PAR ÉTAGE — « un import lent sans découpage par
+// étage, c'est une opinion ». Les lignes [perf-step] existantes ne couvraient
+// que couture et réparation, en DBG (donc filtrées du log visible par défaut),
+// et jamais le parsing ni le lissage ni la construction des meshes : impossible
+// de dire où passent les minutes. Chaque étage dépose sa marque ici, et une
+// seule table est imprimée en fin d'import, en OK (donc lisible sans filtre).
+// Le reliquat non mesuré est affiché explicitement plutôt que dilué : c'est lui
+// qui désigne le prochain endroit à instrumenter.
+// ══════════════════════════════════════════════════════════════════════════
+// Le collecteur est un OBJET LOCAL à un import, passé explicitement — pas un
+// singleton de module. C'est délibéré : en mode Turbo, plusieurs chunks
+// traversent _importSTEPSingle EN CONCURRENCE, et un singleton mélangerait
+// leurs mesures en une table qui n'existerait dans aucun import réel.
+function _stepPerfNew(label){ return { label, marks: [], t0: performance.now() }; }
+function _stepPerfMark(p, name, ms, info){
+  if(!p) return;
+  p.marks.push({ name, ms: Math.max(0, ms), info: info || '' });
+}
+function _stepPerfReport(p){
+  if(!p || p.done) return;
+  p.done = true;
+  const total = Math.max(1, performance.now() - p.t0);
+  const rows  = p.marks.slice();
+  const acc   = rows.reduce((s, m) => s + m.ms, 0);
+  rows.push({ name: '(unmeasured remainder)', ms: Math.max(0, total - acc), info: '' });
+  const w = rows.reduce((m, r) => Math.max(m, r.name.length), 0);
+  const head = `[perf-step] ${p.label} — total ${(total/1000).toFixed(2)} s`;
+  nasLog('OK', head);
+  try{ if(typeof _csgLog === 'function') _csgLog(head); }catch(e){ /* panneau CSG absent : sans importance */ }
+  for(const r of rows){
+    if(r.ms < 1 && r.name !== '(unmeasured remainder)') continue; // étage inactif : ne pas polluer
+    nasLog('OK', `  ${r.name.padEnd(w)}  ${(r.ms/1000).toFixed(2).padStart(8)} s  `
+      + `${String(Math.round(r.ms/total*100)).padStart(3)}%` + (r.info ? '   ' + r.info : ''));
+  }
+}
 
 function _stepCacheOpen(){
   if(_stepCacheOff) return Promise.resolve(null);
@@ -197,16 +334,37 @@ function _stepCacheOpen(){
 // partout en pratique ; fallback double-FNV-1a JS pur sinon (cache local
 // non-adversarial : la collision-résistance crypto est inutile ici).
 // null = cache désactivé silencieusement, l'import continue normalement.
-async function _stepCacheKey(buffer, params){
+async function _stepCacheKey(buffer, params, hashHex){
   if(_stepCacheOff) return null;
   // [26/08] NSTP3 → NSTP4 : les entrées mises en cache avant la correction
   // couleur contiennent du linéaire. Bump du salt = invalidation propre, sans
   // purge explicite (l'éviction LRU nettoie les anciennes entrées).
-  const salt = '|' + ((params && params.linearUnit) || 'mm') + '|NSTP6';
+  // [17/09] La déflexion entre dans la clé : elle change le MAILLAGE, donc une
+  // entrée calculée à 0.001 n'est pas réutilisable à 0.002. Sans ça, régler
+  // _STEP_WASM_DEFLECTION resterait sans effet visible sur tout fichier déjà
+  // importé une fois — le pire des cas : un réglage qui a l'air de ne rien faire.
+  // Bump NSTP6 → NSTP7 : invalide proprement les entrées d'avant ce changement.
+  const salt = '|' + ((params && params.linearUnit) || 'mm')
+             + '|d' + ((params && params.linearDeflection)  ?? _STEP_WASM_DEFLECTION)
+             + '|a' + ((params && params.angularDeflection) ?? _STEP_WASM_ANGULAR)
+             + '|NSTP7';
+  // [17/09] Le digest lui-même est calculé par _stepDigestHex (plus bas), et
+  // l'appelant peut le passer déjà calculé : sur 235 Mo, hacher deux fois le
+  // même buffer — une fois pour le cache de parsing, une fois pour le cache de
+  // géométrie — coûterait une seconde pleine pour un résultat identique.
+  const h = hashHex || await _stepDigestHex(buffer);
+  return h ? (h + salt) : null;
+}
+
+// Digest du buffer en hexa : SHA-256 si disponible (file:// est un contexte
+// sécurisé, donc crypto.subtle y est présent en pratique), sinon double FNV-1a
+// en JS pur — le cache est local et non adversarial, la résistance aux
+// collisions cryptographique n'y sert à rien, seule l'unicité de fait compte.
+async function _stepDigestHex(buffer){
   try{
     if(typeof crypto !== 'undefined' && crypto.subtle && crypto.subtle.digest){
       const h = await crypto.subtle.digest('SHA-256', buffer);
-      return Array.from(new Uint8Array(h)).map(b => b.toString(16).padStart(2,'0')).join('') + salt;
+      return Array.from(new Uint8Array(h)).map(b => b.toString(16).padStart(2,'0')).join('');
     }
   }catch(e){ /* tombe sur FNV ci-dessous */ }
   try{
@@ -214,8 +372,7 @@ async function _stepCacheKey(buffer, params){
     let h1 = 0x811c9dc5 | 0, h2 = 0x811c9dc5 | 0;
     for(let i = 0; i < u8.length; i++){ h1 ^= u8[i]; h1 = Math.imul(h1, 0x01000193); }
     for(let i = u8.length - 1; i >= 0; i--){ h2 ^= u8[i]; h2 = Math.imul(h2, 0x01000193); }
-    return 'fnv_' + (h1 >>> 0).toString(16) + '_' + (h2 >>> 0).toString(16) +
-           '_' + u8.length + salt;
+    return 'fnv_' + (h1 >>> 0).toString(16) + '_' + (h2 >>> 0).toString(16) + '_' + u8.length;
   }catch(e){ return null; }
 }
 
@@ -357,6 +514,220 @@ function _nstpDecode(arrayBuffer, cached){
   return { success: true, meshes };
 }
 // ═══════════════════════════════════════════════════════════════════════════
+// [PERF 17/09] NSPG v1 — CACHE DE GÉOMÉTRIE FINALE
+//
+// Le cache NSTP ci-dessus range le résultat du PARSING. C'est l'étage le moins
+// cher : mesuré sur Scania-Engine-V8-XT-Turbo (1297 corps), le parsing natif
+// coûte 113 s, la réparation 234,6 s et le lissage 17,5 s. Un hit NSTP annonce
+// « zéro parsing » — c'est vrai, et c'est précisément le problème : il ne
+// rembourse que 113 s sur 365, puis refait couture, réparation et lissage à
+// l'identique, à chaque ouverture du même fichier, pour un résultat au bit près
+// identique. Un cache qui ne sert que pour le tiers le moins cher n'est pas un
+// cache, c'est un acompte.
+//
+// NSPG range l'AUTRE bout : la géométrie telle qu'elle part à l'écran. Après
+// couture, réparation, lissage, bascule Z-up→Y-up et offset global — tout est
+// cuit dans les buffers. Restaurer un import revient alors à construire des
+// BufferGeometry sur des vues typées et à les accrocher à la scène : plus
+// aucun calcul, quelle que soit la taille du fichier.
+//
+// Format — même esprit que NSTP (binaire, framé, zéro JSON dans le chemin
+// chaud) :
+//   [u32 'NSPG'][u32 version][u32 jsonLen][JSON utf8][padding 4][BIN]
+// Le JSON ne porte que la table des matières (noms, couleurs, drapeaux,
+// offsets) ; tout ce qui est volumineux est dans BIN, aligné 4, lu par VUES et
+// non par copies — la géométrie restaurée pointe directement dans le tampon du
+// cache, il n'existe donc jamais deux exemplaires des sommets en mémoire.
+//
+// Ce qui entre dans la CLÉ (cf. _geoCacheKey) : tout ce qui change le maillage
+// produit — hash du fichier, déflexion, angle, angle de crête du lissage,
+// bouche-trou, et le fait qu'une réparation ait été appliquée ou non. Ce
+// dernier point est là pour une raison précise : importer sans MEDUSA (corps
+// laissés non-manifold), puis lancer MEDUSA et réimporter en attendant des
+// corps réparés, ne doit PAS ressortir la version non réparée du cache. Deux
+// variantes coexistent donc, jamais plus.
+//
+// Le cache NSTP est conservé tel quel : il reste le filet quand la clé
+// géométrique change (on a touché à un réglage) — le parsing, lui, n'a pas à
+// être refait pour autant.
+// ═══════════════════════════════════════════════════════════════════════════
+let _STEP_GEO_CACHE = true;
+const _NSPG_MAGIC = 0x4750534E; // 'NSPG' en little-endian
+
+// Clé du cache géométrique. `repairApplied` doit être connu AVANT l'import —
+// c'est le cas : il ne dépend que de la présence de MEDUSA et du drapeau
+// _STEP_REPAIR_CLIENT_POOL, tous deux déterminés en amont.
+function _geoCacheKey(hashHex, repairApplied){
+  if(_stepCacheOff || !_STEP_GEO_CACHE || !hashHex) return null;
+  // [17/09] Le mode FreeCAD entre dans la clé. Il change la géométrie produite
+  // — pas de couture, normales d'OCCT, pas de lissage — donc une entrée écrite
+  // dans un mode n'est pas réutilisable dans l'autre. Sans ce champ, basculer
+  // NASSCAD_STEP_TUNING.freecadMode sur un fichier déjà importé n'aurait
+  // strictement aucun effet visible, et on chercherait longtemps pourquoi.
+  return hashHex
+    + '|d' + _STEP_WASM_DEFLECTION
+    + '|a' + _STEP_WASM_ANGULAR
+    + '|c30'                                  // angle de crête du lissage BFS (cf. _smoothBatch)
+    + '|g' + (_STEP_CAP_GAPS ? 1 : 0)
+    + '|r' + (repairApplied ? 1 : 0)
+    + '|f' + (_STEP_LEAN_IMPORT ? 1 : 0)
+    + '|NSPG1';
+}
+
+function _geoCacheGet(key){
+  return _stepCacheOpen().then(db => {
+    if(!db) return null;
+    return new Promise((resolve) => {
+      try{
+        const rq = db.transaction(_STEP_CACHE_STORE, 'readonly')
+                     .objectStore(_STEP_CACHE_STORE).get(key);
+        rq.onsuccess = () => resolve(rq.result ? rq.result.nstp : null);
+        rq.onerror   = () => resolve(null);
+      }catch(e){ resolve(null); }
+    });
+  });
+}
+
+// Même magasin, même éviction LRU, même budget que le cache NSTP : seule la clé
+// diffère (suffixe NSPG1). Aucun changement de schéma IndexedDB — donc aucune
+// migration à écrire, et une base existante continue de s'ouvrir en version 1.
+function _geoCachePut(key, ab, label){
+  try{
+    _stepCacheOpen().then(db => {
+      if(!db) return;
+      try{
+        const tx = db.transaction(_STEP_CACHE_STORE, 'readwrite');
+        tx.objectStore(_STEP_CACHE_STORE).put({ hash: key, nstp: ab,
+          size: ab.byteLength, ts: Date.now(), name: label || '' });
+        tx.oncomplete = () => _stepCacheEvict(db);
+      }catch(e){ /* quota/priv — silencieux, le cache est un bonus */ }
+    });
+  }catch(e){ /* idem */ }
+}
+
+// bodies : [{name, color:'#rrggbb', isManifold, geo, faces}] — `geo` est la
+// géométrie FINALE, celle accrochée à la scène ; `faces` la table mFaces
+// ([r,g,b,start,count] par face topologique) ou null.
+function _nspgEncode(bodies, meta){
+  const chunks = [];
+  let off = 0;
+  // Tous les tableaux stockés sont des f32/u32 : leur byteLength est toujours
+  // multiple de 4, l'alignement des vues est donc acquis sans padding interne.
+  const put = (ta) => { const o = off; chunks.push(ta); off += ta.byteLength; return o; };
+  const jb = [];
+  for(const b of bodies){
+    const g = b.geo;
+    if(!g || !g.attributes || !g.attributes.position) continue;
+    const pos = g.attributes.position.array;
+    const nrm = g.attributes.normal ? g.attributes.normal.array : null;
+    const idx = g.index ? g.index.array : null;
+    const e = { n: b.name || '', c: b.color || null, m: !!b.isManifold };
+    e.p = [put(pos instanceof Float32Array ? pos : new Float32Array(pos)), pos.length];
+    if(nrm) e.nr = [put(nrm instanceof Float32Array ? nrm : new Float32Array(nrm)), nrm.length];
+    if(idx) e.ix = [put(idx instanceof Uint32Array ? idx : new Uint32Array(idx)), idx.length];
+    if(b.faces && b.faces.length){
+      // Couleur stockée DÉJÀ QUANTIFIÉE en 0xRRGGBB, pas en trois flottants.
+      // Les deux seuls consommateurs de cette table (_applyFaceColors et
+      // _dominantFaceHex) font exactement Math.round(v*255) : ranger l'octet et
+      // le rendre en octet/255 est donc rigoureusement sans perte pour eux,
+      // alors qu'un aller-retour par float32 fait dériver 1/3 en 0,33333334 —
+      // inoffensif ici, mais c'est le genre d'écart qu'on finit par payer.
+      // Bonus : 12 octets par face au lieu de 20, et tout est aligné 4.
+      const n = b.faces.length;
+      const fa = new Uint32Array(n * 3);
+      for(let i = 0; i < n; i++){
+        const f = b.faces[i];
+        fa[i*3]   = ((Math.round(f[0]*255)<<16)|(Math.round(f[1]*255)<<8)|Math.round(f[2]*255)) >>> 0;
+        fa[i*3+1] = f[3];
+        fa[i*3+2] = f[4];
+      }
+      e.fc = [put(fa), n];
+    }
+    jb.push(e);
+  }
+  const jsonBytes = new TextEncoder().encode(JSON.stringify({ v:1, meta: meta || {}, bodies: jb }));
+  const head = 12 + jsonBytes.length;
+  const base = head + ((4 - (head % 4)) % 4);
+  const out = new ArrayBuffer(base + off);
+  const dv = new DataView(out);
+  dv.setUint32(0, _NSPG_MAGIC, true);
+  dv.setUint32(4, 1, true);
+  dv.setUint32(8, jsonBytes.length, true);
+  new Uint8Array(out, 12, jsonBytes.length).set(jsonBytes);
+  let p = base;
+  for(const c of chunks){
+    new Uint8Array(out, p, c.byteLength).set(new Uint8Array(c.buffer, c.byteOffset, c.byteLength));
+    p += c.byteLength;
+  }
+  return out;
+}
+
+function _nspgDecode(ab){
+  const dv = new DataView(ab);
+  if(dv.getUint32(0, true) !== _NSPG_MAGIC) throw new Error('NSPG: invalid signature');
+  const ver = dv.getUint32(4, true);
+  if(ver !== 1) throw new Error('NSPG: version ' + ver + ' not supported');
+  const jsonLen = dv.getUint32(8, true);
+  const j = JSON.parse(new TextDecoder().decode(new Uint8Array(ab, 12, jsonLen)));
+  const head = 12 + jsonLen;
+  const base = head + ((4 - (head % 4)) % 4);
+  const f32 = (o, l) => new Float32Array(ab, base + o, l);
+  const u32 = (o, l) => new Uint32Array(ab, base + o, l);
+  const out = [];
+  for(const e of j.bodies){
+    const g = new THREE.BufferGeometry();
+    g.setAttribute('position', new THREE.BufferAttribute(f32(e.p[0], e.p[1]), 3));
+    if(e.nr) g.setAttribute('normal', new THREE.BufferAttribute(f32(e.nr[0], e.nr[1]), 3));
+    if(e.ix) g.setIndex(new THREE.BufferAttribute(u32(e.ix[0], e.ix[1]), 1));
+    let faces = null;
+    if(e.fc){
+      const n = e.fc[1];
+      const fa = u32(e.fc[0], n * 3);
+      faces = new Array(n);
+      for(let i = 0; i < n; i++){
+        const h = fa[i*3];
+        faces[i] = [((h>>16)&255)/255, ((h>>8)&255)/255, (h&255)/255, fa[i*3+1], fa[i*3+2]];
+      }
+    }
+    out.push({ name: e.n, color: e.c, isManifold: e.m, geo: g, faces });
+  }
+  return { meta: j.meta || {}, bodies: out };
+}
+
+// Reconstruction des objets NASSCAD depuis une entrée NSPG. Volontairement le
+// MIROIR EXACT de la phase 2c de _importSTEPSingle : même ordre, mêmes champs,
+// même matériau de repli, même convention de nom. Toute divergence entre les
+// deux ferait un import « depuis le cache » subtilement différent d'un import
+// normal — exactement le genre de bug qu'on ne retrouve jamais.
+function _geoCacheRestore(dec, file, groupId, groupLabel){
+  const bodies = dec.bodies;
+  undoPush('import');
+  // [18/09] La table teinte → opacité voyage dans l'entrée de cache : un import
+  // « depuis le cache » ne relit pas le texte, et sans elle le même fichier
+  // ressortait opaque au second import. Miroir exact, comme le reste ici.
+  _stepAlphaTable = (dec.meta && dec.meta.styleAlpha) ? { styleAlpha: dec.meta.styleAlpha } : null;
+  const _impObjs = [];
+  let meshCount = 0;
+  for(const b of bodies){
+    objCnt++;
+    const _faceMats = _applyFaceColors(b.geo, b.faces, b.name, _stepAlphaOf);
+    const col = b.color || COL[objCnt % COL.length];
+    const _alpha = _stepAlphaOf(col);
+    const mat = _faceMats || new THREE.MeshPhongMaterial({color:col, shininess:8,
+      specular:0x1a1a1a, side:THREE.DoubleSide, transparent:_alpha < 1, opacity:_alpha});
+    const mesh = new THREE.Mesh(b.geo, mat); mesh.castShadow = true; scene.add(mesh);
+    mesh.position.set(0, 0, 0); // positions déjà cuites dans la géo (offset global inclus)
+    mesh.updateMatrixWorld(true);
+    const name = (b.name || file.name.replace(/\.[^.]+$/,'')) + '_' + objCnt;
+    const obj  = {id:objCnt, name, type:'csg', mesh, color:col, isHole:false, isManifold:b.isManifold,
+      stepGroupId:groupId, stepGroupLabel:groupLabel};
+    objs.push(obj); _impObjs.push(obj); meshCount++;
+  }
+  selObjs = _impObjs;
+  return meshCount;
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
 // [NEW V4.7.1] NASSCAD BOOSTER — pont de communication réel (client HTTP local).
 // Complète l'implémentation : le protocole NSTP v1 et le cache IDB existaient
 // déjà ci-dessus ("Booster Inside"), mais rien n'appelait encore un vrai
@@ -374,9 +745,22 @@ function _nstpDecode(arrayBuffer, cached){
 const _BOOSTER_PORT = 8765;
 const _BOOSTER_URL  = `http://127.0.0.1:${_BOOSTER_PORT}`;
 let _boosterState = null; // null=pas encore testé, true/false=résultat mis en cache pour la session
+// [PERF 17/09] Horodatage de la dernière sonde NÉGATIVE. _repairBatch et
+// _smoothBatch remettaient _boosterState à null à CHAQUE appel (« il a pu
+// démarrer depuis »), donc re-sondaient le port à chaque lot : sur une session
+// sans MEDUSA et un fichier découpé en N chunks, cela fait 2 × N sondes de
+// 300 ms de pure latence, payées pour une réponse qu'on connaît déjà. La
+// re-sonde garde tout son sens — juste pas plus d'une par minute.
+let _boosterProbeTs = 0;
+const _BOOSTER_REPROBE_MS = 60000;
+function _boosterMaybeReprobe(){
+  if(_boosterState === false && (performance.now() - _boosterProbeTs) > _BOOSTER_REPROBE_MS)
+    _boosterState = null;
+}
 
 async function _detectBooster(timeoutMs = 300){
   if(_boosterState !== null) return _boosterState;
+  _boosterProbeTs = performance.now();
   try{
     const ctrl = new AbortController();
     const timer = setTimeout(() => ctrl.abort(), timeoutMs);
@@ -420,7 +804,7 @@ async function _detectBooster(timeoutMs = 300){
 // MEDUSA a répondu.
 async function _repairBatch(geos){
   if(!geos.length) return [];
-  if(_boosterState === false) _boosterState = null; // re-sonde : peut avoir demarre depuis
+  _boosterMaybeReprobe(); // re-sonde : peut avoir demarre depuis — mais throttlee (cf. sa definition)
   if(await _detectBooster()){
     try{
       const _bt0 = performance.now();
@@ -499,7 +883,7 @@ async function _repairBatch(geos){
 
 async function _smoothBatch(geos, creaseDeg){
   if(!geos.length) return [];
-  if(_boosterState === false) _boosterState = null; // re-sonde : peut avoir demarre depuis
+  _boosterMaybeReprobe(); // re-sonde : peut avoir demarre depuis — mais throttlee (cf. sa definition)
   if(await _detectBooster()){
     try{
       const _bt0 = performance.now();
@@ -667,7 +1051,11 @@ async function _readStepFileViaBooster(buffer, params){
   const timer = setTimeout(() => ctrl.abort(), timeoutMs);
   let res;
   try{
-    res = await fetch(`${_BOOSTER_URL}/step`, { method: 'POST', body: buffer, signal: ctrl.signal });
+    // [19/09] IFC et STEP partagent le conteneur ISO 10303-21 ; seul le schema
+    // change. MEDUSA a un point d'entree dedie, et /step sait aussi renifler —
+    // on vise quand meme /ifc explicitement, c'est plus clair dans ses logs.
+    const _ep = (params && params.ifc) ? '/ifc' : '/step';
+    res = await fetch(`${_BOOSTER_URL}${_ep}`, { method: 'POST', body: buffer, signal: ctrl.signal });
   }catch(e){
     if(e.name === 'AbortError'){
       const err = new Error(`timeout after ${(timeoutMs/1000).toFixed(0)}s — server probably stuck on this file`);
@@ -719,7 +1107,17 @@ function _occtWorkerSrc(occtJsAbsUrl){
     `  const d = ev.data;`,
     `  if(d.type === 'init'){`,
     `    try{`,
-    `      _occt = await occtimportjs({ wasmBinary: d.wasmBytes, locateFile: function(p){ return p; } });`,
+    `      var cfg = { locateFile: function(p){ return p; } };`,
+    `      if(d.wasmModule){`,
+    `        cfg.instantiateWasm = function(imports, receive){`,
+    `          WebAssembly.instantiate(d.wasmModule, imports).then(function(inst){ receive(inst, d.wasmModule); })`,
+    `            .catch(function(e){ self.postMessage({type:'error', msg:'instantiateWasm: ' + ((e&&e.message)||e)}); });`,
+    `          return {};`,
+    `        };`,
+    `      } else {`,
+    `        cfg.wasmBinary = d.wasmBytes;`,
+    `      }`,
+    `      _occt = await occtimportjs(cfg);`,
     `      self.postMessage({type:'ready'});`,
     `    } catch(err){`,
     `      self.postMessage({type:'error', msg:'OCCT Worker init failed: ' + ((err&&err.message)||err)});`,
@@ -731,7 +1129,39 @@ function _occtWorkerSrc(occtJsAbsUrl){
     `    try{`,
     `      if(!_occt) throw new Error('OCCT Worker not initialized');`,
     `      const result = _occt.ReadStepFile(new Uint8Array(buffer), params);`,
-    `      self.postMessage({type:'result', id, result});`,
+    // [PERF 17/09] Sommets et index convertis en tableaux TYPÉS ici, dans le
+    // Worker, puis renvoyés en TRANSFERABLES. occt-import-js sort des tableaux
+    // JS ordinaires (emval) : sur un corps de 2,7 M triangles, ce sont ~12 M de
+    // nombres boxés que le structured clone du postMessage recopie un par un
+    // vers le thread principal, avant que la passe 1 ne les recopie encore dans
+    // un Float32Array. Converti ici, le passage de frontière devient un simple
+    // changement de propriétaire d'ArrayBuffer — coût nul — et la conversion
+    // elle-même ne pèse plus sur le thread qui doit rester réactif.
+    // En cas de structure inattendue, on renvoie le résultat BRUT : une
+    // optimisation ne doit jamais pouvoir casser ce qui marchait.
+    `      var _tr = new Set();`,
+    `      try{`,
+    `        var _ms = (result && result.meshes) || [];`,
+    `        for(var _i = 0; _i < _ms.length; _i++){`,
+    `          var _m = _ms[_i], _a = _m.attributes;`,
+    `          if(_a && _a.position && _a.position.array){`,
+    `            var _p = _a.position.array;`,
+    `            if(!(_p instanceof Float32Array)) _p = new Float32Array(_p);`,
+    `            _a.position.array = _p; _tr.add(_p.buffer);`,
+    `          }`,
+    `          if(_a && _a.normal && _a.normal.array){`,
+    `            var _n = _a.normal.array;`,
+    `            if(!(_n instanceof Float32Array)) _n = new Float32Array(_n);`,
+    `            _a.normal.array = _n; _tr.add(_n.buffer);`,
+    `          }`,
+    `          if(_m.index && _m.index.array){`,
+    `            var _x = _m.index.array;`,
+    `            if(!(_x instanceof Uint32Array)) _x = new Uint32Array(_x);`,
+    `            _m.index.array = _x; _tr.add(_x.buffer);`,
+    `          }`,
+    `        }`,
+    `      } catch(convErr){ _tr.clear(); }`,
+    `      self.postMessage({type:'result', id, result}, Array.from(_tr));`,
     `    } catch(err){`,
     `      self.postMessage({type:'error', id, msg:(err&&err.message)||String(err)});`,
     `    }`,
@@ -790,7 +1220,7 @@ function _initStepWorkerSlot(idx){
     nasLog('WARN', `OCCT Worker #${idx} unavailable (${err.message})` +
       (idx === 0 ? ' — fallback to main-thread. If this persists: some browsers restrict ' +
       'Workers under file:// — serve NASSCAD via a small local HTTP server ' +
-      '(ex: python -m http.server) contourne ce genre de restriction.' : ''));
+      '(e.g. python -m http.server) to get around this restriction.' : ''));
     if(idx === 0) _stepWorkerFailed = true;
     _stepPool[idx] = null;
     return null;
@@ -799,6 +1229,29 @@ function _initStepWorkerSlot(idx){
 // Transfert zero-copy du WASM déjà décodé (base64 inline ou XHR fallback, cf. _getOcct)
 // vers UN worker du pool — celui-ci ne doit JAMAIS tenter de fetch() le .wasm lui-même
 // (c'est exactement ce fetch qui posait problème sous file:// avant l'inlining base64).
+// [PERF 17/09] Compilation UNIQUE du binaire OCCT, partagée par le pool.
+// Chaque slot recevait jusqu'ici sa propre copie des ~7,25 Mo et appelait
+// occtimportjs({wasmBinary}) : autant de compilations WebAssembly complètes que
+// de slots, pour un binaire rigoureusement identique. Un WebAssembly.Module est
+// structured-cloneable vers un Worker du même agent cluster — on compile donc
+// une fois ici, et les slots suivants instancient directement via le hook
+// instantiateWasm d'Emscripten. Économie : (N-1) compilations et (N-1) copies
+// de 7,25 Mo.
+// Le slot 0 garde DÉLIBÉRÉMENT le chemin par octets : sa compilation est de
+// toute façon la première (rien à mutualiser), et c'est le seul slot dont
+// l'échec bascule toute la session en main-thread — on ne lui fait donc courir
+// aucun risque nouveau. Un slot >0 qui échouerait ne fait que réduire le pool,
+// cas déjà géré (cf. onmessage/onerror, branche idx !== 0).
+let _occtWasmModP = null;
+function _occtWasmModule(bytes){
+  if(_occtWasmModP) return _occtWasmModP;
+  _occtWasmModP = WebAssembly.compile(bytes).catch(e => {
+    nasLog('DBG', `OCCT WASM pre-compile unavailable (${e.message}) — pool slots fall back to raw bytes`);
+    return null;
+  });
+  return _occtWasmModP;
+}
+
 async function _sendOcctWasmToStepWorker(worker, idx){
   if(!window._OCCT_WASM) await _ensureOcctB64Companion();
   let bytes = window._OCCT_WASM || _decodeOcctWasmB64();
@@ -808,6 +1261,15 @@ async function _sendOcctWasmToStepWorker(worker, idx){
       nasLog('WARN', `OCCT Worker #${idx||0}: WASM not found (${e.message}) — fallback to main-thread`);
       const s = _stepPool[idx||0]; if(s) s.dead = true;
       if(!idx) _stepWorkerFailed = true;
+      return;
+    }
+  }
+  // [PERF 17/09] Slots >0 : on envoie le MODULE déjà compilé, pas les octets.
+  if(idx > 0){
+    const mod = await _occtWasmModule(bytes);
+    if(mod){
+      worker.postMessage({type:'init', wasmModule: mod});
+      nasLog('DBG', `OCCT Worker #${idx} — reusing pre-compiled WASM module (no recompilation)`);
       return;
     }
   }
@@ -898,32 +1360,154 @@ async function _stepPoolAcquire(timeoutMs=15000){
 //
 // Retourne le tableau de matériaux, ou null si rien d'exploitable — l'appelant
 // retombe alors sur son matériau unique, comportement d'avant inchangé.
-function _applyFaceColors(geo, mFaces){
-  if(!mFaces || mFaces.length < 2) return null;
+// [11/09] Diagnostic couleurs par face. Mesuré DANS le fichier Scania :
+// 38 635 faces topologiques, 14 906 portent un style propre, et seulement 176
+// sont réellement jaunes #dddd0d — sur 2 corps. Les 53 corps dont le SOLIDE est
+// jaune ont, pour 50 d'entre eux, 100 % de leurs faces stylées : la règle OCCT
+// dit que le jaune y est intégralement écrasé. S'il reste du jaune à l'écran,
+// ce n'est donc pas le fichier — c'est que la table de faces n'arrive pas
+// jusqu'ici, ou qu'elle n'est plus alignée sur la géométrie. Ces compteurs
+// disent lequel des deux, corps par corps. `nasFaceColorReport()` dans la
+// console Script imprime le bilan après un import.
+// Les lignes sont GARDÉES en mémoire, pas seulement écrites : le niveau DBG est
+// filtré du log visible par défaut (cf. le bouton DBG du panneau Logs), donc un
+// diagnostic qui n'existe qu'en DBG est un diagnostic que personne ne lit.
+// nasFaceColorReport() les réimprime en OK — visibles sans toucher au filtre —
+// et le bilan part aussi dans le panneau CSG, à côté du « STEP imported ».
+let _facDiagN = 0, _facDiagOk = 0, _facDiagTally = {}, _facDiagLines = [];
+function _facDiag(kind, name, info){
+  _facDiagTally[kind] = (_facDiagTally[kind] || 0) + 1;
+  // Les corps sains sont l'immense majorité et n'apprennent rien : on n'en
+  // garde qu'un échantillon. Un plafond commun aux deux remplissait le tampon
+  // avec 200 lignes « ok » et jetait précisément les cas qu'on cherche.
+  const _ok = (kind === 'ok');
+  if(_ok ? (_facDiagOk++ < 10) : (_facDiagN++ < 200)){
+    const _l = `[face-color] ${kind} — ${name || '?'}: ${info}`;
+    _facDiagLines.push(_l);
+    nasLog('DBG', _l);
+  }
+}
+function nasFaceColorReset(){ _facDiagN = 0; _facDiagOk = 0; _facDiagTally = {}; _facDiagLines = []; }
+// Bilan lisible sans filtre : une ligne de synthèse + les cas à problème.
+// Retourne le texte complet, pour un copier-coller depuis la console Script.
+function nasFaceColorReport(n){
+  const t = Object.entries(_facDiagTally).sort((a,b)=>b[1]-a[1]);
+  if(!t.length){ nasLog('OK','[face-color] no body analysed'); return '[face-color] no body analysed'; }
+  const bilan = '[face-color] summary — ' + t.map(([k,v])=>k+':'+v).join('  ');
+  nasLog('OK', bilan);
+  try{ if(typeof _csgLog === 'function') _csgLog(bilan); }catch(e){}
+  // Les lignes « ok » n'apprennent rien : on remonte d'abord les autres.
+  const bad = _facDiagLines.filter(l => l.indexOf('[face-color] ok —') !== 0);
+  const pick = (bad.length ? bad : _facDiagLines).slice(0, n || 20);
+  pick.forEach(l => nasLog('OK', l));
+  if(bad.length > pick.length) nasLog('OK', `[face-color] … ${bad.length - pick.length} more line(s) — nasFaceColorReport(200)`);
+  return [bilan].concat(_facDiagLines).join('\n');
+}
+// Export explicite : un Run NassScript s'exécute dans une IIFE isolée, où une
+// déclaration de fonction de ce fichier n'est pas forcément visible.
+try{ window.nasFaceColorReport = nasFaceColorReport; window.nasFaceColorReset = nasFaceColorReset; }catch(e){}
+
+// [18/09] alphaOf : fonction teinte(0xRRGGBB) → opacité, ou absente. Elle vient
+// de la table de styles du fichier (nasStepDeclaredAlpha) et ne touche que les
+// teintes que le fichier déclare explicitement transparentes ; sans elle, ou
+// pour toute teinte inconnue, le matériau est opaque — comportement d'avant.
+function _applyFaceColors(geo, mFaces, _dbgName, alphaOf){
+  if(!mFaces || mFaces.length < 2){
+    _facDiag('single-colour', _dbgName, `mFaces=${mFaces ? mFaces.length : 'null'}`);
+    return null;
+  }
   const _idxCount = geo.index ? geo.index.count : geo.attributes.position.count;
-  const _mk = c => new THREE.MeshPhongMaterial({color:c, shininess:8, specular:0x1a1a1a, side:THREE.DoubleSide});
+  let _drop = 0, _span = 0;
+  const _mk = c => {
+    const a = alphaOf ? alphaOf(c) : 1;
+    return new THREE.MeshPhongMaterial({color:c, shininess:8, specular:0x1a1a1a,
+      side:THREE.DoubleSide, transparent:a < 1, opacity:a});
+  };
   const _mats = [], _byColor = new Map();
+  const _groups = [], _areaOf = [];
   let _covered = 0, _run = null;
   geo.clearGroups();
   for(const f of mFaces){
     const _fs = f[3];
-    if(_fs >= _idxCount) continue;
+    if(_fs + f[4] > _span) _span = _fs + f[4];
+    if(_fs >= _idxCount){ _drop++; continue; }
     const _cnt = Math.min(f[4], _idxCount - _fs);
-    if(_cnt <= 0) continue;
+    if(_cnt <= 0){ _drop++; continue; }
     const _hex = (Math.round(f[0]*255)<<16)|(Math.round(f[1]*255)<<8)|Math.round(f[2]*255);
     let _mi = _byColor.get(_hex);
     if(_mi === undefined){ _mi = _mats.length; _byColor.set(_hex, _mi); _mats.push(_mk(_hex)); }
     if(_run && _run.mi === _mi && _run.start + _run.count === _fs){ _run.count += _cnt; }
-    else { if(_run) geo.addGroup(_run.start, _run.count, _run.mi); _run = { start:_fs, count:_cnt, mi:_mi }; }
+    else { if(_run) _groups.push(_run); _run = { start:_fs, count:_cnt, mi:_mi }; }
+    _areaOf[_mi] = (_areaOf[_mi] || 0) + _cnt;
     if(_fs + _cnt > _covered) _covered = _fs + _cnt;
   }
-  if(_run) geo.addGroup(_run.start, _run.count, _run.mi);
-  // Triangles ajoutés en aval par le gap-fill : ils tombent après la dernière
-  // face. Sans ce rattrapage ils n'auraient aucun matériau et disparaîtraient.
-  if(_mats.length && _covered < _idxCount) geo.addGroup(_covered, _idxCount - _covered, 0);
-  if(!_mats.length){ geo.clearGroups(); return null; }
+  if(_run) _groups.push(_run);
+  if(!_mats.length){
+    // Toutes les plages hors buffer : la géométrie n'est plus celle sur
+    // laquelle la table a été calculée. `span` contre `idx` donne le facteur.
+    _facDiag('ranges-off-mesh', _dbgName, `${mFaces.length} face(s), span=${_span}, idx=${_idxCount}, ratio=${(_span/(_idxCount||1)).toFixed(3)}`);
+    geo.clearGroups(); return null;
+  }
+  // ── [11/09] Triangles qu'AUCUNE face ne revendique ───────────────────────
+  // Deux origines : le gap-fill (_capStepGaps) qui ajoute en fin de buffer, et
+  // les trous INTÉRIEURS — des triangles nés du sewing, entre deux plages de
+  // faces, que la table ne couvre pas. Ils étaient traités différemment et tous
+  // les deux mal : la queue partait sur le matériau 0, les trous sur AUCUN.
+  //
+  // Matériau 0, c'est la couleur de la PREMIÈRE face rencontrée — un accident
+  // d'ordre de parcours, sans aucun rapport avec l'endroit où sont ces
+  // triangles. Sur un corps comme le carter Scania (#2950 : 1 751 faces orange,
+  // 7 gris clair, 15 gris foncé) l'orange est premier, donc tout ce qui n'était
+  // revendiqué par personne devenait orange. C'est exactement la contamination
+  // par proximité de couture : ce n'est pas le fichier qui déborde, c'est nous
+  // qui peignons les raccords avec la teinte de la face n° 0.
+  //
+  // On prend le matériau DOMINANT en surface, pas le premier venu, et on
+  // comble aussi les trous intérieurs — sans groupe, three.js ne dessinait
+  // simplement pas ces triangles.
+  let _dom = 0;
+  for(let i = 1; i < _areaOf.length; i++) if((_areaOf[i]||0) > (_areaOf[_dom]||0)) _dom = i;
+  _groups.sort((a,b)=>a.start-b.start);
+  let _hole = 0, _tail = 0, _cursor = 0;
+  for(const g of _groups){
+    if(g.start > _cursor){ _hole += g.start - _cursor; geo.addGroup(_cursor, g.start - _cursor, _dom); }
+    geo.addGroup(g.start, g.count, g.mi);
+    if(g.start + g.count > _cursor) _cursor = g.start + g.count;
+  }
+  if(_cursor < _idxCount){ _tail = _idxCount - _cursor; geo.addGroup(_cursor, _tail, _dom); }
+  const _fill = `holes=${_hole} tail=${_tail} dominant=#${_mats[_dom].color.getHex().toString(16).padStart(6,'0')}`;
+  if(_drop) _facDiag('ranges-partial', _dbgName, `${_drop}/${mFaces.length} face(s) outside buffer, span=${_span}, idx=${_idxCount}, ${_fill}`);
+  else if(_hole || _tail) _facDiag('gaps-filled', _dbgName, `${mFaces.length} face(s), ${_mats.length} colour(s), ${geo.groups.length} group(s), ${_fill}`);
+  else _facDiag('ok', _dbgName, `${mFaces.length} face(s), ${_mats.length} colour(s), ${geo.groups.length} group(s)`);
   geo.userData.faceRanges = mFaces;
   return _mats;
+}
+
+// [11/09] _dominantFaceHex — la teinte qui couvre le plus de triangles dans une
+// table mFaces. UNE seule implémentation, appelée par les deux importeurs, pour
+// la même raison que _applyFaceColors ci-dessus : deux chemins censés donner le
+// même résultat finissent toujours par diverger.
+//
+// Sert à trancher le cas MÉLANGÉ, celui que _adoptBrepFaces et _xcafFaceColors
+// laissaient en l'état : les faces sont peintes correctement, mais la couleur
+// du CORPS reste celle que le fichier a posée sur le MANIFOLD_SOLID_BREP, et
+// elle peut contredire tout ce qui est affiché. Les faces héritées portent déjà
+// la couleur du solide dans la table, donc si l'essentiel du corps n'est pas
+// stylé c'est elle qui l'emporte d'elle-même et rien ne bouge.
+//
+// Départage par teinte la plus basse à surface égale : deux imports du même
+// fichier doivent donner la même couleur.
+function _dominantFaceHex(mFaces){
+  if(!mFaces || !mFaces.length) return null;
+  const area = new Map();
+  for(const f of mFaces){
+    if(!f || !(f[4] > 0)) continue;
+    const k = (Math.round(f[0]*255)<<16)|(Math.round(f[1]*255)<<8)|Math.round(f[2]*255);
+    area.set(k, (area.get(k)||0) + f[4]);
+  }
+  let bk = null, bv = -1;
+  for(const [k,v] of area) if(v > bv || (v === bv && k < bk)){ bv = v; bk = k; }
+  return bk;
 }
 
 function _lin2srgb(c){
@@ -962,7 +1546,8 @@ function _lin2srgb(c){
 function _adoptBrepFaces(m){
   const bf = m.brep_faces;
   // `m.faces` déjà présent = chemin MEDUSA ou cache NSTP : conversion déjà faite.
-  if(!bf || !bf.length || (m.faces && m.faces.length)) return;
+  if(m.faces && m.faces.length) return;
+  if(!bf || !bf.length){ _facDiag('brep_faces-absent', m.name, 'occt-import-js returned no face'); return; }
   const body = (m.color && m.color.r !== undefined) ? [m.color.r, m.color.g, m.color.b] : null;
   const out = [];
   let key = null, uniform = true, nStyled = 0;
@@ -985,13 +1570,30 @@ function _adoptBrepFaces(m){
     // brep_faces indexe des TRIANGLES, _applyFaceColors indexe le BUFFER.
     out.push([rgb[0], rgb[1], rgb[2], f.first * 3, nTri * 3]);
   }
-  if(!nStyled) return;                       // aucune couleur de face : le solide gouverne
+  if(!nStyled){                              // aucune couleur de face : le solide gouverne
+    _facDiag('no-styled-face', m.name, `${bf.length} face(s) returned, 0 with colour`);
+    return;
+  }
   if(uniform){
     // Corps uniforme au niveau des faces : la face gagne contre le solide.
     m.color = { r: out[0][0], g: out[0][1], b: out[0][2] };
     return;                                  // un seul matériau, pas de groupes
   }
-  if(out.length > 1) m.faces = out;
+  if(out.length > 1){
+    m.faces = out;
+    // [11/09] Corps mélangé : jusqu'ici m.color restait la couleur de niveau
+    // SOLIDE. Le rendu, lui, est déjà juste — les plages sont figées dans `out`
+    // avant ce point, donc ce qui suit ne change PAS un pixel à l'import. Mais
+    // m.color devient o.color, et c'est lui que voient la pastille de l'Object
+    // List, _softenColor sur un résultat CSG, l'export STEP et le repli de
+    // _buildSceneFromData. Un corps affiché gris acier avec une pastille jaune
+    // #DDDD0D, c'est la même contradiction que celle du fichier, recopiée dans
+    // l'application au lieu d'être tranchée.
+    const dom = _dominantFaceHex(out);
+    const cur = body ? ((Math.round(body[0]*255)<<16)|(Math.round(body[1]*255)<<8)|Math.round(body[2]*255)) : null;
+    if(dom !== null && dom !== cur)
+      m.color = { r:((dom>>16)&255)/255, g:((dom>>8)&255)/255, b:(dom&255)/255 };
+  }
 }
 
 function _srgbNormalizeMeshColors(result){
@@ -1007,22 +1609,27 @@ function _srgbNormalizeMeshColors(result){
     // s'en sert comme couleur de repli pour les faces sans style, et peut la
     // remplacer quand toutes les faces s'accordent sur une autre couleur.
     try { _adoptBrepFaces(m); }
-    catch(e){ nasLog('WARN', `brep_faces ignoré sur ${m.name||'?'} (${e.message})`); }
+    catch(e){ nasLog('WARN', `brep_faces ignored on ${m.name||'?'} (${e.message})`); }
   }
   return result;
 }
 
-async function _readStepFileOffloaded(buffer, params){
+async function _readStepFileOffloaded(buffer, params, _perf, _hashHex){
   // [NEW V4.4.8] Booster Inside — cache navigateur consulté AVANT tout calcul.
   // Hash calculé ICI, en premier : plus bas, le buffer est détaché par le
   // postMessage transferable vers le Worker — il serait illisible après.
-  const _ck = await _stepCacheKey(buffer, params);
+  const _tHash0 = performance.now();
+  const _ck = await _stepCacheKey(buffer, params, _hashHex);
+  _stepPerfMark(_perf, 'parse cache key', performance.now() - _tHash0);
   if(_ck){
+    const _tLook0 = performance.now();
     const _hit = await _stepCacheGet(_ck);
+    _stepPerfMark(_perf, 'parse cache lookup', performance.now() - _tLook0, _hit ? 'HIT' : 'miss');
     if(_hit){
       const _t0 = performance.now();
       try{
         const _out = _nstpDecode(_hit, false);
+        _stepPerfMark(_perf, 'NSTP decode (cache)', performance.now() - _t0, `${_out.meshes.length} bodies`);
         nasLog('OK', `⚡ Booster Inside: ${_out.meshes.length} bodies in ` +
           `${((performance.now()-_t0)/1000).toFixed(2)}s — browser cache (IndexedDB), zero parsing`);
         return _out;
@@ -1039,6 +1646,11 @@ async function _readStepFileOffloaded(buffer, params){
     try{
       const _bt0 = performance.now();
       let _bres;
+      // [19/09] /stepstream ne sert que le STEP : un IFC part directement sur
+      // /ifc, sans tenter un streaming qui echouerait pour rien.
+      if(params && params.ifc){
+        _bres = await _readStepFileViaBooster(buffer, params);
+      } else
       try{
         _bres = await _readStepFileViaBoosterStream(buffer, params, (mesh, n) => {
           // Progression RÉELLE, corps par corps, pendant que le natif calcule —
@@ -1054,6 +1666,7 @@ async function _readStepFileOffloaded(buffer, params){
       }
       nasLog('OK', `⚡ MEDUSA: ${_bres.meshes.length} bodies in ` +
         `${((performance.now()-_bt0)/1000).toFixed(2)}s — native parallel OCCT, no WASM`);
+      _stepPerfMark(_perf, 'parsing (MEDUSA native)', performance.now() - _bt0, `${_bres.meshes.length} bodies`);
       if(_ck && _bres && _bres.success && _bres.meshes && _bres.meshes.length){
         _stepCachePut(_ck, _bres);
       }
@@ -1074,7 +1687,12 @@ async function _readStepFileOffloaded(buffer, params){
   }
   // [26/08] Seul point de sortie du chemin WASM : normalisation couleur AVANT
   // la mise en cache, pour que l'IDB ne stocke jamais de linéaire.
+  const _tWasm0 = performance.now();
   const _res = _srgbNormalizeMeshColors(await _readStepFileUncached(buffer, params));
+  _stepPerfMark(_perf, 'parsing (OCCT WASM)', performance.now() - _tWasm0,
+    `${(_res && _res.meshes ? _res.meshes.length : 0)} bodies` +
+    `, deflection ${(params && params.linearDeflection) ?? _STEP_WASM_DEFLECTION}` +
+    ` (emval + structured clone included)`);
   if(_ck && _res && _res.success && _res.meshes && _res.meshes.length){
     _stepCachePut(_ck, _res); // fire-and-forget : encode NSTP + store + LRU
   }
@@ -1174,7 +1792,7 @@ async function _stepOpfsSupported(){
 // Retourne { text, cleanup() } — cleanup() purge le fichier tampon OPFS (no-op si repli RAM).
 async function _stepLoadTextBuffered(file){
   if(!(await _stepOpfsSupported())){
-    nasLog('DBG', 'STEP buffer tampon : OPFS indisponible — repli 100% RAM (ancien chemin)');
+    nasLog('DBG', 'STEP scratch buffer: OPFS unavailable — falling back to 100% RAM (legacy path)');
     const buffer = await file.arrayBuffer();
     return { text: _bytesToLatin1Str(new Uint8Array(buffer)), cleanup: async () => {} };
   }
@@ -1209,7 +1827,7 @@ async function _stepLoadTextBuffered(file){
     const cleanup = async () => { try { await root.removeEntry(opfsName); } catch(e){ /* déjà purgé, sans conséquence */ } };
     return { text, cleanup };
   } catch(e){
-    nasLog('WARN', `STEP buffer tampon (OPFS) échoué (${e.message}) — repli 100% RAM`);
+    nasLog('WARN', `STEP scratch buffer (OPFS) failed (${e.message}) — falling back to 100% RAM`);
     if(root && opfsName){ try { await root.removeEntry(opfsName); } catch(_e){ /* rien à purger */ } }
     const buffer = await file.arrayBuffer();
     return { text: _bytesToLatin1Str(new Uint8Array(buffer)), cleanup: async () => {} };
@@ -1767,7 +2385,7 @@ function _stepZipList(u8){
 async function _stepZipPull(u8, entry){
   const dv = new DataView(u8.buffer, u8.byteOffset, u8.byteLength);
   if(dv.getUint32(entry.lhOff, true) !== 0x04034B50)
-    throw new Error('Local header ZIP invalide (offset ' + entry.lhOff + ')');
+    throw new Error('Invalid ZIP local header (offset ' + entry.lhOff + ')');
   const fnl = dv.getUint16(entry.lhOff + 26, true);
   const exl = dv.getUint16(entry.lhOff + 28, true);
   const start = entry.lhOff + 30 + fnl + exl;
@@ -1906,7 +2524,21 @@ async function _stepNormalizeFile(file){
 // Le scan tourne AVANT le transfert du buffer au Worker OCCT (postMessage transfer =
 // ArrayBuffer détaché). Part 21 = ASCII → décodage latin1 rapide (_bytesToLatin1Str).
 
-let _pmiPending = null;   // résultat du scan, consommé en fin d'import
+let _pmiPending = null;
+let _stepDeclared = null;   // [16/09] relevé de la déclaration du fichier courant   // résultat du scan, consommé en fin d'import
+// [18/09] Opacité déclarée par le fichier courant, par teinte. Le porteur est
+// séparé de _stepDeclared parce que le chemin « depuis le cache » n'a pas de
+// texte à relire : il restitue la table rangée dans l'entrée NSPG.
+let _stepAlphaTable = null;
+// Accepte '#rrggbb' (matériau unique) ou 0xRRGGBB (table de faces). Rend 1 —
+// donc opaque, comportement d'avant — dès que le fichier ne déclare rien.
+function _stepAlphaOf(c){
+  if(!_stepAlphaTable || typeof nasStepDeclaredAlpha !== 'function') return 1;
+  const hex = (typeof c === 'number')
+    ? '#' + ((c >>> 0) & 0xffffff).toString(16).padStart(6, '0')
+    : String(c).toLowerCase();
+  try { return nasStepDeclaredAlpha(_stepAlphaTable, hex); } catch(e){ return 1; }
+}
 let _pmiRoot = null;      // THREE.Group racine des overlays PMI (lazy)
 // [NEW V4.4.0 05/07] subs : liens { sub, label, anchor } — chaque sous-groupe PMI suit
 // l'objet ancre (1er corps de son import) via _pmiSync() dans anim(). Voir _pmiSync.
@@ -2357,20 +2989,20 @@ function _pmiScanIfRelevant(buffer, fname){
 }
 
 // ── Overlay Three.js + UI ─────────────────────────────────────────────────────
-const _PMI_FAM_COLOR = { datum: 0xffd447, forme: 0x4fc3f7, orientation: 0x4dd0e1,
-  localisation: 0xff8a65, dimension: 0x81c784, texte: 0xd0d0d0, autre: 0xce93d8 };
+const _PMI_FAM_COLOR = { datum: 0xffd447, form: 0x4fc3f7, orientation: 0x4dd0e1,
+  location: 0xff8a65, dimension: 0x81c784, text: 0xd0d0d0, other: 0xce93d8 };
 const _PMI_CSS = { white: 0xf2f2f2, black: 0x202020, red: 0xff4040, green: 0x33cc55,
   blue: 0x4488ff, yellow: 0xffd447, cyan: 0x33cccc, magenta: 0xcc44cc };
 
 function _pmiFamily(name){
   const n = (name || '').toLowerCase();
   if(/datum/.test(n)) return 'datum';
-  if(/flat|straight|circular|cylindric|angular/.test(n)) return 'forme';
+  if(/flat|straight|circular|cylindric|angular/.test(n)) return 'form';
   if(/parallel|perpendic|orient/.test(n)) return 'orientation';
-  if(/position|profile|runout|concentr|symmetr|coaxial/.test(n)) return 'localisation';
+  if(/position|profile|runout|concentr|symmetr|coaxial/.test(n)) return 'location';
   if(/size|diamet|radius|linear|dimension|angle|chamfer|thread/.test(n)) return 'dimension';
-  if(/text|note|label/.test(n)) return 'texte';
-  return 'autre';
+  if(/text|note|label/.test(n)) return 'text';
+  return 'other';
 }
 
 function _pmiCommit(p, ox, oy, oz, label){
@@ -2474,7 +3106,7 @@ function _pmiBuildPanel(){
   const fams = {};
   _pmiState.items.forEach((it, ix) => { (fams[it.fam] = fams[it.fam] || []).push(ix); });
   let rows = '';
-  for(const f of ['datum','forme','orientation','localisation','dimension','texte','autre']){
+  for(const f of ['datum','form','orientation','location','dimension','text','other']){
     if(!fams[f]) continue;
     const col = '#' + _PMI_FAM_COLOR[f].toString(16).padStart(6, '0');
     rows += `<div style="margin:7px 0 2px;font-weight:700;font-size:11px;color:${col}">■ ${f.toUpperCase()} <span style="opacity:.55">(${fams[f].length})</span></div>`;
@@ -2527,7 +3159,34 @@ function _pmiClear(){
   _pmiRepaint();
 }
 
+// ═══════════════════════════════════════════════════════════════════════════
+// IMPORT IFC MEDUSA — optional native entry; default import is in ifc-import.js.
+//
+// Trois lignes de code, parce que tout le travail est ailleurs : MEDUSA lit
+// l'IFC nativement (namespace nasifc) et rend le MEME buffer NSTP que pour un
+// STEP. Tout ce qui suit — decodage, construction des maillages, couleurs par
+// face, opacite, cache IndexedDB, arborescence — est strictement le chemin
+// STEP, inchange.
+//
+// DEUX DIFFERENCES, et elles sont voulues :
+//   - boosterOnly. occt-import-js ne sait PAS lire l'IFC : retomber sur le WASM
+//     ne produirait qu'une erreur incomprehensible. Sans MEDUSA, on le dit.
+//   - pas de decoupage Turbo. Le slicer traverse un graphe Part-21 depuis les
+//     PRODUCT STEP ; les racines d'un IFC sont ailleurs. MEDUSA avale le
+//     fichier entier de toute facon (10,5 Mo / 147 712 entites en 13 s).
+async function importIFCMedusa(file) {
+  nasFaceColorReset();
+  if (!(await _detectBooster())) {
+    throw new Error('IFC import needs the MEDUSA engine — start it and try again '
+                  + '(unlike STEP there is no browser fallback: the WASM reader does not speak IFC)');
+  }
+  nasLog('OK', `IFC: ${file.name} (${(file.size/1024/1024).toFixed(1)} MB) — native MEDUSA reader`);
+  return _importSTEPSingle(file, { boosterOnly: true, ifc: true });
+}
+try{ window.importIFCMedusa = importIFCMedusa; }catch(e){}
+
 async function importSTEP(file) {
+  nasFaceColorReset();   // [11/09] compteurs couleurs par face, remis a zero par import
   // [NEW V4.4.0 03/07] Normalisation conteneur AVANT la décision de slicing : un
   // .stpz de 30 MB peut cacher un Part 21 de 300 MB — la taille pertinente pour le
   // seuil Turbo est celle du payload décompressé, pas celle du conteneur.
@@ -2711,8 +3370,9 @@ async function importSTEP(file) {
 }
 
 async function _importSTEPSingle(file, _impOpts){
-  showSpinner('Import STEP (OCCT)', file.name);
+  showSpinner((_impOpts && _impOpts.ifc) ? 'Import IFC (MEDUSA)' : 'Import STEP (OCCT)', file.name);
   const t0 = performance.now();
+  const _perf = _stepPerfNew(file.name); // [PERF 17/09] cf. _stepPerfReport() dans le finally
   const _stepGroupId = 'stepgrp_' + (++_stepGroupSeq);
   const _seenN = (_stepFilenameSeen.get(file.name) || 0) + 1;
   _stepFilenameSeen.set(file.name, _seenN);
@@ -2742,11 +3402,86 @@ async function _importSTEPSingle(file, _impOpts){
     // [NEW V4.4.0 03/07] Badge AP dans le titre du spinner — l'utilisateur voit ENFIN
     // quel protocole il importe au lieu d'un générique "(OCCT)".
     const _spTitle = 'Import STEP' + (_stepSchema !== '?' ? ' ' + _stepSchema : '') + ' (OCCT)';
+    // ══════════════════════════════════════════════════════════════════════
+    // [PERF 17/09] CACHE DE GÉOMÉTRIE FINALE — consulté AVANT tout le reste.
+    // Le hash est calculé ici, une seule fois, puis resservi plus bas au cache
+    // de parsing : deux SHA-256 sur le même buffer, ce serait une seconde
+    // perdue sur un gros fichier pour deux résultats identiques.
+    // ══════════════════════════════════════════════════════════════════════
+    const _tHash0 = performance.now();
+    const _hashHex = await _stepDigestHex(buffer);
+    _stepPerfMark(_perf, 'file hash', performance.now() - _tHash0,
+      `${(buffer.byteLength/1024/1024).toFixed(1)} MB`);
+    // [17/09] En mode FreeCAD aucune réparation n'a lieu, MEDUSA présent ou non :
+    // le drapeau doit dire ce qui se PASSE, pas ce qui serait possible.
+    const _repairApplied = !_STEP_LEAN_IMPORT
+      && ((await _detectBooster()) || _STEP_REPAIR_CLIENT_POOL);
+    const _gk = _geoCacheKey(_hashHex, _repairApplied);
+    if(_gk){
+      const _tG0 = performance.now();
+      const _gHit = await _geoCacheGet(_gk);
+      _stepPerfMark(_perf, 'geometry cache lookup', performance.now() - _tG0, _gHit ? 'HIT' : 'miss');
+      if(_gHit){
+        try{
+          const _tR0 = performance.now();
+          const _dec = _nspgDecode(_gHit);
+          // Le scan PMI reste nécessaire : l'overlay d'annotations n'est pas de
+          // la géométrie de corps, il n'est donc pas dans le NSPG. Il est peu
+          // coûteux (0,1 s pour 17 Mo) et se recale sur l'offset global stocké
+          // dans l'entrée — c'est pour ça qu'on le stocke.
+          _pmiPending = null;
+          try { _pmiPending = _pmiScanIfRelevant(buffer, file.name); }
+          catch(e){ nasLog('WARN', `PMI scan failed (${e.message}) — import continues without PMI`); }
+          const _n = _geoCacheRestore(_dec, file, _stepGroupId, _stepGroupLabel);
+          if(_pmiPending && (_pmiPending.annotations.length || _pmiPending.semantics.length)){
+            try { _pmiCommit(_pmiPending, _dec.meta.gOx || 0, _dec.meta.gOy || 0, _dec.meta.gOz || 0, _stepGroupLabel); }
+            catch(e){ nasLog('WARN', `PMI overlay failed (${e.message})`); }
+          }
+          _pmiPending = null;
+          _stepPerfMark(_perf, 'geometry restore (cache)', performance.now() - _tR0, `${_n} bodies`);
+          updProps(); updOList(); updStats();
+          const _cms = Math.round(performance.now() - t0);
+          if(!_stepTurboBatch){ _lastImportStats = { chunks: 1, ms: _cms, label: file.name }; updStats(); }
+          const _cnm = _dec.meta.nonManifoldCount || 0;
+          nasLog('OK', `⚡ STEP import from geometry cache: ${_n} mesh(es) — ${_cms} ms `
+            + `(no parsing, no sewing, no repair, no smoothing)`
+            + (_cnm ? ` — ⚠ ${_cnm} non-manifold` : ''));
+          _csgLog(`✓ STEP imported (geometry cache): ${_n} mesh(es)`
+            + (_cnm ? ` — ⚠ ${_cnm} non-manifold` : ''));
+          nasFaceColorReport();
+          return; // l'audit déclaration↔obtenu est sauté : il compare au résultat
+                  // du LECTEUR, qui n'a pas tourné. Le dire plutôt que l'inventer.
+        }catch(e){
+          nasLog('WARN', `Geometry cache entry unreadable (${e.message}) — purged, falling back to a full import`);
+          _stepCacheDelete(_gk);
+        }
+      }
+    }
     // [NEW V4.4.0 03/07] Scan PMI + géométrie tessellée — impérativement AVANT le
     // transfert du buffer au Worker (postMessage transfer = ArrayBuffer détaché).
     _pmiPending = null;
+    const _tPmi0 = performance.now();
     try { _pmiPending = _pmiScanIfRelevant(buffer, file.name); }
-    catch(e){ nasLog('WARN', `PMI scan failed (${e.message}) — import continue sans PMI`); }
+    catch(e){ nasLog('WARN', `PMI scan failed (${e.message}) — import continues without PMI`); }
+    _stepPerfMark(_perf, 'PMI scan', performance.now() - _tPmi0);
+    // [16/09] Ce que le fichier DÉCLARE, lu avant tout calcul géométrique — et
+    // impérativement ici, avant que le transfert au Worker ne détache le buffer.
+    // Sans ce relevé, « ⚠ non manifold » est une opinion sans référence ; avec
+    // lui, c'est une contradiction chiffrée entre ce que le fichier affirme et
+    // ce que l'import a produit. Mesuré : 0,1 s pour 17 Mo, 0,6 s pour 40 Mo —
+    // négligeable devant les 28 s et 110 s des imports correspondants.
+    _stepDeclared = null;
+    _stepAlphaTable = null;
+    const _tDecl0 = performance.now();
+    try { if(typeof nasStepDeclared === 'function') _stepDeclared = nasStepDeclared(buffer); }
+    catch(e){ nasLog('WARN', `STEP declaration scan failed (${e.message}) — import continue`); }
+    _stepAlphaTable = _stepDeclared;
+    if(_stepDeclared && _stepDeclared.styleAlpha){
+      const _nA = Object.keys(_stepDeclared.styleAlpha).length;
+      if(_nA) nasLog('OK', `STEP declares ${_nA} translucent colour(s) — applied to the bodies painted with them`
+        + (_stepDeclared.styleAlphaAmbiguous ? `, ${_stepDeclared.styleAlphaAmbiguous} ambiguous one(s) left opaque` : ''));
+    }
+    _stepPerfMark(_perf, 'STEP declaration scan', performance.now() - _tDecl0);
     // [NEW V4.2.7p4 20/06] Parsing offloadé vers le Worker OCCT dédié si dispo (gros
     // fichiers multi-corps sans geler l'UI) — fallback to main-thread transparent sinon.
     if(buffer.byteLength > 20*1024*1024)
@@ -2764,14 +3499,23 @@ async function _importSTEPSingle(file, _impOpts){
     // troublant. Le cas vraiment opaque (occt-import-js WASM, aucun callback exposé,
     // vérifié dans son source) ne subsiste que quand le serveur natif est absent.
     if(_boosterState){
-      showSpinner(_spTitle, `${file.name} — MEDUSA: parsing file… (detailed progress in the server window)`, 'indeterminate');
+      showSpinner(_spTitle, `${file.name} — MEDUSA: parsing file…`, 'indeterminate');
     }else{
       showSpinner(_spTitle, `${file.name} — parsing OCCT… (no progress % available — opaque lib)`, 'indeterminate');
     }
     let result;
     try {
+      // [PERF 17/09] Déflexion et angle passés EXPLICITEMENT. Avant, seul
+      // linearUnit était transmis : occt-import-js appliquait donc ses défauts
+      // (ratio bbox 0.001 / 0.5 rad) sans que rien, côté NASSCAD, ne le dise ni
+      // ne permette de le régler. Cf. _STEP_WASM_DEFLECTION pour le pourquoi du
+      // nouveau défaut. MEDUSA ignore ces champs (il POSTe le buffer brut).
       result = await _readStepFileOffloaded(buffer, { linearUnit:'millimeter',
-        boosterOnly: !!(_impOpts && _impOpts.boosterOnly) });
+        linearDeflectionType: 'bounding_box_ratio',
+        linearDeflection:  _STEP_WASM_DEFLECTION,
+        angularDeflection: _STEP_WASM_ANGULAR,
+        boosterOnly: !!(_impOpts && _impOpts.boosterOnly),
+        ifc:         !!(_impOpts && _impOpts.ifc) }, _perf, _hashHex);
     } finally {
       /* rien à nettoyer ici — le chrono est géré globalement par showSpinner/hideSpinner */
     }
@@ -2846,68 +3590,96 @@ async function _importSTEPSingle(file, _impOpts){
       const geo = new THREE.BufferGeometry();
       geo.setAttribute('position', new THREE.BufferAttribute(verts, 3));
       geo.setIndex(new THREE.BufferAttribute(new Uint32Array(idxArr), 1));
-      // [CLEANUP V4.2.7 19/06] Injection normales OCCT SUPPRIMÉE — plus aucun consommateur
-      // depuis le retrait du moyennage dans _weldAndCheckManifold (cf. ce fichier, plus haut).
-      // Le lissage final vient exclusivement de postProcessCSGGeo (BFS, position+index).
-      // Sewing adaptatif : 0.001mm → 0.01mm → 0.1mm
-      // Couvre les gaps SolidWorks/Parasolid (>0.001mm) et la dérive Float32 grands assemblages.
-      // Chaque retry repart du buffer original (le weld modifie geo en place).
-      // Bbox protection : maxSewTol limité à minDim/3 — évite de coller les faces
-      // opposées d'objets ultra-minces (ex: disque 0.01mm : tol=0.1mm les collapse).
-      const _sP = new Float32Array(geo.attributes.position.array);
-      const _sI = geo.index  ? new Uint32Array(geo.index.array)             : null;
-      const _sN = geo.attributes.normal ? new Float32Array(geo.attributes.normal.array) : null;
-      const _rG = () => {
-        geo.setAttribute('position', new THREE.BufferAttribute(new Float32Array(_sP), 3));
-        if(_sI) geo.setIndex(new THREE.BufferAttribute(new Uint32Array(_sI), 1));
-        if(_sN) geo.setAttribute('normal', new THREE.BufferAttribute(new Float32Array(_sN), 3));
-      };
-      // minDim = plus petite dimension de la bbox → plafond de la tol adaptative
-      const _bb0 = new THREE.Box3().setFromBufferAttribute(geo.attributes.position);
-      const _sz0 = new THREE.Vector3(); _bb0.getSize(_sz0);
-      const _minDim = Math.min(_sz0.x, _sz0.y, _sz0.z);
-      // maxSewTol : tol (1/2/3) max autorisée pour éviter le collapse
-      // _minDim ≥ 0.3mm → tol jusqu'à 0.1mm ok  (maxSewTol=1)
-      // _minDim ≥ 0.03mm → tol jusqu'à 0.01mm ok (maxSewTol=2)
-      // _minDim < 0.03mm → pas de retry           (maxSewTol=3, tol=3 seulement)
-      const _maxSewTol = _minDim >= 0.3 ? 1 : _minDim >= 0.03 ? 2 : 3;
-      let _sTol = 3;
-      let isManifold = _weldAndCheckManifold(geo, 3);
-      // [NEW] Breathe AVANT chaque retry, pas seulement entre meshes : sur un gros mesh
-      // (centaines de milliers de vertices), _weldAndCheckManifold hache via toFixed()
-      // — coûteux — et peut à elle seule dépasser largement les 16ms du throttle du haut
-      // de boucle. Jusqu'à 3 passes d'affilée (tol 3→2→1) sans pause = le vrai responsable
-      // des gels de plusieurs dizaines de secondes constatés (chrono spinner y compris —
-      // il est calculé depuis performance.now(), donc jamais "faux", juste incapable de
-      // se rafraîchir tant que le thread unique ne respire pas). Coupe le bloc en tranches.
-      if(!isManifold && _sTol > _maxSewTol){ await _breathe(); _rG(); _sTol=2; isManifold = _weldAndCheckManifold(geo, 2); }
-      if(!isManifold && _sTol > _maxSewTol){ await _breathe(); _rG(); _sTol=1; isManifold = _weldAndCheckManifold(geo, 1); }
-      if(_sTol < 3) nasLog('DBG', `STEP sewing adaptatif tol=${_sTol} (${[,'0.1','0.01','0.001'][_sTol]}mm) — ${m.name||'?'} — minDim=${_minDim.toFixed(3)}mm`);
-      // Skip micro-meshes non-manifold : annotations/GD&T AP242 parasites (< 20 tris)
-      const _nTri = (geo.index ? geo.index.count : geo.attributes.position.count) / 3;
-      if(!isManifold && _nTri < 20){
-        nasLog('DBG', `STEP skip micro-mesh non-manifold : ${m.name||'?'} (${_nTri} tris)`);
-        continue;
-      }
-      if(!isManifold) nonManifoldCount++;
-      // [NEW V4.2.7 19/06] Diagnostic trous résiduels — cf. instrumentation _weldAndCheckManifold.
-      // Mesure empirique avant de décider si un hole-filling (boundary-loop+triangulation) est
-      // justifié : combien d'arêtes à nu, et où (bbox), une fois la cascade de sewing épuisée.
-      if(!isManifold && geo._nakedEdges){
-        const _bb=geo._gapBBox;
-        nasLog('DBG', `STEP gap residual — ${m.name||'?'} : ${geo._nakedEdges} naked edge(s)`
-          + (geo._overEdges?`, ${geo._overEdges} over-valenced edge(s)`:'')
-          + ` — bbox [${_bb.min.map(v=>v.toFixed(4)).join(',')}] → [${_bb.max.map(v=>v.toFixed(4)).join(',')}]`);
-      }
-      // [NEW V4.2.7 19/06] Tentative de cap (boundary-loop + ear-clip planaire) — cf.
-      // _capStepGaps. Best-effort : seules les boucles fermées quasi-planes sont comblées,
-      // tout le reste reste inchangé (CSG désactivé comme aujourd'hui). Validé sur
-      // boxy_with_cylindricity.stp (NIST AP214) avant ce patch.
-      if(!isManifold && geo._nakedEdgePairs && geo._nakedEdgePairs.length){
-        await _breathe(); // idem — _capStepGaps refait un _edgeManifoldCheck complet
-        if(_capStepGaps(geo)){
-          isManifold = true; nonManifoldCount--;
-          nasLog('DBG', `STEP gap filled — ${m.name||'?'} : mesh now watertight`);
+      // ── [17/09] IMPORT LÉGER ─────────────────────────────────────────────
+      // On garde ce qu'OCCT a produit : sa triangulation, son ordre de faces,
+      // et ses normales quand il les fournit. Rien d'autre n'est touché.
+      // Les normales subissent la MÊME bascule Z-up→Y-up que les sommets —
+      // une normale est un vecteur, la rotation s'y applique à l'identique
+      // (rotation pure, pas de mise à l'échelle : pas de matrice inverse
+      // transposée à sortir).
+      let isManifold = null;   // null = non évalué, cf. nasEnsureManifold côté host
+      if(_STEP_LEAN_IMPORT){
+        const _nSrc = m.attributes?.normal?.array;
+        if(_nSrc && _nSrc.length === posArr.length){
+          const _nrm = new Float32Array(_nSrc.length);
+          for(let i=0; i<_nSrc.length; i+=3){
+            _nrm[i]   = _nSrc[i];
+            _nrm[i+1] = _nSrc[i+2];
+            _nrm[i+2] = -_nSrc[i+1];
+          }
+          geo.setAttribute('normal', new THREE.BufferAttribute(_nrm, 3));
+        }
+      } else {
+        // [CLEANUP V4.2.7 19/06] Injection normales OCCT SUPPRIMÉE — plus aucun consommateur
+        // depuis le retrait du moyennage dans _weldAndCheckManifold (cf. ce fichier, plus haut).
+        // Le lissage final vient exclusivement de postProcessCSGGeo (BFS, position+index).
+        // Sewing adaptatif : 0.001mm → 0.01mm → 0.1mm
+        // Couvre les gaps SolidWorks/Parasolid (>0.001mm) et la dérive Float32 grands assemblages.
+        // Chaque retry repart du buffer original (le weld modifie geo en place).
+        // Bbox protection : maxSewTol limité à minDim/3 — évite de coller les faces
+        // opposées d'objets ultra-minces (ex: disque 0.01mm : tol=0.1mm les collapse).
+        const _sP = new Float32Array(geo.attributes.position.array);
+        const _sI = geo.index  ? new Uint32Array(geo.index.array)             : null;
+        const _sN = geo.attributes.normal ? new Float32Array(geo.attributes.normal.array) : null;
+        const _rG = () => {
+          geo.setAttribute('position', new THREE.BufferAttribute(new Float32Array(_sP), 3));
+          if(_sI) geo.setIndex(new THREE.BufferAttribute(new Uint32Array(_sI), 1));
+          if(_sN) geo.setAttribute('normal', new THREE.BufferAttribute(new Float32Array(_sN), 3));
+        };
+        // minDim = plus petite dimension de la bbox → plafond de la tol adaptative
+        const _bb0 = new THREE.Box3().setFromBufferAttribute(geo.attributes.position);
+        const _sz0 = new THREE.Vector3(); _bb0.getSize(_sz0);
+        const _minDim = Math.min(_sz0.x, _sz0.y, _sz0.z);
+        // maxSewTol : tol (1/2/3) max autorisée pour éviter le collapse
+        // _minDim ≥ 0.3mm → tol jusqu'à 0.1mm ok  (maxSewTol=1)
+        // _minDim ≥ 0.03mm → tol jusqu'à 0.01mm ok (maxSewTol=2)
+        // _minDim < 0.03mm → pas de retry           (maxSewTol=3, tol=3 seulement)
+        const _maxSewTol = _minDim >= 0.3 ? 1 : _minDim >= 0.03 ? 2 : 3;
+        let _sTol = 3;
+        isManifold = _weldAndCheckManifold(geo, 3);
+        // [NEW] Breathe AVANT chaque retry, pas seulement entre meshes : sur un gros mesh
+        // (centaines de milliers de vertices), _weldAndCheckManifold hache via toFixed()
+        // — coûteux — et peut à elle seule dépasser largement les 16ms du throttle du haut
+        // de boucle. Jusqu'à 3 passes d'affilée (tol 3→2→1) sans pause = le vrai responsable
+        // des gels de plusieurs dizaines de secondes constatés (chrono spinner y compris —
+        // il est calculé depuis performance.now(), donc jamais "faux", juste incapable de
+        // se rafraîchir tant que le thread unique ne respire pas). Coupe le bloc en tranches.
+        if(!isManifold && _sTol > _maxSewTol){ await _breathe(); _rG(); _sTol=2; isManifold = _weldAndCheckManifold(geo, 2); }
+        if(!isManifold && _sTol > _maxSewTol){ await _breathe(); _rG(); _sTol=1; isManifold = _weldAndCheckManifold(geo, 1); }
+        if(_sTol < 3) nasLog('DBG', `STEP sewing adaptatif tol=${_sTol} (${[,'0.1','0.01','0.001'][_sTol]}mm) — ${m.name||'?'} — minDim=${_minDim.toFixed(3)}mm`);
+        // Skip micro-meshes non-manifold : annotations/GD&T AP242 parasites (< 20 tris)
+        const _nTri = (geo.index ? geo.index.count : geo.attributes.position.count) / 3;
+        if(!isManifold && _nTri < 20){
+          nasLog('DBG', `STEP skip micro-mesh non-manifold : ${m.name||'?'} (${_nTri} tris)`);
+          continue;
+        }
+        if(!isManifold) nonManifoldCount++;
+        // [NEW V4.2.7 19/06] Diagnostic trous résiduels — cf. instrumentation _weldAndCheckManifold.
+        // Mesure empirique avant de décider si un hole-filling (boundary-loop+triangulation) est
+        // justifié : combien d'arêtes à nu, et où (bbox), une fois la cascade de sewing épuisée.
+        if(!isManifold && geo._nakedEdges){
+          const _bb=geo._gapBBox;
+          nasLog('DBG', `STEP gap residual — ${m.name||'?'} : ${geo._nakedEdges} naked edge(s)`
+            + (geo._overEdges?`, ${geo._overEdges} over-valenced edge(s)`:'')
+            + ` — bbox [${_bb.min.map(v=>v.toFixed(4)).join(',')}] → [${_bb.max.map(v=>v.toFixed(4)).join(',')}]`);
+        }
+        // [NEW V4.2.7 19/06] Tentative de cap (boundary-loop + ear-clip planaire) — cf.
+        // _capStepGaps. Best-effort : seules les boucles fermées quasi-planes sont comblées,
+        // tout le reste reste inchangé (CSG désactivé comme aujourd'hui). Validé sur
+        // boxy_with_cylindricity.stp (NIST AP214) avant ce patch.
+        if(!isManifold && geo._nakedEdgePairs && geo._nakedEdgePairs.length){
+          await _breathe(); // idem — _capStepGaps refait un _edgeManifoldCheck complet
+          // [TEST CAP 16/09 — À REMETTRE EN ÉTAT] bouche-trou neutralisé.
+          // On cherche à savoir si le « soudage en surface » des lumières vient d'ici :
+          // _capStepGaps ferme toute boucle de bord quasi-plane, sans pouvoir distinguer
+          // un jour laissé par la tessellation d'une ouverture voulue par le concepteur.
+          // Retirer le `false &&` pour rétablir. Original : if(_capStepGaps(geo)){
+          // [RESTAURÉ 17/09] le `false &&` du test du 16/09 est remplacé par un
+          // interrupteur nommé : _STEP_CAP_GAPS = false refait le test sans patch.
+          if(_STEP_CAP_GAPS && _capStepGaps(geo)){
+            isManifold = true; nonManifoldCount--;
+            nasLog('DBG', `STEP gap filled — ${m.name||'?'} : mesh now watertight`);
+          }
         }
       }
       _stepGeos.push({ geo, mName: m.name, mColor: m.color, mFaces: m.faces, isManifold });
@@ -2924,6 +3696,8 @@ async function _importSTEPSingle(file, _impOpts){
       const _impObjs = [];
 
       nasLog('DBG', `[perf-step] sewing: ${(performance.now()-_tSewStart).toFixed(0)}ms — ${_stepGeos.length} body(ies)`);
+      _stepPerfMark(_perf, 'sewing + manifold check', performance.now() - _tSewStart,
+        `${_stepGeos.length} bodies (main thread)`);
       const _tRepairStart = performance.now();
 
       // ── Phase 2a : offset global + reparation manifold, PAR CORPS.
@@ -2942,7 +3716,12 @@ async function _importSTEPSingle(file, _impOpts){
       // de la dupliquer entre chemin MEDUSA et chemin pool-client.
       for(const s of _stepGeos) s.geo.translate(_gOx, _gOy, _gOz);
 
-      const _mrGeos = _p2Total ? await _repairBatch(_stepGeos.map(s => s.geo)) : [];
+      // [17/09] En mode FreeCAD on ne répare RIEN à l'import — pas même par
+      // MEDUSA (33,8 s mesurées sur le Scania). FreeCAD n'a pas d'équivalent de
+      // cette étape : sa réparation, quand elle a lieu, est une opération que
+      // l'utilisateur demande. On tombe donc dans la branche « différé ».
+      const _mrGeos = _STEP_LEAN_IMPORT ? null
+                    : (_p2Total ? await _repairBatch(_stepGeos.map(s => s.geo)) : []);
       let _p2Path;
       if(_mrGeos){
         // Chemin MEDUSA reussi : re-check manifold par corps. Synchrone et
@@ -2963,6 +3742,25 @@ async function _importSTEPSingle(file, _impOpts){
           _repaired[_i] = { geoRepaired: _geoRepaired, mName, mColor, isManifold };
         }
         if(_p2Total) showSpinner('Import STEP (OCCT)', `${file.name} — repair ${_p2Total}/${_p2Total}`, 0.5);
+      } else if(!_STEP_REPAIR_CLIENT_POOL){
+        // ── [PERF 17/09] RÉPARATION DIFFÉRÉE — MEDUSA absent et pool client
+        // désactivé (cf. _STEP_REPAIR_CLIENT_POOL pour la mesure qui motive ce
+        // défaut). On garde la géométrie SOUDÉE telle quelle : c'est exactement
+        // ce que la phase 2b fait déjà, sans discussion, pour tous les corps
+        // multicolores (« la réparation existe pour rendre un corps utilisable
+        // par le CSG, pas pour l'afficher »). Les corps restent marqués
+        // non-manifold ; _manifoldRepair sera appelé par le CSG au moment où il
+        // en aura réellement besoin.
+        _p2Path = 'deferred';
+        for(let _i = 0; _i < _p2Total; _i++){
+          const { geo, mName, mColor, isManifold } = _stepGeos[_i];
+          _repaired[_i] = { geoRepaired: geo, mName, mColor, isManifold };
+        }
+        if(_p2Total) nasLog('OK', `STEP repair deferred — ${_p2Total} bodies shown exactly as OCCT produced them `
+          + `(repaired on demand, at the first CSG). Set `
+          + (_STEP_LEAN_IMPORT ? `NASSCAD_STEP_TUNING.leanImport = false`
+                               : `NASSCAD_STEP_TUNING.repairClientPool = true`)
+          + ` to repair at import time like before.`);
       } else {
         // ── Repli : pool client concurrent — IDENTIQUE a la session precedente,
         // sauf geo.translate() retire (deja fait ci-dessus, une seule fois).
@@ -3031,6 +3829,8 @@ async function _importSTEPSingle(file, _impOpts){
         if(_p2Total) showSpinner('Import STEP (OCCT)', `${file.name} — repair ${_p2Total}/${_p2Total}`, 0.5);
       }
       nasLog('DBG', `[perf-step] repair: ${(performance.now()-_tRepairStart).toFixed(0)}ms — ${_p2Total} body(ies), path=${_p2Path}, ${nonManifoldCount} still non-manifold`);
+      _stepPerfMark(_perf, 'manifold repair', performance.now() - _tRepairStart,
+        `path=${_p2Path}, ${nonManifoldCount} still non-manifold`);
 
       // ── Phase 2b : lissage BFS — UN SEUL appel batch (MEDUSA natif si dispo,
       // N corps en parallèle serveur ; repli séquentiel JS identique à l'ancien
@@ -3059,10 +3859,27 @@ async function _importSTEPSingle(file, _impOpts){
         _repaired[_i].geoRepaired = _stepGeos[_i].geo;
       }
 
-      const _smoothGeos = await _smoothBatch(_repaired.map(r => r.geoRepaired), 30);
+      // [17/09] Le lissage BFS n'existe que pour REMPLACER les normales qu'on
+      // jetait. Quand la source les fournit — occt-import-js les calcule via
+      // Poly_Triangulation::ComputeNormals, donc depuis la SURFACE et non depuis
+      // les triangles — elles sont exactes, déjà là, et meilleures que toute
+      // heuristique d'angle de crête. C'est exactement ce que fait FreeCAD.
+      // Le chemin MEDUSA ne les transporte pas encore dans le NSTP : il garde
+      // donc le lissage natif, qui coûte 1,5 s pour 1449 corps — trop peu cher
+      // pour justifier une migration de protocole.
+      const _tSmooth0 = performance.now();
+      const _srcGeos = _repaired.map(r => r && r.geoRepaired);
+      const _haveNormals = _STEP_LEAN_IMPORT && _srcGeos.length
+        && _srcGeos.every(g => g && g.attributes && g.attributes.normal);
+      const _smoothGeos = _haveNormals ? _srcGeos : await _smoothBatch(_srcGeos, 30);
+      _stepPerfMark(_perf, _haveNormals ? 'smoothing (skipped — OCCT normals)' : 'BFS smoothing',
+        performance.now() - _tSmooth0, `${_repaired.length} bodies`);
+      const _tBuild0 = performance.now();
 
       // ── Phase 2c : construction des meshes + enregistrement objets NASSCAD
       // (logique métier inchangée, juste déplacée hors de la boucle repair) ──
+      const _cacheBodies = []; // [PERF 17/09] matière du cache NSPG, cf. plus bas
+      let _nColoured = 0;      // [18/09] corps dont la COULEUR vient du lecteur, pas de la palette
       for(let _i = 0; _i < _repaired.length; _i++){
         const { mName, mColor, isManifold, mFaces } = _repaired[_i];
         const geoSmooth = _smoothGeos[_i];
@@ -3088,16 +3905,49 @@ async function _importSTEPSingle(file, _impOpts){
         // l'invariant "o.color est une chaine '#rrggbb'" soit enfin vrai partout.
         let col;
         if(mColor && mColor.r !== undefined){
+          _nColoured++;
           const _cr=Math.round(mColor.r*255),_cg=Math.round(mColor.g*255),_cb=Math.round(mColor.b*255);
           col = '#' + (((_cr<<16)|(_cg<<8)|_cb) >>> 0).toString(16).padStart(6,'0');
         } else { col = COL[objCnt % COL.length]; }
         // [27/08] Couleurs par face — implémentation partagée avec step-xcaf.js.
-        const _faceMats = _applyFaceColors(geoSmooth, mFaces);
+        // [18/09] _stepAlphaOf : opacité déclarée par le fichier pour cette
+        // teinte. Aucun lecteur (MEDUSA, occt-import-js, cache) ne transporte
+        // d'alpha ; la table vient de la passe de déclaration, faite plus haut
+        // sur le texte, et vaut 1 partout si le fichier n'a pas de transparence.
+        const _faceMats = _applyFaceColors(geoSmooth, mFaces, mName, _stepAlphaOf);
+        // [11/09] La couleur du CORPS doit s'accorder avec ce qui est peint.
+        // _adoptBrepFaces et _xcafFaceColors le font déjà chacun de leur côté,
+        // mais le chemin MEDUSA ne passe par NI l'un NI l'autre : la table de
+        // faces arrive telle quelle dans le NSTP et o.color reste la couleur de
+        // niveau SOLIDE du fichier. D'où un corps rendu gris acier avec une
+        // pastille jaune #dddd0d dans l'Object List. Ici, c'est le seul point
+        // par où passent les TROIS chemins.
+        if(_faceMats){
+          const _dom = _dominantFaceHex(mFaces);
+          if(_dom !== null){
+            const _domHex = '#' + _dom.toString(16).padStart(6,'0');
+            if(_domHex !== col){
+              nasLog('DBG', `[face-color] body colour aligned on the dominant face colour — ${mName||'?'} : ${col} -> ${_domHex}`);
+              col = _domHex;
+            }
+          }
+        }
         if(_faceMats){
           nasLog('DBG', `STEP per-face colors — ${mName||'?'} : ${mFaces.length} face(s), `
             + `${new Set(_faceMats.map(m=>m.color.getHex())).size} color(s), ${geoSmooth.groups.length} draw group(s)`);
         }
-        const mat = _faceMats || new THREE.MeshPhongMaterial({color:col, shininess:8, specular:0x1a1a1a, side:THREE.DoubleSide});
+        // [19/09] L'opacite du LECTEUR l'emporte sur la table de declaration.
+        // Le commentaire ci-dessus datait d'avant le 18/09 : MEDUSA transporte
+        // desormais `a` dans le NSTP (SURFACE_STYLE_RENDERING cote STEP,
+        // IfcSurfaceStyleRendering cote IFC). Et un IFC n'a PAS de passe de
+        // declaration — elle lit du Part-21 STEP — donc sans cette ligne tout
+        // le vitrage d'un batiment ressort opaque : mesure du 19/09, 206 corps
+        // translucides dans le NSTP, 0 a l'ecran. La table reste le repli pour
+        // les lecteurs qui ne disent rien (occt-import-js, vieux caches).
+        const _alpha = (mColor && mColor.a !== undefined && mColor.a < 1) ? mColor.a
+                     : (_stepAlphaOf ? _stepAlphaOf(col) : 1);
+        const mat = _faceMats || new THREE.MeshPhongMaterial({color:col, shininess:8,
+          specular:0x1a1a1a, side:THREE.DoubleSide, transparent:_alpha < 1, opacity:_alpha});
         const mesh = new THREE.Mesh(geoSmooth, mat); mesh.castShadow = true; scene.add(mesh);
         mesh.position.set(0, 0, 0); // positions baked dans la géo via offset global
         mesh.updateMatrixWorld(true);
@@ -3105,6 +3955,28 @@ async function _importSTEPSingle(file, _impOpts){
         const obj  = {id:objCnt, name, type:'csg', mesh, color:col, isHole:false, isManifold,
           stepGroupId:_stepGroupId, stepGroupLabel:_stepGroupLabel};
         objs.push(obj); _impObjs.push(obj); meshCount++;
+        _cacheBodies.push({ name: mName, color: col, isManifold, geo: geoSmooth, faces: mFaces });
+      }
+      _stepPerfMark(_perf, 'mesh build + scene', performance.now() - _tBuild0,
+        `${_repaired.length} bodies`);
+      // [18/09] Le fichier déclare-t-il des couleurs que le lecteur n'a pas
+      // rendues ? Un modèle gris peut venir du fichier ou du lecteur, et jusqu'ici
+      // rien ne permettait de trancher depuis l'écran. Mesuré : occt-import-js
+      // (WASM, le repli quand MEDUSA n'est pas là) ne rend AUCUNE couleur de face
+      // — `brep_faces[].color` vaut null même sur un fichier écrit par OCCT — et
+      // sur Rocky_House il ne rend pas non plus les couleurs de corps. Le dire est
+      // la moitié du travail ; l'autre moitié est de démarrer MEDUSA.
+      if(_stepDeclared && meshCount){
+        const _dc = _stepDeclared.counts || {};
+        const _declStyles = (_dc.STYLED_ITEM || 0) + (_dc.OVER_RIDING_STYLED_ITEM || 0);
+        const _declFaceStyles = _dc.OVER_RIDING_STYLED_ITEM || 0;
+        if(_declStyles && !_nColoured)
+          nasLog('WARN', `STEP colours: the file declares ${_declStyles.toLocaleString()} style(s) `
+            + `but the reader returned none — every body is showing a palette colour. `
+            + `MEDUSA (native) reads them; the browser fallback does not.`);
+        else if(_declFaceStyles && !_cacheBodies.some(b => b.faces && b.faces.length))
+          nasLog('WARN', `STEP colours: ${_declFaceStyles.toLocaleString()} per-face style(s) declared, `
+            + `none returned by the reader — bodies are painted with their solid colour only.`);
       }
       selObjs = _impObjs;
       // [NEW V4.4.0 03/07] Overlay PMI — construit APRÈS le centrage global pass 2 :
@@ -3115,17 +3987,54 @@ async function _importSTEPSingle(file, _impOpts){
         catch(e){ nasLog('WARN', `PMI overlay failed (${e.message})`); }
       }
       _pmiPending = null;
+      // [PERF 17/09] Écriture du cache de géométrie finale — DIFFÉRÉE d'une
+      // macrotask : la scène doit s'afficher d'abord. L'encodage recopie les
+      // buffers (quelques centaines de ms sur un gros assemblage), et rien ne
+      // justifie de retarder le premier rendu de ce que l'utilisateur vient
+      // d'attendre. Fire-and-forget : un échec ne casse rien, il coûte juste un
+      // import complet la prochaine fois.
+      if(_gk && _cacheBodies.length){
+        const _lbl = file.name, _mGOx = _gOx, _mGOy = _gOy, _mGOz = _gOz;
+        const _mNm = nonManifoldCount, _mPath = _p2Path;
+        const _mAlpha = (_stepDeclared && _stepDeclared.styleAlpha
+          && Object.keys(_stepDeclared.styleAlpha).length) ? _stepDeclared.styleAlpha : undefined;
+        setTimeout(() => {
+          try{
+            const _t0e = performance.now();
+            const _ab = _nspgEncode(_cacheBodies, { gOx:_mGOx, gOy:_mGOy, gOz:_mGOz,
+              nonManifoldCount:_mNm, path:_mPath, deflection:_STEP_WASM_DEFLECTION,
+              styleAlpha:_mAlpha });
+            _geoCachePut(_gk, _ab, _lbl);
+            nasLog('DBG', `[cache-geo] ${_lbl} — ${(_ab.byteLength/1024/1024).toFixed(1)} MB encoded `
+              + `in ${Math.round(performance.now()-_t0e)} ms — the next import of this file `
+              + `will be near-instant`);
+          }catch(e){ nasLog('DBG', `[cache-geo] write skipped (${e.message})`); }
+        }, 0);
+      }
     }
     updProps(); updOList(); updStats();
     const ms = Math.round(performance.now()-t0);
     const kb = Math.round(file.size/1024);
     if(!_stepTurboBatch){ _lastImportStats = { chunks: 1, ms, label: file.name }; updStats(); } // chrono stats panel — gated en Turbo : le vrai total {chunks:N, ms:_turboMs} est écrit par importSTEP en fin de batch
-    nasLog('OK', `Import STEP (OCCT) : ${meshCount} mesh(es) — ${kb} KB — ${ms}ms`
+    // [19/09] Le meme code sert aux deux formats : dire lequel, plutot que
+    // d'annoncer « STEP » a quelqu'un qui vient de deposer un IFC.
+    const _fmt = (_impOpts && _impOpts.ifc) ? 'IFC (MEDUSA)' : 'STEP (OCCT)';
+    nasLog('OK', `Import ${_fmt} : ${meshCount} mesh(es) — ${kb} KB — ${ms}ms`
       + (nonManifoldCount ? ` — ⚠ ${nonManifoldCount} non-manifold (CSG disabled)` : ''));
-    _csgLog(`✓ STEP imported (OCCT): ${meshCount} mesh(es)`
+    _csgLog(`✓ ${_fmt} imported: ${meshCount} mesh(es)`
       + (nonManifoldCount ? ` — ⚠ ${nonManifoldCount} non-manifold` : ''));
+    nasFaceColorReport();   // [11/09] bilan couleurs par face — une ligne, toujours
+    // [16/09] Confrontation déclaration ↔ obtenu. C'est ce qui a permis de
+    // trancher : sur Rocky_House, le fichier déclare 143 solides tous fermés et
+    // 10 corps ressortent ouverts — parce que 12 faces sur 8 285 n'ont produit
+    // AUCUN triangle. Un trou de face manquante, pas un interstice : aucune
+    // tolérance de couture ne peut le fermer, il n'y a rien en face.
+    try {
+      if(_stepDeclared && typeof nasStepAudit === 'function')
+        nasStepAudit(_stepDeclared, result, { nonManifoldCount });
+    } catch(e){ nasLog('WARN', `STEP audit failed (${e.message})`); }
   } catch(err){
     nasLog('ERROR', 'Import STEP : ' + err.message);
     _nasAlert('⚠ Import STEP failed:\n' + err.message);
-  } finally { hideSpinner(); }
+  } finally { hideSpinner(); _stepPerfReport(_perf); }
 }
