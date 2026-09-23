@@ -34,7 +34,7 @@ const MEDUSA_SNAP_RENDER = 3000;   // lignes affichées au maximum (l'export gar
   window.addEventListener('error', ev =>
     nasLog('ERROR', ev.message + (ev.filename ? ' @ ' + ev.filename + ':' + ev.lineno : '')));
   window.addEventListener('unhandledrejection', ev =>
-    nasLog('ERROR', 'Promise rejet: ' + (ev.reason?.message || ev.reason)));
+    nasLog('ERROR', 'Promise rejection: ' + (ev.reason?.message || ev.reason)));
 })();
 
 // ── nasLog(level, msg) — point d'entrée unique ─────────────────
@@ -292,7 +292,7 @@ async function logCopyClipboard(){
   if(copied){
     nasLog('OK', 'Logs copied to clipboard (' + _logEntries.length + ' entries).');
   }else{
-    nasLog('ERROR', 'logCopyClipboard: copie échouée (permissions navigateur ?)');
+    nasLog('ERROR', 'logCopyClipboard: copy failed (browser permissions?)');
   }
 }
 
@@ -307,7 +307,7 @@ async function logCopyClipboard(){
 async function logRecallIDB(maxEntries){
   const n = maxEntries || 200;
   if(typeof _idbReady === 'undefined' || !_idbReady){
-    nasLog('WARN','logRecallIDB: IDB non prêt');
+    nasLog('WARN','logRecallIDB: IDB not ready');
     return;
   }
   try{
@@ -327,7 +327,7 @@ async function logRecallIDB(maxEntries){
     });
 
     if(!entries.length){
-      nasLog('INFO','logRecallIDB: aucune entrée en IDB');
+      nasLog('INFO','logRecallIDB: no entry in IDB');
       return;
     }
 
@@ -335,13 +335,13 @@ async function logRecallIDB(maxEntries){
     const separator = {
       ts: '──────',
       level: 'INFO',
-      msg: `── ${entries.length} entrées rappelées depuis IDB (sessions précédentes) ──`
+      msg: `── ${entries.length} entries recalled from IDB (previous sessions) ──`
     };
     _logEntries = [separator, ...entries, ..._logEntries];
     if(_logEntries.length > LOG_MAX * 2) _logEntries = _logEntries.slice(-LOG_MAX * 2);
 
     if(_logVisible) _logRebuild();
-    nasLog('OK', `logRecallIDB: ${entries.length} entrées chargées depuis IDB`);
+    nasLog('OK', `logRecallIDB: ${entries.length} entries loaded from IDB`);
   } catch(err){
     nasLog('ERROR','logRecallIDB: ' + err.message);
   }
