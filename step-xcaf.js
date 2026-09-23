@@ -55,7 +55,7 @@
 // perturbé côté kernel OCCT. Ce helper évite d'afficher littéralement
 // "undefined" dans les logs/alertes dans ce cas.
 function _xcafErrMsg(e){
-  return (e && e.message) ? e.message : (e ? String(e) : 'exception sans message (probablement une exception WASM non convertie en Error JS)');
+  return (e && e.message) ? e.message : (e ? String(e) : 'exception without a message (probably a WASM exception not converted to a JS Error)');
 }
 
 // ── Construction d'un document XDE frais (chemin validé) ──
@@ -182,9 +182,9 @@ function _xcafResolveFaceColorFn(oc, colorTool, sampleFace){
 // ou orange — ils s'affichaient en jaune vif.
 function _xcafFaceColors(oc, colorTool, faceShapes, fallbackHex){
   const NONE = { faces: null, uniformHex: null };
-  if(!faceShapes || !faceShapes.length) return NONE;
+  if(!faceShapes || !faceShapes.length){ _facDiag('xcaf-no-face', null, 'faceShapes empty'); return NONE; }
   const fn = _xcafResolveFaceColorFn(oc, colorTool, faceShapes[0].face);
-  if(!fn) return NONE;
+  if(!fn){ _facDiag('xcaf-no-resolver', null, 'no GetColor overload answers for a face'); return NONE; }
   const CT = oc.XCAFDoc_ColorType;
   const types = [CT.XCAFDoc_ColorSurf, CT.XCAFDoc_ColorGen, CT.XCAFDoc_ColorCurv].filter(v => v !== undefined);
   const fb = [parseInt(fallbackHex.slice(1,3),16)/255, parseInt(fallbackHex.slice(3,5),16)/255, parseInt(fallbackHex.slice(5,7),16)/255];
@@ -211,7 +211,10 @@ function _xcafFaceColors(oc, colorTool, faceShapes, fallbackHex){
     else rgb = fb;
     out.push([rgb[0], rgb[1], rgb[2], fs.start, fs.count]);
   }
-  if(!nStyled) return NONE;        // aucune couleur de face : le solide gouverne
+  if(!nStyled){                    // aucune couleur de face : le solide gouverne
+    _facDiag('xcaf-no-styled-face', null, `${faceShapes.length} face(s), 0 with colour (fn=${fn})`);
+    return NONE;
+  }
   if(seen.size === 1 && nStyled === faceShapes.length){
     // Toutes les faces s'accordent sur une seule couleur : elle ecrase celle du
     // solide (regle OCCT). Un seul materiau suffit, aucun groupe a produire.
@@ -471,7 +474,7 @@ function _xcafExtractPMI(oc, doc){
     if(entryTotal > 50){
       // N'affiche en détail que les entrées anormalement lentes (>50ms) —
       // sinon 29 lignes de log à chaque import pour rien la plupart du temps.
-      nasLog('DBG', `STEP-XCAF PMI: entrée[${idx}] (${kind}) LENTE — total=${entryTotal.toFixed(0)}ms `+
+      nasLog('DBG', `STEP-XCAF PMI: entry[${idx}] (${kind}) SLOW — total=${entryTotal.toFixed(0)}ms `+
         `(name=${(tAfterName-entryT0).toFixed(0)}ms IsDatum=${(tAfterIsDatum-tAfterName).toFixed(0)}ms `+
         `IsDimension=${(tAfterIsDim-tAfterIsDatum).toFixed(0)}ms IsGeomTolerance=${(tAfterIsGeomTol-tAfterIsDim).toFixed(0)}ms `+
         `payload=${(tAfterPayload-tAfterIsGeomTol).toFixed(0)}ms)`);
@@ -561,7 +564,7 @@ function _xcafPushPMIToPanel(pmi){
     }else if(e.kind === 'geomTolerance'){
       _pmiState.sem.push({
         kind: 'tol',
-        label: (e.type || 'tolérance géométrique') + (e.name ? ` (${e.name})` : ''),
+        label: (e.type || 'geometric tolerance') + (e.name ? ` (${e.name})` : ''),
         value: null, // non disponible via XDE dans ce build — cf. _xcafExtractPMI
         unit: '',
         datums: [],
@@ -600,7 +603,7 @@ async function importSTEP_XCAF(file){
     return [];
   }
   if(!_occt){
-    nasLog('WARN', 'STEP-XCAF : OCCT kernel not loaded — a fillet or a STEP-XCAF import triggers its loading (≈65 Mo, une fois par session)');
+    nasLog('WARN', 'STEP-XCAF : OCCT kernel not loaded — a fillet or a STEP-XCAF import triggers its loading (≈65 MB, once per session)');
   }
   showSpinner('Import STEP (XCAF)', file.name, 'indeterminate');
   // [FIX 01/08] Double rAF : garantit que ce message est PEINT avant le bloc
@@ -627,10 +630,10 @@ async function importSTEP_XCAF(file){
     reader.SetGDTMode(true);
     const readStatus = reader.ReadFile(fsPath);
     const statusVal = (readStatus && typeof readStatus.value === 'number') ? readStatus.value : readStatus;
-    nasLog('DBG', `STEP-XCAF: ReadFile status = ${JSON.stringify(statusVal)} (1=Done attendu)`);
+    nasLog('DBG', `STEP-XCAF: ReadFile status = ${JSON.stringify(statusVal)} (1=Done expected)`);
     const nbRoots = reader.NbRootsForTransfer();
     nasLog('DBG', `STEP-XCAF: NbRootsForTransfer = ${nbRoots}`);
-    if(nbRoots === 0) throw new Error(`STEP-XCAF: no root to transfer (ReadFile status=${JSON.stringify(statusVal)} — empty file, non reconnu, ou lecture échouée)`);
+    if(nbRoots === 0) throw new Error(`STEP-XCAF: no root to transfer (ReadFile status=${JSON.stringify(statusVal)} — empty file, unrecognised, or read failed)`);
     const transferOk = reader.Transfer_1(handleDoc);
     if(!transferOk) throw new Error('STEP-XCAF: XDE transfer failed (Transfer_1 returned false)');
 
@@ -696,6 +699,22 @@ async function importSTEP_XCAF(file){
         _colorBody = _fc.uniformHex;
       }
       const _mFaces = _fc.faces;
+      // [11/09] Cas MÉLANGÉ — pendant exact de _adoptBrepFaces (step-import.js),
+      // même helper partagé. Les faces sont déjà peintes correctement ; ce qui
+      // suit ne touche que la couleur du CORPS, restée celle du solide et donc
+      // parfois en contradiction avec ce qui s'affiche. C'est elle que montrent
+      // la pastille de l'Object List et l'export.
+      if(_mFaces){
+        const _dom = _dominantFaceHex(_mFaces);
+        if(_dom !== null){
+          const _domHex = '#' + _dom.toString(16).padStart(6, '0');
+          if(_domHex !== _colorBody){
+            nasLog('DBG', `XCAF mixed body — dominant face color wins over solid — part ${idx} : `
+              + `${_colorBody} -> ${_domHex}`);
+            _colorBody = _domHex;
+          }
+        }
+      }
 
       if(!_mFaces){
         geo = await _manifoldRepair(geo);
@@ -717,7 +736,7 @@ async function importSTEP_XCAF(file){
       const _col = color;
       // [27/08] Meme helper que step-import.js — une seule implementation des
       // couleurs par face pour les deux importeurs, par construction.
-      const _faceMats = _applyFaceColors(geo, _mFaces);
+      const _faceMats = _applyFaceColors(geo, _mFaces, leaf && leaf.name);
       if(_faceMats){
         nasLog('DBG', `XCAF per-face colors — part ${idx} : ${_mFaces.length} face(s), `
           + `${new Set(_faceMats.map(m=>m.color.getHex())).size} color(s), ${geo.groups.length} draw group(s)`);
@@ -761,10 +780,10 @@ async function importSTEP_XCAF(file){
       const nbDatum = pmi.entries.filter(e=>e.kind==='datum').length;
       const nbGeomTol = pmi.entries.filter(e=>e.kind==='geomTolerance').length;
       if(pmi.entries.length){
-        nasLog('OK', `STEP-XCAF PMI: ${nbDim} dimension(s), ${nbDatum} datum(s), ${nbGeomTol} tolérance(s) géométrique(s) (type seul, valeur via scanner PMI existant)`);
+        nasLog('OK', `STEP-XCAF PMI: ${nbDim} dimension(s), ${nbDatum} datum(s), ${nbGeomTol} geometric tolerance(s) (type only, value via the existing PMI scanner)`);
         _xcafPushPMIToPanel(pmi);
       }
-    }catch(e){ nasLog('WARN', 'STEP-XCAF PMI: extraction échouée — '+_xcafErrMsg(e)); }
+    }catch(e){ nasLog('WARN', 'STEP-XCAF PMI: extraction failed — '+_xcafErrMsg(e)); }
 
     hideSpinner();
     const dt = ((performance.now()-t0)/1000).toFixed(1);
