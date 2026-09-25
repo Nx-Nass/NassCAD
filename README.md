@@ -3,6 +3,7 @@
 > Free browser-based parametric 3D CAD — OpenCASCADE WASM · STEP AP242 · PMI · IFC (BIM) · Three.js
 
 [![License: CC BY-NC 4.0](https://img.shields.io/badge/License-CC%20BY--NC%204.0-lightgrey.svg)](https://creativecommons.org/licenses/by-nc/4.0/)
+[![Education: free](https://img.shields.io/badge/education-free-brightgreen.svg)](#-license)
 [![Version](https://img.shields.io/badge/version-4.7.0%20MEDUSA-blue.svg)](https://www.nasscad.com/)
 [![Live Demo](https://img.shields.io/badge/demo-nasscad.com-brightgreen.svg)](https://www.nasscad.com/)
 [![Previous](https://img.shields.io/badge/previous-4.2.7-lightblue.svg)](https://github.com/Nx-Nass/Nasscad_4.2.7)
@@ -190,8 +191,11 @@ Each third-party component stays under its own license. See [`THIRD-PARTY.md`](T
 
 NassLab's own code is distributed under the **Creative Commons BY-NC 4.0** license:
 
+- **Education license — free of charge** — schools (secondary, technical and vocational), their teachers and students, public or private, as well as apprenticeship and training centres, colleges, universities, associations, FabLabs, makerspaces and libraries, may use, install, share and adapt NASSCAD for teaching, learning and research, including in paid training. No registration, nothing to sign. Students and teachers own the models they create. (Additional permission in [`LICENSE`](LICENSE).)
 - **Personal and non-commercial use** — free, redistribution allowed with attribution
 - **Commercial use** — written agreement required from NassLab
+
+NASSCAD is a personal project, developed by one person on his own time. It doesn't earn its author a single cent.
 
 [Full license →](https://creativecommons.org/licenses/by-nc/4.0/) · [`LICENSE`](LICENSE)
 
