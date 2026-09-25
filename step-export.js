@@ -15,8 +15,18 @@
 //   _ioBakeGeo, _ioObjColorHex, _ioFacePalette, _ioTriMaterial  — nasscad-io.js
 //     (repli local si le module n'est pas chargé : cf. _stepBake / _stepHexOf)
 //
-//   Indépendant de step-import.js — aucun couplage détecté (scan confirmé,
-//   pas supposé). L'export et l'import STEP ne partagent aucun état.
+//   _BOOSTER_URL                                     — step-import.js (URL de MEDUSA),
+//     lu au moment de l'appel, repli http://127.0.0.1:8765 s'il est absent
+//
+//   [24/09] L'export passe désormais par MEDUSA (POST /stepexport) : le
+//   navigateur ne fait plus que cuire les triangles monde et les poster en
+//   binaire ; B-Rep, assemblage, couleurs et texte Part 21 sont produits en
+//   natif, en parallèle, et reviennent en flux écrit directement sur le disque.
+//   Le writer JS ci-dessous (_expSTEPRunJS) reste intact : c'est le repli quand
+//   le moteur ne tourne pas ou date d'avant /stepexport. Les deux écrivent le
+//   même fichier (vérifié entité par entité et par relecture OCCT).
+//   L'import et l'export ne partagent toujours aucun état : seule l'URL du
+//   moteur est commune.
 // ══════════════════════════════════════════════════════════════════════════
 // ── Export STEP — B-Rep analytique — ISO 10303-21 / AP203 · AP214 · AP242
 // Merge coplanaire : triangles coplanaires connexes → MANIFOLD_SOLID_BREP (ADVANCED_FACE/PLANE,
@@ -320,28 +330,461 @@ function _stepFacePalette(so){
   return pal.map((h, i) => ({hex: String(h).replace('#','').slice(0,6).toLowerCase(), a: _stepAlpha(L[i], so)}));
 }
 
-function _expSTEPRun(objList, opts){
+// ── Sphères analytiques d'un objet ────────────────────────────────────────
+// Rend [{x,y,z,R,name}] (centre MONDE, repère Three Y-up) si l'objet s'écrit
+// en SPHERICAL_SURFACE, sinon null. Factorisé [24/09] : le writer JS et la
+// requête MEDUSA prennent exactement la même décision.
+//  • sphère à scale uniforme → une sphère ; ellipsoïde → null (tessellation) ;
+//  • union CSG de sphères-feuilles DISJOINTES → une sphère par feuille.
+//    Cas réel : box-select 25 sphères + Union → 1 objet CSG. Centre =
+//    matrixWorld × (p_création − cg). Disjonction re-vérifiée par sphères
+//    englobantes : une union OVERLAPPING n'est PAS décomposable en solides
+//    séparés → null.
+function _stepAnalyticSpheres(so){
+  if(so.type==='sphere'){
+    const _lg=so.mesh.geometry; _lg.computeBoundingBox(); const _lb=_lg.boundingBox;
+    const _sx=Math.abs(so.mesh.scale.x),_sy=Math.abs(so.mesh.scale.y),_sz=Math.abs(so.mesh.scale.z);
+    const _W=(_lb.max.x-_lb.min.x)*_sx,_H=(_lb.max.y-_lb.min.y)*_sy,_D=(_lb.max.z-_lb.min.z)*_sz;
+    const _mx=Math.max(_W,_H,_D)||1;
+    if(Math.abs(_W-_H)/_mx<1e-3 && Math.abs(_H-_D)/_mx<1e-3 && Math.abs(_W-_D)/_mx<1e-3){
+      const _wp=new THREE.Vector3(); so.mesh.getWorldPosition(_wp);
+      return [{x:_wp.x, y:_wp.y, z:_wp.z, R:_W/2, name:so.name}];
+    }
+    return null;
+  }
+  if(so.type==='csg' && typeof _csgTree!=='undefined' && _csgTree.has(so.id)){
+    const _nd=_csgTree.get(so.id), _kids=_nd.children||[];
+    const _allSph = _nd.op==='union' && _kids.length>0 && _kids.every(c=>
+      c.type==='sphere' && !c.isHole && !c._csgTree && c.s &&
+      Math.abs(Math.abs(c.s[0])-Math.abs(c.s[1]))<1e-6 &&
+      Math.abs(Math.abs(c.s[1])-Math.abs(c.s[2]))<1e-6);
+    if(!_allSph) return null;
+    const _up=new THREE.Vector3(),_uq=new THREE.Quaternion(),_us=new THREE.Vector3();
+    so.mesh.matrixWorld.decompose(_up,_uq,_us);
+    const _unif = Math.abs(_us.x-_us.y)<1e-6 && Math.abs(_us.y-_us.z)<1e-6;
+    if(!_unif) return null;
+    const _hasCg = Array.isArray(_nd.cg);
+    const _cg = _hasCg ? new THREE.Vector3(_nd.cg[0],_nd.cg[1],_nd.cg[2]) : null;
+    const _S=_kids.map(c=>{
+      const _wc = _hasCg
+        ? new THREE.Vector3(c.p[0]-_cg.x,c.p[1]-_cg.y,c.p[2]-_cg.z).applyMatrix4(so.mesh.matrixWorld)
+        : new THREE.Vector3(c.p[0],c.p[1],c.p[2]); // legacy (pré-cg) : p déjà en monde
+      return {wc:_wc, R:(PS/2)*Math.abs(c.s[0])*(_hasCg?_us.x:1)};
+    });
+    for(let i=0;i<_S.length;i++)for(let j=i+1;j<_S.length;j++){
+      if(_S[i].wc.distanceTo(_S[j].wc) < _S[i].R+_S[j].R-1e-4) return null;
+    }
+    return _S.map((s,k)=>({x:s.wc.x, y:s.wc.y, z:s.wc.z, R:s.R, name:so.name+'_'+(k+1)}));
+  }
+  return null;
+}
+
+// ── Paramètres communs aux deux writers ───────────────────────────────────
+// [18/09] Le mode de fusion ne servait qu'à peupler le libellé du spinner :
+// EXACT, ROBUST et FACETED rendaient trois fichiers identiques au octet près,
+// et la tolérance personnalisée de la modale n'était lue par personne.
+//   • decimals → quantification des sommets ET des plans dans le merge
+//     coplanaire : c'est la tolérance de fusion, celle que le mode promet ;
+//   • FACETED  → plus de merge du tout, une face par triangle ;
+//   • tolerance → UNCERTAINTY_MEASURE_WITH_UNIT du contexte géométrique,
+//     au lieu d'un 0.001 mm figé sans rapport avec le calcul.
+// Les coordonnées, elles, restent écrites à 6 décimales quel que soit le mode.
+function _stepExportParams(){
+  const _cfg=globalThis._stepExportConfig||{};
+  const mode=_cfg.fusionMode||'ROBUST';
+  const mInfo=STEPFusionModes[mode]||STEPFusionModes.ROBUST;
+  const apVersion=_cfg.apVersion||'AP242';
+  const apInfo=STEPApVersions[apVersion]||STEPApVersions.AP242;
+  const custom=(_cfg.customTolerance!=null && isFinite(_cfg.customTolerance) && _cfg.customTolerance>0);
+  const tol = custom ? _cfg.customTolerance : (mInfo.tolerance!=null ? mInfo.tolerance : 1e-5);
+  const keyDec = custom
+    ? Math.max(1, Math.min(9, Math.round(-Math.log10(_cfg.customTolerance))))
+    : (mInfo.decimals!=null ? mInfo.decimals : 6);
+  return {cfg:_cfg, mode, mInfo, apInfo, tol, keyDec};
+}
+
+// ══════════════════════════════════════════════════════════════════════════
+// [24/09] EXPORT VIA MEDUSA — POST /stepexport (protocole NSX1)
+// ══════════════════════════════════════════════════════════════════════════
+// Porte d'entrée unique, même contrat qu'avant : Promise résolue avec le texte
+// si opts.returnText, sinon undefined après écriture du fichier.
+// Choix du chemin :
+//   • MEDUSA joignable et /ping annonce "stepexport" → export natif ;
+//   • sinon (moteur absent, binaire antérieur au 24/09) → writer JS, avec une
+//     ligne de journal qui dit pourquoi ;
+//   • MEDUSA refuse la requête AVANT le flux (HTTP d'erreur) → writer JS aussi ;
+//   • le flux casse EN COURS de route → erreur franche, pas de repli : le
+//     fichier cible n'a pas été touché (écriture annulée), et relancer le
+//     writer JS sur un modèle qui a justement demandé le moteur ne ferait que
+//     figer l'onglet.
+async function _expSTEPRun(objList, opts){
+  opts = opts || {};
+  const avail = await _stepMedusaProbe();
+  if(avail.ok){
+    try{
+      return await _expSTEPRunMedusa(objList, opts, avail);
+    }catch(e){
+      if(!e || !e.preStream){
+        if(!opts.silent) hideSpinner();
+        nasLog('ERROR','STEP export via MEDUSA interrupted: '+(e&&e.message||e)+' — no file written');
+        if(opts.returnText) throw e;
+        return undefined;
+      }
+      nasLog('WARN','MEDUSA refused the STEP export ('+e.message+') — using the in-browser writer');
+    }
+  }else if(!opts.silent){
+    nasLog('INFO','STEP export: '+avail.why+' — using the in-browser writer (slower on large models)');
+  }
+  return _expSTEPRunJS(objList, opts);
+}
+
+const _STEP_MEDUSA_URL = () => (typeof _BOOSTER_URL !== 'undefined' ? _BOOSTER_URL : 'http://127.0.0.1:8765');
+
+// Une seule sonde /ping : joignabilité ET capacité. 2 s comme _medusaProbe
+// (host) — la boucle de MEDUSA est série, un moteur occupé répond en retard ;
+// un moteur absent, lui, refuse la connexion immédiatement en loopback.
+async function _stepMedusaProbe(){
+  const ctrl = new AbortController();
+  const timer = setTimeout(() => ctrl.abort(), 2000);
+  try{
+    const res = await fetch(`${_STEP_MEDUSA_URL()}/ping`, { signal: ctrl.signal });
+    if(!res.ok) return {ok:false, why:'MEDUSA answered HTTP '+res.status};
+    const j = await res.json();
+    if(j && j.stepexport === true) return {ok:true, stepload: j.stepload === true};
+    return {ok:false, why:'this MEDUSA build ('+(j&&j.version||'?')+') predates native STEP export'};
+  }catch(e){
+    return {ok:false, why:'MEDUSA is not running'};
+  }finally{ clearTimeout(timer); }
+}
+
+// ── [24/09] Corps importés : réécriture du B-Rep EXACT d'origine ─────────
+// Un corps importé par MEDUSA porte _medusaRef (cf. _stepExactRef dans
+// step-import.js). Tant que sa géométrie est celle de l'import (empreinte
+// identique : mêmes nombres de sommets et d'indices, même hash du contenu),
+// on envoie la référence et sa transformation : MEDUSA réécrit le B-Rep
+// d'origine, instancié, au lieu du maillage — la taille et la précision du
+// fichier source. Sinon (booléenne, réparation, transformation cuite,
+// édition), maillage.
+function _stepExactUsable(so){
+  const R = so && so._medusaRef, g = so && so.mesh && so.mesh.geometry;
+  if(!R || !R.ref || !R.fp || !g || !g.attributes || !g.attributes.position) return false;
+  if(typeof _stepGeoFingerprint !== 'function') return false;       // step-import.js absent
+  if(g.attributes.position.count !== R.fp.n || (g.index ? g.index.count : 0) !== R.fp.i) return false;
+  const now = _stepGeoFingerprint(g);
+  return !!now && now.h === R.fp.h;
+}
+
+// [24/09, soir] Avant l'export : quels corps partent en B-Rep exact, et MEDUSA
+// en tient-il encore le B-Rep ? Un fichier déjà importé ressort du cache du
+// navigateur sans passer par MEDUSA, et MEDUSA a pu redémarrer depuis
+// l'import : dans les deux cas le B-Rep n'est plus en mémoire. On demande donc
+// au moteur ce qu'il tient (GET /stepheld) et on lui renvoie chaque fichier
+// qui manque (POST /stepload) — une relecture SANS maillage, sous la même
+// empreinte, qui rend aux mêmes références les mêmes pièces (le moteur vérifie
+// la signature de chacune). Rend l'ensemble des objets à envoyer en exact.
+async function _stepExactPrepare(list, avail, opts, P){
+  const usable = new Set();
+  let changed = 0, unloaded = 0;
+  const byTag = new Map();                 // étiquette → {src, objs}
+  for(const so of list){
+    if(!so || !so._medusaRef) continue;
+    if(!_stepExactUsable(so)){ changed++; continue; }
+    usable.add(so);
+    const R = so._medusaRef, tag = String(R.ref).split(':')[0];
+    if(!/^h[0-9a-f]{32}$/.test(tag)) continue;        // étiquette de session : rien à recharger
+    let e = byTag.get(tag);
+    if(!e) byTag.set(tag, e = {src: null, objs: []});
+    e.objs.push(so);
+    // Le fichier source, rangé par step-import.js (_stepExactSources).
+    const src = R.src || (typeof _stepExactSources !== 'undefined' && _stepExactSources ? _stepExactSources.get(tag) : null);
+    if(!e.src && src && typeof src.slice === 'function') e.src = src;
+  }
+  if(!byTag.size || !avail || !avail.stepload) return {usable, changed, unloaded};
+  let held = null;
+  try{
+    const r = await fetch(`${_STEP_MEDUSA_URL()}/stepheld`);
+    if(r.ok) held = new Set(((await r.json()) || {}).tags || []);
+  }catch(_){ /* moteur injoignable : l'export lui-même le dira */ }
+  if(!held) return {usable, changed, unloaded};
+  for(const [tag, e] of byTag){
+    if(held.has(tag)) continue;
+    const drop = (why) => {
+      unloaded += e.objs.length;
+      for(const so of e.objs) usable.delete(so);
+      nasLog('WARN', 'STEP export: '+e.objs.length+' imported body(ies) '+why+' — written from their mesh');
+    };
+    if(!e.src){ drop('are no longer held by MEDUSA and their source file is not available to reload them'); continue; }
+    const name = e.src.name || 'the source file';
+    if(!opts.silent) showSpinner('Export STEP '+P.apInfo.name, 'MEDUSA — reloading the exact B-Rep of '+name+
+      ' ('+(e.src.size/1048576).toFixed(1)+' MB)…', 'indeterminate');
+    const t0 = performance.now();
+    try{
+      // Blob sans type : pas d'en-tête Content-Type, donc requête CORS simple
+      // (pas de pré-vol), comme l'import ; le fichier est lu depuis le disque.
+      const r = await fetch(`${_STEP_MEDUSA_URL()}/stepload?tag=${tag.slice(1)}`,
+        { method: 'POST', body: e.src.slice(0, e.src.size, '') });
+      let j = null;
+      try{ j = await r.json(); }catch(_){ /* corps illisible : on garde le statut */ }
+      if(!r.ok || !j || !j.success) throw new Error((j && j.error) || ('HTTP '+r.status));
+      nasLog('OK', 'STEP export: exact B-Rep of '+name+' reloaded into MEDUSA — '+j.parts+' part(s) in '+
+        ((performance.now() - t0)/1000).toFixed(1)+' s');
+    }catch(err){
+      drop('of '+name+' could not be reloaded into MEDUSA ('+((err && err.message) || err)+')');
+    }
+  }
+  return {usable, changed, unloaded};
+}
+// Repère du FICHIER importé (mm, Z-up) → repère de SORTIE STEP, matrice 3x4
+// en lignes : M = CV · W · T(off) · YUP. YUP est la bascule de l'import
+// (x, z, -y), T le centrage global de l'import, W la matrice monde actuelle
+// de l'objet (déplacements, rotations, échelle), CV la bascule de l'export
+// (x, -z, y). Un miroir ou une échelle non uniforme sont refusés par MEDUSA,
+// qui renvoie alors le corps au maillage.
+function _stepExactMatrix(so){
+  const R = so._medusaRef;
+  const YUP = new THREE.Matrix4().set(1,0,0,0, 0,0,1,0, 0,-1,0,0, 0,0,0,1);
+  const T   = new THREE.Matrix4().makeTranslation(R.off[0], R.off[1], R.off[2]);
+  const CV  = new THREE.Matrix4().set(1,0,0,0, 0,0,-1,0, 0,1,0,0, 0,0,0,1);
+  const M = CV.multiply(so.mesh.matrixWorld.clone()).multiply(T).multiply(YUP);
+  const e = M.elements;                    // colonnes
+  return [e[0], e[4], e[8], e[12],  e[1], e[5], e[9], e[13],  e[2], e[6], e[10], e[14]];
+}
+
+// Requête NSX1 — cf. le bloc stepx:: de nasscad_medusa.cpp pour le format.
+// Rendue en MORCEAUX (en-têtes + vues sur les tableaux de géométrie) passés
+// tels quels à un Blob : aucun gros tampon recopié côté JS.
+const _STEP_AP_CODE = {AP203:0, AP214:1, AP242:2};
+const _STEP_MODE_CODE = {EXACT:0, ROBUST:1, FACETED:2};
+function _stepMedusaRequest(list, P, exactSet){
+  const enc = new TextEncoder();
+  const chunks = [];
+  let nBodies = 0, nTris = 0, nExactSent = 0;
+  // Petit tampon d'en-têtes, vidé dans chunks avant chaque tableau de géométrie.
+  let hb = new ArrayBuffer(4096), dv = new DataView(hb), ho = 0;
+  const room = n => {
+    if(ho + n <= hb.byteLength) return;
+    chunks.push(new Uint8Array(hb, 0, ho));
+    hb = new ArrayBuffer(Math.max(4096, n)); dv = new DataView(hb); ho = 0;
+  };
+  const u32 = v => { room(4); dv.setUint32(ho, v >>> 0, true); ho += 4; };
+  const f64 = v => { room(8); dv.setFloat64(ho, v, true); ho += 8; };
+  const str = s => {
+    const b = enc.encode(s == null ? '' : String(s)), pad = (4 - (b.length & 3)) & 3;
+    u32(b.length); room(b.length + pad);
+    new Uint8Array(hb, ho, b.length).set(b); ho += b.length;
+    for(let i = 0; i < pad; i++) dv.setUint8(ho++, 0);
+  };
+  const flush = () => { if(ho){ chunks.push(new Uint8Array(hb, 0, ho)); hb = new ArrayBuffer(4096); dv = new DataView(hb); ho = 0; } };
+  const rgbOf = hex => parseInt(String(hex).slice(0, 6), 16) & 0xFFFFFF;
+  // bodyCount n'est connu qu'à la fin : il vit dans son propre petit tampon.
+  const countBuf = new DataView(new ArrayBuffer(4));
+  room(4); new Uint8Array(hb, ho, 4).set([78, 83, 88, 49]); ho += 4;          // 'NSX1'
+  u32(_STEP_AP_CODE[P.apInfo.name]); u32(_STEP_MODE_CODE[P.mode] ?? 1); u32(P.keyDec); f64(P.tol);
+  u32(list.length); str(typeof NASSCAD_VERSION !== 'undefined' ? NASSCAD_VERSION : '');
+  flush(); chunks.push(new Uint8Array(countBuf.buffer));
+  const head = (kind, name, base, pal) => {
+    u32(kind); str(name); u32(rgbOf(base.hex)); f64(base.a);
+    u32(pal ? pal.length : 0);
+    if(pal) for(const p of pal){ u32(rgbOf(p.hex)); f64(p.a); }
+    nBodies++;
+  };
+  for(const so of list){
+    const base = {hex:_stepHexOf(so), a:_stepAlpha(Array.isArray(so.mesh.material)?so.mesh.material[0]:so.mesh.material, so)};
+    const sph = _stepAnalyticSpheres(so);
+    if(sph){
+      for(const s of sph){ head(1, s.name, base, null); f64(s.x); f64(s.y); f64(s.z); f64(s.R); }
+      continue;
+    }
+    const g = _stepBake(so);
+    const pa = g.attributes.position, ix = g.index;
+    let pos = pa.array;
+    if(!(pos instanceof Float32Array) || pa.itemSize !== 3 || pa.isInterleavedBufferAttribute){
+      pos = new Float32Array(pa.count * 3);
+      for(let i = 0; i < pa.count; i++){ pos[i*3] = pa.getX(i); pos[i*3+1] = pa.getY(i); pos[i*3+2] = pa.getZ(i); }
+    }
+    let nT, nV = pa.count, idx = null;
+    if(ix){
+      nT = Math.floor(ix.count / 3);
+      idx = (ix.array instanceof Uint32Array) ? ix.array.subarray(0, nT * 3) : Uint32Array.from(ix.array.subarray(0, nT * 3));
+    }else{
+      nT = Math.floor(nV / 3); nV = nT * 3;
+    }
+    const pal = _stepFacePalette(so);
+    let tm = (pal && typeof _ioTriMaterial === 'function') ? _ioTriMaterial(g) : null;
+    if(tm && !(tm instanceof Int32Array)) tm = Int32Array.from(tm);
+    // kind 2 : référence exacte + transformation, le maillage suit comme repli.
+    const exact = !!(exactSet && exactSet.has(so));
+    head(exact ? 2 : 0, so.name, base, pal);
+    if(exact){
+      str(so._medusaRef.ref);
+      for(const v of _stepExactMatrix(so)) f64(v);
+      const recolored = String(so.color || '').toLowerCase() !== String(so._medusaRef.col0 || '').toLowerCase();
+      u32(recolored ? 1 : 0);
+      nExactSent++;
+    }
+    u32(nV); u32(nT); u32((idx ? 1 : 0) | (tm ? 2 : 0));
+    flush();
+    chunks.push(pos.subarray(0, nV * 3));
+    if(idx) chunks.push(idx);
+    if(tm) chunks.push(tm.subarray(0, nT));
+    nTris += nT;
+    g.dispose();                       // libère le GPU ; les tableaux restent vivants jusqu'à l'envoi
+  }
+  flush();
+  countBuf.setUint32(0, nBodies, true);
+  return {chunks, nBodies, nTris, nExactSent};
+}
+
+async function _expSTEPRunMedusa(objList, opts, avail){
+  const t0 = performance.now();
+  const P = _stepExportParams();
+  const list = objList || objs;
+  if(!opts.silent) showSpinner('Export STEP '+P.apInfo.name, 'MEDUSA — checking '+list.length+' object(s)…', 'indeterminate');
+  await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
+  // Corps exacts d'abord : cette étape peut recharger un fichier dans MEDUSA.
+  const ex = await _stepExactPrepare(list, avail, opts, P);
+  if(!opts.silent) showSpinner('Export STEP '+P.apInfo.name, 'MEDUSA — baking '+list.length+' object(s)…', 'indeterminate');
+  // Double rAF : le spinner est peint avant la cuisson synchrone des corps.
+  await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
+  scene.updateMatrixWorld(true);
+  const rq = _stepMedusaRequest(list, P, ex.usable);
+  const tBake = performance.now();
+  if(!opts.silent) showSpinner('Export STEP '+P.apInfo.name, 'MEDUSA — B-Rep of '+rq.nBodies+' body(ies), '+rq.nTris.toLocaleString('en-US')+' triangles…', 'indeterminate');
+
+  let res;
+  try{
+    res = await fetch(`${_STEP_MEDUSA_URL()}/stepexport`, { method:'POST', body: new Blob(rq.chunks) });
+  }catch(e){
+    const err = new Error('MEDUSA unreachable ('+e.message+')'); err.preStream = true; throw err;
+  }
+  rq.chunks.length = 0;                // la requête est partie : plus rien ne la retient
+  const ctype = res.headers.get('content-type') || '';
+  if(!res.ok || ctype.includes('application/json') || !res.body){
+    let msg = 'HTTP '+res.status;
+    try{ const j = await res.json(); if(j && j.error) msg = j.error; }catch(_){ /* corps illisible : on garde le statut */ }
+    const err = new Error(msg); err.preStream = true; throw err;
+  }
+
+  // ── Lecture du flux : [u32 jsonLen][JSON], puis le texte STEP ──────────
+  // Garde-fou de silence : si plus un octet n'arrive pendant 120 s, le moteur
+  // est considéré figé et la lecture est annulée (le fichier n'est pas écrit).
+  const reader = res.body.getReader();
+  let stall = null, stalled = false;
+  const arm = () => { clearTimeout(stall); stall = setTimeout(() => { stalled = true; reader.cancel().catch(()=>{}); }, 120000); };
+  let pend = new Uint8Array(0), meta = null;
+  const sink = await _stepOpenSink(opts, P);
+  let bytes = 0, lastUi = 0;
+  try{
+    arm();
+    for(;;){
+      const {done, value} = await reader.read();
+      if(stalled) throw new Error('MEDUSA stopped sending data for 120 s');
+      if(done) break;
+      arm();
+      let chunk = value;
+      if(!meta){
+        const m = new Uint8Array(pend.length + chunk.length); m.set(pend); m.set(chunk, pend.length); pend = m;
+        if(pend.length < 4) continue;
+        const jl = new DataView(pend.buffer, pend.byteOffset, 4).getUint32(0, true);
+        if(pend.length < 4 + jl) continue;
+        meta = JSON.parse(new TextDecoder().decode(pend.subarray(4, 4 + jl)));
+        if(!meta.success) throw new Error(meta.error || 'MEDUSA: STEP export failed (unknown reason)');
+        chunk = pend.subarray(4 + jl); pend = null;
+        if(!chunk.length) continue;
+      }
+      bytes += chunk.length;
+      await sink.write(chunk);
+      const now = performance.now();
+      if(!opts.silent && now - lastUi > 250){
+        lastUi = now;
+        showSpinner('Export STEP '+P.apInfo.name, 'MEDUSA — writing '+(bytes/1048576).toFixed(1)+' MB · '+
+          meta.entities.toLocaleString('en-US')+' entities', 'indeterminate');
+      }
+    }
+    if(!meta) throw new Error('MEDUSA closed the connection before sending anything');
+  }catch(e){
+    clearTimeout(stall);
+    await sink.abort();
+    // Flux coupé sans le chunk terminal = fetch lève ici : jamais de fichier
+    // tronqué qui aurait l'air entier.
+    throw e;
+  }
+  clearTimeout(stall);
+  const text = await sink.close();
+  const ms = Math.round(performance.now() - t0);
+
+  if(meta.faceStylesDropped)
+    nasLog('WARN','STEP export: '+meta.faceStylesDropped+' face colors skipped (over '+meta.maxFaceStyles+' per body) — body color kept');
+  if(meta.open)
+    nasLog('WARN','STEP export: '+meta.open+' body(ies) are not watertight — written as open shells (surface model, not a solid)');
+  if(ex.changed)
+    nasLog('INFO','STEP export: '+ex.changed+' imported body(ies) changed since import — written from their mesh');
+  if(meta.exactMissing)
+    nasLog('WARN','STEP export: '+meta.exactMissing+' imported body(ies) could not be matched to their exact B-Rep in MEDUSA — written from their mesh');
+  if(meta.exactNonRigid)
+    nasLog('WARN','STEP export: '+meta.exactNonRigid+' imported body(ies) mirrored or non-uniformly scaled — written from their mesh');
+  if(meta.exactFailed)
+    nasLog('WARN','STEP export: '+meta.exactFailed+' exact body(ies) could not be written by OCCT — written from their mesh');
+  if(meta.namesShortened)
+    nasLog('WARN','STEP export: '+meta.namesShortened+' body name(s) shortened — ISO 10303-21 forbids lines over 256 characters and a string cannot be split');
+  if(!opts.returnText && P.cfg.logStats!==false)
+    nasLog('OK','Export STEP '+P.apInfo.name+' B-Rep via MEDUSA — '+list.length+' obj — '+meta.parts+' parts — '+meta.triangles+' tris — '+
+      meta.manifold+' MANIFOLD / '+meta.faceted+' FACETED / '+meta.spheres+' SPHERICAL'+
+      (meta.tessellated?' / '+meta.tessellated+' TESSELLATED':'')+
+      (meta.exact?' / '+meta.exact+' EXACT ('+meta.prototypes+' prototypes)':'')+(meta.open?' / '+meta.open+' OPEN':'')+
+      (meta.styledItems?' / '+meta.styledItems+' styles'+(meta.faceStyles?' ('+meta.faceStyles+' per face)':''):'')+
+      ' — '+(bytes/1024).toFixed(1)+' KB — '+ms+'ms (bake '+Math.round(tBake-t0)+'ms, B-Rep '+Math.round(meta.planMs)+'ms on '+
+      meta.threads+' threads)');
+  if(!opts.silent) hideSpinner();
+  return opts.returnText ? text : undefined;
+}
+
+// Destination du flux. Trois cas, un seul contrat {write, close, abort} :
+//   • handle du picker (Chrome/Edge) → écriture DIRECTE sur disque au fil de
+//     l'eau : un STEP de plusieurs Go ne transite jamais en entier par la RAM
+//     de l'onglet. abort() annule l'écriture, le fichier existant reste intact ;
+//   • pas de handle → morceaux accumulés en Blob, puis _nasDownload (même
+//     repli qu'avant : Téléchargements, ou dialogue natif sous Electron) ;
+//   • returnText → morceaux décodés en texte (round-trip interne).
+async function _stepOpenSink(opts, P){
+  const parts = [];
+  if(!opts.returnText && opts.fileHandle){
+    try{
+      const ws = await opts.fileHandle.createWritable();
+      return {
+        write: c => ws.write(c),
+        close: async () => { await ws.close(); return undefined; },
+        abort: async () => { try{ await ws.abort(); }catch(_){ /* déjà fermé */ } }
+      };
+    }catch(e){
+      nasLog('WARN','FileHandle write: '+e.message+' — browser fallback');
+    }
+  }
+  return {
+    write: c => { parts.push(c); },
+    close: async () => {
+      if(opts.returnText){
+        const dec = new TextDecoder(); let s = '';
+        for(const c of parts) s += dec.decode(c, {stream:true});
+        return s + dec.decode();
+      }
+      _nasDownload('model_'+P.apInfo.name+'.stp', new Blob(parts, {type:'application/step'}), 'application/step');
+      return undefined;
+    },
+    abort: async () => { parts.length = 0; }
+  };
+}
+
+// ══════════════════════════════════════════════════════════════════════════
+// Writer JS — repli sans moteur. Inchangé sur le fond depuis l'audit du 18/09 ;
+// seuls les paramètres (_stepExportParams) et la détection de sphères
+// (_stepAnalyticSpheres) sont désormais partagés avec le chemin MEDUSA.
+// ══════════════════════════════════════════════════════════════════════════
+function _expSTEPRunJS(objList, opts){
   opts = opts || {};
   const t0=performance.now();
-  const _cfg=globalThis._stepExportConfig||{};
-  const _mode=_cfg.fusionMode||'ROBUST';
-  const _mInfo=STEPFusionModes[_mode]||STEPFusionModes.ROBUST;
-  const _apVersion=_cfg.apVersion||'AP242';
-  const _apInfo=STEPApVersions[_apVersion]||STEPApVersions.AP242;
-  // [18/09] Le mode de fusion ne servait qu'à peupler le libellé du spinner :
-  // EXACT, ROBUST et FACETED rendaient trois fichiers identiques au octet près,
-  // et la tolérance personnalisée de la modale n'était lue par personne.
-  //   • decimals → quantification des sommets ET des plans dans le merge
-  //     coplanaire : c'est la tolérance de fusion, celle que le mode promet ;
-  //   • FACETED  → plus de merge du tout, une face par triangle ;
-  //   • tolerance → UNCERTAINTY_MEASURE_WITH_UNIT du contexte géométrique,
-  //     au lieu d'un 0.001 mm figé sans rapport avec le calcul.
-  // Les coordonnées, elles, restent écrites à 6 décimales quel que soit le mode.
-  const _tol = (_cfg.customTolerance!=null && isFinite(_cfg.customTolerance) && _cfg.customTolerance>0)
-    ? _cfg.customTolerance : (_mInfo.tolerance!=null ? _mInfo.tolerance : 1e-5);
-  const _keyDec = (_cfg.customTolerance!=null && isFinite(_cfg.customTolerance) && _cfg.customTolerance>0)
-    ? Math.max(1, Math.min(9, Math.round(-Math.log10(_cfg.customTolerance))))
-    : (_mInfo.decimals!=null ? _mInfo.decimals : 6);
+  // Mode de fusion, protocole, tolérance, clé de quantification : cf. _stepExportParams.
+  const {cfg:_cfg, mode:_mode, mInfo:_mInfo, apInfo:_apInfo, tol:_tol, keyDec:_keyDec}=_stepExportParams();
   if(!opts.silent) showSpinner('Export STEP '+_apInfo.name,'Mode: '+_mInfo.name+' — B-Rep…');
   // Double rAF : garantit que le spinner est peint avant le traitement synchrone.
   // [FIX 17/07] Retourne désormais une Promise (résolue avec le texte STEP si
@@ -360,6 +803,9 @@ function _expSTEPRun(objList, opts){
     let id=0; const L=[];
     const E=()=>{ id++; return id; };
     const W=(s)=>{ L.push('#'+id+' = '+s+';'); };
+    // [24/09] Entité déjà mise en lignes (listes tesselées : des milliers de
+    // points) — écrite telle quelle, sans repli à 72 colonnes.
+    const WR=(s)=>{ L.push({raw:s}); };
     const R=a=>'('+a.map(i=>'#'+i).join(',')+')';   // liste de références, jamais vide ici
 
     // ── Boilerplate AP — paramétré par _apInfo ────────────────────────────
@@ -369,9 +815,13 @@ function _expSTEPRun(objList, opts){
     // de conformance — les validateurs STEP l'exigent, les parseurs géo non).
     const iAC =E(); W("APPLICATION_CONTEXT('"+_stepStr(_apInfo.appCtxText)+"')");
     E();            W("APPLICATION_PROTOCOL_DEFINITION('"+_stepStr(_apInfo.apdStd)+"','"+_stepStr(_apInfo.apdName)+"',"+_apInfo.apdYear+",#"+iAC+")");
-    const iUL =E(); W("(NAMED_UNIT(*) SI_UNIT(.MILLI.,.METRE.) LENGTH_MEASURE_WITH_UNIT(LENGTH_MEASURE(1.)))");
-    const iUA =E(); W("(NAMED_UNIT(*) SI_UNIT($,.RADIAN.) PLANE_ANGLE_MEASURE_WITH_UNIT(PLANE_ANGLE_MEASURE(1.)))");
-    const iUS =E(); W("(NAMED_UNIT(*) SI_UNIT($,.STERADIAN.) SOLID_ANGLE_MEASURE_WITH_UNIT(SOLID_ANGLE_MEASURE(1.)))");
+    // [24/09] Unités sous leur forme NORMALISÉE (LENGTH_UNIT / PLANE_ANGLE_UNIT /
+    // SOLID_ANGLE_UNIT), comme OCCT. L'ancienne forme « SI_UNIT(...) *_MEASURE_WITH_UNIT »
+    // n'était pas reconnue comme radian par les lecteurs : sans effet sur un
+    // maillage, fatale à tout angle (demi-angle d'un cône). Même correction dans MEDUSA.
+    const iUL =E(); W("(LENGTH_UNIT() NAMED_UNIT(*) SI_UNIT(.MILLI.,.METRE.))");
+    const iUA =E(); W("(NAMED_UNIT(*) PLANE_ANGLE_UNIT() SI_UNIT($,.RADIAN.))");
+    const iUS =E(); W("(NAMED_UNIT(*) SI_UNIT($,.STERADIAN.) SOLID_ANGLE_UNIT())");
     const iUM =E(); W("UNCERTAINTY_MEASURE_WITH_UNIT(LENGTH_MEASURE("+_stepReal(_tol,12)+"),#"+iUL+",'distance_accuracy_value','confusion accuracy')");
     const iGC =E(); W("(GEOMETRIC_REPRESENTATION_CONTEXT(3) GLOBAL_UNCERTAINTY_ASSIGNED_CONTEXT((#"+iUM+")) GLOBAL_UNIT_ASSIGNED_CONTEXT((#"+iUL+",#"+iUA+",#"+iUS+")) REPRESENTATION_CONTEXT('Context #1','3D Context with UNIT and UNCERTAINTY'))");
     // Origine partagée : la géométrie est cuite en coordonnées monde, donc chaque
@@ -481,15 +931,22 @@ function _expSTEPRun(objList, opts){
           comp.forEach(i=>{const t=tris[i],P=[t.A,t.B,t.C];
             for(let e=0;e<3;e++){const u=P[e],v=P[(e+1)%3];
               if(!dCount.has(vk(v)+'>'+vk(u)))bndPairs.push([u,v]);}});
-          if(bndPairs.length===0||bndPairs.length>5000)return null;
+          // [24/09] Plus de plafond à 5000 arêtes de bord : il ne protégeait que
+          // la recherche linéaire du point de départ, remplacée par uPt ci-dessous.
+          if(bndPairs.length===0)return null;
           // Trace TOUTES les boucles fermées de la composante (pas juste la première) —
           // même logique de chaînage que _traceNakedLoops (STEP import, cap-fill).
           const nextOf=new Map();
-          bndPairs.forEach(([u,v])=>nextOf.set(vk(u),{v,vk:vk(v)}));
+          const uPt=new Map();
+          for(const [u,v] of bndPairs){
+            const ku=vk(u);
+            if(nextOf.has(ku))return null; // pincement : deux arêtes de bord sortantes → ambigu
+            nextOf.set(ku,{v,vk:vk(v)}); uPt.set(ku,u);
+          }
           const visited=new Set(), loops=[];
           for(const [startKey] of nextOf){
             if(visited.has(startKey))continue;
-            const startPt=bndPairs.find(([u])=>vk(u)===startKey)[0];
+            const startPt=uPt.get(startKey);
             const loop=[startPt]; visited.add(startKey); let curKey=startKey;
             while(true){
               const nxt=nextOf.get(curKey);
@@ -596,43 +1053,47 @@ function _expSTEPRun(objList, opts){
       const iBR=E();W("MANIFOLD_SOLID_BREP('"+_stepStr(name)+"',#"+iSH+")");
       return {brep:iBR, faces:faceIds};
     };
-    // Émission FACETED_BREP — fallback (1 FACE_SURFACE/triangle, historique)
+    // Coque fermée ⇔ chaque arête non orientée partagée par exactement deux triangles.
+    const _closedMesh=tris=>{
+      const par=new Map();
+      const bump=(a,b)=>{const k=a<b?a+'~'+b:b+'~'+a; par.set(k,(par.get(k)||0)+1);};
+      for(const t of tris){ bump(t.ka,t.kb); bump(t.kb,t.kc); bump(t.kc,t.ka); }
+      for(const v of par.values()) if(v!==2) return false;
+      return true;
+    };
+    // Émission FACETED_BREP compacte — AP203 / AP214 (et repli JS).
     // [18/09] Une coque ouverte ne sort plus en CLOSED_SHELL. Un maillage non
     // étanche — la moitié des modèles NASA, tout ce qui est scanné ou décoratif —
     // était déclaré solide fermé : le lecteur y voit un solide invalide et en
     // calcule un volume qui ne veut rien dire. La parité des arêtes tranche, et
     // une coque ouverte part en OPEN_SHELL + SHELL_BASED_SURFACE_MODEL, ce qui
     // est la vérité et ce qu'écrit OCCT dans le même cas.
+    // [24/09] 8 → 3 entités par triangle, dans ce que la norme permet : un PLANE
+    // par plan DISTINCT partagé par les triangles coplanaires, origine du repère
+    // sur un sommet déjà écrit, ref_direction (OPTIONAL) omise. Même règle que
+    // MEDUSA (stepx::planFaceted).
     const _emitFaceted=(tris,name)=>{
-      const ptMap=new Map();
-      const mkPt=(x,y,z)=>{const k=q(x)+'|'+q(y)+'|'+q(z);
-        if(ptMap.has(k))return ptMap.get(k);
-        const i=E();W("CARTESIAN_POINT('',("+f(x)+","+f(y)+","+f(z)+"))");
+      const ptMap=new Map(), plMap=new Map();
+      const mkPt=(k,p)=>{let i=ptMap.get(k); if(i!==undefined)return i;
+        i=E();W("CARTESIAN_POINT('',("+f(p[0])+","+f(p[1])+","+f(p[2])+"))");
         ptMap.set(k,i);return i;};
-      const par=new Map();
-      const bump=(a,b)=>{const k=a<b?a+':'+b:b+':'+a; par.set(k,(par.get(k)||0)+1);};
       const faceIds=[];
       tris.forEach(t=>{
-        const[ax,ay,az]=t.A,[bx,by,bz]=t.B,[cx,cy,cz]=t.C,{nx,ny,nz}=t;
-        let rx=1,ry=0,rz=0; if(Math.abs(nx)>0.9){rx=0;ry=1;rz=0;}
-        const dot=rx*nx+ry*ny+rz*nz; rx-=dot*nx;ry-=dot*ny;rz-=dot*nz;
-        const rl=Math.sqrt(rx*rx+ry*ry+rz*rz)||1; rx/=rl;ry/=rl;rz/=rl;
-        const kx=(ax+bx+cx)/3,ky=(ay+by+cy)/3,kz=(az+bz+cz)/3;
-        const iA=mkPt(ax,ay,az),iB=mkPt(bx,by,bz),iC=mkPt(cx,cy,cz);
-        bump(iA,iB); bump(iB,iC); bump(iC,iA);
+        const iA=mkPt(t.ka,t.A),iB=mkPt(t.kb,t.B),iC=mkPt(t.kc,t.C);
+        const pk=q(t.nx)+','+q(t.ny)+','+q(t.nz)+','+q(t.nx*t.A[0]+t.ny*t.A[1]+t.nz*t.A[2]);
+        let iPL=plMap.get(pk);
+        if(iPL===undefined){
+          const iDN=E();W("DIRECTION('',("+f(t.nx)+","+f(t.ny)+","+f(t.nz)+"))");
+          const iAX=E();W("AXIS2_PLACEMENT_3D('',#"+iA+",#"+iDN+",$)");
+          iPL=E();W("PLANE('',#"+iAX+")");
+          plMap.set(pk,iPL);
+        }
         const iPLp=E();W("POLY_LOOP('',(#"+iA+",#"+iB+",#"+iC+"))");
         const iFOB=E();W("FACE_OUTER_BOUND('',#"+iPLp+",.T.)");
-        const iDN=E();W("DIRECTION('',("+f(nx)+","+f(ny)+","+f(nz)+"))");
-        const iDR=E();W("DIRECTION('',("+f(rx)+","+f(ry)+","+f(rz)+"))");
-        const iKP=E();W("CARTESIAN_POINT('',("+f(kx)+","+f(ky)+","+f(kz)+"))");
-        const iAXF=E();W("AXIS2_PLACEMENT_3D('',#"+iKP+",#"+iDN+",#"+iDR+")");
-        const iSRF=E();W("PLANE('',#"+iAXF+")");
-        const iFC=E();W("FACE_SURFACE('',(#"+iFOB+"),#"+iSRF+",.T.)");
+        const iFC=E();W("FACE_SURFACE('',(#"+iFOB+"),#"+iPL+",.T.)");
         faceIds.push({id:iFC,m:t.m});
       });
-      let closed=true;
-      for(const v of par.values()) if(v!==2){ closed=false; break; }
-      if(closed){
+      if(_closedMesh(tris)){
         const iSH=E();W("CLOSED_SHELL('',"+R(faceIds.map(x=>x.id))+")");
         const iBR=E();W("FACETED_BREP('"+_stepStr(name)+"',#"+iSH+")");
         return {brep:iBR, faces:faceIds, open:false};
@@ -640,6 +1101,62 @@ function _expSTEPRun(objList, opts){
       const iSH=E();W("OPEN_SHELL('',"+R(faceIds.map(x=>x.id))+")");
       const iBR=E();W("SHELL_BASED_SURFACE_MODEL('"+_stepStr(name)+"',(#"+iSH+"))");
       return {brep:iBR, faces:faceIds, open:true};
+    };
+    // Émission TESSELÉE AP242 — ISO 10303-42 éd.4 / CAx-IF « 3D Tessellated
+    // Geometry » : un COORDINATES_LIST par corps, une TRIANGULATED_FACE par
+    // matériau (pnindex vide si le corps est uni : les triangles visent alors
+    // directement la liste), TESSELLATED_SOLID si fermé, sinon TESSELLATED_SHELL.
+    // Normales non écrites (liste vide, autorisée). Même règle que MEDUSA
+    // (stepx::planTess) ; lignes : 3 points, 16 indices ou 4 triangles.
+    const _emitTess=(tris,name)=>{
+      const vid=new Map(), pts=[];
+      const idOf=(k,p)=>{let i=vid.get(k); if(i===undefined){i=pts.length; vid.set(k,i); pts.push(p);} return i;};
+      const mats=[];
+      for(const t of tris){ if(mats.indexOf(t.m)<0){ mats.push(t.m); if(mats.length>4096) break; } }
+      const single=mats.length===1||mats.length>4096;
+      const groups=(single?[tris[0].m]:mats).map(m=>({m, pn:[], tri:[]}));
+      for(const G of groups){
+        const local=single?null:new Map();
+        for(const t of tris){
+          if(!single && t.m!==G.m) continue;
+          for(const [k,p] of [[t.ka,t.A],[t.kb,t.B],[t.kc,t.C]]){
+            const gv=idOf(k,p);
+            if(single){ G.tri.push(gv); continue; }
+            let l=local.get(gv); if(l===undefined){ l=G.pn.length; local.set(gv,l); G.pn.push(gv); }
+            G.tri.push(l);
+          }
+        }
+      }
+      const sep=(k,per)=>k===0?'\n  ':(k%per===0?',\n  ':',');
+      const iCL=E();
+      { const a=new Array(pts.length);
+        for(let k=0;k<pts.length;k++){ const p=pts[k]; a[k]=sep(k,3)+'('+f(p[0])+','+f(p[1])+','+f(p[2])+')'; }
+        WR('#'+iCL+" = COORDINATES_LIST('',"+pts.length+",("+a.join('')+'));'); }
+      const faceIds=groups.map(G=>{
+        const iTF=E();
+        const pa=new Array(G.pn.length);
+        for(let k=0;k<G.pn.length;k++) pa[k]=sep(k,16)+(G.pn[k]+1);
+        const nt=G.tri.length/3, ta=new Array(nt);
+        for(let k=0;k<nt;k++) ta[k]=sep(k,4)+'('+(G.tri[3*k]+1)+','+(G.tri[3*k+1]+1)+','+(G.tri[3*k+2]+1)+')';
+        WR('#'+iTF+" = TRIANGULATED_FACE('',#"+iCL+","+(G.pn.length||pts.length)+",(),$,("+pa.join('')+"),("+ta.join('')+'));');
+        return {id:iTF, m:G.m};
+      });
+      const open=!_closedMesh(tris);
+      const iTS=E();W((open?"TESSELLATED_SHELL('":"TESSELLATED_SOLID('")+_stepStr(name)+"',"+R(faceIds.map(x=>x.id))+",$)");
+      return {brep:iTS, faces:faceIds, open, tess:true};
+    };
+    // Nombre d'entités d'un B-Rep fusionné (même compte que stepx::planarMerge).
+    const _manifoldCount=faces=>{
+      const vs=new Set(), es=new Set(); let n=0;
+      const vk=p=>q(p[0])+'|'+q(p[1])+'|'+q(p[2]);
+      for(const fc of faces){
+        n+=6;
+        for(const Lp of [fc.outerLoop,...fc.holeLoops]){
+          n+=Lp.length+2;
+          for(let i=0;i<Lp.length;i++){ const a=vk(Lp[i]), b=vk(Lp[(i+1)%Lp.length]); vs.add(a); es.add(a<b?a+'~'+b:b+'~'+a); }
+        }
+      }
+      return 2*vs.size+4*es.size+n+2;
     };
     // Émission sphère analytique — MANIFOLD_SOLID_BREP à 1 face SPHERICAL_SURFACE.
     // Topologie canonique OCCT : 1 face sphérique bornée par UNE couture méridienne
@@ -675,13 +1192,15 @@ function _expSTEPRun(objList, opts){
       return {brep:iBR, faces:[{id:iAF,m:-1}]};
     };
 
-    // ── boucle par objet — choix MANIFOLD_SOLID_BREP / FACETED_BREP ────
+    // Clé de soudure d'un sommet (tolérance du mode), partagée par les émetteurs.
+    const _vk=p=>q(p[0])+'|'+q(p[1])+'|'+q(p[2]);
+    // ── boucle par objet — MANIFOLD_SOLID_BREP / TESSELLATED / FACETED_BREP ─
     // parts[] : un élément par SOLIDE émis = un PRODUCT dans l'assemblage.
     const parts=[];
-    let totalTris=0, nManifold=0, nFaceted=0, nSphere=0, nFaceStyled=0, nStyleDropped=0, nOpen=0;
+    let totalTris=0, nManifold=0, nFaceted=0, nSphere=0, nTess=0, nFaceStyled=0, nStyleDropped=0, nOpen=0;
     const _pushPart=(res,name,base,pal,faceted)=>{
       parts.push({brep:res.brep, faces:res.faces, name:name, base:base, pal:pal,
-                  faceted:!!faceted, open:!!res.open});
+                  faceted:!!faceted, open:!!res.open, tess:!!res.tess});
       if(res.open) nOpen++;
     };
     // ISO 10303-514 : ADVANCED_BREP_SHAPE_REPRESENTATION n'accepte que des faces
@@ -690,66 +1209,23 @@ function _expSTEPRun(objList, opts){
     // l'ancien export mettait les deux dans la meme entite.
     // Une coque ouverte n'est pas un solide : elle releve de
     // MANIFOLD_SURFACE_SHAPE_REPRESENTATION (SHELL_BASED_SURFACE_MODEL).
-    const _repOf=pt=>pt.open?'MANIFOLD_SURFACE_SHAPE_REPRESENTATION'
-      :(pt.faceted?'FACETED_BREP_SHAPE_REPRESENTATION':'ADVANCED_BREP_SHAPE_REPRESENTATION');
+    // Tessellé : TESSELLATED_SHAPE_REPRESENTATION, reliée au produit comme les
+    // autres (CAx-IF, cas « tessellated only »).
+    const _repOf=pt=>pt.tess?'TESSELLATED_SHAPE_REPRESENTATION':(pt.open?'MANIFOLD_SURFACE_SHAPE_REPRESENTATION'
+      :(pt.faceted?'FACETED_BREP_SHAPE_REPRESENTATION':'ADVANCED_BREP_SHAPE_REPRESENTATION'));
     (objList||objs).forEach(so=>{
       const base={hex:_stepHexOf(so), a:_stepAlpha(Array.isArray(so.mesh.material)?so.mesh.material[0]:so.mesh.material, so)};
-      // ── Sphère à scale uniforme → SPHERICAL_SURFACE analytique ──────────
+      // ── Sphère(s) analytique(s) → SPHERICAL_SURFACE ──────────────────────
       // Évite l'explosion FACETED_BREP (res 128 → ~32k triangles/sphère).
-      // Scale non-uniforme (ellipsoïde) → on retombe sur la tessellation classique.
-      if(so.type==='sphere'){
-        const _lg=so.mesh.geometry; _lg.computeBoundingBox(); const _lb=_lg.boundingBox;
-        const _sx=Math.abs(so.mesh.scale.x),_sy=Math.abs(so.mesh.scale.y),_sz=Math.abs(so.mesh.scale.z);
-        const _W=(_lb.max.x-_lb.min.x)*_sx,_H=(_lb.max.y-_lb.min.y)*_sy,_D=(_lb.max.z-_lb.min.z)*_sz;
-        const _mx=Math.max(_W,_H,_D)||1;
-        if(Math.abs(_W-_H)/_mx<1e-3 && Math.abs(_H-_D)/_mx<1e-3 && Math.abs(_W-_D)/_mx<1e-3){
-          const _wp=new THREE.Vector3(); so.mesh.getWorldPosition(_wp);
-          const _C=cv(_wp.x,_wp.y,_wp.z);
-          _pushPart(_emitSphere(_C[0],_C[1],_C[2],_W/2,so.name), so.name, base, null);
+      // Décision partagée avec le chemin MEDUSA : cf. _stepAnalyticSpheres.
+      const _sph=_stepAnalyticSpheres(so);
+      if(_sph){
+        _sph.forEach(s=>{
+          const C=cv(s.x,s.y,s.z);
+          _pushPart(_emitSphere(C[0],C[1],C[2],s.R,s.name), s.name, base, null);
           nSphere++;
-          return;
-        }
-      }
-      // ── Union triviale de sphères → décomposition analytique multi-corps ──
-      // Cas réel : box-select 25 sphères + Union → 1 objet CSG. La branche
-      // 'sphere' ci-dessus ne voit plus rien. Ici : si le noeud CSG est une union
-      // (op union) de sphères-feuilles DISJOINTES (scale uniforme), émettre chaque
-      // sphère en SPHERICAL_SURFACE. Centre = matrixWorld × (p_création − cg).
-      // Disjonction re-vérifiée par sphères englobantes : une union OVERLAPPING
-      // n'est PAS décomposable en solides séparés → retombe sur la tessellation.
-      if(so.type==='csg' && _csgTree.has(so.id)){
-        const _nd=_csgTree.get(so.id), _kids=_nd.children||[];
-        const _allSph = _nd.op==='union' && _kids.length>0 && _kids.every(c=>
-          c.type==='sphere' && !c.isHole && !c._csgTree && c.s &&
-          Math.abs(Math.abs(c.s[0])-Math.abs(c.s[1]))<1e-6 &&
-          Math.abs(Math.abs(c.s[1])-Math.abs(c.s[2]))<1e-6);
-        if(_allSph){
-          const _up=new THREE.Vector3(),_uq=new THREE.Quaternion(),_us=new THREE.Vector3();
-          so.mesh.matrixWorld.decompose(_up,_uq,_us);
-          const _unif = Math.abs(_us.x-_us.y)<1e-6 && Math.abs(_us.y-_us.z)<1e-6;
-          const _hasCg = Array.isArray(_nd.cg);
-          const _cg = _hasCg ? new THREE.Vector3(_nd.cg[0],_nd.cg[1],_nd.cg[2]) : null;
-          if(_unif){
-            const _S=_kids.map(c=>{
-              const _wc = _hasCg
-                ? new THREE.Vector3(c.p[0]-_cg.x,c.p[1]-_cg.y,c.p[2]-_cg.z).applyMatrix4(so.mesh.matrixWorld)
-                : new THREE.Vector3(c.p[0],c.p[1],c.p[2]); // legacy (pré-cg) : p déjà en monde
-              return {wc:_wc, R:(PS/2)*Math.abs(c.s[0])*(_hasCg?_us.x:1)};
-            });
-            let _disj=true;
-            for(let i=0;i<_S.length&&_disj;i++)for(let j=i+1;j<_S.length;j++){
-              if(_S[i].wc.distanceTo(_S[j].wc) < _S[i].R+_S[j].R-1e-4){_disj=false;break;}
-            }
-            if(_disj){
-              _S.forEach((s,k)=>{
-                const C=cv(s.wc.x,s.wc.y,s.wc.z);
-                _pushPart(_emitSphere(C[0],C[1],C[2],s.R,so.name+'_'+(k+1)), so.name+'_'+(k+1), base, null);
-                nSphere++;
-              });
-              return;
-            }
-          }
-        }
+        });
+        return;
       }
       const gHD=_stepBake(so);
       const pos=gHD.attributes.position, ix=gHD.index;
@@ -767,12 +1243,34 @@ function _expSTEPRun(objList, opts){
         let nx=ey*gz-ez*gy,ny=ez*gx-ex*gz,nz=ex*gy-ey*gx;
         const nl=Math.sqrt(nx*nx+ny*ny+nz*nz);
         if(nl<1e-10)continue; // dégénéré → skip
+        // [24/09] Triangle effondré à la soudure (deux sommets sur la même clé) :
+        // écarté, il donnait une boucle à sommet répété — comme MEDUSA.
+        const ka=_vk(A), kb=_vk(B), kc=_vk(C);
+        if(ka===kb||kb===kc||ka===kc)continue;
         nx/=nl;ny/=nl;nz/=nl;
-        tris.push({A,B,C,nx,ny,nz,m:triMat?triMat[i]:-1});
+        tris.push({A,B,C,nx,ny,nz,m:triMat?triMat[i]:-1,ka,kb,kc});
       }
       if(!tris.length){gHD.dispose();return;}
-      const merged=(_mode==='FACETED')?null:_planarMerge(tris);
+      // ── Choix de la représentation (même règle que stepx::planBody) ─────
+      // [24/09] L'ADVANCED_FACE par triangle courbe (~18 entités) faisait
+      // grossir un STEP de 357 Mo à 2,2 Go. AP242 : tessellé ; AP203/214 :
+      // FACETED_BREP compact ; le B-Rep à faces planes n'est gardé que s'il
+      // reste proche en taille (pièces polyédriques), ou pour un petit corps.
+      const ap242=_apInfo.name==='AP242';
+      const vSet=new Set(), plSet=new Set();
+      for(const t of tris){
+        vSet.add(t.ka); vSet.add(t.kb); vSet.add(t.kc);
+        plSet.add(q(t.nx)+','+q(t.ny)+','+q(t.nz)+','+q(t.nx*t.A[0]+t.ny*t.A[1]+t.nz*t.A[2]));
+      }
+      const alt=ap242 ? 300+34*vSet.size+24*tris.length : 65*vSet.size+135*plSet.size+130*tris.length;
+      const budget=Math.max(16384,(ap242?8:2)*alt);
+      let merged=null;
+      if(_mode!=='FACETED' && 47*11*plSet.size<=budget){
+        merged=_planarMerge(tris);
+        if(merged && 47*_manifoldCount(merged)>budget) merged=null;
+      }
       if(merged){_pushPart(_emitManifold(merged,so.name), so.name, base, pal); nManifold++;}
+      else if(ap242){_pushPart(_emitTess(tris,so.name), so.name, base, pal); nTess++;}
       else{_pushPart(_emitFaceted(tris,so.name), so.name, base, pal, true); nFaceted++;}
       gHD.dispose();
     });
@@ -906,7 +1404,7 @@ function _expSTEPRun(objList, opts){
     if(nStyleDropped)
       nasLog('WARN','STEP export: '+nStyleDropped+' face colors skipped (over '+_STEP_MAX_FACE_STYLES+' per body) — body color kept');
     if(nOpen)
-      nasLog('WARN','STEP export: '+nOpen+' body(ies) are not watertight — written as OPEN_SHELL / SHELL_BASED_SURFACE_MODEL (surface model, not a solid)');
+      nasLog('WARN','STEP export: '+nOpen+' body(ies) are not watertight — written as open shells (surface model, not a solid)');
     if(_stepStr.truncated)
       nasLog('WARN','STEP export: '+_stepStr.truncated+' name(s) shortened — ISO 10303-21 forbids lines over 256 characters and a string cannot be split');
 
@@ -926,9 +1424,10 @@ function _expSTEPRun(objList, opts){
       'ENDSEC;','DATA;',
       '/* NASSCAD V'+NASSCAD_VERSION+' - nasscad.com - '+nObj+' objects - '+parts.length+' parts - '+totalTris+' triangles - '+
         nManifold+' MANIFOLD_SOLID_BREP / '+nFaceted+' FACETED_BREP / '+nSphere+' SPHERICAL_SURFACE'+
+        (nTess?' / '+nTess+' TESSELLATED':'')+
         (nOpen?' / '+nOpen+' OPEN_SHELL':'')+
         (styledItemIds.length?' / '+styledItemIds.length+' styled items':'')+' - '+_apInfo.name+' */',
-      ...L.map(s=>_stepFold(s,72)),
+      ...L.map(s=>typeof s==='string'?_stepFold(s,72):s.raw),
       'ENDSEC;','END-ISO-10303-21;',''
     ].join('\n');
     const kb=(step.length/1024).toFixed(1);
@@ -941,7 +1440,7 @@ function _expSTEPRun(objList, opts){
     }
     if(_cfg.logStats!==false)
       nasLog('OK','Export STEP '+_apInfo.name+' B-Rep — '+nObj+' obj — '+parts.length+' parts — '+totalTris+' tris — '+
-        nManifold+' MANIFOLD / '+nFaceted+' FACETED / '+nSphere+' SPHERICAL'+(nOpen?' / '+nOpen+' OPEN':'')+
+        nManifold+' MANIFOLD / '+nFaceted+' FACETED / '+nSphere+' SPHERICAL'+(nTess?' / '+nTess+' TESSELLATED':'')+(nOpen?' / '+nOpen+' OPEN':'')+
         (styledItemIds.length?' / '+styledItemIds.length+' styles'+(nFaceStyled?' ('+nFaceStyled+' per face)':''):'')+
         ' — '+kb+' KB — '+Math.round(performance.now()-t0)+'ms');
     // Nom suggéré : inclut le protocole pour aider l'utilisateur à identifier
