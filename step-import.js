@@ -344,10 +344,13 @@ async function _stepCacheKey(buffer, params, hashHex){
   // _STEP_WASM_DEFLECTION resterait sans effet visible sur tout fichier déjà
   // importé une fois — le pire des cas : un réglage qui a l'air de ne rien faire.
   // Bump NSTP6 → NSTP7 : invalide proprement les entrées d'avant ce changement.
+  // [24/09, soir] NSTP7 → NSTP8 : les entrées portent désormais la référence
+  // exacte de chaque corps (cf. _stepExactRef) ; une entrée sans elle ferait
+  // exporter en maillage un fichier que MEDUSA sait réécrire à l'identique.
   const salt = '|' + ((params && params.linearUnit) || 'mm')
              + '|d' + ((params && params.linearDeflection)  ?? _STEP_WASM_DEFLECTION)
              + '|a' + ((params && params.angularDeflection) ?? _STEP_WASM_ANGULAR)
-             + '|NSTP7';
+             + '|NSTP8';
   // [17/09] Le digest lui-même est calculé par _stepDigestHex (plus bas), et
   // l'appelant peut le passer déjà calculé : sur 235 Mo, hacher deux fois le
   // même buffer — une fois pour le cache de parsing, une fois pour le cache de
@@ -460,6 +463,7 @@ function _nstpEncode(result){
       // [27/08] Les couleurs par face doivent survivre au cache : sans cette
       // ligne, un second import du même fichier ressortait monochrome.
       faces: (m.faces && m.faces.length) ? m.faces : undefined,
+      ref: m.ref || undefined,       // [24/09, soir] cf. _stepExactRef
       posOffset, posCount: pos.length, idxOffset, idxCount: idx.length });
     bufs.push(pos, idx);
   }
@@ -506,6 +510,7 @@ function _nstpDecode(arrayBuffer, cached){
     name:  m.name,
     color: m.color || undefined,
     faces: (m.faces && m.faces.length) ? m.faces : undefined,
+    ref:   m.ref || undefined,        // [24/09] cf. _stepExactRef
     attributes: { position: { array:
       new Float32Array(arrayBuffer, binBase + m.posOffset, m.posCount) } },
     index: { array:
@@ -571,7 +576,7 @@ function _geoCacheKey(hashHex, repairApplied){
     + '|g' + (_STEP_CAP_GAPS ? 1 : 0)
     + '|r' + (repairApplied ? 1 : 0)
     + '|f' + (_STEP_LEAN_IMPORT ? 1 : 0)
-    + '|NSPG1';
+    + '|NSPG2';                               // [24/09, soir] 2 : les corps portent leur référence exacte
 }
 
 function _geoCacheGet(key){
@@ -589,7 +594,7 @@ function _geoCacheGet(key){
 }
 
 // Même magasin, même éviction LRU, même budget que le cache NSTP : seule la clé
-// diffère (suffixe NSPG1). Aucun changement de schéma IndexedDB — donc aucune
+// diffère (suffixe NSPG2). Aucun changement de schéma IndexedDB — donc aucune
 // migration à écrire, et une base existante continue de s'ouvrir en version 1.
 function _geoCachePut(key, ab, label){
   try{
@@ -622,6 +627,7 @@ function _nspgEncode(bodies, meta){
     const nrm = g.attributes.normal ? g.attributes.normal.array : null;
     const idx = g.index ? g.index.array : null;
     const e = { n: b.name || '', c: b.color || null, m: !!b.isManifold };
+    if(b.ref) e.r = String(b.ref);          // [24/09, soir] cf. _stepExactRef
     e.p = [put(pos instanceof Float32Array ? pos : new Float32Array(pos)), pos.length];
     if(nrm) e.nr = [put(nrm instanceof Float32Array ? nrm : new Float32Array(nrm)), nrm.length];
     if(idx) e.ix = [put(idx instanceof Uint32Array ? idx : new Uint32Array(idx)), idx.length];
@@ -689,7 +695,7 @@ function _nspgDecode(ab){
         faces[i] = [((h>>16)&255)/255, ((h>>8)&255)/255, (h&255)/255, fa[i*3+1], fa[i*3+2]];
       }
     }
-    out.push({ name: e.n, color: e.c, isManifold: e.m, geo: g, faces });
+    out.push({ name: e.n, color: e.c, isManifold: e.m, geo: g, faces, ref: e.r || null });
   }
   return { meta: j.meta || {}, bodies: out };
 }
@@ -721,6 +727,10 @@ function _geoCacheRestore(dec, file, groupId, groupLabel){
     const name = (b.name || file.name.replace(/\.[^.]+$/,'')) + '_' + objCnt;
     const obj  = {id:objCnt, name, type:'csg', mesh, color:col, isHole:false, isManifold:b.isManifold,
       stepGroupId:groupId, stepGroupLabel:groupLabel};
+    // [24/09, soir] Même lien vers le B-Rep exact qu'un import complet : sans
+    // lui, un fichier sorti de ce cache s'exporterait en maillage.
+    if(b.ref) obj._medusaRef = _stepExactRef(b.ref,
+      [(dec.meta && dec.meta.gOx) || 0, (dec.meta && dec.meta.gOy) || 0, (dec.meta && dec.meta.gOz) || 0], b.geo, col, file);
     objs.push(obj); _impObjs.push(obj); meshCount++;
   }
   selObjs = _impObjs;
@@ -988,8 +998,84 @@ async function _smoothBatch(geos, creaseDeg){
 // extrait chaque frame [u32 jsonLen][json][pos f32][idx u32] dès qu'elle est
 // complète. Frame {"end":true} = fin (ou {"end":true,"error"} = échec côté
 // serveur en cours de route → on jette, l'appelant retombe sur /step classique).
-async function _readStepFileViaBoosterStream(buffer, params, onMesh){
-  const res = await fetch(`${_BOOSTER_URL}/stepstream`, { method: 'POST', body: buffer });
+// ── [24/09] Référence au B-Rep exact d'un corps importé ─────────────────────
+// MEDUSA garde la géométrie exacte de chaque corps qu'il lit et la désigne par
+// « ref » (« h<empreinte du fichier>:<rang>:<signature> », cf. ImportEntry dans
+// nasscad_medusa.cpp). On mémorise avec elle ce qu'il faut pour la replacer à
+// l'export :
+//   off  — la translation globale appliquée à l'import (pass 2, centrage) ;
+//   col0 — la couleur d'origine (une couleur changée = couleurs de faces
+//          d'origine abandonnées, cf. step-export.js) ;
+//   fp   — l'empreinte de la géométrie affichée (nombres de sommets et
+//          d'indices, hash du contenu). Une géométrie modifiée depuis l'import
+//          (booléenne, réparation, transformation « cuite », édition) ne
+//          correspond plus : l'export retombe alors sur le maillage, jamais
+//          sur l'ancien corps ;
+// Le fichier source (File/Blob) est rangé à part, par étiquette, dans
+// _stepExactSources : si MEDUSA ne tient plus ce B-Rep au moment de l'export
+// (redémarré, ou import sorti du cache du navigateur sans passer par lui),
+// step-export.js le lui renvoie (/stepload) — une relecture sans maillage,
+// sous la même empreinte. À part, et non dans _medusaRef : le journal
+// d'annulation et le fichier projet sérialisent _medusaRef, et un File n'a
+// rien à y faire (IndexedDB en recopierait le contenu à chaque action).
+//
+// Hash du contenu : MurmurHash3 (x86, 32 bits) sur les BITS des positions puis
+// sur les indices. Un multiply-xor naïf ne suffirait pas : deux inversions de
+// signe s'y annulent, et un miroir « cuit » d'une pièce centrée garde nombre
+// de sommets ET boîte englobante — c'est exactement le cas à attraper.
+function _stepGeoHash(g){
+  const pa = g.attributes.position, ix = g.index;
+  let h = 0x9747b28c | 0, len = 0;
+  const eat = (w) => {
+    let k = Math.imul(w | 0, 0xcc9e2d51);
+    k = (k << 15) | (k >>> 17);
+    h ^= Math.imul(k, 0x1b873593);
+    h = (h << 13) | (h >>> 19);
+    h = (Math.imul(h, 5) + 0xe6546b64) | 0;
+  };
+  const arr = pa.array;
+  if(arr instanceof Float32Array && pa.itemSize === 3 && !pa.isInterleavedBufferAttribute){
+    const u = new Uint32Array(arr.buffer, arr.byteOffset, pa.count * 3);
+    for(let i = 0; i < u.length; i++) eat(u[i]);
+    len += u.length;
+  }else{
+    const f = new Float32Array(3), u = new Uint32Array(f.buffer);
+    for(let i = 0; i < pa.count; i++){
+      f[0] = pa.getX(i); f[1] = pa.getY(i); f[2] = pa.getZ(i);
+      eat(u[0]); eat(u[1]); eat(u[2]);
+    }
+    len += pa.count * 3;
+  }
+  if(ix){
+    const a = ix.array, n = ix.count;
+    for(let i = 0; i < n; i++) eat(a[i]);
+    len += n;
+  }
+  h ^= len;
+  h ^= h >>> 16; h = Math.imul(h, 0x85ebca6b);
+  h ^= h >>> 13; h = Math.imul(h, 0xc2b2ae35);
+  h ^= h >>> 16;
+  return h >>> 0;
+}
+function _stepGeoFingerprint(g){
+  if(!g || !g.attributes || !g.attributes.position) return null;
+  return { n: g.attributes.position.count, i: g.index ? g.index.count : 0, h: _stepGeoHash(g) };
+}
+const _stepExactSources = new Map();          // étiquette MEDUSA → File/Blob source
+function _stepExactRef(ref, off, geo, col, src){
+  const r = String(ref), tag = r.split(':')[0];
+  if(src && typeof src.slice === 'function' && /^h[0-9a-f]{32}$/.test(tag)) _stepExactSources.set(tag, src);
+  return { ref: r, off: off.slice(0, 3), col0: col, fp: _stepGeoFingerprint(geo) };
+}
+// ?tag= pour MEDUSA : les 32 premiers chiffres hexa du SHA-256 du fichier. Il
+// identifie le fichier auprès du moteur d'une session à l'autre ; sans lui
+// (digest indisponible), MEDUSA prend une étiquette de session, comme avant.
+function _stepTagQuery(hashHex){
+  return (typeof hashHex === 'string' && /^[0-9a-f]{32,}$/.test(hashHex)) ? '?tag=' + hashHex.slice(0, 32) : '';
+}
+
+async function _readStepFileViaBoosterStream(buffer, params, onMesh, hashHex){
+  const res = await fetch(`${_BOOSTER_URL}/stepstream${_stepTagQuery(hashHex)}`, { method: 'POST', body: buffer });
   if(!res.ok || !res.body){
     const err = new Error('stream unavailable (HTTP ' + res.status + ')');
     err.streamUnsupported = true; // vieux serveur sans /stepstream → repli /step
@@ -1025,6 +1111,7 @@ async function _readStepFileViaBoosterStream(buffer, params, onMesh){
       const idx = new Uint32Array(buf.slice(4 + jsonLen + posBytes, total).buffer);
       const mesh = { name: meta.name, color: meta.color || undefined,
         faces: (meta.faces && meta.faces.length) ? meta.faces : undefined,
+        ref: meta.ref || undefined,   // [24/09] B-Rep exact gardé par MEDUSA (cf. _stepExactRef)
         attributes: { position: { array: pos } }, index: { array: idx } };
       meshes.push(mesh);
       if(onMesh) try{ onMesh(mesh, meshes.length); }catch(e){ /* la progression ne doit jamais casser l'import */ }
@@ -1045,7 +1132,7 @@ async function _readStepFileViaBoosterStream(buffer, params, onMesh){
 // POST du buffer STEP brut au compagnon natif. Le buffer n'est PAS détaché par
 // fetch() (contrairement à un postMessage transferable vers un Worker) — reste
 // utilisable ensuite si ce chemin échoue et qu'on retombe sur le Worker WASM.
-async function _readStepFileViaBooster(buffer, params){
+async function _readStepFileViaBooster(buffer, params, hashHex){
   const ctrl = new AbortController();
   const timeoutMs = Math.max(120000, Math.ceil(buffer.byteLength / (1024*1024)) * 3000); // 3s/Mo, plancher 2min
   const timer = setTimeout(() => ctrl.abort(), timeoutMs);
@@ -1054,7 +1141,7 @@ async function _readStepFileViaBooster(buffer, params){
     // [19/09] IFC et STEP partagent le conteneur ISO 10303-21 ; seul le schema
     // change. MEDUSA a un point d'entree dedie, et /step sait aussi renifler —
     // on vise quand meme /ifc explicitement, c'est plus clair dans ses logs.
-    const _ep = (params && params.ifc) ? '/ifc' : '/step';
+    const _ep = (params && params.ifc) ? '/ifc' : '/step' + _stepTagQuery(hashHex);
     res = await fetch(`${_BOOSTER_URL}${_ep}`, { method: 'POST', body: buffer, signal: ctrl.signal });
   }catch(e){
     if(e.name === 'AbortError'){
@@ -1621,6 +1708,8 @@ async function _readStepFileOffloaded(buffer, params, _perf, _hashHex){
   const _tHash0 = performance.now();
   const _ck = await _stepCacheKey(buffer, params, _hashHex);
   _stepPerfMark(_perf, 'parse cache key', performance.now() - _tHash0);
+  // [24/09, soir] Empreinte du fichier, remise à MEDUSA (?tag=) : cf. _stepTagQuery.
+  const _fileHash = _hashHex || (_ck ? _ck.slice(0, _ck.indexOf('|')) : null);
   if(_ck){
     const _tLook0 = performance.now();
     const _hit = await _stepCacheGet(_ck);
@@ -1649,7 +1738,7 @@ async function _readStepFileOffloaded(buffer, params, _perf, _hashHex){
       // [19/09] /stepstream ne sert que le STEP : un IFC part directement sur
       // /ifc, sans tenter un streaming qui echouerait pour rien.
       if(params && params.ifc){
-        _bres = await _readStepFileViaBooster(buffer, params);
+        _bres = await _readStepFileViaBooster(buffer, params, _fileHash);
       } else
       try{
         _bres = await _readStepFileViaBoosterStream(buffer, params, (mesh, n) => {
@@ -1657,12 +1746,12 @@ async function _readStepFileOffloaded(buffer, params, _perf, _hashHex){
           // remplace le spinner "opaque lib" sans pourcentage.
           if(typeof showSpinner === 'function') showSpinner('MEDUSA (streaming)',
             `${n} body(ies) received…`, 'indeterminate');
-        });
+        }, _fileHash);
       }catch(_se){
         // Vieux serveur (pas de /stepstream), coupure en cours, erreur serveur :
         // le /step classique reste la voie sûre — comportement identique à avant.
         nasLog('DBG', `MEDUSA stream unavailable (${_se.message}) — falling back to classic /step`);
-        _bres = await _readStepFileViaBooster(buffer, params);
+        _bres = await _readStepFileViaBooster(buffer, params, _fileHash);
       }
       nasLog('OK', `⚡ MEDUSA: ${_bres.meshes.length} bodies in ` +
         `${((performance.now()-_bt0)/1000).toFixed(2)}s — native parallel OCCT, no WASM`);
@@ -3682,7 +3771,7 @@ async function _importSTEPSingle(file, _impOpts){
           }
         }
       }
-      _stepGeos.push({ geo, mName: m.name, mColor: m.color, mFaces: m.faces, isManifold });
+      _stepGeos.push({ geo, mName: m.name, mColor: m.color, mFaces: m.faces, isManifold, mRef: m.ref });
     }
     // ── Pass 2 : centrage GLOBAL — une seule translation identique pour tous les corps.
     // Les vertices occt-import-js sont en coordonnées world STEP (Z-up, déjà converties Y-up).
@@ -3954,8 +4043,13 @@ async function _importSTEPSingle(file, _impOpts){
         const name = (mName || file.name.replace(/\.[^.]+$/,'')) + '_' + objCnt;
         const obj  = {id:objCnt, name, type:'csg', mesh, color:col, isHole:false, isManifold,
           stepGroupId:_stepGroupId, stepGroupLabel:_stepGroupLabel};
+        // [24/09] Lien vers le B-Rep EXACT que MEDUSA garde pour ce corps : à
+        // l'export, tant que la géométrie n'a pas changé, c'est lui qui est
+        // réécrit (taille et précision du fichier d'origine), pas ce maillage.
+        const _ref = _stepGeos[_i] && _stepGeos[_i].mRef;
+        if(_ref) obj._medusaRef = _stepExactRef(_ref, [_gOx, _gOy, _gOz], geoSmooth, col, file);
         objs.push(obj); _impObjs.push(obj); meshCount++;
-        _cacheBodies.push({ name: mName, color: col, isManifold, geo: geoSmooth, faces: mFaces });
+        _cacheBodies.push({ name: mName, color: col, isManifold, geo: geoSmooth, faces: mFaces, ref: _ref });
       }
       _stepPerfMark(_perf, 'mesh build + scene', performance.now() - _tBuild0,
         `${_repaired.length} bodies`);
