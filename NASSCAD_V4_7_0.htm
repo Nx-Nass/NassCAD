@@ -4919,6 +4919,22 @@ function _gridScreenBasis(){
   _gdSy = cam.up.y<0 ? -1 : 1;
 }
 
+// [FIX 27/09] Alt+glisser déplaçait la grille ET tous les objets dans le
+// monde. Cette translation n'était sauvée nulle part (projet, undo) alors que
+// tout le reste raisonne en coordonnées monde : Pos Y relisait le décalage,
+// une nouvelle primitive naissait à Y=0 monde (hors plateau), le snap visait
+// la grille monde, et un Ctrl+Z ou un projet rouvert laissait les pièces
+// flotter au-dessus du plateau. On déplace désormais la caméra de −d : à
+// l'écran c'est identique (pivot d'orbite compris), et le plateau reste
+// l'origine du monde. _gridPan garde le cumul pour « Recenter grid ».
+const _gridPan = new THREE.Vector3();
+function _gridPanBy(dx, dy, dz){
+  _gridPan.x += dx; _gridPan.y += dy; _gridPan.z += dz;
+  camT.x -= dx; camT.y -= dy; camT.z -= dz;
+  updCam();
+  _updateGridResetBtnState();
+}
+
 function _initGridDrag(domEl){
   domEl.addEventListener('mousedown',function(e){
     // Alt + clic gauche = pan full 3D : drag horizontal → XZ (caméra-relatif), drag vertical → Y
@@ -4942,14 +4958,7 @@ function _initGridDrag(domEl){
       const _mx=dx*GRID_DRAG_STEP;
       const _ddx=_gdR.x*_mx, _ddz=_gdR.z*_mx;
       const deltaY=-dy*GRID_DRAG_STEP*_gdSy; // _gdSy : la scène monte toujours vers le haut de l'écran
-      _gridGroup.position.x+=_ddx; _gridGroup.position.z+=_ddz;
-      _gridGroup.position.y+=deltaY;
-      objs.forEach(o=>{
-        o.mesh.position.x+=_ddx; o.mesh.position.z+=_ddz;
-        o.mesh.position.y+=deltaY;
-      });
-      _updateGridResetBtnState();
-      _camDirty=true;
+      _gridPanBy(_ddx, deltaY, _ddz);
       e.preventDefault();
       return;
     }
@@ -4957,11 +4966,7 @@ function _initGridDrag(domEl){
       const dy=e.clientY-_gridYDragStartY;
       _gridYDragStartY=e.clientY;
       const deltaY=-dy*GRID_DRAG_STEP*(cam.up.y<0?-1:1); // souris vers le haut → scène monte, vue retournée comprise
-      _gridGroup.position.y += deltaY;
-      // Scene objects follow
-      objs.forEach(o => { o.mesh.position.y += deltaY; });
-      _updateGridResetBtnState();
-      _camDirty = true;
+      _gridPanBy(0, deltaY, 0);
       e.preventDefault();
       return;
     }
@@ -4973,12 +4978,7 @@ function _initGridDrag(domEl){
     const _mx = dx * GRID_DRAG_STEP, _mz = -dy * GRID_DRAG_STEP;
     const _ddx = _gdR.x*_mx + _gdF.x*_mz;
     const _ddz = _gdR.z*_mx + _gdF.z*_mz;
-    _gridGroup.position.x += _ddx;
-    _gridGroup.position.z += _ddz;
-    // Scene objects follow
-    objs.forEach(o => { o.mesh.position.x += _ddx; o.mesh.position.z += _ddz; });
-    _updateGridResetBtnState();
-    _camDirty = true;
+    _gridPanBy(_ddx, 0, _ddz);
     e.preventDefault();
   },{passive:false});
   window.addEventListener('mouseup',function(){ _gridDragging=false; _gridYDragging=false; _gridFreeDragging=false; });
@@ -5014,23 +5014,14 @@ function _frameSelection(){
 function _updateGridResetBtnState(){
   const b = document.getElementById('btn-grid-reset');
   if(!b || !_gridGroup) return;
-  b.disabled = (_gridGroup.position.x===0 && _gridGroup.position.y===0 && _gridGroup.position.z===0);
+  b.disabled = (_gridPan.x===0 && _gridPan.y===0 && _gridPan.z===0);
 }
 function _gridReset(){
   if(!_gridGroup) return;
-  const dx = -_gridGroup.position.x;
-  const dy = -_gridGroup.position.y;
-  const dz = -_gridGroup.position.z;
-  if(dx===0 && dy===0 && dz===0){ nasLog('OK','⌂ Grid already centered'); return; }
-  undoPush('reset grid');
-  _gridGroup.position.set(0, 0, 0);
-  objs.forEach(o => {
-    o.mesh.position.x += dx;
-    o.mesh.position.y += dy;
-    o.mesh.position.z += dz;
-  });
-  _camDirty=true;
-  updProps();
+  if(_gridPan.x===0 && _gridPan.y===0 && _gridPan.z===0){ nasLog('OK','⌂ Grid already centered'); return; }
+  // Vue seulement (cf. _gridPanBy) : aucun objet ne bouge, rien à annuler.
+  camT.add(_gridPan); _gridPan.set(0, 0, 0);
+  updCam();
   _updateGridResetBtnState();
   nasLog('OK','⌂ Grid + objects recentered');
 }
@@ -8626,7 +8617,7 @@ function pasteObjs(){
   nasLog('OK','Pasted '+ns.length+' object(s) (+'+ns.length+' → total '+objs.length+')');
 }
 
-function setCameraView(v){if(v==='top'){camA.theta=0;camA.phi=Math.PI/2-0.01;}else if(v==='front'){camA.theta=0;camA.phi=0.01;}else if(v==='right'){camA.theta=Math.PI/2;camA.phi=0.01;}else if(v==='persp'){camA={theta:0,phi:Math.PI/5,dist:240};camT.set(0,0,0);}else{camA={theta:0,phi:Math.PI/5,dist:300};camT.set(0,0,0);}updCam();}
+function setCameraView(v){if(v==='top'){camA.theta=0;camA.phi=Math.PI/2-0.01;}else if(v==='front'){camA.theta=0;camA.phi=0.01;}else if(v==='right'){camA.theta=Math.PI/2;camA.phi=0.01;}else if(v==='persp'){camA={theta:0,phi:Math.PI/5,dist:240};camT.set(0,0,0);_gridPan.set(0,0,0);}else{camA={theta:0,phi:Math.PI/5,dist:300};camT.set(0,0,0);_gridPan.set(0,0,0);}_updateGridResetBtnState();updCam();}
 
 function mDown(e){
   const r=ren.domElement.getBoundingClientRect();mouse.x=((e.clientX-r.left)/r.width)*2-1;mouse.y=-((e.clientY-r.top)/r.height)*2+1;
