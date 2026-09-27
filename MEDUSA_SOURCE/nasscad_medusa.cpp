@@ -105,6 +105,12 @@
 #include <BRep_Tool.hxx>
 #include <Poly_Triangulation.hxx>
 #include <Poly_PolygonOnTriangulation.hxx>  // [21/09] couture par topologie — cf. extractIntoTopo
+#include <BRep_TEdge.hxx>                   // [FIX 27/09] les DEUX polygones d'une couture, cf. etage A
+#include <BRep_CurveRepresentation.hxx>
+#include <BRepTools.hxx>                    // [FIX 27/09] faces sans triangulation, cf. etage A'
+#include <BRepTools_WireExplorer.hxx>
+#include <GCPnts_TangentialDeflection.hxx>
+#include <ShapeAnalysis_Curve.hxx>
 #include <BRepPrimAPI_MakeBox.hxx>          // [21/09] --selftest-weld
 #include <BRepPrimAPI_MakeCylinder.hxx>
 #include <BRepPrimAPI_MakeCone.hxx>
@@ -260,6 +266,13 @@ struct MeshData {
     // et la renvoie a l'export : le B-Rep d'origine est alors reecrit tel quel
     // au lieu du maillage. Vide = pas de B-Rep exact (IFC, maillage pur).
     std::string ref;
+    // [FIX 27/09] Ce que le B-Rep du corps DECLARE, par la seule topologie :
+    // chaque arete comptee sur les faces qui la bordent (une couture compte deux
+    // fois). « closed » : toutes a deux ; « open » : au moins une a un ;
+    // « nonmanifold » : au moins une a plus de deux. Le pendant, corps par corps,
+    // de step-declare.js (qui ne sait repondre que pour le fichier entier).
+    // Vide = inconnu (IFC maille, chemin legacy) : le champ n'est pas emis.
+    std::string brep;
 };
 
 // [27/08] Couleur resolue d'UNE face, et carte face -> couleur d'un solide.
@@ -1251,6 +1264,8 @@ static std::atomic<long long> gWeldEdgesResidual{0};  // aretes cousues par l'et
 static std::atomic<long long> gWeldEdgesMismatch{0};  // discretisations incoherentes
 static std::atomic<long long> gWeldTrisDropped{0};    // degeneres + dupliques
 static std::atomic<int>       gWeldFallback{0};       // corps repasses en legacy
+static std::atomic<long long> gWeldFacesFilled{0};    // [FIX 27/09] faces refaites par l'etage A'
+static std::atomic<long long> gWeldDiagFlips{0};      // [FIX 27/09] diagonales basculees (etage C)
 
 // [21/09] L'etiquette, en un seul endroit : /step la met dans gMetaJson,
 // /stepstream dans sa frame terminale. Deux chemins, un seul texte — c'est
@@ -1278,6 +1293,8 @@ static std::string weldMetaJson() {
       <<   "\"edgesMismatch\":"  << gWeldEdgesMismatch.load() << ","
       <<   "\"trisDropped\":"    << gWeldTrisDropped.load()   << ","
       <<   "\"legacyFallback\":" << gWeldFallback.load()      << ","
+      <<   "\"facesFilled\":"    << gWeldFacesFilled.load()   << ","
+      <<   "\"diagonalFlips\":"  << gWeldDiagFlips.load()     << ","
       <<   "\"enabled\":"        << (topoWeldEnabled() ? "true" : "false")
       << "}";
     return o.str();
@@ -1294,12 +1311,21 @@ struct Diag {
     int  edgesMismatch = 0;   // etage A : 2 usages, nombres de noeuds differents
     int  edgesOverUsed = 0;   // etage A : > 2 usages — non manifold DANS le B-Rep
     int  edgesSeamOnly = 0;   // etage A : un seul polygone expose, seam laisse a B
+    int  edgesNmPaired = 0;   // etage A : aretes non manifold du B-Rep, usages apparies 2 a 2
+    int  facesFilled   = 0;   // etage A' : faces sans triangulation, remplies depuis leur bord
+    int  facesRedone   = 0;   // etage A' : triangulations OCCT incoherentes avec leurs aretes, refaites
+    int  facesCollapsed= 0;   // etage A' : lamelles dont le contour tient en deux noeuds (rien a emettre)
+    int  facesUnfilled = 0;   // etage A' : faces qu'aucun repli n'a su trianguler
     int  edgesResidual = 0;   // etage B : aretes de bord appariees
     int  edgesFlipped  = 0;   // etage B : appariees en MEME sens (orientation suspecte)
     double residualTol = 0.0; // tolerance qui a suffi a l'etage B (0 = inutile)
     int  trisDegen     = 0;   // etage C : supprimes
     int  trisDup       = 0;   // etage C : supprimes
     int  trisOpposed   = 0;   // etage C : comptes, JAMAIS supprimes
+    int  diagFlips     = 0;   // etage C : diagonales basculees (arete a 4 triangles, deux faces)
+    int  microCollapsed= 0;   // etage C : micro-aretes (< 2 um) contractees sous condition de lien
+    int  microClusters = 0;   // etage C : amas de sommets distincts a moins de 2 um, fusionnes
+    int  trisCancelled = 0;   // etage C : triangles opposes NES de cette fusion, annules par paires
     int  nakedEdges    = 0;   // etat FINAL
     int  overValenced  = 0;
     int  bowtieVerts   = 0;
@@ -1313,11 +1339,20 @@ struct Diag {
         if (edgesSeamOnly) o << ", seam-deferred " << edgesSeamOnly;
         if (edgesMismatch) o << ", mismatch " << edgesMismatch;
         if (edgesOverUsed) o << ", brep-overused " << edgesOverUsed;
+        if (edgesNmPaired) o << ", brep-nonmanifold-paired " << edgesNmPaired;
+        if (facesFilled)   o << ", faces-filled " << facesFilled;
+        if (facesRedone)   o << ", faces-retriangulated " << facesRedone;
+        if (facesCollapsed)o << ", faces-collapsed " << facesCollapsed;
+        if (facesUnfilled) o << ", faces-unfilled " << facesUnfilled;
         if (edgesResidual) o << ", residual " << edgesResidual << " @tol " << residualTol;
         if (edgesFlipped)  o << ", same-dir " << edgesFlipped;
         if (trisDegen)     o << ", -degen-tri " << trisDegen;
         if (trisDup)       o << ", -dup-tri " << trisDup;
         if (trisOpposed)   o << ", opposed-tri " << trisOpposed;
+        if (diagFlips)     o << ", diagonal-flips " << diagFlips;
+        if (microCollapsed)o << ", micro-edges-collapsed " << microCollapsed;
+        if (microClusters) o << ", micro-clusters " << microClusters;
+        if (trisCancelled) o << ", -cancelled-tri " << trisCancelled;
         if (watertight())  o << " => WATERTIGHT";
         else o << " => naked " << nakedEdges << ", over-valenced " << overValenced
                << ", bowtie " << bowtieVerts;
@@ -1342,6 +1377,9 @@ public:
     }
     std::vector<uint32_t> snapshot() const { return p_; }
     void restore(const std::vector<uint32_t>& s) { p_ = s; }
+    // [FIX 27/09] Un noeud de plus, seul dans sa classe — pour les sommets que
+    // cree le remplissage des faces sans triangulation (cf. etage A').
+    uint32_t add() { p_.push_back((uint32_t)p_.size()); return (uint32_t)(p_.size() - 1); }
 private:
     std::vector<uint32_t> p_;
 };
@@ -1354,7 +1392,9 @@ struct FaceSlot {
     int      nb  = 0;         // NbNodes() (0 = face non triangulee)
 };
 
-struct EdgeUse { uint32_t slot; Handle(Poly_PolygonOnTriangulation) pol; };
+// [FIX 27/09] `rev` : sens de l'arete dans CETTE face, orientation de la face
+// comprise — sert a apparier les usages d'une arete non manifold (cf. etage A).
+struct EdgeUse { uint32_t slot; Handle(Poly_PolygonOnTriangulation) pol; bool rev = false; };
 
 static inline uint64_t edgeKey(uint32_t a, uint32_t b) {
     if (a > b) { const uint32_t t = a; a = b; b = t; }
@@ -1435,6 +1475,19 @@ static void analyzeTopology(const std::vector<uint32_t>& idx, uint32_t nVerts,
 }
 
 } // namespace nasweld
+
+// [FIX 27/09] Decoupe d'oreilles avec pontage des trous, sur des points 2D.
+// Definie apres nasifc::tri (plus bas dans le fichier), dont elle reutilise
+// earClip et bridgeHoles. `outer` et `holes` indexent `pts` ; `tris` recoit des
+// triplets d'indices dans `pts`, dans le sens direct du plan 2D. `forced` : voir
+// la definition — un resultat topologiquement ferme meme sur un contour qui se
+// croise.
+static bool fillTriangulate2D(const std::vector<std::pair<double, double>>& pts,
+                              std::vector<uint32_t> outer,
+                              std::vector<std::vector<uint32_t>> holes,
+                              std::vector<uint32_t>& tris,
+                              bool forced,
+                              const std::vector<uint32_t>* ident);
 
 // Extraction AVEC couture par topologie. `usable` a false = rien d'exploitable
 // ici (aucune face triangulee) : l'appelant retombe sur le chemin legacy.
@@ -1525,14 +1578,35 @@ static int extractIntoTopo(const TopoDS_Shape& shape, const std::string& name,
             // FACE (le handle de triangulation est unique par TFace, donc cette
             // egalite suffit a identifier la face — inutile de comparer les
             // locations, qui different justement entre prototype et instance).
-            for (int rep = 1; rep <= 8; ++rep) {
-                Handle(Poly_PolygonOnTriangulation) P;
-                Handle(Poly_Triangulation) T;
-                TopLoc_Location L;
-                BRep_Tool::PolygonOnTriangulation(e, P, T, L, rep);
-                if (P.IsNull()) break;
-                if (T.get() != s.tri.get()) continue;
-                uses[key].push_back(EdgeUse{ si, P });
+            //
+            // [FIX 27/09] LES COUTURES N'ETAIENT JAMAIS COUSUES. L'ancien acces,
+            // BRep_Tool::PolygonOnTriangulation(e, P, T, L, rang), ne rend que le
+            // PREMIER polygone d'une representation fermee : la couture d'un
+            // cylindre ou d'un tore (une arete bordee deux fois par la MEME face,
+            // une fois a u=0, une fois a u=2pi) porte deux polygones, et le second
+            // n'est expose que par PolygonOnTriangulation2(). Ajoute au garde
+            // seenInFace, chaque couture ressortait avec UN seul usage : « bord
+            // franc », rien de cousu, rien de compte — le releve n'annoncait meme
+            // pas de « seam-deferred ». Tout reposait alors sur l'etage B, qui
+            // annule sa passe en bloc des qu'elle fabrique une arete a trois
+            // triangles. Mesure (OCCT 7.6.3, KR600_R2830-4.stp) : 51 coutures non
+            // cousues sur le seul corps 0, 30 corps sur 61 non etanches en sortie
+            // de MEDUSA. On lit donc directement la liste des representations de
+            // la TEdge : les deux polygones d'une couture deviennent deux usages
+            // de la meme face, et l'etage A les coud exactement, a l'indice pres,
+            // comme n'importe quelle arete entre deux faces.
+            const Handle(BRep_TEdge) te = Handle(BRep_TEdge)::DownCast(e.TShape());
+            if (te.IsNull()) continue;
+            const bool eRev = (e.Orientation() == TopAbs_REVERSED);
+            for (const Handle(BRep_CurveRepresentation)& cr : te->Curves()) {
+                if (cr.IsNull() || !cr->IsPolygonOnTriangulation()) continue;
+                if (cr->Triangulation().get() != s.tri.get()) continue;
+                const bool closed = cr->IsPolygonOnClosedTriangulation();
+                // Couture : PolygonOnTriangulation() est le cote FORWARD, ...2() le cote REVERSED.
+                if (!cr->PolygonOnTriangulation().IsNull())
+                    uses[key].push_back(EdgeUse{ si, cr->PolygonOnTriangulation(), closed ? false : eRev });
+                if (closed && !cr->PolygonOnTriangulation2().IsNull())
+                    uses[key].push_back(EdgeUse{ si, cr->PolygonOnTriangulation2(), true });
             }
         }
     }
@@ -1545,6 +1619,26 @@ static int extractIntoTopo(const TopoDS_Shape& shape, const std::string& name,
         const double dy = pp[(size_t)a*3+1] - pp[(size_t)b*3+1];
         const double dz = pp[(size_t)a*3+2] - pp[(size_t)b*3+2];
         return std::sqrt(dx*dx + dy*dy + dz*dz);
+    };
+
+    // [FIX 27/09] Noeuds des aretes que le B-Rep lui-meme fait porter par plus de
+    // deux cotes de face : leur recouvrement est DECLARE, l'etage C ne les
+    // fusionne jamais (cf. les amas sous le micron).
+    std::vector<uint32_t> nmNodes;
+
+    // Couture exacte de DEUX usages d'une meme arete. false = discretisations
+    // incoherentes (nombres de noeuds differents) : l'etage B s'en chargera.
+    auto sewPair = [&](const EdgeUse& a, const EdgeUse& b) -> bool {
+        const int n0 = (int)a.pol->NbNodes(), n1 = (int)b.pol->NbNodes();
+        if (n0 != n1 || n0 < 2) return false;
+        // Les deux polylignes suivent la parametrisation de l'arete, donc le
+        // meme ordre. On ne s'y fie pas : on verifie sur les extremites, en 3D.
+        const double dDir = distG(nodeOf(a, 1), nodeOf(b, 1)) + distG(nodeOf(a, n0), nodeOf(b, n1));
+        const double dRev = distG(nodeOf(a, 1), nodeOf(b, n1)) + distG(nodeOf(a, n0), nodeOf(b, 1));
+        const bool rev = (dRev < dDir);
+        for (int i = 1; i <= n0; ++i)
+            dsu.unite(nodeOf(a, i), nodeOf(b, rev ? (n0 - i + 1) : i));
+        return true;
     };
 
     for (auto& kv : uses) {
@@ -1566,7 +1660,34 @@ static int extractIntoTopo(const TopoDS_Shape& shape, const std::string& name,
             diag.edgesDegen++;
             continue;
         }
-        if (v.size() > 2) { diag.edgesOverUsed++; continue; } // non manifold en amont
+        if (v.size() > 2) {
+            // Non manifold EN AMONT : le fichier lui-meme fait porter l'arete par
+            // plus de deux cotes de face (RC_Buggy : 45 EDGE_CURVE referencees 4
+            // fois, cf. step-declare.js). [FIX 27/09] On ne cousait RIEN : les
+            // quatre polylignes restaient nues (244 aretes nues sur un seul corps).
+            // On apparie desormais ce qui s'apparie sans ambiguite — les deux
+            // cotes d'une meme face (une couture), puis un usage direct avec un
+            // usage inverse s'il n'en reste qu'un de chaque. Chaque paire devient
+            // une arete de maillage a deux triangles ; le reste, ambigu, est laisse
+            // tel quel et compte.
+            for (const EdgeUse& u : v)                             // proteges de toute fusion, cf. etage C
+                for (int i = 1; i <= (int)u.pol->NbNodes(); ++i) nmNodes.push_back(nodeOf(u, i));
+            std::vector<char> done(v.size(), 0);
+            int paired = 0;
+            for (size_t i = 0; i < v.size(); ++i)
+                for (size_t j = i + 1; j < v.size() && !done[i]; ++j)
+                    if (!done[j] && v[i].slot == v[j].slot && v[i].pol.get() != v[j].pol.get()
+                        && sewPair(v[i], v[j])) { done[i] = done[j] = 1; paired++; }
+            std::vector<size_t> rest;
+            for (size_t i = 0; i < v.size(); ++i) if (!done[i]) rest.push_back(i);
+            if (rest.size() == 2 && v[rest[0]].rev != v[rest[1]].rev && sewPair(v[rest[0]], v[rest[1]])) {
+                paired++; rest.clear();
+            }
+            diag.edgesTopo += paired;
+            if (!rest.empty()) diag.edgesOverUsed++;
+            else diag.edgesNmPaired++;
+            continue;
+        }
         if (v.size() != 2) continue;                          // bord franc du B-Rep
         if (v[0].slot == v[1].slot && v[0].pol.get() == v[1].pol.get()) {
             // Meme face, MEME polygone : OCCT n'expose qu'un cote du seam par
@@ -1576,51 +1697,561 @@ static int extractIntoTopo(const TopoDS_Shape& shape, const std::string& name,
             continue;
         }
 
-        const int n0 = (int)v[0].pol->NbNodes(), n1 = (int)v[1].pol->NbNodes();
-        if (n0 != n1 || n0 < 2) { diag.edgesMismatch++; continue; } // -> etage B
-
-        // Les deux polylignes suivent la parametrisation de l'arete, donc le
-        // meme ordre. On ne s'y fie pas : on verifie sur les extremites, en 3D.
-        // Un test, deux distances — ca ne coute rien et ca couvre toute
-        // surprise de convention.
-        const double dDir = distG(nodeOf(v[0],1),  nodeOf(v[1],1))
-                          + distG(nodeOf(v[0],n0), nodeOf(v[1],n1));
-        const double dRev = distG(nodeOf(v[0],1),  nodeOf(v[1],n1))
-                          + distG(nodeOf(v[0],n0), nodeOf(v[1],1));
-        const bool rev = (dRev < dDir);
-        for (int i = 1; i <= n0; ++i)
-            dsu.unite(nodeOf(v[0], i), nodeOf(v[1], rev ? (n0 - i + 1) : i));
+        if (!sewPair(v[0], v[1])) { diag.edgesMismatch++; continue; } // -> etage B
         diag.edgesTopo++;
     }
 
+    // [FIX 27/09] Triangles d'un slot, en noeuds GLOBAUX, sens de la face
+    // applique : ceux d'OCCT, ou — quand l'etage A' a du ecarter une
+    // triangulation absente ou incoherente — ceux de son remplissage.
+    std::vector<char> replaced(slots.size(), 0);
+    std::vector<std::vector<uint32_t>> fillTris(slots.size());   // sens naturel de la surface
+    auto forSlotTris = [&](uint32_t si, auto&& fn) {
+        const FaceSlot& s = slots[si];
+        const bool reversed = (s.face.Orientation() == TopAbs_REVERSED);
+        if (replaced[si]) {
+            const std::vector<uint32_t>& ft = fillTris[si];
+            for (size_t k = 0; k + 2 < ft.size(); k += 3)
+                if (reversed) fn(ft[k], ft[k+2], ft[k+1]); else fn(ft[k], ft[k+1], ft[k+2]);
+            return;
+        }
+        if (!s.nb) return;
+        const int nt = (int)s.tri->NbTriangles();
+        for (int i = 1; i <= nt; ++i) {
+            Standard_Integer a, b, c;
+            s.tri->Triangle(i).Get(a, b, c);
+            if (reversed) { const Standard_Integer t = b; b = c; c = t; }
+            fn(s.off + (uint32_t)a - 1, s.off + (uint32_t)b - 1, s.off + (uint32_t)c - 1);
+        }
+    };
+
     // ── Soupe indexee a partir de l'etat courant du DSU. `remap` compacte les
     // classes d'equivalence en indices contigus.
-    std::vector<uint32_t> remap(nodesIn), triIdx;
+    // [FIX 27/09] Seules les classes REFERENCEES par un triangle recoivent un
+    // indice : les noeuds d'une triangulation ecartee par l'etage A' ne doivent
+    // pas sortir comme sommets isoles. `remap` vaut UINT32_MAX pour eux. Sur un
+    // corps sans remplissage, tous les noeuds sont references : rien ne change.
+    std::vector<uint32_t> remap, triIdx;
     uint32_t vertsOut = 0;
     auto rebuild = [&]() {
-        std::vector<uint32_t> id(nodesIn, UINT32_MAX);
+        const uint32_t nAll = (uint32_t)(pp.size() / 3);
+        std::vector<char> used(nAll, 0);
+        for (uint32_t si = 0; si < (uint32_t)slots.size(); ++si)
+            forSlotTris(si, [&](uint32_t a, uint32_t b, uint32_t c) {
+                used[dsu.find(a)] = 1; used[dsu.find(b)] = 1; used[dsu.find(c)] = 1;
+            });
+        std::vector<uint32_t> id(nAll, UINT32_MAX);
+        remap.assign(nAll, UINT32_MAX);
         vertsOut = 0;
-        for (uint32_t g = 0; g < nodesIn; ++g) {
+        for (uint32_t g = 0; g < nAll; ++g) {
             const uint32_t r = dsu.find(g);
+            if (!used[r]) continue;
             if (id[r] == UINT32_MAX) id[r] = vertsOut++;
             remap[g] = id[r];
         }
         triIdx.clear();
-        for (const FaceSlot& s : slots) {
-            if (!s.nb) continue;
-            const bool reversed = (s.face.Orientation() == TopAbs_REVERSED);
-            const int nt = (int)s.tri->NbTriangles();
-            for (int i = 1; i <= nt; ++i) {
-                Standard_Integer a, b, c;
-                s.tri->Triangle(i).Get(a, b, c);
-                if (reversed) { const Standard_Integer t = b; b = c; c = t; }
-                triIdx.push_back(remap[s.off + (uint32_t)a - 1]);
-                triIdx.push_back(remap[s.off + (uint32_t)b - 1]);
-                triIdx.push_back(remap[s.off + (uint32_t)c - 1]);
-            }
-        }
+        for (uint32_t si = 0; si < (uint32_t)slots.size(); ++si)
+            forSlotTris(si, [&](uint32_t a, uint32_t b, uint32_t c) {
+                triIdx.push_back(remap[a]); triIdx.push_back(remap[b]); triIdx.push_back(remap[c]);
+            });
     };
     rebuild();
+
+    // ═══ ETAGE A' — faces que BRepMesh n'a pas su trianguler ═══════════════
+    // [FIX 27/09 — Nass] Mesure sur le jeu tests/step (OCCT 7.6.3), trois cas
+    // ou la face elle-meme, et non la couture, laisse le trou :
+    //   - pas de triangulation du tout. Tronc de cone de conical-surface.step :
+    //     BRepMesh rend « Failure » quelle que soit la deflexion, Delabella
+    //     compris, alors que la MEME surface bornee par sa boite UV se maille
+    //     (le contour, pas la surface, le fait echouer). Et des faces-lamelles
+    //     d'aire nulle — plage v de largeur 0, ou deux aretes confondues en 3D
+    //     (KR600, corps 17) — qu'AUCUN mailleur ne peut trianguler ;
+    //   - une triangulation qui ne respecte pas ses propres aretes, alors que
+    //     BRepMesh rend « succes » : faces planes a dix contours du KR600
+    //     (corps 0 a 3), 44 segments sur 48 d'un cercle absents des triangles.
+    //     Le recouvrement des contraintes de bord a echoue en silence.
+    // Dans les trois cas il manque des triangles la ou la face est, et aucune
+    // tolerance de couture ne comble une face absente (cf. step-declare.js).
+    //
+    // Le remede ne devine rien : la face est retriangulee sur les noeuds que ses
+    // voisines ont DEJA poses sur leurs aretes communes. Le bord est donc
+    // conforme par construction — memes sommets, a l'indice pres, pas de jointure
+    // en T possible. Le contour vient de BRepTools_WireExplorer, les UV des
+    // pcurves ; decoupe d'oreilles dans le plan UV (repli : plan moyen de Newell,
+    // puis eventail), puis raffinement des seules aretes INTERIEURES tant que le
+    // milieu s'ecarte de la surface de plus que la deflexion de la piece.
+    //
+    // Cout : l'etage ne s'arme que si la couture exacte laisse une arete nue ou
+    // qu'une face n'a pas de triangulation. Un corps sain ne paie rien.
+    {
+        bool arm = false;
+        for (const FaceSlot& s : slots) if (!s.nb) { arm = true; break; }
+        if (!arm) {
+            std::unordered_map<uint64_t, int> ec;
+            ec.reserve(triIdx.size());
+            for (size_t t = 0; t + 2 < triIdx.size(); t += 3) {
+                ec[edgeKey(triIdx[t], triIdx[t+1])]++;
+                ec[edgeKey(triIdx[t+1], triIdx[t+2])]++;
+                ec[edgeKey(triIdx[t+2], triIdx[t])]++;
+            }
+            for (const auto& kv : ec) if (kv.second != 2) { arm = true; break; }
+        }
+        if (arm) {
+            // ── Detection : triangulation absente, ou dont le bord ne suit pas
+            // les polygones de ses propres aretes (segment de polygone absent ou
+            // interieur, bord de triangulation hors polygone, arete a 3 triangles).
+            auto consistent = [&](uint32_t si) -> bool {
+                const FaceSlot& s = slots[si];
+                std::unordered_map<uint64_t, int> ec;
+                const int nt = (int)s.tri->NbTriangles();
+                ec.reserve((size_t)nt * 3);
+                for (int i = 1; i <= nt; ++i) {
+                    Standard_Integer a, b, c;
+                    s.tri->Triangle(i).Get(a, b, c);
+                    ec[edgeKey((uint32_t)a, (uint32_t)b)]++;
+                    ec[edgeKey((uint32_t)b, (uint32_t)c)]++;
+                    ec[edgeKey((uint32_t)c, (uint32_t)a)]++;
+                }
+                std::unordered_set<uint64_t> seg;
+                for (TopExp_Explorer ee(s.face, TopAbs_EDGE); ee.More(); ee.Next()) {
+                    const TopAbs_Orientation o = ee.Current().Orientation();
+                    if (o == TopAbs_INTERNAL || o == TopAbs_EXTERNAL) continue;
+                    const Handle(BRep_TEdge) te = Handle(BRep_TEdge)::DownCast(ee.Current().TShape());
+                    if (te.IsNull()) continue;
+                    for (const Handle(BRep_CurveRepresentation)& cr : te->Curves()) {
+                        if (cr.IsNull() || !cr->IsPolygonOnTriangulation()) continue;
+                        if (cr->Triangulation().get() != s.tri.get()) continue;
+                        // PolygonOnTriangulation2() LEVE Standard_DomainError sur une
+                        // representation non fermee : on ne l'appelle que sur une couture.
+                        const int nPol = cr->IsPolygonOnClosedTriangulation() ? 2 : 1;
+                        for (int w = 0; w < nPol; ++w) {
+                            const Handle(Poly_PolygonOnTriangulation)& P = w ? cr->PolygonOnTriangulation2()
+                                                                            : cr->PolygonOnTriangulation();
+                            if (P.IsNull()) continue;
+                            for (int i = 1; i < P->NbNodes(); ++i)
+                                if (P->Node(i) != P->Node(i+1))
+                                    seg.insert(edgeKey((uint32_t)P->Node(i), (uint32_t)P->Node(i+1)));
+                        }
+                    }
+                }
+                for (uint64_t k : seg) { auto it = ec.find(k); if (it == ec.end() || it->second != 1) return false; }
+                for (const auto& kv : ec) {
+                    if (kv.second > 2) return false;
+                    if (kv.second == 1 && !seg.count(kv.first)) return false;
+                }
+                return true;
+            };
+            for (uint32_t si = 0; si < (uint32_t)slots.size(); ++si)
+                if (!slots[si].nb || !consistent(si)) replaced[si] = 1;
+
+            // Deflexion de reference : celle que BRepMesh a retenue pour ce corps.
+            double fillDefl = 0.0;
+            for (const FaceSlot& s : slots)
+                if (s.nb && s.tri->Deflection() > fillDefl) fillDefl = s.tri->Deflection();
+            if (!(fillDefl > 0.0)) fillDefl = 1e-3 * diagLen;
+            if (!(fillDefl > 0.0)) fillDefl = 1e-3;
+
+            auto newNode = [&](const gp_Pnt& p) -> uint32_t {
+                pp.push_back(p.X()); pp.push_back(p.Y()); pp.push_back(p.Z());
+                return dsu.add();
+            };
+            // Un sommet topologique = une seule classe, quel que soit le polygone
+            // qui l'a fourni : c'est l'identite du B-Rep, pas une tolerance.
+            std::unordered_map<const void*, uint32_t> vtxNode;
+            auto vertexNode = [&](const TopoDS_Vertex& V, uint32_t cand) -> uint32_t {
+                const void* k = V.TShape().get();
+                auto it = vtxNode.find(k);
+                if (it != vtxNode.end()) { if (cand != UINT32_MAX) dsu.unite(it->second, cand); return it->second; }
+                const uint32_t n = (cand != UINT32_MAX) ? cand : newNode(BRep_Tool::Pnt(V));
+                vtxNode.emplace(k, n);
+                return n;
+            };
+            // Discretisation d'une arete, dans le sens de son parametre : le
+            // polygone d'une face voisine SAINE (memes noeuds que la voisine), a
+            // defaut n'importe quel polygone, a defaut une discretisation propre,
+            // memorisee pour que les deux cotes d'une couture la partagent.
+            struct Chain { std::vector<uint32_t> g; std::vector<double> t; };
+            std::unordered_map<const void*, Chain> ownChain;
+            auto chainOf = [&](const TopoDS_Edge& eAny, const TopoDS_Face& fFwd, Chain& ch) -> bool {
+                const TopoDS_Edge E = TopoDS::Edge(eAny.Oriented(TopAbs_FORWARD));
+                const void* key = E.TShape().get();
+                TopoDS_Vertex V0, V1;
+                TopExp::Vertices(E, V0, V1);
+                ch.g.clear(); ch.t.clear();
+                if (V0.IsNull() || V1.IsNull()) return false;
+                if (BRep_Tool::Degenerated(E)) {
+                    // Apex, pole : un seul point 3D, mais un segment dans le plan UV.
+                    double f = 0, l = 0;
+                    BRep_Tool::Range(E, fFwd, f, l);
+                    const uint32_t n = vertexNode(V0, UINT32_MAX);
+                    const int k = 8;
+                    for (int i = 0; i <= k; ++i) { ch.g.push_back(n); ch.t.push_back(f + (l - f) * i / k); }
+                    return true;
+                }
+                const EdgeUse* best = nullptr;
+                auto it = uses.find(key);
+                if (it != uses.end())
+                    for (const EdgeUse& u : it->second) {
+                        if (!replaced[u.slot]) { best = &u; break; }
+                        if (!best) best = &u;
+                    }
+                bool own = false;
+                if (best) {
+                    const int n = (int)best->pol->NbNodes();
+                    for (int i = 1; i <= n; ++i) ch.g.push_back(nodeOf(*best, i));
+                    if (best->pol->HasParameters()) {
+                        for (int i = 1; i <= n; ++i) ch.t.push_back(best->pol->Parameter(i));
+                    } else {
+                        BRepAdaptor_Curve C(E);
+                        ShapeAnalysis_Curve sac;
+                        for (int i = 1; i <= n; ++i) {
+                            const uint32_t g = ch.g[(size_t)i - 1];
+                            gp_Pnt proj; double prm = 0.0;
+                            sac.Project(C, gp_Pnt(pp[(size_t)g*3], pp[(size_t)g*3+1], pp[(size_t)g*3+2]),
+                                        Precision::Confusion(), proj, prm);
+                            ch.t.push_back(prm);
+                        }
+                    }
+                    if (n >= 2 && ch.t.front() > ch.t.back()) {
+                        std::reverse(ch.g.begin(), ch.g.end());
+                        std::reverse(ch.t.begin(), ch.t.end());
+                    }
+                } else {
+                    auto oc = ownChain.find(key);
+                    if (oc != ownChain.end()) ch = oc->second;
+                    else {
+                        double f = 0, l = 0;
+                        BRep_Tool::Range(E, f, l);
+                        BRepAdaptor_Curve C(E);
+                        GCPnts_TangentialDeflection disc(C, f, l, ANGULAR_DEFLECTION, fillDefl, 2);
+                        const int n = disc.NbPoints();
+                        for (int i = 1; i <= n; ++i) {
+                            ch.t.push_back(disc.Parameter(i));
+                            ch.g.push_back((i == 1 || i == n) ? UINT32_MAX : newNode(disc.Value(i)));
+                        }
+                        own = true;
+                    }
+                }
+                if (ch.g.size() < 2) return false;
+                ch.g.front() = vertexNode(V0, ch.g.front());
+                ch.g.back()  = vertexNode(V1, ch.g.back());
+                if (own) ownChain.emplace(key, ch);
+                return true;
+            };
+            // Contour d'un fil, dans l'ordre du fil, avec l'UV de chaque noeud
+            // lu sur la pcurve de CE cote de l'arete (une couture a deux pcurves).
+            // Rend 1 si le contour est exploitable, 0 s'il tient en moins de trois
+            // noeuds (lamelle : ses aretes coincident, il n'y a rien a trianguler),
+            // -1 si une arete n'a pu etre lue (ni discretisation, ni pcurve).
+            struct LoopPt { uint32_t g; double u, v; };
+            auto buildLoop = [&](const TopoDS_Wire& W, const TopoDS_Face& fFwd,
+                                 std::vector<LoopPt>& loop) -> int {
+                loop.clear();
+                for (BRepTools_WireExplorer we(W, fFwd); we.More(); we.Next()) {
+                    const TopoDS_Edge& E = we.Current();
+                    if (E.Orientation() == TopAbs_INTERNAL || E.Orientation() == TopAbs_EXTERNAL) continue;
+                    Chain ch;
+                    if (!chainOf(E, fFwd, ch)) return -1;
+                    double f = 0, l = 0;
+                    Handle(Geom2d_Curve) pc = BRep_Tool::CurveOnSurface(E, fFwd, f, l);
+                    if (pc.IsNull()) return -1;
+                    const bool rev = (E.Orientation() == TopAbs_REVERSED);
+                    const size_t n = ch.g.size();
+                    for (size_t k = 0; k < n; ++k) {
+                        const size_t i = rev ? n - 1 - k : k;
+                        if (k == 0 && !loop.empty()) { dsu.unite(loop.back().g, ch.g[i]); continue; }
+                        const gp_Pnt2d uv = pc->Value(ch.t[i]);
+                        loop.push_back(LoopPt{ ch.g[i], uv.X(), uv.Y() });
+                    }
+                }
+                if (loop.size() > 1) { dsu.unite(loop.back().g, loop.front().g); loop.pop_back(); }
+                return loop.size() >= 3 ? 1 : 0;
+            };
+            auto P3 = [&](uint32_t g) { return gp_Pnt(pp[(size_t)g*3], pp[(size_t)g*3+1], pp[(size_t)g*3+2]); };
+
+            // Remplissage d'UNE face : 1 remplie, 0 effondree (lamelle a deux
+            // noeuds : les voisines portent deja le meme segment, rien a emettre),
+            // -1 echec.
+            auto fillFace = [&](uint32_t si) -> int {
+                const TopoDS_Face fFwd = TopoDS::Face(slots[si].face.Oriented(TopAbs_FORWARD));
+                const TopoDS_Wire outerW = BRepTools::OuterWire(fFwd);
+                if (outerW.IsNull()) return -1;
+                std::vector<std::vector<LoopPt>> loops(1);
+                const int st = buildLoop(outerW, fFwd, loops[0]);
+                if (st <= 0) { fillTris[si].clear(); return st; }
+                for (TopExp_Explorer we(fFwd, TopAbs_WIRE); we.More(); we.Next()) {
+                    const TopoDS_Wire W = TopoDS::Wire(we.Current());
+                    if (W.IsSame(outerW)) continue;
+                    std::vector<LoopPt> lp;
+                    if (buildLoop(W, fFwd, lp) > 0) loops.push_back(std::move(lp));
+                }
+                // Sommets LOCAUX : un meme noeud global peut y figurer deux fois
+                // (les deux cotes d'une couture n'ont pas le meme UV).
+                std::vector<double> U, V;
+                std::vector<uint32_t> G, outer;
+                std::vector<std::vector<uint32_t>> holes;
+                std::unordered_set<uint64_t> bnd;   // segments de contour : jamais coupes
+                for (size_t li = 0; li < loops.size(); ++li) {
+                    std::vector<uint32_t> idx;
+                    for (const LoopPt& p : loops[li]) {
+                        idx.push_back((uint32_t)G.size());
+                        G.push_back(p.g); U.push_back(p.u); V.push_back(p.v);
+                    }
+                    for (size_t k = 0; k < idx.size(); ++k)
+                        bnd.insert(edgeKey(idx[k], idx[(k + 1) % idx.size()]));
+                    if (li == 0) outer = std::move(idx); else holes.push_back(std::move(idx));
+                }
+                std::vector<uint32_t> T;
+                bool viaUV = false;
+                // Deux domaines 2D candidats : le plan UV — le seul ou le sens des
+                // triangles est celui de la surface par construction — et le plan
+                // moyen du contour 3D (Newell), quand l'UV est degenere.
+                std::vector<std::pair<double, double>> Puv, Pnw;
+                if (G.size() <= 4000) {
+                    double a = 0, u0 = U[outer[0]], u1 = u0, v0 = V[outer[0]], v1 = v0;
+                    for (size_t k = 0; k < outer.size(); ++k) {
+                        const uint32_t p = outer[k], q = outer[(k + 1) % outer.size()];
+                        a += U[p] * V[q] - U[q] * V[p];
+                        u0 = std::min(u0, U[p]); u1 = std::max(u1, U[p]);
+                        v0 = std::min(v0, V[p]); v1 = std::max(v1, V[p]);
+                    }
+                    const double box = (u1 - u0) * (v1 - v0);
+                    if (box > 0.0 && std::fabs(0.5 * a) > 1e-9 * box) {
+                        Puv.resize(G.size());
+                        for (size_t k = 0; k < G.size(); ++k) Puv[k] = { U[k], V[k] };
+                    }
+                    double nx = 0, ny = 0, nz = 0;
+                    for (size_t k = 0; k < outer.size(); ++k) {
+                        const gp_Pnt pa = P3(G[outer[k]]), pb = P3(G[outer[(k + 1) % outer.size()]]);
+                        nx += (pa.Y() - pb.Y()) * (pa.Z() + pb.Z());
+                        ny += (pa.Z() - pb.Z()) * (pa.X() + pb.X());
+                        nz += (pa.X() - pb.X()) * (pa.Y() + pb.Y());
+                    }
+                    const double nn = std::sqrt(nx*nx + ny*ny + nz*nz);
+                    if (nn > 0.0) {
+                        const gp_Dir N(nx / nn, ny / nn, nz / nn);
+                        const gp_Dir E1 = (std::fabs(N.X()) < 0.9) ? N.Crossed(gp_Dir(1, 0, 0)) : N.Crossed(gp_Dir(0, 1, 0));
+                        const gp_Dir E2 = N.Crossed(E1);
+                        Pnw.resize(G.size());
+                        for (size_t k = 0; k < G.size(); ++k) {
+                            const gp_XYZ p = P3(G[k]).XYZ();
+                            Pnw[k] = { p.Dot(E1.XYZ()), p.Dot(E2.XYZ()) };
+                        }
+                    }
+                }
+                // 0. LAMELLE (aire < 1e-3 x perimetre^2, sans trou) : fermeture
+                // eclair entre ses deux flancs. Les deux sommets les plus eloignes
+                // coupent le contour en deux chaines ; on avance sur l'une ou
+                // l'autre par la diagonale la plus courte. Chaque barreau relie un
+                // noeud d'un flanc au noeud d'en face : sur une lamelle de 0,6 um
+                // (KR600, corps 19), ce sont des micro-aretes que la contraction
+                // de l'etage C saura refermer — la ou un eventail, reliant un
+                // sommet a tous les autres, violait la condition de lien et
+                // laissait le controle de NASSCAD les ecraser a l'aveugle.
+                bool zipped = false;
+                if (holes.empty() && outer.size() >= 4) {
+                    double nx = 0, ny = 0, nz = 0, per = 0;
+                    for (size_t k = 0; k < outer.size(); ++k) {
+                        const gp_Pnt pa = P3(G[outer[k]]), pb = P3(G[outer[(k + 1) % outer.size()]]);
+                        nx += (pa.Y() - pb.Y()) * (pa.Z() + pb.Z());
+                        ny += (pa.Z() - pb.Z()) * (pa.X() + pb.X());
+                        nz += (pa.X() - pb.X()) * (pa.Y() + pb.Y());
+                        per += pa.Distance(pb);
+                    }
+                    const double area = 0.5 * std::sqrt(nx*nx + ny*ny + nz*nz);
+                    if (per > 0.0 && area < 1e-3 * per * per) {
+                        const size_t n = outer.size();
+                        auto far = [&](size_t from) {
+                            size_t best = from; double bd = -1.0;
+                            for (size_t k = 0; k < n; ++k) {
+                                const double d = P3(G[outer[k]]).SquareDistance(P3(G[outer[from]]));
+                                if (d > bd) { bd = d; best = k; }
+                            }
+                            return best;
+                        };
+                        const size_t i0 = far(far(0)), i1 = far(i0);
+                        std::vector<uint32_t> A, B;                   // A : i0 -> i1 ; B : i0 -> i1 par l'autre flanc
+                        for (size_t k = i0; ; k = (k + 1) % n) { A.push_back(outer[k]); if (k == i1) break; }
+                        for (size_t k = i0; ; k = (k + n - 1) % n) { B.push_back(outer[k]); if (k == i1) break; }
+                        if (i0 != i1 && A.size() >= 3 && B.size() >= 3) {
+                            auto d3 = [&](uint32_t a, uint32_t b) { return P3(G[a]).Distance(P3(G[b])); };
+                            // Le contour parcourt A dans l'ordre et B a rebours : chaque triangle
+                            // reprend ses aretes de bord dans le sens du contour.
+                            T.push_back(A[0]); T.push_back(A[1]); T.push_back(B[1]);
+                            size_t ka = 1, kb = 1;
+                            const size_t la = A.size() - 1, lb = B.size() - 1;   // indice de i1
+                            while (!(ka == la - 1 && kb == lb - 1)) {
+                                const bool canA = (ka + 1 < la), canB = (kb + 1 < lb);
+                                const bool advA = canA && (!canB || d3(A[ka + 1], B[kb]) <= d3(A[ka], B[kb + 1]));
+                                if (advA) { T.push_back(A[ka]); T.push_back(A[ka + 1]); T.push_back(B[kb]); ka++; }
+                                else      { T.push_back(B[kb + 1]); T.push_back(B[kb]); T.push_back(A[ka]); kb++; }
+                            }
+                            T.push_back(A[ka]); T.push_back(A[la]); T.push_back(B[kb]);
+                            zipped = true;
+                        }
+                    }
+                }
+                // 1. UV strict, 2. Newell strict, 3. force (UV si disponible), 4. eventail.
+                std::vector<uint32_t> ident(G.size());   // identite topologique de chaque sommet local
+                for (size_t k = 0; k < G.size(); ++k) ident[k] = dsu.find(G[k]);
+                if (T.empty() && !Puv.empty()) viaUV = fillTriangulate2D(Puv, outer, holes, T, false, &ident);
+                if (!viaUV && !Pnw.empty() && !fillTriangulate2D(Pnw, outer, holes, T, false, &ident)) T.clear();
+                if (!viaUV && T.empty()) {
+                    if (!Puv.empty()) viaUV = fillTriangulate2D(Puv, outer, holes, T, true, &ident);
+                    if (!viaUV && !Pnw.empty() && !fillTriangulate2D(Pnw, outer, holes, T, true, &ident)) T.clear();
+                }
+                // 3. Eventail sur le contour exterieur : topologiquement ferme, meme a aire nulle.
+                if (T.empty())
+                    for (size_t k = 1; k + 1 < outer.size(); ++k) {
+                        T.push_back(outer[0]); T.push_back(outer[k]); T.push_back(outer[k + 1]);
+                    }
+                if (T.empty()) return -1;
+
+                BRepAdaptor_Surface S(fFwd);
+                // Raffinement, sur le seul chemin UV (ailleurs l'UV ne decrit pas la
+                // face). Mesure du premier jet — couper au milieu toute arete dont le
+                // milieu s'ecarte : tronc de cone de conical-surface.step, 342 sommets
+                // pour tout le corps avant, 25 864 apres, et encore plafonne : la
+                // decoupe d'oreilles rend des eventails, et couper un eventail en
+                // fabrique d'autres. Ici, la methode standard : Delaunay dans le plan
+                // (u.|Su|, v.|Sv|) — a peu pres isometrique a la surface — par
+                // basculements de Lawson, puis insertion au centre de tout triangle
+                // qui s'ecarte de la surface de plus que la deflexion, et Delaunay de
+                // nouveau. Les segments de contour ne sont JAMAIS bascules ni coupes :
+                // c'est ce qui garde la conformite avec les faces voisines.
+                if (viaUV && S.GetType() != GeomAbs_Plane) {
+                    double u0 = U[0], u1 = U[0], v0 = V[0], v1 = V[0];
+                    for (size_t k = 0; k < U.size(); ++k) {
+                        u0 = std::min(u0, U[k]); u1 = std::max(u1, U[k]);
+                        v0 = std::min(v0, V[k]); v1 = std::max(v1, V[k]);
+                    }
+                    double su = 0.0, sv = 0.0; int ns = 0;
+                    for (int i = 0; i < 3; ++i)
+                        for (int j = 0; j < 3; ++j) {
+                            gp_Pnt p; gp_Vec du, dv;
+                            S.D1(u0 + (u1 - u0) * (0.25 + 0.25 * i), v0 + (v1 - v0) * (0.25 + 0.25 * j), p, du, dv);
+                            su += du.Magnitude(); sv += dv.Magnitude(); ns++;
+                        }
+                    su = (su > 0.0) ? su / ns : 1.0;
+                    sv = (sv > 0.0) ? sv / ns : 1.0;
+                    auto X = [&](uint32_t k) { return U[k] * su; };
+                    auto Y = [&](uint32_t k) { return V[k] * sv; };
+                    auto orient = [&](uint32_t a, uint32_t b, uint32_t c) {
+                        return (X(b) - X(a)) * (Y(c) - Y(a)) - (Y(b) - Y(a)) * (X(c) - X(a));
+                    };
+                    // d dans le cercle circonscrit de (a, b, c), ce dernier dans le sens direct.
+                    auto inCircle = [&](uint32_t a, uint32_t b, uint32_t c, uint32_t d) {
+                        const double adx = X(a) - X(d), ady = Y(a) - Y(d);
+                        const double bdx = X(b) - X(d), bdy = Y(b) - Y(d);
+                        const double cdx = X(c) - X(d), cdy = Y(c) - Y(d);
+                        return (adx*adx + ady*ady) * (bdx*cdy - cdx*bdy)
+                             - (bdx*bdx + bdy*bdy) * (adx*cdy - cdx*ady)
+                             + (cdx*cdx + cdy*cdy) * (adx*bdy - bdx*ady);
+                    };
+                    auto lawson = [&]() {
+                        for (int it = 0; it < 64; ++it) {
+                            std::unordered_map<uint64_t, std::pair<uint32_t, uint32_t>> e2t;
+                            const uint32_t nt = (uint32_t)(T.size() / 3);
+                            e2t.reserve((size_t)nt * 3);
+                            for (uint32_t t = 0; t < nt; ++t)
+                                for (int k = 0; k < 3; ++k) {
+                                    auto ins = e2t.emplace(edgeKey(T[t*3+k], T[t*3+(k+1)%3]), std::make_pair(t, UINT32_MAX));
+                                    if (!ins.second) ins.first->second.second = t;
+                                }
+                            std::vector<char> busy(nt, 0);
+                            bool flipped = false;
+                            for (const auto& kv : e2t) {
+                                const uint32_t t1 = kv.second.first, t2 = kv.second.second;
+                                if (t2 == UINT32_MAX || busy[t1] || busy[t2] || bnd.count(kv.first)) continue;
+                                uint32_t a = UINT32_MAX, b = 0, c = 0, d = UINT32_MAX;
+                                for (int k = 0; k < 3; ++k) {
+                                    const uint32_t x = T[t1*3+k], y = T[t1*3+(k+1)%3];
+                                    if (edgeKey(x, y) == kv.first) { a = x; b = y; c = T[t1*3+(k+2)%3]; }
+                                }
+                                for (int k = 0; k < 3; ++k)
+                                    if (T[t2*3+k] == b && T[t2*3+(k+1)%3] == a) d = T[t2*3+(k+2)%3];
+                                if (a == UINT32_MAX || d == UINT32_MAX || c == d) continue;
+                                if (e2t.count(edgeKey(c, d))) continue;
+                                if (!(inCircle(a, b, c, d) > 0.0)) continue;
+                                if (orient(c, a, d) <= 0.0 || orient(d, b, c) <= 0.0) continue;
+                                T[t1*3] = c; T[t1*3+1] = a; T[t1*3+2] = d;
+                                T[t2*3] = d; T[t2*3+1] = b; T[t2*3+2] = c;
+                                busy[t1] = busy[t2] = 1;
+                                flipped = true;
+                            }
+                            if (!flipped) break;
+                        }
+                    };
+                    lawson();
+                    const size_t maxLocal = G.size() * 8 + 4000;
+                    for (int pass = 0; pass < 48 && G.size() < maxLocal; ++pass) {
+                        bool changed = false;
+                        const uint32_t nt = (uint32_t)(T.size() / 3);
+                        for (uint32_t t = 0; t < nt && G.size() < maxLocal; ++t) {
+                            const uint32_t a = T[t*3], b = T[t*3+1], c = T[t*3+2];
+                            const double uc = (U[a] + U[b] + U[c]) / 3.0, vc = (V[a] + V[b] + V[c]) / 3.0;
+                            const gp_Pnt pa = P3(G[a]), pb = P3(G[b]), pc = P3(G[c]);
+                            double dev = S.Value(uc, vc).Distance(gp_Pnt((pa.XYZ() + pb.XYZ() + pc.XYZ()) / 3.0));
+                            const uint32_t e[3][2] = { { a, b }, { b, c }, { c, a } };
+                            for (const auto& ed : e) {
+                                if (bnd.count(edgeKey(ed[0], ed[1]))) continue;
+                                const gp_Pnt m = S.Value(0.5 * (U[ed[0]] + U[ed[1]]), 0.5 * (V[ed[0]] + V[ed[1]]));
+                                dev = std::max(dev, m.Distance(gp_Pnt((P3(G[ed[0]]).XYZ() + P3(G[ed[1]]).XYZ()) / 2.0)));
+                            }
+                            if (dev <= fillDefl || orient(a, b, c) <= 0.0) continue;
+                            // Insertion au centre : trois triangles, meme sens.
+                            const uint32_t m = (uint32_t)G.size();
+                            G.push_back(newNode(S.Value(uc, vc))); U.push_back(uc); V.push_back(vc);
+                            T[t*3+2] = m;
+                            T.push_back(b); T.push_back(c); T.push_back(m);
+                            T.push_back(c); T.push_back(a); T.push_back(m);
+                            changed = true;
+                        }
+                        if (!changed) break;
+                        lawson();
+                    }
+                }
+                // Sens : par construction dans le plan UV ; sinon on le verifie contre
+                // la normale de la surface (Su x Sv), ponderee par l'aire. Pas sur
+                // une lamelle : son aire est nulle, le signe n'y voudrait rien dire —
+                // la fermeture eclair suit le sens du fil, c'est lui qui fait foi.
+                if (!viaUV && !zipped) {
+                    double score = 0.0;
+                    for (size_t k = 0; k + 2 < T.size(); k += 3) {
+                        const gp_Pnt a = P3(G[T[k]]), b = P3(G[T[k+1]]), c = P3(G[T[k+2]]);
+                        const gp_Vec n = gp_Vec(a, b).Crossed(gp_Vec(a, c));
+                        gp_Pnt p; gp_Vec du, dv;
+                        S.D1((U[T[k]] + U[T[k+1]] + U[T[k+2]]) / 3.0, (V[T[k]] + V[T[k+1]] + V[T[k+2]]) / 3.0, p, du, dv);
+                        const gp_Vec ns = du.Crossed(dv);
+                        const double l = ns.Magnitude();
+                        if (l > 1e-300) score += n.Dot(ns) / l;
+                    }
+                    if (score < 0.0)
+                        for (size_t k = 0; k + 2 < T.size(); k += 3) std::swap(T[k+1], T[k+2]);
+                }
+                std::vector<uint32_t>& out = fillTris[si];
+                out.clear();
+                out.reserve(T.size());
+                for (uint32_t lv : T) out.push_back(G[lv]);
+                return 1;
+            };
+
+            for (uint32_t si = 0; si < (uint32_t)slots.size(); ++si) {
+                if (!replaced[si]) continue;
+                int st = -1;
+                try { st = fillFace(si); } catch (...) { st = -1; }
+                if (st > 0) { if (slots[si].nb) diag.facesRedone++; else diag.facesFilled++; }
+                else if (st == 0) diag.facesCollapsed++;
+                else {
+                    // Jamais pire qu'avant : une triangulation OCCT, meme douteuse,
+                    // est gardee plutot que remplacee par rien.
+                    fillTris[si].clear();
+                    if (slots[si].nb) replaced[si] = 0; else diag.facesUnfilled++;
+                }
+            }
+            rebuild();
+        }
+    }
 
     // Position representative de chaque sommet cousu : la MOYENNE de sa classe,
     // en double. C'est elle qui neutralise l'asymetrie float32 entre deux faces
@@ -1629,8 +2260,9 @@ static int extractIntoTopo(const TopoDS_Shape& shape, const std::string& name,
     auto rebuildVertPos = [&]() {
         vp.assign((size_t)vertsOut * 3, 0.0);
         std::vector<uint32_t> cnt(vertsOut, 0);
-        for (uint32_t g = 0; g < nodesIn; ++g) {
+        for (uint32_t g = 0; g < (uint32_t)remap.size(); ++g) {
             const uint32_t w = remap[g];
+            if (w == UINT32_MAX) continue;   // [FIX 27/09] noeud d'une triangulation ecartee
             vp[(size_t)w*3]   += pp[(size_t)g*3];
             vp[(size_t)w*3+1] += pp[(size_t)g*3+1];
             vp[(size_t)w*3+2] += pp[(size_t)g*3+2];
@@ -1770,17 +2402,9 @@ static int extractIntoTopo(const TopoDS_Shape& shape, const std::string& name,
     }
 
     rebuildVertPos();
-    md.positions.resize((size_t)vertsOut * 3);
-    {
-        const gp_Trsf& itr = instLoc.Transformation();
-        for (uint32_t w = 0; w < vertsOut; ++w) {
-            gp_Pnt p(vp[(size_t)w*3], vp[(size_t)w*3+1], vp[(size_t)w*3+2]);
-            p.Transform(itr);
-            md.positions[(size_t)w*3]   = (float)p.X();
-            md.positions[(size_t)w*3+1] = (float)p.Y();
-            md.positions[(size_t)w*3+2] = (float)p.Z();
-        }
-    }
+    // [FIX 27/09] md.positions n'est plus ecrit ici mais apres les passes de
+    // nettoyage (contraction des micro-aretes, bascule de diagonales), qui
+    // deplacent et retirent des sommets — cf. le compactage en fin d'etage.
 
     struct Run { uint32_t key; float r, g, b; uint32_t start, count; float a; };
     std::vector<Run> runs;
@@ -1805,36 +2429,452 @@ static int extractIntoTopo(const TopoDS_Shape& shape, const std::string& name,
     };
 
     md.indices.reserve(triIdx.size());
-    for (const FaceSlot& s : slots) {
-        if (!s.nb) continue;
-        const bool reversed = (s.face.Orientation() == TopAbs_REVERSED);
-        const uint32_t runStart = (uint32_t)md.indices.size();
-        const int nt = (int)s.tri->NbTriangles();
-        for (int i = 1; i <= nt; ++i) {
-            Standard_Integer a, b, c;
-            s.tri->Triangle(i).Get(a, b, c);
-            if (reversed) { const Standard_Integer t = b; b = c; c = t; }
-            const uint32_t ia = remap[s.off + (uint32_t)a - 1];
-            const uint32_t ib = remap[s.off + (uint32_t)b - 1];
-            const uint32_t ic = remap[s.off + (uint32_t)c - 1];
-            if (ia == ib || ib == ic || ic == ia) { diag.trisDegen++; continue; }
+    std::vector<uint32_t> triSlot;   // [FIX 27/09] face d'origine de chaque triangle emis
+    triSlot.reserve(triIdx.size() / 3);
+    std::vector<FaceRGB> slotCol(faceColors ? slots.size() : 0);   // [FIX 27/09] couleur de chaque face
+    for (uint32_t si = 0; si < (uint32_t)slots.size(); ++si) {
+        const FaceSlot& s = slots[si];
+        // [FIX 27/09] triangles d'OCCT ou du remplissage (etage A'), cf. forSlotTris
+        forSlotTris(si, [&](uint32_t ga, uint32_t gb, uint32_t gc) {
+            const uint32_t ia = remap[ga], ib = remap[gb], ic = remap[gc];
+            if (ia == ib || ib == ic || ic == ia) { diag.trisDegen++; return; }
             bool opposed = false;
             const TriKey k = canon(ia, ib, ic, opposed);
             const uint8_t bit = opposed ? 2 : 1;
             auto it = seenTri.find(k);
             if (it != seenTri.end()) {
-                if (it->second & bit) { diag.trisDup++; continue; }  // doublon strict
+                if (it->second & bit) { diag.trisDup++; return; }    // doublon strict
                 diag.trisOpposed++;                                  // compte, garde
                 it->second |= bit;
             } else seenTri.emplace(k, bit);
             md.indices.push_back(ia); md.indices.push_back(ib); md.indices.push_back(ic);
-        }
+            triSlot.push_back(si);
+        });
         if (faceColors) {
-            float fr = md.r, fg = md.g, fb = md.b, fa = md.a;
+            FaceRGB c{ md.r, md.g, md.b, md.a };
             auto it = faceColors->find(s.face.TShape().get());
-            if (it != faceColors->end()) { fr = it->second.r; fg = it->second.g; fb = it->second.b; fa = it->second.a; }
-            const uint32_t cnt = (uint32_t)md.indices.size() - runStart;
-            if (cnt) runs.push_back(Run{ colorKey(fr, fg, fb, fa), fr, fg, fb, runStart, cnt, fa });
+            if (it != faceColors->end()) c = it->second;
+            slotCol[si] = c;
+        }
+    }
+
+    // [FIX 27/09] MICRO-ARETES. Le B-Rep porte des aretes de quelques dixiemes
+    // de micron (KR600 : un segment de 0,5 um, un arc de 0,0017 rad), et le
+    // maillage en herite. Topologiquement rien a redire — le corps sort ici
+    // etanche a l'indice pres. Mais le controle de NASSCAD (_weldAndCheckManifold,
+    // tol=3) soude par cellules de 0,001 mm : il ECRASE ces aretes sans regarder
+    // la topologie, et deux triangles qui se touchaient par un sommet se
+    // retrouvent a partager une arete — mesure : jusqu'a 104 aretes a quatre
+    // triangles sur un corps que MEDUSA livrait etanche.
+    // On contracte donc nous-memes toute arete plus courte que kMicro, mais
+    // SEULEMENT quand la condition de lien (Dey, Edelsbrunner, Guha, Nekhayev,
+    // 1999 — la regle de toute decimation qui preserve la variete) garantit que
+    // le resultat reste une variete : les voisins communs des deux extremites
+    // sont exactement les sommets opposes a l'arete. kMicro = 2 um, au-dessus de
+    // la diagonale d'une cellule du controle (racine de 3 x 1 um). Deplacement
+    // maximal d'un sommet : 2 um, rien a l'ecran.
+    std::vector<char> triDead(md.indices.size() / 3, 0);
+    std::vector<char> touchedV(vertsOut, 0); // sommets deplaces par une contraction ou une fusion
+    std::vector<char> nmVert(vertsOut, 0);   // sommets d'une arete non manifold DECLAREE
+    for (uint32_t g : nmNodes)
+        if (g < remap.size() && remap[g] != UINT32_MAX) nmVert[remap[g]] = 1;
+    {
+        const double sc = std::fabs(instLoc.Transformation().ScaleFactor());
+        const double kMicro = 0.002 / (sc > 0.0 ? sc : 1.0);     // mm, dans le repere du prototype
+        const uint32_t ntri = (uint32_t)(md.indices.size() / 3);
+        auto len = [&](uint32_t a, uint32_t b) {
+            const double dx = vp[(size_t)a*3] - vp[(size_t)b*3], dy = vp[(size_t)a*3+1] - vp[(size_t)b*3+1],
+                         dz = vp[(size_t)a*3+2] - vp[(size_t)b*3+2];
+            return std::sqrt(dx*dx + dy*dy + dz*dz);
+        };
+        std::vector<std::pair<double, uint64_t>> micro;
+        for (uint32_t t = 0; t < ntri; ++t)
+            for (int k = 0; k < 3; ++k) {
+                const uint32_t a = md.indices[t*3+k], b = md.indices[t*3+(k+1)%3];
+                if (a < b && !nmVert[a] && !nmVert[b]) { const double l = len(a, b); if (l < kMicro) micro.push_back({ l, edgeKey(a, b) }); }
+            }
+        if (!micro.empty()) {
+            std::sort(micro.begin(), micro.end());
+            std::vector<std::vector<uint32_t>> vt(vertsOut);       // sommet -> triangles vivants
+            for (uint32_t t = 0; t < ntri; ++t)
+                for (int k = 0; k < 3; ++k) vt[md.indices[t*3+k]].push_back(t);
+            std::vector<uint32_t> rep(vertsOut);
+            for (uint32_t v = 0; v < vertsOut; ++v) rep[v] = v;
+            auto R = [&](uint32_t v) { while (rep[v] != v) { rep[v] = rep[rep[v]]; v = rep[v]; } return v; };
+            auto neighbours = [&](uint32_t v, std::unordered_set<uint32_t>& out) {
+                out.clear();
+                for (uint32_t t : vt[v]) {
+                    if (triDead[t]) continue;
+                    for (int k = 0; k < 3; ++k) { const uint32_t w = md.indices[t*3+k]; if (w != v) out.insert(w); }
+                }
+            };
+            std::unordered_set<uint32_t> na, nb;
+            for (const auto& me : micro) {
+                const uint32_t a = R((uint32_t)(me.second >> 32)), b = R((uint32_t)(me.second & 0xFFFFFFFFu));
+                if (a == b || len(a, b) >= kMicro) continue;
+                // Triangles portant l'arete (a, b), et leurs sommets opposes.
+                std::vector<uint32_t> ab, opp;
+                for (uint32_t t : vt[a]) {
+                    if (triDead[t]) continue;
+                    bool hasB = false; uint32_t o = UINT32_MAX;
+                    for (int k = 0; k < 3; ++k) {
+                        const uint32_t w = md.indices[t*3+k];
+                        if (w == b) hasB = true; else if (w != a) o = w;
+                    }
+                    if (hasB) { ab.push_back(t); opp.push_back(o); }
+                }
+                if (ab.empty() || ab.size() > 2) continue;       // plus une arete, ou arete deja non manifold
+                // Sur une coque OUVERTE : deux sommets de bord relies par une arete
+                // interieure ne se contractent pas (on pincerait le bord).
+                auto onBorder = [&](uint32_t v) {
+                    std::unordered_map<uint32_t, int> c;
+                    for (uint32_t t : vt[v]) {
+                        if (triDead[t]) continue;
+                        for (int k = 0; k < 3; ++k) { const uint32_t w = md.indices[t*3+k]; if (w != v) c[w]++; }
+                    }
+                    for (const auto& kv : c) if (kv.second == 1) return true;
+                    return false;
+                };
+                if (ab.size() == 2 && onBorder(a) && onBorder(b)) continue;
+                neighbours(a, na); neighbours(b, nb);
+                size_t common = 0; bool linkOk = true;
+                for (uint32_t w : na) if (nb.count(w)) {
+                    common++;
+                    if (std::find(opp.begin(), opp.end(), w) == opp.end()) { linkOk = false; break; }
+                }
+                if (!linkOk || common != opp.size()) continue;
+                // Contraction de b sur a, au milieu : chaque sommet bouge de moins de kMicro/2.
+                for (int k = 0; k < 3; ++k) vp[(size_t)a*3+k] = 0.5 * (vp[(size_t)a*3+k] + vp[(size_t)b*3+k]);
+                for (uint32_t t : ab) triDead[t] = 1;
+                for (uint32_t t : vt[b]) {
+                    if (triDead[t]) continue;
+                    for (int k = 0; k < 3; ++k) if (md.indices[t*3+k] == b) md.indices[t*3+k] = a;
+                    vt[a].push_back(t);
+                }
+                vt[b].clear();
+                rep[b] = a;
+                touchedV[a] = 1;
+                diag.microCollapsed++;
+            }
+        }
+    }
+
+    // [FIX 27/09] AMAS SOUS LE MICRON. La contraction ci-dessus refuse, a juste
+    // titre, ce qui violerait la condition de lien. Mais ce qu'elle laisse, le
+    // controle de NASSCAD le soudera quand meme, a l'aveugle, par cellules de
+    // 0,001 mm : refuser ici ne protege rien, cela deplace seulement le defaut
+    // chez le client. Cas mesures sur KR600 : une bande conique de 0,61 um de
+    // haut entre deux cylindres (face 94 du corps 19), triangulee par OCCT en
+    // motif irregulier ; un « trou » en croissant de 0,5 um de large dans une
+    // plaque (corps 0 a 3). On fait donc la soudure NOUS-MEMES, mais en sachant
+    // ce qu'on soude : chaque amas de sommets distincts a moins de kMicro est
+    // ramene a son barycentre, puis on nettoie ce que la fusion a fabrique —
+    // triangles degeneres retires, doublons stricts dedoublonnes, et paires de
+    // triangles opposes NEES DE LA FUSION annulees (la paroi d'epaisseur nulle
+    // qu'est devenue une fente de 0,5 um). Les paires opposees preexistantes ne
+    // sont pas touchees, conformement a la regle de l'etage C.
+    {
+        const double sc = std::fabs(instLoc.Transformation().ScaleFactor());
+        const double kMicro = 0.002 / (sc > 0.0 ? sc : 1.0);
+        const uint32_t ntri = (uint32_t)(md.indices.size() / 3);
+        std::vector<char> live(vertsOut, 0);
+        for (uint32_t t = 0; t < ntri; ++t)
+            if (!triDead[t]) for (int k = 0; k < 3; ++k) live[md.indices[t*3+k]] = 1;
+        for (uint32_t v = 0; v < vertsOut; ++v) if (nmVert[v]) live[v] = 0;
+        std::unordered_map<uint64_t, std::vector<uint32_t>> grid;
+        auto cell = [&](double x) { return (int64_t)std::floor(x / kMicro); };
+        auto ckey = [](int64_t i, int64_t j, int64_t k) {
+            return ((uint64_t)(uint32_t)i * 73856093ull) ^ ((uint64_t)(uint32_t)j * 19349663ull)
+                 ^ ((uint64_t)(uint32_t)k * 83492791ull);
+        };
+        for (uint32_t v = 0; v < vertsOut; ++v)
+            if (live[v]) grid[ckey(cell(vp[(size_t)v*3]), cell(vp[(size_t)v*3+1]), cell(vp[(size_t)v*3+2]))].push_back(v);
+        DSU cl(vertsOut);
+        bool anyPair = false;
+        for (uint32_t v = 0; v < vertsOut; ++v) {
+            if (!live[v]) continue;
+            const int64_t ci = cell(vp[(size_t)v*3]), cj = cell(vp[(size_t)v*3+1]), ck = cell(vp[(size_t)v*3+2]);
+            for (int a = -1; a <= 1; ++a) for (int b = -1; b <= 1; ++b) for (int c = -1; c <= 1; ++c) {
+                auto it = grid.find(ckey(ci + a, cj + b, ck + c));
+                if (it == grid.end()) continue;
+                for (uint32_t w : it->second) {
+                    if (w <= v) continue;
+                    double d2 = 0;
+                    for (int k = 0; k < 3; ++k) { const double dd = vp[(size_t)v*3+k] - vp[(size_t)w*3+k]; d2 += dd * dd; }
+                    if (d2 < kMicro * kMicro) { cl.unite(v, w); anyPair = true; }
+                }
+            }
+        }
+        if (anyPair) {
+            // Barycentre de chaque amas, porte par sa racine.
+            std::vector<double> acc((size_t)vertsOut * 3, 0.0);
+            std::vector<uint32_t> cnt(vertsOut, 0);
+            for (uint32_t v = 0; v < vertsOut; ++v) {
+                if (!live[v]) continue;
+                const uint32_t r = cl.find(v);
+                for (int k = 0; k < 3; ++k) acc[(size_t)r*3+k] += vp[(size_t)v*3+k];
+                cnt[r]++;
+            }
+            // On ne fusionne que ce que la soudure du client rendrait non manifold.
+            // Deux sommets sans voisin commun, meme soudes, ne font qu'un sommet
+            // pince : aucune arete n'y gagne de triangle, le controle de NASSCAD
+            // reste vert — on les laisse distincts (maillage plus propre pour le CSG).
+            // Seuls les amas qui, fusionnes comme le ferait le client, donneraient
+            // une arete a plus de deux triangles sont fusionnes ici.
+            std::vector<char> merged(vertsOut, 0);
+            {
+                std::unordered_map<uint64_t, int> ec;
+                ec.reserve((size_t)ntri * 3);
+                for (uint32_t t = 0; t < ntri; ++t) {
+                    if (triDead[t]) continue;
+                    uint32_t r[3];
+                    for (int k = 0; k < 3; ++k) {
+                        const uint32_t v = md.indices[t*3+k];
+                        r[k] = (live[v] && cnt[cl.find(v)] >= 2) ? cl.find(v) : v;
+                    }
+                    if (r[0] == r[1] || r[1] == r[2] || r[2] == r[0]) continue;
+                    for (int k = 0; k < 3; ++k) ec[edgeKey(r[k], r[(k+1)%3])]++;
+                }
+                for (const auto& kv : ec) {
+                    if (kv.second <= 2) continue;
+                    const uint32_t a = (uint32_t)(kv.first >> 32), b = (uint32_t)(kv.first & 0xFFFFFFFFu);
+                    if (a < vertsOut && cnt[a] >= 2) merged[a] = 1;
+                    if (b < vertsOut && cnt[b] >= 2) merged[b] = 1;
+                }
+            }
+            for (uint32_t r = 0; r < vertsOut; ++r)
+                if (merged[r]) {
+                    for (int k = 0; k < 3; ++k) vp[(size_t)r*3+k] = acc[(size_t)r*3+k] / cnt[r];
+                    touchedV[r] = 1;
+                    diag.microClusters++;
+                }
+            for (uint32_t t = 0; t < ntri; ++t) {
+                if (triDead[t]) continue;
+                for (int k = 0; k < 3; ++k) {
+                    const uint32_t v = md.indices[t*3+k];
+                    const uint32_t r = (live[v] && merged[cl.find(v)]) ? cl.find(v) : v;
+                    if (r != v) md.indices[t*3+k] = r;
+                }
+                const uint32_t a = md.indices[t*3], b = md.indices[t*3+1], c = md.indices[t*3+2];
+                if (a == b || b == c || c == a) { triDead[t] = 1; diag.trisDegen++; }
+            }
+        }
+    }
+
+    // [FIX 27/09] Nettoyage de ce que contractions et fusions ont fabrique, et de
+    // cela SEUL (triangles portant un sommet deplace) : doublons stricts,
+    // paires de triangles opposes, quadrilateres opposes.
+    if (std::find(touchedV.begin(), touchedV.end(), (char)1) != touchedV.end()) {
+        const uint32_t ntri = (uint32_t)(md.indices.size() / 3);
+        {
+            std::unordered_map<TriKey, std::vector<uint32_t>, TriKeyHash> byKey;
+            for (uint32_t t = 0; t < ntri; ++t) {
+                if (triDead[t]) continue;
+                const uint32_t a = md.indices[t*3], b = md.indices[t*3+1], c = md.indices[t*3+2];
+                if (!touchedV[a] && !touchedV[b] && !touchedV[c]) continue;
+                bool opp = false;
+                byKey[canon(a, b, c, opp)].push_back(t);
+            }
+            for (auto& kv : byKey) {
+                if (kv.second.size() < 2) continue;
+                std::vector<uint32_t> fw, bw;
+                for (uint32_t t : kv.second) {
+                    bool opp = false;
+                    canon(md.indices[t*3], md.indices[t*3+1], md.indices[t*3+2], opp);
+                    (opp ? bw : fw).push_back(t);
+                }
+                while (!fw.empty() && !bw.empty()) {   // paroi d'epaisseur nulle : on l'annule
+                    triDead[fw.back()] = triDead[bw.back()] = 1;
+                    fw.pop_back(); bw.pop_back();
+                    diag.trisCancelled += 2;
+                }
+                for (size_t i = 1; i < fw.size(); ++i) { triDead[fw[i]] = 1; diag.trisDup++; }
+                for (size_t i = 1; i < bw.size(); ++i) { triDead[bw[i]] = 1; diag.trisDup++; }
+            }
+            // Meme paroi, autre decoupe : les deux flancs de la fente devenus
+            // confondus couvrent le MEME quadrilatere (memes quatre sommets, sens
+            // opposes), mais chaque face l'a coupe par une diagonale differente —
+            // aucun triangle n'en double un autre. On compare donc les
+            // quadrilateres (deux triangles d'une meme face partageant une arete),
+            // cycle canonique compris, et on annule les deux s'ils sont opposes.
+            struct Quad { uint32_t t1, t2, slot; bool rev; };
+            std::map<std::array<uint32_t, 4>, std::vector<Quad>> quads;
+            std::unordered_map<uint64_t, std::vector<uint32_t>> et;
+            for (uint32_t t = 0; t < ntri; ++t) {
+                if (triDead[t]) continue;
+                bool touched = false;
+                for (int k = 0; k < 3; ++k) if (touchedV[md.indices[t*3+k]]) touched = true;
+                if (!touched) continue;
+                for (int k = 0; k < 3; ++k) et[edgeKey(md.indices[t*3+k], md.indices[t*3+(k+1)%3])].push_back(t);
+            }
+            for (const auto& kv : et) {
+                if (kv.second.size() < 2) continue;
+                for (size_t i = 0; i < kv.second.size(); ++i)
+                    for (size_t j = i + 1; j < kv.second.size(); ++j) {
+                        const uint32_t t = kv.second[i], u = kv.second[j];
+                        if (triSlot[t] != triSlot[u]) continue;
+                        // t = (x, y, z) parcourt x -> y ; u doit parcourir y -> x.
+                        uint32_t x = 0, y = 0, z = 0, w = UINT32_MAX;
+                        for (int k = 0; k < 3; ++k)
+                            if (edgeKey(md.indices[t*3+k], md.indices[t*3+(k+1)%3]) == kv.first) {
+                                x = md.indices[t*3+k]; y = md.indices[t*3+(k+1)%3]; z = md.indices[t*3+(k+2)%3];
+                            }
+                        for (int k = 0; k < 3; ++k)
+                            if (md.indices[u*3+k] == y && md.indices[u*3+(k+1)%3] == x) w = md.indices[u*3+(k+2)%3];
+                        if (w == UINT32_MAX || w == z) continue;
+                        // Contour du quadrilatere : z -> x -> w -> y. Forme canonique :
+                        // plus petit sommet en tete, et le sens.
+                        std::array<uint32_t, 4> cyc = { z, x, w, y };
+                        const size_t m = (size_t)(std::min_element(cyc.begin(), cyc.end()) - cyc.begin());
+                        std::rotate(cyc.begin(), cyc.begin() + (std::ptrdiff_t)m, cyc.end());
+                        const bool rev = cyc[1] > cyc[3];
+                        if (rev) std::swap(cyc[1], cyc[3]);
+                        quads[cyc].push_back(Quad{ t, u, triSlot[t], rev });
+                    }
+            }
+            for (auto& kv : quads) {
+                std::vector<Quad>& q = kv.second;
+                for (size_t i = 0; i < q.size(); ++i)
+                    for (size_t j = i + 1; j < q.size(); ++j) {
+                        if (q[i].slot == q[j].slot || q[i].rev == q[j].rev) continue;
+                        if (triDead[q[i].t1] || triDead[q[i].t2] || triDead[q[j].t1] || triDead[q[j].t2]) continue;
+                        triDead[q[i].t1] = triDead[q[i].t2] = triDead[q[j].t1] = triDead[q[j].t2] = 1;
+                        diag.trisCancelled += 4;
+                    }
+            }
+        }
+    }
+
+    // [FIX 27/09] DIAGONALE COMMUNE A DEUX FACES. KR600, corps 17 : deux faces
+    // qui se rejoignent en lame au meme sommet ont chacune coupe leur coin par
+    // le MEME triangle (1, 53, 79) — chaque triangulation est juste, mais la
+    // diagonale 1-53 porte alors quatre triangles, deux par face. Ni la couture
+    // ni la tolerance n'y sont pour rien : c'est un choix de diagonale. On le
+    // refait dans UNE des deux faces : les deux triangles de cette face sur
+    // l'arete forment un quadrilatere (a, d, b, c) ; on les remplace par
+    // (c, a, d) et (d, b, c), memes sommets, meme sens de parcours, meme face,
+    // meme place dans le tampon d'index — les plages de couleur par face ne
+    // bougent pas. Refuse si la nouvelle diagonale existe deja, ou si l'un des
+    // deux triangles se retournerait de plus de 5 % de l'aire du quadrilatere :
+    // au coin d'une lame, les deux faces ne laissent qu'un quadrilatere a peine
+    // concave, et l'un des deux nouveaux triangles est une lamelle d'aire
+    // quasi nulle (mesure KR600 : -6,5 contre +4 779, 0,14 %). On retient la
+    // face ou le basculement est le moins penalisant.
+    {
+        std::unordered_map<uint64_t, std::vector<uint32_t>> et;
+        const uint32_t ntri = (uint32_t)(md.indices.size() / 3);
+        bool any = false;
+        {
+            std::unordered_map<uint64_t, int> ec;
+            ec.reserve((size_t)ntri * 3);
+            for (uint32_t t = 0; t < ntri; ++t) {
+                if (triDead[t]) continue;
+                for (int k = 0; k < 3; ++k)
+                    if (++ec[edgeKey(md.indices[t*3+k], md.indices[t*3+(k+1)%3])] > 2) any = true;
+            }
+        }
+        if (any) {
+            et.reserve((size_t)ntri * 3);
+            for (uint32_t t = 0; t < ntri; ++t) {
+                if (triDead[t]) continue;
+                for (int k = 0; k < 3; ++k) et[edgeKey(md.indices[t*3+k], md.indices[t*3+(k+1)%3])].push_back(t);
+            }
+            auto P = [&](uint32_t w) { return gp_Vec(vp[(size_t)w*3], vp[(size_t)w*3+1], vp[(size_t)w*3+2]); };
+            auto nrm = [&](uint32_t a, uint32_t b, uint32_t c) { return (P(b) - P(a)).Crossed(P(c) - P(a)); };
+            auto drop = [&](uint64_t ek, uint32_t t) {
+                auto it = et.find(ek);
+                if (it == et.end()) return;
+                auto& l = it->second;
+                l.erase(std::remove(l.begin(), l.end(), t), l.end());
+            };
+            std::vector<uint64_t> over;
+            for (const auto& kv : et) if (kv.second.size() > 2) over.push_back(kv.first);
+            for (uint64_t ek : over) {
+                const uint32_t a = (uint32_t)(ek >> 32), b = (uint32_t)(ek & 0xFFFFFFFFu);
+                for (int attempt = 0; attempt < 4 && et[ek].size() > 2; ++attempt) {
+                    // Une face qui a exactement deux triangles sur cette arete.
+                    std::map<uint32_t, std::vector<uint32_t>> bySlot;
+                    for (uint32_t t : et[ek]) bySlot[triSlot[t]].push_back(t);
+                    uint32_t bt1 = UINT32_MAX, bt2 = UINT32_MAX, bc = 0, bd = 0;
+                    double bestScore = -1e300;
+                    for (const auto& sl : bySlot) {
+                        if (sl.second.size() != 2) continue;
+                        uint32_t t1 = UINT32_MAX, t2 = UINT32_MAX, c = 0, d = 0;
+                        for (uint32_t t : sl.second)
+                            for (int k = 0; k < 3; ++k) {
+                                const uint32_t x = md.indices[t*3+k], y = md.indices[t*3+(k+1)%3], z = md.indices[t*3+(k+2)%3];
+                                if (x == a && y == b) { t1 = t; c = z; }
+                                if (x == b && y == a) { t2 = t; d = z; }
+                            }
+                        if (t1 == UINT32_MAX || t2 == UINT32_MAX || c == d) continue;
+                        if (et.count(edgeKey(c, d)) && !et[edgeKey(c, d)].empty()) continue;
+                        const gp_Vec n0 = nrm(a, b, c) + nrm(b, a, d);
+                        const double n2 = n0.SquareMagnitude();
+                        if (!(n2 > 0.0)) continue;
+                        const double score = std::min(nrm(c, a, d).Dot(n0), nrm(d, b, c).Dot(n0)) / n2;
+                        if (score < -0.05 || score <= bestScore) continue;
+                        bestScore = score; bt1 = t1; bt2 = t2; bc = c; bd = d;
+                    }
+                    if (bt1 == UINT32_MAX) break;
+                    for (uint32_t t : { bt1, bt2 })
+                        for (int k = 0; k < 3; ++k) drop(edgeKey(md.indices[t*3+k], md.indices[t*3+(k+1)%3]), t);
+                    md.indices[bt1*3] = bc; md.indices[bt1*3+1] = a;  md.indices[bt1*3+2] = bd;
+                    md.indices[bt2*3] = bd; md.indices[bt2*3+1] = b;  md.indices[bt2*3+2] = bc;
+                    for (uint32_t t : { bt1, bt2 })
+                        for (int k = 0; k < 3; ++k) et[edgeKey(md.indices[t*3+k], md.indices[t*3+(k+1)%3])].push_back(t);
+                    diag.diagFlips++;
+                }
+            }
+        }
+    }
+
+    // [FIX 27/09] Compactage : triangles contractes retires (l'ordre des autres
+    // ne bouge pas), sommets non references retires, positions ecrites dans le
+    // repere de l'instance, plages de couleur recalculees face par face — une
+    // plage par face, dans l'ordre des faces, exactement comme avant.
+    {
+        std::vector<uint32_t> idx, slotOf;
+        idx.reserve(md.indices.size());
+        slotOf.reserve(triSlot.size());
+        std::vector<uint32_t> nid(vertsOut, UINT32_MAX);
+        uint32_t nv = 0;
+        for (size_t t = 0; t < triSlot.size(); ++t) {
+            if (triDead[t]) continue;
+            for (int k = 0; k < 3; ++k) {
+                uint32_t& w = nid[md.indices[t*3+k]];
+                if (w == UINT32_MAX) w = nv++;
+            }
+        }
+        // Ordre des sommets conserve (croissant), comme sans compactage.
+        nv = 0;
+        for (uint32_t v = 0; v < vertsOut; ++v) if (nid[v] != UINT32_MAX) nid[v] = nv++;
+        for (size_t t = 0; t < triSlot.size(); ++t) {
+            if (triDead[t]) continue;
+            for (int k = 0; k < 3; ++k) idx.push_back(nid[md.indices[t*3+k]]);
+            slotOf.push_back(triSlot[t]);
+        }
+        md.indices.swap(idx);
+        md.positions.resize((size_t)nv * 3);
+        const gp_Trsf& itr = instLoc.Transformation();
+        for (uint32_t v = 0; v < vertsOut; ++v) {
+            if (nid[v] == UINT32_MAX) continue;
+            gp_Pnt p(vp[(size_t)v*3], vp[(size_t)v*3+1], vp[(size_t)v*3+2]);
+            p.Transform(itr);
+            const size_t w = (size_t)nid[v] * 3;
+            md.positions[w]   = (float)p.X();
+            md.positions[w+1] = (float)p.Y();
+            md.positions[w+2] = (float)p.Z();
+        }
+        vertsOut = nv;
+        if (faceColors) {
+            for (size_t t = 0; t < slotOf.size(); ) {
+                size_t e = t;
+                while (e < slotOf.size() && slotOf[e] == slotOf[t]) ++e;
+                const FaceRGB& c = slotCol[slotOf[t]];
+                runs.push_back(Run{ colorKey(c.r, c.g, c.b, c.a), c.r, c.g, c.b,
+                                    (uint32_t)(t * 3), (uint32_t)((e - t) * 3), c.a });
+                t = e;
+            }
         }
     }
 
@@ -1858,14 +2898,33 @@ static int extractIntoTopo(const TopoDS_Shape& shape, const std::string& name,
     gWeldEdgesResidual.fetch_add(diag.edgesResidual);
     gWeldEdgesMismatch.fetch_add(diag.edgesMismatch);
     gWeldTrisDropped.fetch_add(diag.trisDegen + diag.trisDup);
+    gWeldFacesFilled.fetch_add(diag.facesFilled + diag.facesRedone);
+    gWeldDiagFlips.fetch_add(diag.diagFlips);
     // Au journal : tout corps encore defectueux, ET tout corps qui n'a ete sauve
     // que par l'etage geometrique — c'est la liste des prototypes a regarder.
     if (!diag.watertight() || diag.edgesResidual || diag.edgesMismatch
-        || diag.edgesOverUsed || diag.edgesSeamOnly) {
+        || diag.edgesOverUsed || diag.edgesSeamOnly
+        // [FIX 27/09] et tout corps que les nouveaux etages ont du reprendre
+        || diag.edgesNmPaired || diag.facesFilled || diag.facesRedone
+        || diag.facesCollapsed || diag.facesUnfilled || diag.diagFlips || diag.microCollapsed || diag.microClusters) {
         if (!diag.watertight()) gManifoldIssueCount++;
         std::ostringstream oss;
         oss << "[WELD] \"" << name.substr(0, 48) << "\" " << diag.brief() << "\n";
         logFileOnly(oss.str());
+    }
+
+    {
+        std::unordered_map<const void*, int> val;
+        for (const FaceSlot& sl : slots)
+            for (TopExp_Explorer ee(sl.face, TopAbs_EDGE); ee.More(); ee.Next()) {
+                const TopAbs_Orientation o = ee.Current().Orientation();
+                if (o == TopAbs_INTERNAL || o == TopAbs_EXTERNAL) continue;
+                if (BRep_Tool::Degenerated(TopoDS::Edge(ee.Current()))) continue;
+                val[ee.Current().TShape().get()]++;
+            }
+        int freeE = 0, nmE = 0;
+        for (const auto& kv : val) { if (kv.second == 1) freeE++; else if (kv.second > 2) nmE++; }
+        md.brep = nmE ? "nonmanifold" : (freeE ? "open" : "closed");
     }
 
     if (!md.positions.empty() && !md.indices.empty()) out.push_back(std::move(md));
@@ -1896,6 +2955,14 @@ static int extractInto(const TopoDS_Shape& shape, const std::string& name,
             oss << "[WELD] \"" << name.substr(0, 48) << "\" seam welding abandoned ("
                 << e.what() << ") — falling back to extractIntoLegacy\n";
             logFileOnly(oss.str());
+        } catch (...) {
+            // [FIX 27/09] Standard_Failure (OCCT) ne derive pas de std::exception :
+            // sans ce filet, une exception OCCT levee pendant la couture remontait
+            // jusqu'au pool de threads et faisait echouer l'import ENTIER.
+            out.resize(before);
+            usable = false;
+            logFileOnly("[WELD] \"" + name.substr(0, 48) + "\" seam welding abandoned (OCCT exception)"
+                        " — falling back to extractIntoLegacy\n");
         }
         if (usable) return faces;
         out.resize(before);
@@ -2159,6 +3226,7 @@ static std::vector<uint8_t> encodeNSTP(const std::vector<MeshData>& meshes, doub
             }
             json << "],";
         }
+        if (!m.brep.empty()) json << "\"brep\":\"" << m.brep << "\",";   // [FIX 27/09] champ ADDITIF
         json << "\"posOffset\":" << posOffset << ",\"posCount\":" << m.positions.size()
              << ",\"idxOffset\":" << idxOffset << ",\"idxCount\":" << m.indices.size() << "}";
 
@@ -5493,6 +6561,128 @@ public:
 
 } // namespace nasifc
 
+// [FIX 27/09] Cf. sa declaration, avant extractIntoTopo : le remplissage des
+// faces sans triangulation reutilise la decoupe d'oreilles du lecteur IFC.
+//
+// MODE FORCE. Le contour d'une face que BRepMesh a ratee est souvent celui qui
+// l'a fait echouer : KR600, corps 0, un « trou » en croissant de 0,5 micron de
+// large, borde par deux arcs quasi confondus discretises independamment par
+// leurs faces voisines — les deux polylignes se CROISENT. Aucun trianguleur
+// geometrique strict ne triangule un contour auto-intersectant ; c'est ce qui a
+// fait echouer BRepMesh, et c'est ce qui ferait echouer le strict ici.
+// forced=true garantit un resultat : pont le plus court meme s'il croise, et a
+// defaut d'oreille valide, l'oreille convexe qui contient le moins de points
+// (a defaut, la moins concave). Chaque oreille suit l'ordre cyclique du
+// contour : chaque segment de bord est pris par exactement UN triangle, dans
+// le sens oppose a sa voisine — la variete est fermee et orientee quelle que
+// soit la geometrie. Le recouvrement eventuel reste confine a la zone qui se
+// croisait deja, de l'ordre de la largeur du croissant.
+static bool fillTriangulate2D(const std::vector<std::pair<double, double>>& pts,
+                              std::vector<uint32_t> outer,
+                              std::vector<std::vector<uint32_t>> holes,
+                              std::vector<uint32_t>& tris,
+                              bool forced,
+                              const std::vector<uint32_t>* ident) {
+    using nasifc::tri::P2;
+    using nasifc::tri::cross2;
+    std::vector<P2> P(pts.size());
+    for (size_t k = 0; k < pts.size(); ++k) P[k] = P2{ pts[k].first, pts[k].second };
+    auto loopArea = [&](const std::vector<uint32_t>& l) {
+        double s = 0;
+        for (size_t i = 0; i < l.size(); ++i) {
+            const P2& a = P[l[i]]; const P2& b = P[l[(i + 1) % l.size()]];
+            s += a.x * b.y - b.x * a.y;
+        }
+        return 0.5 * s;
+    };
+    if (!holes.empty() && !nasifc::tri::bridgeHoles(P, outer, holes)) {
+        if (!forced) return false;
+        // Pont le plus court, croisement tolere, un trou apres l'autre.
+        for (auto& hole : holes) {
+            if (hole.size() < 3) continue;
+            if ((loopArea(hole) > 0) == (loopArea(outer) > 0)) std::reverse(hole.begin(), hole.end());
+            double best = 1e300; size_t bi = 0, bj = 0;
+            for (size_t i = 0; i < outer.size(); ++i)
+                for (size_t j = 0; j < hole.size(); ++j) {
+                    const P2& A = P[outer[i]]; const P2& B = P[hole[j]];
+                    const double d = (A.x - B.x) * (A.x - B.x) + (A.y - B.y) * (A.y - B.y);
+                    if (d < best) { best = d; bi = i; bj = j; }
+                }
+            std::vector<uint32_t> merged;
+            merged.reserve(outer.size() + hole.size() + 2);
+            for (size_t i = 0; i <= bi; ++i) merged.push_back(outer[i]);
+            for (size_t j = 0; j < hole.size(); ++j) merged.push_back(hole[(bj + j) % hole.size()]);
+            merged.push_back(hole[bj]);
+            for (size_t i = bi; i < outer.size(); ++i) merged.push_back(outer[i]);
+            outer.swap(merged);
+        }
+    }
+    std::vector<P2> q;
+    q.reserve(outer.size());
+    for (uint32_t k : outer) q.push_back(P[k]);
+    std::vector<uint32_t> t;
+    if (!nasifc::tri::earClip(q, t)) {
+        if (!forced || q.size() < 3) return false;
+        t.clear();
+        std::vector<uint32_t> v(q.size());
+        for (size_t i = 0; i < q.size(); ++i) v[i] = (uint32_t)i;
+        if (nasifc::tri::area2(q) < 0) std::reverse(v.begin(), v.end());
+        auto same = [](const P2& a, const P2& b) { return std::fabs(a.x - b.x) < 1e-12 && std::fabs(a.y - b.y) < 1e-12; };
+        // Une diagonale ne doit jamais redoubler une arete deja la : le pontage
+        // fait passer le contour plusieurs fois par les memes sommets, et une
+        // « nouvelle » diagonale entre deux de leurs occurrences peut etre une
+        // arete du contour — elle finirait a trois triangles. On raisonne sur
+        // l'identite des noeuds (`ident`), pas sur les positions.
+        auto idOf = [&](uint32_t qi) -> uint32_t { const uint32_t k = outer[qi]; return ident ? (*ident)[k] : k; };
+        auto ekey = [](uint32_t a, uint32_t b) -> uint64_t {
+            if (a > b) std::swap(a, b);
+            return ((uint64_t)a << 32) | b;
+        };
+        std::unordered_set<uint64_t> have;
+        for (size_t i = 0; i < q.size(); ++i) have.insert(ekey(idOf((uint32_t)i), idOf((uint32_t)((i + 1) % q.size()))));
+        auto clash = [&](size_t ip, size_t in) {
+            const uint32_t x = idOf(v[ip]), y = idOf(v[in]);
+            return x == y || have.count(ekey(x, y)) != 0;
+        };
+        while (v.size() > 3) {
+            size_t pick = SIZE_MAX, bestIn = SIZE_MAX;
+            double bestCr = -1e300;
+            for (size_t i = 0; i < v.size(); ++i) {
+                const size_t ip = (i + v.size() - 1) % v.size(), in = (i + 1) % v.size();
+                const P2& a = q[v[ip]]; const P2& b = q[v[i]]; const P2& c = q[v[in]];
+                const double cr = cross2(a, b, c);
+                if (cr <= 0 || clash(ip, in)) continue;
+                size_t inside = 0;
+                for (size_t k = 0; k < v.size(); ++k) {
+                    if (k == ip || k == i || k == in) continue;
+                    const P2& p = q[v[k]];
+                    if (same(p, a) || same(p, b) || same(p, c)) continue;
+                    if (nasifc::tri::inTri(a, b, c, p)) inside++;
+                }
+                if (inside < bestIn || (inside == bestIn && cr > bestCr)) { bestIn = inside; bestCr = cr; pick = i; }
+                if (inside == 0) break;
+            }
+            // Aucun sommet convexe sans redoublement : le moins concave qui ne
+            // redouble rien, et seulement a defaut, le moins concave tout court.
+            for (int pass = 0; pass < 2 && pick == SIZE_MAX; ++pass)
+                for (size_t i = 0; i < v.size(); ++i) {
+                    const size_t ip = (i + v.size() - 1) % v.size(), in = (i + 1) % v.size();
+                    if (pass == 0 && clash(ip, in)) continue;
+                    const double cr = cross2(q[v[ip]], q[v[i]], q[v[in]]);
+                    if (pick == SIZE_MAX || cr > bestCr) { bestCr = cr; pick = i; }
+                }
+            const size_t ip = (pick + v.size() - 1) % v.size(), in = (pick + 1) % v.size();
+            have.insert(ekey(idOf(v[ip]), idOf(v[in])));
+            t.push_back(v[ip]); t.push_back(v[pick]); t.push_back(v[in]);
+            v.erase(v.begin() + (std::ptrdiff_t)pick);
+        }
+        t.push_back(v[0]); t.push_back(v[1]); t.push_back(v[2]);
+    }
+    tris.clear();
+    tris.reserve(t.size());
+    for (uint32_t k : t) tris.push_back(outer[k]);
+    return true;
+}
 
 
 
@@ -5790,6 +6980,7 @@ static std::vector<uint8_t> processStepBuffer(const std::string& body, double de
         gWeldBodies = 0; gWeldWatertight = 0; gWeldFallback = 0;
         gWeldEdgesTopo = 0; gWeldEdgesResidual = 0; gWeldEdgesMismatch = 0;
         gWeldTrisDropped = 0;
+        gWeldFacesFilled = 0; gWeldDiagFlips = 0;   // [FIX 27/09]
         TDF_LabelSequence freeShapes;
         shapeTool->GetFreeShapes(freeShapes);
 
@@ -6499,6 +7690,7 @@ static std::vector<uint8_t> processIfcBuffer(const std::string& body, double def
     gWeldBodies = 0; gWeldWatertight = 0; gWeldFallback = 0;
     gWeldEdgesTopo = 0; gWeldEdgesResidual = 0; gWeldEdgesMismatch = 0;
     gWeldTrisDropped = 0;
+    gWeldFacesFilled = 0; gWeldDiagFlips = 0;   // [FIX 27/09]
 
     nasifc::Model M = nasifc::parse(body);
     if (M.empty()) throw std::runtime_error("/ifc: no entity found (not an ISO-10303-21 file?)");
@@ -7137,6 +8329,7 @@ static void writeMeshFrame(SocketFD fd, const MeshData& m) {
         j << "],";
     }
     if (!m.ref.empty()) j << "\"ref\":\"" << jsonEscape(m.ref) << "\",";
+    if (!m.brep.empty()) j << "\"brep\":\"" << m.brep << "\",";   // [FIX 27/09] idem encodeNSTP
     j << "\"posCount\":" << m.positions.size() << ",\"idxCount\":" << m.indices.size() << "}";
     std::string js = j.str();
     uint32_t jl = (uint32_t)js.size();

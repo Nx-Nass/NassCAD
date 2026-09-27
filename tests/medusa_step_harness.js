@@ -118,7 +118,7 @@ function nstpDecode(buf) {
   const meta = JSON.parse(new TextDecoder().decode(new Uint8Array(ab, 16, jsonLen)));
   const bin = 16 + jsonLen;
   meta.meshes = (meta.meshes || []).map(m => ({
-    name: m.name, faces: m.faces,
+    name: m.name, faces: m.faces, brep: m.brep,
     pos: new Float32Array(ab, bin + m.posOffset, m.posCount),
     idx: new Uint32Array(ab, bin + m.idxOffset, m.idxCount),
   }));
@@ -176,7 +176,7 @@ async function runFile(file) {
   const bodies = nstp.meshes.map(m => {
     const yup = toYup(m.pos);
     const raw = nasscadCheck(yup, m.idx);
-    return { name: m.name, verts: m.pos.length / 3, tris: m.idx.length / 3,
+    return { name: m.name, brep: m.brep, verts: m.pos.length / 3, tris: m.idx.length / 3,
              raw: { naked: raw.naked, over: raw.over, weldedVerts: raw.weldedVerts, manifold: raw.manifold },
              _yup: yup, _idx: m.idx };
   });
@@ -210,17 +210,26 @@ async function runFile(file) {
     const lg = (await request('GET', '/log?n=20000')).body.toString('utf8').replace(/\x1b\[[0-9;]*m/g, '');
     const lines = lg.split('\n');
     let from = 0;
-    for (let i = lines.length - 1; i >= 0; i--) if (lines[i].startsWith('[FILE]')) { from = i; break; }
+    for (let i = lines.length - 1; i >= 0; i--) if (lines[i].includes('[FILE]')) { from = i; break; }
     weldLog = lines.slice(from).filter(l => /\[WELD\]|\[WARN\]|REPAIR|MANIFOLD-RAW/.test(l));
   } catch (e) { /* journal facultatif */ }
 
   const sum = key => bodies.reduce((a, b) => a + (b[key] ? 1 : 0), 0);
+  // `closed*` : les seuls corps que leur B-Rep declare fermes (champ NSTP
+  // `brep`, MEDUSA >= 27/09). Un moteur plus ancien ne l'emet pas : null.
+  const hasBrep = bodies.some(b => b.brep);
   const agg = (which) => {
-    const a = { bodiesBroken: 0, naked: 0, over: 0, weldedVerts: 0 };
+    const a = { bodiesBroken: 0, naked: 0, over: 0, weldedVerts: 0,
+                closedBodies: hasBrep ? 0 : null, closedBroken: hasBrep ? 0 : null,
+                closedNaked: hasBrep ? 0 : null, closedOver: hasBrep ? 0 : null };
     for (const b of bodies) {
       const r = b[which]; if (!r) return null;
       if (!r.manifold) a.bodiesBroken++;
       a.naked += r.naked; a.over += r.over; a.weldedVerts += r.weldedVerts;
+      if (b.brep === 'closed') {
+        a.closedBodies++; a.closedNaked += r.naked; a.closedOver += r.over;
+        if (!r.manifold) a.closedBroken++;
+      }
     }
     return a;
   };
@@ -234,6 +243,7 @@ async function runFile(file) {
     stepMs: Math.round(wallMs), engineMs: Math.round(nstp.tessMs || 0), smoothMs: Math.round(smoothMs),
     weldMeta: nstp.metadata && nstp.metadata.weld,
     raw: agg('raw'), client: agg('client'),
+    brep: hasBrep ? bodies.reduce((m, b) => (m[b.brep] = (m[b.brep] || 0) + 1, m), {}) : null,
     brokenBodies: bodies.filter(b => !b.raw.manifold || (b.client && !b.client.manifold)),
     weldLog: tail(weldLog, 400),
   };
@@ -254,14 +264,15 @@ function mdTable(results, base) {
       (Object.keys(r.declared.edgeValence).some(k => k !== '2') ? ', valence≠2' : '');
   const cell = (a, k) => (a && a[k] !== undefined ? a[k] : '—');
   if (base) {
-    L.push(`| File | Declared | Bodies | Non-manifold bodies (before → after) | Naked edges | Over-shared edges | Vertices | /step time ms |`);
-    L.push(`|---|---|---:|---:|---:|---:|---:|---:|`);
+    L.push(`| File | Declared (file) | Bodies | Non-manifold bodies (before → after) | …of which B-rep closed (after) | Naked edges | Over-shared edges | Vertices | /step time ms |`);
+    L.push(`|---|---|---:|---:|---:|---:|---:|---:|---:|`);
     for (const r of results) {
-      if (r.error) { L.push(`| ${r.file} | ${decl(r)} | ERROR: ${r.error.slice(0, 80)} | | | | | |`); continue; }
+      if (r.error) { L.push(`| ${r.file} | ${decl(r)} | ERROR: ${r.error.slice(0, 80)} | | | | | | |`); continue; }
       const b = byName.get(r.file);
       const c = r.client || r.raw, bc = b ? (b.client || b.raw) : null;
       const arrow = (x, y) => (b ? `${x} → ${y}` : `${y}`);
-      L.push(`| ${r.file} | ${decl(r)} | ${b ? `${b.bodies} → ` : ''}${r.bodies} | ${arrow(cell(bc, 'bodiesBroken'), c.bodiesBroken)} | `
+      const cl = c.closedBodies === null ? '—' : `${c.closedBroken} / ${c.closedBodies}`;
+      L.push(`| ${r.file} | ${decl(r)} | ${b ? `${b.bodies} → ` : ''}${r.bodies} | ${arrow(cell(bc, 'bodiesBroken'), c.bodiesBroken)} | ${cl} | `
         + `${arrow(cell(bc, 'naked'), c.naked)} | ${arrow(cell(bc, 'over'), c.over)} | `
         + `${arrow(b ? b.verts : '—', r.verts)} | ${arrow(b ? b.stepMs : '—', r.stepMs)} |`);
     }
@@ -310,10 +321,11 @@ async function main() {
       const c = r.client || r.raw;
       console.log(`${r.bodies} bodies, ${r.verts} verts, ${r.stepMs} ms | raw ${r.raw.bodiesBroken} broken `
         + `(${r.raw.naked} naked, ${r.raw.over} over)` + (r.client ? ` | client ${c.bodiesBroken} broken (${c.naked} naked, ${c.over} over)` : '')
-        + (r.declared.closedByDeclaration ? ' | declared closed' : ' | NOT declared closed'));
+        + (r.declared.closedByDeclaration ? ' | declared closed' : ' | NOT declared closed')
+        + (r.brep ? ` | B-rep ${Object.entries(r.brep).map(([k, v]) => `${v} ${k}`).join(', ')}` : ''));
       if (VERBOSE) {
         for (const b of r.brokenBodies.slice(0, 30))
-          console.log(`   ✗ ${b.name}: raw ${b.raw.naked}/${b.raw.over}` + (b.client ? `, client ${b.client.naked}/${b.client.over}` : '')
+          console.log(`   ✗ ${b.name}${b.brep ? ` [${b.brep}]` : ''}: raw ${b.raw.naked}/${b.raw.over}` + (b.client ? `, client ${b.client.naked}/${b.client.over}` : '')
             + ` (${b.verts} v, ${b.tris} t)`);
         for (const l of r.weldLog.slice(0, 30)) console.log('   ' + l);
       }
@@ -325,8 +337,12 @@ async function main() {
     if (MD) fs.writeFileSync(MD, table + '\n');
     console.log('\n' + table);
     if (STRICT) {
-      const bad = results.filter(r => !r.error && r.declared.closedByDeclaration && (r.client || r.raw).bodiesBroken);
-      if (bad.length) { console.log(`\nSTRICT: ${bad.length} file(s) declared closed still produce non-manifold bodies`); process.exitCode = 1; }
+      const bad = results.filter(r => {
+        if (r.error) return true;
+        const c = r.client || r.raw;
+        return c.closedBroken !== null ? c.closedBroken > 0 : (r.declared.closedByDeclaration && c.bodiesBroken > 0);
+      });
+      if (bad.length) { console.log(`\nSTRICT: ${bad.length} file(s) with a body declared closed that NASSCAD flags non-manifold (or an import error)`); process.exitCode = 1; }
     }
   } finally {
     if (child) child.kill();
