@@ -27,7 +27,7 @@ git clone https://github.com/Nx-Nass/Nasscad_4.7.0.git
 cd Nasscad_4.7.0
 ```
 
-Then build and start **MEDUSA** — booleans do not work without it. The build bundles are in the `DEPLOY_*` folders (`BUILD.md` for Windows/MSVC, `install-linux.sh` for Ubuntu, `deploy.bat` for WSL); see [NASSCAD Engine](#-nasscad-engine--medusa) below.
+Then build and start **MEDUSA** — booleans do not work without it. Each `DEPLOY_*` folder holds one zip — extract it first (`BUILD.md` for Windows/MSVC, `install-linux.sh` for Ubuntu, `deploy.bat` for WSL); see [NASSCAD Engine](#-nasscad-engine--medusa) below.
 
 On Windows, `nasscad.bat` starts the engine and opens NASSCAD in one double-click. It expects `Nasscad_Medusa_Engine_3.1.exe` (built from `DEPLOY_WINDOWS_11_MSVC`) **in the same folder as the page**.
 
@@ -56,7 +56,7 @@ Then open `NASSCAD_V4_7_0.htm`. The CSG panel shows the engine state: green `· 
 | **World grid** | A gridded room — floor, walls, ceiling — around your work, sized to the scene (1 m, 2 m, 5 m…) so depth and scale read at a glance. One button hides volume + room, the work grid stays |
 | **Toolbox** | 6 icons per row. Scale the selection /5 /2 1× ×2 ×5 ×10, set the scroll-wheel zoom speed /5 /2 1× ×2 ×5 ×10 (remembered), measure, frame, drop to ground, centre of gravity… every button documented in the built-in help |
 | **Sketch.Gen** | 2D sketcher |
-| **Generators** | Screw.Gen & Nut.Gen (ISO / ASME), Gear.Gen, Pipe.Gen, CircularText.Gen |
+| **Generators** | Screw.Gen & Nut.Gen (ISO / ASME, right- or left-hand thread, print clearance, Higbee cut), Gear.Gen, Pipe.Gen, CircularText.Gen |
 | **NassScript** | Full-access JS console over the scene graph — `NASSCAD_bench_perf.js` is a ready-made benchmark to run in it |
 | **Undo / Redo** | 200 levels, IndexedDB-persistent |
 | **Editing** | Box-select, double-click cycle (resize handles → dimensions → rotation rings), X-Ray mode, magnetic snap down to 0.001 mm |
@@ -115,9 +115,9 @@ web-ifc-LICENSE.md          web-ifc license (MPL 2.0)
 NASSCAD_bench_perf.js       Performance benchmark (NassScript)
 capture_csg.js              CSG payload capture, for engine debugging
 
-DEPLOY_WINDOWS_11_MSVC/     MEDUSA engine — MSVC build (source + CMake + vcpkg)
-DEPLOY_UBUNTU_LINUX/        MEDUSA engine — native Ubuntu installer
-DEPLOY_UBUNTU_WSL/          MEDUSA engine — WSL deployment
+DEPLOY_WINDOWS_11_MSVC/     Medusa_Engine_MSVC.zip — MEDUSA, MSVC build (source + CMake + vcpkg)
+DEPLOY_UBUNTU_LINUX/        DEPLOY_UBUNTU.zip      — MEDUSA, native Ubuntu installer
+DEPLOY_UBUNTU_WSL/          DEPLOY_UBUNTU_WSL.zip  — MEDUSA, WSL deployment
 ```
 
 ---
@@ -136,13 +136,13 @@ MEDUSA is a small native binary that runs **on your own machine** and listens on
 
 **Engine log — on demand, not on disk.** MEDUSA writes no log file. The last 20 000 lines are kept in memory and served as plain text by `GET /log?n=<max>` — the jellyfish button in the NASSCAD Logs panel pulls them into the panel, next to the browser-side log of the same session. Pass `--logfile` to also write a timestamped `medusa-logs-<date>.txt`, as earlier builds did.
 
-Build bundles are in the `DEPLOY_*` folders:
+Build bundles are zipped in the `DEPLOY_*` folders — extract the one for your platform:
 
-| Target | Contents |
-|--------|----------|
-| `DEPLOY_WINDOWS_11_MSVC` | `nasscad_medusa.cpp`, `CMakeLists.txt`, `vcpkg.json`, `build_msvc.bat`, `BUILD.md` |
-| `DEPLOY_UBUNTU_LINUX` | `install-linux.sh`, `nasscad.sh`, desktop launcher + icons, `README-LINUX.md` |
-| `DEPLOY_UBUNTU_WSL` | `deploy.bat` / `deploy.sh`, `Medusa_Engine_3.1.bat`, uninstallers |
+| Target | Zip | Contents |
+|--------|-----|----------|
+| `DEPLOY_WINDOWS_11_MSVC` | `Medusa_Engine_MSVC.zip` | `nasscad_medusa.cpp`, `CMakeLists.txt`, `vcpkg.json`, `build_msvc.bat`, `BUILD.md` |
+| `DEPLOY_UBUNTU_LINUX` | `DEPLOY_UBUNTU.zip` | `install-linux.sh`, `nasscad.sh`, desktop launcher + icons, `README-LINUX.md` |
+| `DEPLOY_UBUNTU_WSL` | `DEPLOY_UBUNTU_WSL.zip` | `deploy.bat` / `deploy.sh`, `Medusa_Engine_3.1.bat`, uninstallers |
 
 ---
 
