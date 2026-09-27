@@ -1,0 +1,396 @@
+{
+  "comment": "Extended regression set (65 parts from the FreeCAD parts library, CC-BY 3.0), pinned to a commit and checked by SHA-256. Downloaded into tests/step/extended/ by: node tests/fetch_step_files.js --manifest tests/step/manifest-extended.json. Run with: node tests/medusa_step_harness.js --dir tests/step/extended",
+  "dir": "extended",
+  "files": [
+    {
+      "name": "Architectural_Parts_Building_Construction_Slab_adjustable_scaffolder.step",
+      "sha256": "ed718879d163b02d1519620da0e7647880f1e02251903a3778afb4b140611632",
+      "url": "https://raw.githubusercontent.com/FreeCAD/FreeCAD-library/be5e71491051cef75da46831b6fd77c6313cb497/Architectural%20Parts/Building%20Construction/Slab%20adjustable%20scaffolder.step",
+      "origin": "FreeCAD-library: Architectural Parts/Building Construction/Slab adjustable scaffolder.step"
+    },
+    {
+      "name": "Architectural_Parts_Construction_blocks_Concrete_block_14x19x19.step",
+      "sha256": "c7eb5d37c8c144f926bf4eac1ace6c3bddd5153d0705bdfbc4c4b3d4b5f5b9b3",
+      "url": "https://raw.githubusercontent.com/FreeCAD/FreeCAD-library/be5e71491051cef75da46831b6fd77c6313cb497/Architectural%20Parts/Construction%20blocks/Concrete%20block%2014x19x19.step",
+      "origin": "FreeCAD-library: Architectural Parts/Construction blocks/Concrete block 14x19x19.step"
+    },
+    {
+      "name": "Architectural_Parts_Construction_blocks_Concrete_block_14x39x19.step",
+      "sha256": "cb8eec55733f1917b64a7b476488bf5efdb85682c189accf2e51ae21d9fa1eb1",
+      "url": "https://raw.githubusercontent.com/FreeCAD/FreeCAD-library/be5e71491051cef75da46831b6fd77c6313cb497/Architectural%20Parts/Construction%20blocks/Concrete%20block%2014x39x19.step",
+      "origin": "FreeCAD-library: Architectural Parts/Construction blocks/Concrete block 14x39x19.step"
+    },
+    {
+      "name": "Architectural_Parts_Doors_Generic_Simple_door.step",
+      "sha256": "07fc43563fb820cb7246824ef26ee98dbc8438f2f3792c434c4de60b083c8d2e",
+      "url": "https://raw.githubusercontent.com/FreeCAD/FreeCAD-library/be5e71491051cef75da46831b6fd77c6313cb497/Architectural%20Parts/Doors/Generic/Simple%20door.step",
+      "origin": "FreeCAD-library: Architectural Parts/Doors/Generic/Simple door.step"
+    },
+    {
+      "name": "Architectural_Parts_Doors_Glass_Double_glass_doors_with_handles_and_transom.step",
+      "sha256": "fc6bee047fb7e4c401a5cd2ff7c5a077687948b21f3e319c397df39464d641e6",
+      "url": "https://raw.githubusercontent.com/FreeCAD/FreeCAD-library/be5e71491051cef75da46831b6fd77c6313cb497/Architectural%20Parts/Doors/Glass/Double%20glass%20doors%20with%20handles%20and%20transom.step",
+      "origin": "FreeCAD-library: Architectural Parts/Doors/Glass/Double glass doors with handles and transom.step"
+    },
+    {
+      "name": "Architectural_Parts_Electric_equipment_Air_conditionning.stp",
+      "sha256": "88be10b233b548611d8a9a1459ee986f7b632920bc4c6646011190b7bdd6eb24",
+      "url": "https://raw.githubusercontent.com/FreeCAD/FreeCAD-library/be5e71491051cef75da46831b6fd77c6313cb497/Architectural%20Parts/Electric%20equipment/Air%20conditionning.stp",
+      "origin": "FreeCAD-library: Architectural Parts/Electric equipment/Air conditionning.stp"
+    },
+    {
+      "name": "Architectural_Parts_Hydro_equipment_ShowerPad1x1m.step",
+      "sha256": "70132a2ea8ac264a18c398a9eea361f571379dcf296b0beb9bfbf5b3f93dd81f",
+      "url": "https://raw.githubusercontent.com/FreeCAD/FreeCAD-library/be5e71491051cef75da46831b6fd77c6313cb497/Architectural%20Parts/Hydro%20equipment/ShowerPad1x1m.step",
+      "origin": "FreeCAD-library: Architectural Parts/Hydro equipment/ShowerPad1x1m.step"
+    },
+    {
+      "name": "Architectural_Parts_Hydro_equipment_ShowerPad2x1.2m.step",
+      "sha256": "ad65a22515dcfd32513fa54e927b823c4273328b677e2f0004421b9ec1f1ef72",
+      "url": "https://raw.githubusercontent.com/FreeCAD/FreeCAD-library/be5e71491051cef75da46831b6fd77c6313cb497/Architectural%20Parts/Hydro%20equipment/ShowerPad2x1.2m.step",
+      "origin": "FreeCAD-library: Architectural Parts/Hydro equipment/ShowerPad2x1.2m.step"
+    },
+    {
+      "name": "Architectural_Parts_Roof_steel-sheets-2000mm.step",
+      "sha256": "5c7091f1bbc49c9c02974ad34f756869ceb152798cf73ba65b4c906cd7004a9d",
+      "url": "https://raw.githubusercontent.com/FreeCAD/FreeCAD-library/be5e71491051cef75da46831b6fd77c6313cb497/Architectural%20Parts/Roof/steel-sheets-2000mm.step",
+      "origin": "FreeCAD-library: Architectural Parts/Roof/steel-sheets-2000mm.step"
+    },
+    {
+      "name": "Architectural_Parts_Roof_steel-sheets-3000mm.step",
+      "sha256": "6ff1d76dd9d75d1e0b61e93e1696aedc6bb490003392b88207644f2ef64a6d99",
+      "url": "https://raw.githubusercontent.com/FreeCAD/FreeCAD-library/be5e71491051cef75da46831b6fd77c6313cb497/Architectural%20Parts/Roof/steel-sheets-3000mm.step",
+      "origin": "FreeCAD-library: Architectural Parts/Roof/steel-sheets-3000mm.step"
+    },
+    {
+      "name": "Architectural_Parts_Wikihouse_Mallet.step",
+      "sha256": "7c21c3eaa24ff109f46c92e86dd07a9dd5e9fcd16f31601139958d21e5fadc91",
+      "url": "https://raw.githubusercontent.com/FreeCAD/FreeCAD-library/be5e71491051cef75da46831b6fd77c6313cb497/Architectural%20Parts/Wikihouse/Mallet.step",
+      "origin": "FreeCAD-library: Architectural Parts/Wikihouse/Mallet.step"
+    },
+    {
+      "name": "Architectural_Parts_Windows_Casement_2PaneTopOpen.stp",
+      "sha256": "1bf5bb8096bf5431f780fd51534746d5c9e01df68edae4be20d0ce8bbea9214b",
+      "url": "https://raw.githubusercontent.com/FreeCAD/FreeCAD-library/be5e71491051cef75da46831b6fd77c6313cb497/Architectural%20Parts/Windows/Casement/2PaneTopOpen.stp",
+      "origin": "FreeCAD-library: Architectural Parts/Windows/Casement/2PaneTopOpen.stp"
+    },
+    {
+      "name": "Architectural_Parts_Windows_Casement_Simple_2-panes_window.step",
+      "sha256": "975ce6e171202754546f9e6884fb2dda466cfad1d98b0bdd8de645ef54f1d241",
+      "url": "https://raw.githubusercontent.com/FreeCAD/FreeCAD-library/be5e71491051cef75da46831b6fd77c6313cb497/Architectural%20Parts/Windows/Casement/Simple%202-panes%20window.step",
+      "origin": "FreeCAD-library: Architectural Parts/Windows/Casement/Simple 2-panes window.step"
+    },
+    {
+      "name": "Computing_Storage_HDD_2-5inch-Disk-Drive-7mm-SATA.step",
+      "sha256": "fafcb4c08e3af3869942060e6e9daee340df9199cd8e4422e751b3904e1e392d",
+      "url": "https://raw.githubusercontent.com/FreeCAD/FreeCAD-library/be5e71491051cef75da46831b6fd77c6313cb497/Computing/Storage/HDD/2-5inch-Disk-Drive-7mm-SATA.step",
+      "origin": "FreeCAD-library: Computing/Storage/HDD/2-5inch-Disk-Drive-7mm-SATA.step"
+    },
+    {
+      "name": "Computing_Storage_HDD_3-5inch-Disk-Drive-SATA.step",
+      "sha256": "6a921d4e91bdb31c0b8fbe03a902bc6e787a1e79c3493c0623740b14d652c4ad",
+      "url": "https://raw.githubusercontent.com/FreeCAD/FreeCAD-library/be5e71491051cef75da46831b6fd77c6313cb497/Computing/Storage/HDD/3-5inch-Disk-Drive-SATA.step",
+      "origin": "FreeCAD-library: Computing/Storage/HDD/3-5inch-Disk-Drive-SATA.step"
+    },
+    {
+      "name": "Electrical_Parts_Batteries_battery-AAA.step",
+      "sha256": "7fbef835a30d4936a3df912acf9b4e14bda1deaf462cd385fce55fbabfcbd2da",
+      "url": "https://raw.githubusercontent.com/FreeCAD/FreeCAD-library/be5e71491051cef75da46831b6fd77c6313cb497/Electrical%20Parts/Batteries/battery-AAA.step",
+      "origin": "FreeCAD-library: Electrical Parts/Batteries/battery-AAA.step"
+    },
+    {
+      "name": "Electrical_Parts_Batteries_battery-holder-4-AAA.step",
+      "sha256": "5ada75e4955e1739f367028d315d03900379e6226c8a19b20e73f233664809ab",
+      "url": "https://raw.githubusercontent.com/FreeCAD/FreeCAD-library/be5e71491051cef75da46831b6fd77c6313cb497/Electrical%20Parts/Batteries/battery-holder-4-AAA.step",
+      "origin": "FreeCAD-library: Electrical Parts/Batteries/battery-holder-4-AAA.step"
+    },
+    {
+      "name": "Electrical_Parts_Endstop_endstop-v1-2-makerbot.step",
+      "sha256": "f343f68a16a6ffc16fcbd14c0dc947b947bd8cb775310ec1d01259cc2254b312",
+      "url": "https://raw.githubusercontent.com/FreeCAD/FreeCAD-library/be5e71491051cef75da46831b6fd77c6313cb497/Electrical%20Parts/Endstop/endstop-v1-2-makerbot.step",
+      "origin": "FreeCAD-library: Electrical Parts/Endstop/endstop-v1-2-makerbot.step"
+    },
+    {
+      "name": "Electrical_Parts_Endstop_endstop.stp",
+      "sha256": "7526d54b5e46a9a28ad0d14849e8f71c2da4521874e6a13ec5fd779320c10bbf",
+      "url": "https://raw.githubusercontent.com/FreeCAD/FreeCAD-library/be5e71491051cef75da46831b6fd77c6313cb497/Electrical%20Parts/Endstop/endstop.stp",
+      "origin": "FreeCAD-library: Electrical Parts/Endstop/endstop.stp"
+    },
+    {
+      "name": "Electrical_Parts_Hotend_CatNozzle.step",
+      "sha256": "dc08f564246f34defb982b1bf2aba5bf4f8df5878a146a638a20d340296efede",
+      "url": "https://raw.githubusercontent.com/FreeCAD/FreeCAD-library/be5e71491051cef75da46831b6fd77c6313cb497/Electrical%20Parts/Hotend/CatNozzle.step",
+      "origin": "FreeCAD-library: Electrical Parts/Hotend/CatNozzle.step"
+    },
+    {
+      "name": "Electrical_Parts_Hotend_Lerge_V5_heatblock-PartLerge_V5_Heatblock.step",
+      "sha256": "e664cfdf7e484b1c0d187bffadefd246130770d06d46c8102cc1ced3d4318b84",
+      "url": "https://raw.githubusercontent.com/FreeCAD/FreeCAD-library/be5e71491051cef75da46831b6fd77c6313cb497/Electrical%20Parts/Hotend/Lerge_V5_heatblock-PartLerge_V5_Heatblock.step",
+      "origin": "FreeCAD-library: Electrical Parts/Hotend/Lerge_V5_heatblock-PartLerge_V5_Heatblock.step"
+    },
+    {
+      "name": "Electrical_Parts_Power_Supplies_IRM-60_ST_series_power_supply_IRM-60_ST_power_supply.step",
+      "sha256": "9f84ef45e24e32bd9c1b0b2491df16170d9c8c15f42de88f41c86fa38412057a",
+      "url": "https://raw.githubusercontent.com/FreeCAD/FreeCAD-library/be5e71491051cef75da46831b6fd77c6313cb497/Electrical%20Parts/Power%20Supplies/IRM-60%20ST%20series%20power%20supply/IRM-60%20ST%20power%20supply.step",
+      "origin": "FreeCAD-library: Electrical Parts/Power Supplies/IRM-60 ST series power supply/IRM-60 ST power supply.step"
+    },
+    {
+      "name": "Electrical_Parts_Power_Supplies_Switching_power_supply_Switching_power_supply.step",
+      "sha256": "62fc3f33f51a56efaef6eee5bc565b77fcf1831a33a36c34c74c3dafddb0e04e",
+      "url": "https://raw.githubusercontent.com/FreeCAD/FreeCAD-library/be5e71491051cef75da46831b6fd77c6313cb497/Electrical%20Parts/Power%20Supplies/Switching%20power%20supply/Switching%20power%20supply.step",
+      "origin": "FreeCAD-library: Electrical Parts/Power Supplies/Switching power supply/Switching power supply.step"
+    },
+    {
+      "name": "Electrical_Parts_Push_buttons_Black_mushroom_head_push_button_-_22_mm.step",
+      "sha256": "67a90f03da15aef0dbde87d481737c00c4e0fb469ae383e2987d49c4acaf2ace",
+      "url": "https://raw.githubusercontent.com/FreeCAD/FreeCAD-library/be5e71491051cef75da46831b6fd77c6313cb497/Electrical%20Parts/Push%20buttons/Black%20mushroom%20head%20push%20button%20-%2022%20mm.step",
+      "origin": "FreeCAD-library: Electrical Parts/Push buttons/Black mushroom head push button - 22 mm.step"
+    },
+    {
+      "name": "Electrical_Parts_Push_buttons_Blue_Push-button_-_22_mm.step",
+      "sha256": "21d285b8e15458f15cd7f2c0917c9f06424ef8cb734a40519fa08ef62059a586",
+      "url": "https://raw.githubusercontent.com/FreeCAD/FreeCAD-library/be5e71491051cef75da46831b6fd77c6313cb497/Electrical%20Parts/Push%20buttons/Blue%20Push-button%20-%2022%20mm.step",
+      "origin": "FreeCAD-library: Electrical Parts/Push buttons/Blue Push-button - 22 mm.step"
+    },
+    {
+      "name": "Electrical_Parts_Servos_Emax-ES08A_Emax-es08A.step",
+      "sha256": "157e13370d50fe878d5c2fef1304e1497a7f97e2f504d8a31b5056b9ad28bf5a",
+      "url": "https://raw.githubusercontent.com/FreeCAD/FreeCAD-library/be5e71491051cef75da46831b6fd77c6313cb497/Electrical%20Parts/Servos/Emax-ES08A/Emax-es08A.step",
+      "origin": "FreeCAD-library: Electrical Parts/Servos/Emax-ES08A/Emax-es08A.step"
+    },
+    {
+      "name": "Electrical_Parts_Servos_Emax-ES08A_servo-rounded-horn.step",
+      "sha256": "98e79b2aa434a07421a298ee31c6f3b45af16e8de147f43fe00368effc6ecce0",
+      "url": "https://raw.githubusercontent.com/FreeCAD/FreeCAD-library/be5e71491051cef75da46831b6fd77c6313cb497/Electrical%20Parts/Servos/Emax-ES08A/servo-rounded-horn.step",
+      "origin": "FreeCAD-library: Electrical Parts/Servos/Emax-ES08A/servo-rounded-horn.step"
+    },
+    {
+      "name": "Electrical_Parts_fans_blower-50x50mm.step",
+      "sha256": "e1e496b7e0a2ecc32d289fa33588833e5a8e4c0205320a17bbbf1e1b240ca27d",
+      "url": "https://raw.githubusercontent.com/FreeCAD/FreeCAD-library/be5e71491051cef75da46831b6fd77c6313cb497/Electrical%20Parts/fans/blower-50x50mm.step",
+      "origin": "FreeCAD-library: Electrical Parts/fans/blower-50x50mm.step"
+    },
+    {
+      "name": "Electrical_Parts_fans_fan-40x40mm.step",
+      "sha256": "b3ac546897c4db6e80093b960b45d219e0617c125412e9ff42116bd7831e700e",
+      "url": "https://raw.githubusercontent.com/FreeCAD/FreeCAD-library/be5e71491051cef75da46831b6fd77c6313cb497/Electrical%20Parts/fans/fan-40x40mm.step",
+      "origin": "FreeCAD-library: Electrical Parts/fans/fan-40x40mm.step"
+    },
+    {
+      "name": "Electro-pneumatic_Cylinders_PM-16-100-CYLINDER.STEP",
+      "sha256": "bce3bed5145d0d41f2db907d3065fbd665d6222f9cacb2c2b569ff3c28803a3a",
+      "url": "https://raw.githubusercontent.com/FreeCAD/FreeCAD-library/be5e71491051cef75da46831b6fd77c6313cb497/Electro-pneumatic/Cylinders/PM-16-100-CYLINDER.STEP",
+      "origin": "FreeCAD-library: Electro-pneumatic/Cylinders/PM-16-100-CYLINDER.STEP"
+    },
+    {
+      "name": "Electro-pneumatic_Cylinders_PM-16-125-CYLINDER.STEP",
+      "sha256": "c48f138f858e2a47ec229945900b893e47306e33ec2fd35b363c9bcfc9d0a96e",
+      "url": "https://raw.githubusercontent.com/FreeCAD/FreeCAD-library/be5e71491051cef75da46831b6fd77c6313cb497/Electro-pneumatic/Cylinders/PM-16-125-CYLINDER.STEP",
+      "origin": "FreeCAD-library: Electro-pneumatic/Cylinders/PM-16-125-CYLINDER.STEP"
+    },
+    {
+      "name": "Electro-pneumatic_Fixings_PM-16-AB.STEP",
+      "sha256": "4d4c93c9d5a044633351b332824812909e918421fcdc646b44be1d293e561457",
+      "url": "https://raw.githubusercontent.com/FreeCAD/FreeCAD-library/be5e71491051cef75da46831b6fd77c6313cb497/Electro-pneumatic/Fixings/PM-16-AB.STEP",
+      "origin": "FreeCAD-library: Electro-pneumatic/Fixings/PM-16-AB.STEP"
+    },
+    {
+      "name": "Electro-pneumatic_Fixings_PM-25-AB-FM.STEP",
+      "sha256": "fb58ec519b195c44cacbb51a2702d0f4b8418b33d651f81f47d63abb76218d4c",
+      "url": "https://raw.githubusercontent.com/FreeCAD/FreeCAD-library/be5e71491051cef75da46831b6fd77c6313cb497/Electro-pneumatic/Fixings/PM-25-AB-FM.STEP",
+      "origin": "FreeCAD-library: Electro-pneumatic/Fixings/PM-25-AB-FM.STEP"
+    },
+    {
+      "name": "Electronics_Parts_Antennas_Antenna-GNSS-STA-901A.step",
+      "sha256": "7ab4b1aee81aa551ff15ac2b98aa766b1f847799977d5d1ca717a4f012557fe8",
+      "url": "https://raw.githubusercontent.com/FreeCAD/FreeCAD-library/be5e71491051cef75da46831b6fd77c6313cb497/Electronics%20Parts/Antennas/Antenna-GNSS-STA-901A.step",
+      "origin": "FreeCAD-library: Electronics Parts/Antennas/Antenna-GNSS-STA-901A.step"
+    },
+    {
+      "name": "Electronics_Parts_Boards_Arduino_Nano-Rev3_0.step",
+      "sha256": "233e6040c4067e5555a36c9d4006c7b23378829868e69d5e339683c035b9bb45",
+      "url": "https://raw.githubusercontent.com/FreeCAD/FreeCAD-library/be5e71491051cef75da46831b6fd77c6313cb497/Electronics%20Parts/Boards/Arduino/Nano-Rev3_0.step",
+      "origin": "FreeCAD-library: Electronics Parts/Boards/Arduino/Nano-Rev3_0.step"
+    },
+    {
+      "name": "Electronics_Parts_Boards_Raspberry_Raspberry_Pi_Pico_Pico-R3.step",
+      "sha256": "ea5c693afee3de73e9fcaab1892a5ed44bf789438b9b1e5906e9c4f9859cab8b",
+      "url": "https://raw.githubusercontent.com/FreeCAD/FreeCAD-library/be5e71491051cef75da46831b6fd77c6313cb497/Electronics%20Parts/Boards/Raspberry/Raspberry%20Pi%20Pico/Pico-R3.step",
+      "origin": "FreeCAD-library: Electronics Parts/Boards/Raspberry/Raspberry Pi Pico/Pico-R3.step"
+    },
+    {
+      "name": "Electronics_Parts_Buttons_SMD_SW_SPST_FSMSM.step",
+      "sha256": "c2d42df2325d3ee75ebfb8ff499ddc1446fa7cdcb71036be611facac68750f0a",
+      "url": "https://raw.githubusercontent.com/FreeCAD/FreeCAD-library/be5e71491051cef75da46831b6fd77c6313cb497/Electronics%20Parts/Buttons/SMD/SW_SPST_FSMSM.step",
+      "origin": "FreeCAD-library: Electronics Parts/Buttons/SMD/SW_SPST_FSMSM.step"
+    },
+    {
+      "name": "Electronics_Parts_Buttons_SMD_sw_smd_6.0x3.8.step",
+      "sha256": "abc2bab2542d1634e247d273105ab5ec96eb17252eca0861f9973da1eacf001d",
+      "url": "https://raw.githubusercontent.com/FreeCAD/FreeCAD-library/be5e71491051cef75da46831b6fd77c6313cb497/Electronics%20Parts/Buttons/SMD/sw_smd_6.0x3.8.step",
+      "origin": "FreeCAD-library: Electronics Parts/Buttons/SMD/sw_smd_6.0x3.8.step"
+    },
+    {
+      "name": "Electronics_Parts_Buzzers_Buzzer.step",
+      "sha256": "153552ca82314d131e5dcaa2080e12866c7379a8ef6efe2927347db70931f755",
+      "url": "https://raw.githubusercontent.com/FreeCAD/FreeCAD-library/be5e71491051cef75da46831b6fd77c6313cb497/Electronics%20Parts/Buzzers/Buzzer.step",
+      "origin": "FreeCAD-library: Electronics Parts/Buzzers/Buzzer.step"
+    },
+    {
+      "name": "Electronics_Parts_Cameras_Wide-170-Angle-Raspi-Camera.step",
+      "sha256": "1e9192d28f04b14ce59e307b5f7d0caa05b4eba2e53c14b2752b1587309dfe84",
+      "url": "https://raw.githubusercontent.com/FreeCAD/FreeCAD-library/be5e71491051cef75da46831b6fd77c6313cb497/Electronics%20Parts/Cameras/Wide-170-Angle-Raspi-Camera.step",
+      "origin": "FreeCAD-library: Electronics Parts/Cameras/Wide-170-Angle-Raspi-Camera.step"
+    },
+    {
+      "name": "Electronics_Parts_Capacitors_SMD_C_0402.step",
+      "sha256": "184c94c329d8515d3f2618f3023051f78c0b8704f2bb1b5763935d6b0872d306",
+      "url": "https://raw.githubusercontent.com/FreeCAD/FreeCAD-library/be5e71491051cef75da46831b6fd77c6313cb497/Electronics%20Parts/Capacitors/SMD/C_0402.step",
+      "origin": "FreeCAD-library: Electronics Parts/Capacitors/SMD/C_0402.step"
+    },
+    {
+      "name": "Electronics_Parts_Capacitors_SMD_C_0603.step",
+      "sha256": "9a083491c7d4e7a8ef98257ae12b02d82d6c5ac785167bcac1076f5923969e62",
+      "url": "https://raw.githubusercontent.com/FreeCAD/FreeCAD-library/be5e71491051cef75da46831b6fd77c6313cb497/Electronics%20Parts/Capacitors/SMD/C_0603.step",
+      "origin": "FreeCAD-library: Electronics Parts/Capacitors/SMD/C_0603.step"
+    },
+    {
+      "name": "Electronics_Parts_Connectors_Audio-connectors_3-5mm-audio-jack.step",
+      "sha256": "c25a576b1eb1800c7ac8cace53b5e6781f91cde1e873a923ccaca5dca0c8edd0",
+      "url": "https://raw.githubusercontent.com/FreeCAD/FreeCAD-library/be5e71491051cef75da46831b6fd77c6313cb497/Electronics%20Parts/Connectors/Audio-connectors/3-5mm-audio-jack.step",
+      "origin": "FreeCAD-library: Electronics Parts/Connectors/Audio-connectors/3-5mm-audio-jack.step"
+    },
+    {
+      "name": "Electronics_Parts_Connectors_Ethernet-connectors_rj45-ethernet-PCB-with-leds.step",
+      "sha256": "1c430c2abe7df54f29d923e5e92e44ced0508bc61c06973bae3b51f862ae8ed9",
+      "url": "https://raw.githubusercontent.com/FreeCAD/FreeCAD-library/be5e71491051cef75da46831b6fd77c6313cb497/Electronics%20Parts/Connectors/Ethernet-connectors/rj45-ethernet-PCB-with-leds.step",
+      "origin": "FreeCAD-library: Electronics Parts/Connectors/Ethernet-connectors/rj45-ethernet-PCB-with-leds.step"
+    },
+    {
+      "name": "Electronics_Parts_Crystals_xtal-smd-10x4x3mm.step",
+      "sha256": "576ca47ba2eb27906f7d15fb58d5cdd66e81da66a6f68b0855f4fd561c5b5958",
+      "url": "https://raw.githubusercontent.com/FreeCAD/FreeCAD-library/be5e71491051cef75da46831b6fd77c6313cb497/Electronics%20Parts/Crystals/xtal-smd-10x4x3mm.step",
+      "origin": "FreeCAD-library: Electronics Parts/Crystals/xtal-smd-10x4x3mm.step"
+    },
+    {
+      "name": "Electronics_Parts_Crystals_xtal-through-hole.step",
+      "sha256": "92d8b49572ed26f872fdefbecefd5b1eda7cfe7dd2557bdf5367c0122a94d432",
+      "url": "https://raw.githubusercontent.com/FreeCAD/FreeCAD-library/be5e71491051cef75da46831b6fd77c6313cb497/Electronics%20Parts/Crystals/xtal-through-hole.step",
+      "origin": "FreeCAD-library: Electronics Parts/Crystals/xtal-through-hole.step"
+    },
+    {
+      "name": "Electronics_Parts_Diodes_SMD_DO-214AC.step",
+      "sha256": "7cbeac59c376197bcb47895ff41780f968f9d055658950f0f747abebaecf05b5",
+      "url": "https://raw.githubusercontent.com/FreeCAD/FreeCAD-library/be5e71491051cef75da46831b6fd77c6313cb497/Electronics%20Parts/Diodes/SMD/DO-214AC.step",
+      "origin": "FreeCAD-library: Electronics Parts/Diodes/SMD/DO-214AC.step"
+    },
+    {
+      "name": "Electronics_Parts_Diodes_SMD_SOD-323.step",
+      "sha256": "b7d48093e43e3bed0f912d644429f7b69797c34d297036c545ac4d5bae6d3483",
+      "url": "https://raw.githubusercontent.com/FreeCAD/FreeCAD-library/be5e71491051cef75da46831b6fd77c6313cb497/Electronics%20Parts/Diodes/SMD/SOD-323.step",
+      "origin": "FreeCAD-library: Electronics Parts/Diodes/SMD/SOD-323.step"
+    },
+    {
+      "name": "Electronics_Parts_Displays_Display_7_segmentos_Archivos_Display_7_segmentos.step",
+      "sha256": "4613974608759633c218efa3165986fe9cefe86c613b3ca769684b6af051895d",
+      "url": "https://raw.githubusercontent.com/FreeCAD/FreeCAD-library/be5e71491051cef75da46831b6fd77c6313cb497/Electronics%20Parts/Displays/Display%207%20segmentos/Archivos/Display%207%20segmentos.step",
+      "origin": "FreeCAD-library: Electronics Parts/Displays/Display 7 segmentos/Archivos/Display 7 segmentos.step"
+    },
+    {
+      "name": "Electronics_Parts_Displays_LCD_lcd-4x20-backlight.step",
+      "sha256": "694a39a66a0d4e9a473c60ff67a9d846ea67d3692acea6373ad99d32b18ea4d9",
+      "url": "https://raw.githubusercontent.com/FreeCAD/FreeCAD-library/be5e71491051cef75da46831b6fd77c6313cb497/Electronics%20Parts/Displays/LCD/lcd-4x20-backlight.step",
+      "origin": "FreeCAD-library: Electronics Parts/Displays/LCD/lcd-4x20-backlight.step"
+    },
+    {
+      "name": "Electronics_Parts_Fuses_SMD_F1812-505k.step",
+      "sha256": "396695ff3c2383564054dfe5628acb5479e2d58e84f72aa6674fa5a81833846f",
+      "url": "https://raw.githubusercontent.com/FreeCAD/FreeCAD-library/be5e71491051cef75da46831b6fd77c6313cb497/Electronics%20Parts/Fuses/SMD/F1812-505k.step",
+      "origin": "FreeCAD-library: Electronics Parts/Fuses/SMD/F1812-505k.step"
+    },
+    {
+      "name": "Electronics_Parts_Fuses_THT_fuse-MF-R1100.step",
+      "sha256": "6bc99e46e18a7fc14e02fd54ab8e80dfb9c10cbf5c165ed5f107e9b9bb57e99d",
+      "url": "https://raw.githubusercontent.com/FreeCAD/FreeCAD-library/be5e71491051cef75da46831b6fd77c6313cb497/Electronics%20Parts/Fuses/THT/fuse-MF-R1100.step",
+      "origin": "FreeCAD-library: Electronics Parts/Fuses/THT/fuse-MF-R1100.step"
+    },
+    {
+      "name": "Electronics_Parts_Headers_2.54mm-pitch_female_1x10-female-pin-header.step",
+      "sha256": "a14b97e01baf0b5b3190bb1977a0565f0f1a57560ba6706d925317223812e61a",
+      "url": "https://raw.githubusercontent.com/FreeCAD/FreeCAD-library/be5e71491051cef75da46831b6fd77c6313cb497/Electronics%20Parts/Headers/2.54mm-pitch/female/1x10-female-pin-header.step",
+      "origin": "FreeCAD-library: Electronics Parts/Headers/2.54mm-pitch/female/1x10-female-pin-header.step"
+    },
+    {
+      "name": "Electronics_Parts_Headers_2.54mm-pitch_female_1x6-female-pin-header.step",
+      "sha256": "d1be280cff248f619fa025cb5fce8073e0896720a36d15e7d29a4d487ab53214",
+      "url": "https://raw.githubusercontent.com/FreeCAD/FreeCAD-library/be5e71491051cef75da46831b6fd77c6313cb497/Electronics%20Parts/Headers/2.54mm-pitch/female/1x6-female-pin-header.step",
+      "origin": "FreeCAD-library: Electronics Parts/Headers/2.54mm-pitch/female/1x6-female-pin-header.step"
+    },
+    {
+      "name": "Electronics_Parts_Heatsinks_heat-sink-19x19x5mm.step",
+      "sha256": "c229ad459161d50990576a272183e3825329d312e976e8045df4c9a558c1df6a",
+      "url": "https://raw.githubusercontent.com/FreeCAD/FreeCAD-library/be5e71491051cef75da46831b6fd77c6313cb497/Electronics%20Parts/Heatsinks/heat-sink-19x19x5mm.step",
+      "origin": "FreeCAD-library: Electronics Parts/Heatsinks/heat-sink-19x19x5mm.step"
+    },
+    {
+      "name": "Electronics_Parts_Heatsinks_heat-sink-8x6x5.step",
+      "sha256": "505f80e8b48b64a4aca728da6ede876083a68ca8982100f735d722968140115b",
+      "url": "https://raw.githubusercontent.com/FreeCAD/FreeCAD-library/be5e71491051cef75da46831b6fd77c6313cb497/Electronics%20Parts/Heatsinks/heat-sink-8x6x5.step",
+      "origin": "FreeCAD-library: Electronics Parts/Heatsinks/heat-sink-8x6x5.step"
+    },
+    {
+      "name": "Electronics_Parts_IC_SMD_14SOIC-N.step",
+      "sha256": "3d56eca174f80a96b3ee3fbd81c43035045fff2b4720ea906fee5223a5d55863",
+      "url": "https://raw.githubusercontent.com/FreeCAD/FreeCAD-library/be5e71491051cef75da46831b6fd77c6313cb497/Electronics%20Parts/IC/SMD/14SOIC-N.step",
+      "origin": "FreeCAD-library: Electronics Parts/IC/SMD/14SOIC-N.step"
+    },
+    {
+      "name": "Electronics_Parts_IC_SMD_DFN-2523-6.step",
+      "sha256": "b267dd604ebbb1317afc6c30feb2b18fe0b3ff9cff3a677757e5e4f98c18dcd4",
+      "url": "https://raw.githubusercontent.com/FreeCAD/FreeCAD-library/be5e71491051cef75da46831b6fd77c6313cb497/Electronics%20Parts/IC/SMD/DFN-2523-6.step",
+      "origin": "FreeCAD-library: Electronics Parts/IC/SMD/DFN-2523-6.step"
+    },
+    {
+      "name": "Electronics_Parts_Inductors_Inductive_sensor_Inductive-Proximity-Sensor.step",
+      "sha256": "c681b5ba255488eabffd3867c142c01a523a9671b965698f734ae002a160be62",
+      "url": "https://raw.githubusercontent.com/FreeCAD/FreeCAD-library/be5e71491051cef75da46831b6fd77c6313cb497/Electronics%20Parts/Inductors/Inductive_sensor/Inductive-Proximity-Sensor.step",
+      "origin": "FreeCAD-library: Electronics Parts/Inductors/Inductive_sensor/Inductive-Proximity-Sensor.step"
+    },
+    {
+      "name": "Electronics_Parts_Inductors_SMD_L_0603.step",
+      "sha256": "97a2833d2a583cf2fb688e2d43ed15c6f1b1c0d28f0ca49ccea1053b3507352a",
+      "url": "https://raw.githubusercontent.com/FreeCAD/FreeCAD-library/be5e71491051cef75da46831b6fd77c6313cb497/Electronics%20Parts/Inductors/SMD/L_0603.step",
+      "origin": "FreeCAD-library: Electronics Parts/Inductors/SMD/L_0603.step"
+    },
+    {
+      "name": "Electronics_Parts_Jumpers_jumper-cap-2.54mm.step",
+      "sha256": "bb784de2f598260c9a84e5f87bfc8ece06671bab5c5212f8480495b8003f76a0",
+      "url": "https://raw.githubusercontent.com/FreeCAD/FreeCAD-library/be5e71491051cef75da46831b6fd77c6313cb497/Electronics%20Parts/Jumpers/jumper-cap-2.54mm.step",
+      "origin": "FreeCAD-library: Electronics Parts/Jumpers/jumper-cap-2.54mm.step"
+    },
+    {
+      "name": "Electronics_Parts_LEDs_LED_0603.step",
+      "sha256": "f43c7a559fb510b847f60f806dd98d3f82a2b65946d795a64e302e0863853a6c",
+      "url": "https://raw.githubusercontent.com/FreeCAD/FreeCAD-library/be5e71491051cef75da46831b6fd77c6313cb497/Electronics%20Parts/LEDs/LED_0603.step",
+      "origin": "FreeCAD-library: Electronics Parts/LEDs/LED_0603.step"
+    },
+    {
+      "name": "Electronics_Parts_LEDs_RGB-LED-5mm.step",
+      "sha256": "709ddb9da766979f7c596d54319ce4645d764d6eb3f8e1558b550d2c6e128662",
+      "url": "https://raw.githubusercontent.com/FreeCAD/FreeCAD-library/be5e71491051cef75da46831b6fd77c6313cb497/Electronics%20Parts/LEDs/RGB-LED-5mm.step",
+      "origin": "FreeCAD-library: Electronics Parts/LEDs/RGB-LED-5mm.step"
+    },
+    {
+      "name": "Electronics_Parts_Motors_DC_motor_Mabuchi-Encoder_DCMotorEncoder.step",
+      "sha256": "fdbeace37f8846dd92a902a249974c5d139c593b9c931355203c0486f63604c2",
+      "url": "https://raw.githubusercontent.com/FreeCAD/FreeCAD-library/be5e71491051cef75da46831b6fd77c6313cb497/Electronics%20Parts/Motors/DC%20motor/Mabuchi-Encoder/DCMotorEncoder.step",
+      "origin": "FreeCAD-library: Electronics Parts/Motors/DC motor/Mabuchi-Encoder/DCMotorEncoder.step"
+    },
+    {
+      "name": "Electronics_Parts_Motors_DC_motor_Motors_Motor-CC-12V-MITSUMI.step",
+      "sha256": "d32939475fa5a9f4fd9b2e1ed1edf2e81b59bd45d03dcde02ac8e7dd45b23324",
+      "url": "https://raw.githubusercontent.com/FreeCAD/FreeCAD-library/be5e71491051cef75da46831b6fd77c6313cb497/Electronics%20Parts/Motors/DC%20motor/Motors/Motor-CC-12V-MITSUMI.step",
+      "origin": "FreeCAD-library: Electronics Parts/Motors/DC motor/Motors/Motor-CC-12V-MITSUMI.step"
+    }
+  ]
+}

@@ -1,0 +1,1127 @@
+{
+ "label": "before",
+ "engine": {
+  "engine": "nasscad-medusa-engine",
+  "version": "3.1",
+  "occt": "7.6.3",
+  "protocol": "NSTP1",
+  "csgtree": true,
+  "stepexport": true,
+  "stepload": true,
+  "ramMB": 16095,
+  "availMB": 15498,
+  "cores": 4,
+  "runawayThreads": 0,
+  "deviationPct": 0.5
+ },
+ "date": "2026-09-27T14:22:33.787Z",
+ "results": [
+  {
+   "file": "conical-surface.step",
+   "sizeKB": 9,
+   "declared": {
+    "solids": 1,
+    "closedShells": 1,
+    "openShells": 0,
+    "faces": 5,
+    "edges": 8,
+    "edgeValence": {
+     "2": 8
+    },
+    "closedByDeclaration": true,
+    "system": "Autodesk Translation Framework v13.14.0.145"
+   },
+   "bodies": 1,
+   "verts": 342,
+   "tris": 555,
+   "stepMs": 92,
+   "engineMs": 89,
+   "smoothMs": 3,
+   "weldMeta": {
+    "bodies": 1,
+    "watertight": 0,
+    "stillBroken": 1,
+    "edgesTopo": 3,
+    "edgesResidual": 0,
+    "edgesMismatch": 0,
+    "trisDropped": 0,
+    "legacyFallback": 0,
+    "enabled": true
+   },
+   "raw": {
+    "bodiesBroken": 1,
+    "naked": 127,
+    "over": 0,
+    "weldedVerts": 341
+   },
+   "client": {
+    "bodiesBroken": 1,
+    "naked": 127,
+    "over": 0,
+    "weldedVerts": 341
+   },
+   "brokenBodies": [
+    {
+     "name": "(Unsaved)",
+     "verts": 342,
+     "tris": 555,
+     "raw": {
+      "naked": 127,
+      "over": 0,
+      "weldedVerts": 341,
+      "manifold": false
+     },
+     "client": {
+      "naked": 127,
+      "over": 0,
+      "weldedVerts": 341,
+      "manifold": false
+     }
+    }
+   ]
+  },
+  {
+   "file": "cube-in.step",
+   "sizeKB": 18,
+   "declared": {
+    "solids": 1,
+    "closedShells": 1,
+    "openShells": 0,
+    "faces": 6,
+    "edges": 12,
+    "edgeValence": {
+     "2": 12
+    },
+    "closedByDeclaration": true,
+    "system": "FreeCAD"
+   },
+   "bodies": 1,
+   "verts": 8,
+   "tris": 12,
+   "stepMs": 10,
+   "engineMs": 9,
+   "smoothMs": 2,
+   "weldMeta": {
+    "bodies": 1,
+    "watertight": 1,
+    "stillBroken": 0,
+    "edgesTopo": 12,
+    "edgesResidual": 0,
+    "edgesMismatch": 0,
+    "trisDropped": 0,
+    "legacyFallback": 0,
+    "enabled": true
+   },
+   "raw": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 8
+   },
+   "client": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 8
+   },
+   "brokenBodies": []
+  },
+  {
+   "file": "rounded-cube.step",
+   "sizeKB": 20,
+   "declared": {
+    "solids": 1,
+    "closedShells": 1,
+    "openShells": 0,
+    "faces": 7,
+    "edges": 15,
+    "edgeValence": {
+     "2": 15
+    },
+    "closedByDeclaration": true,
+    "system": "FreeCAD"
+   },
+   "bodies": 1,
+   "verts": 44,
+   "tris": 84,
+   "stepMs": 12,
+   "engineMs": 10,
+   "smoothMs": 2,
+   "weldMeta": {
+    "bodies": 1,
+    "watertight": 1,
+    "stillBroken": 0,
+    "edgesTopo": 15,
+    "edgesResidual": 0,
+    "edgesMismatch": 0,
+    "trisDropped": 0,
+    "legacyFallback": 0,
+    "enabled": true
+   },
+   "raw": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 44
+   },
+   "client": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 44
+   },
+   "brokenBodies": []
+  },
+  {
+   "file": "sg1-c5-214.stp",
+   "sizeKB": 23,
+   "declared": {
+    "solids": 1,
+    "closedShells": 1,
+    "openShells": 0,
+    "faces": 16,
+    "edges": 32,
+    "edgeValence": {
+     "2": 32
+    },
+    "closedByDeclaration": true,
+    "system": "CATIA V5 STEP AP214"
+   },
+   "bodies": 1,
+   "verts": 976,
+   "tris": 1952,
+   "stepMs": 23,
+   "engineMs": 21,
+   "smoothMs": 3,
+   "weldMeta": {
+    "bodies": 1,
+    "watertight": 1,
+    "stillBroken": 0,
+    "edgesTopo": 32,
+    "edgesResidual": 0,
+    "edgesMismatch": 0,
+    "trisDropped": 0,
+    "legacyFallback": 0,
+    "enabled": true
+   },
+   "raw": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 976
+   },
+   "client": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 976
+   },
+   "brokenBodies": []
+  },
+  {
+   "file": "splinecage.stp",
+   "sizeKB": 28,
+   "declared": {
+    "solids": 0,
+    "closedShells": 0,
+    "openShells": 8,
+    "faces": 4,
+    "edges": 16,
+    "edgeValence": {
+     "1": 16
+    },
+    "closedByDeclaration": false,
+    "system": null
+   },
+   "bodies": 4,
+   "verts": 281,
+   "tris": 371,
+   "stepMs": 15,
+   "engineMs": 13,
+   "smoothMs": 2,
+   "weldMeta": {
+    "bodies": 4,
+    "watertight": 0,
+    "stillBroken": 4,
+    "edgesTopo": 0,
+    "edgesResidual": 0,
+    "edgesMismatch": 0,
+    "trisDropped": 0,
+    "legacyFallback": 1,
+    "enabled": true
+   },
+   "raw": {
+    "bodiesBroken": 4,
+    "naked": 183,
+    "over": 0,
+    "weldedVerts": 281
+   },
+   "client": {
+    "bodiesBroken": 4,
+    "naked": 183,
+    "over": 0,
+    "weldedVerts": 281
+   },
+   "brokenBodies": [
+    {
+     "name": "COMPOUND",
+     "verts": 22,
+     "tris": 20,
+     "raw": {
+      "naked": 22,
+      "over": 0,
+      "weldedVerts": 22,
+      "manifold": false
+     },
+     "client": {
+      "naked": 22,
+      "over": 0,
+      "weldedVerts": 22,
+      "manifold": false
+     }
+    },
+    {
+     "name": "COMPOUND",
+     "verts": 158,
+     "tris": 254,
+     "raw": {
+      "naked": 60,
+      "over": 0,
+      "weldedVerts": 158,
+      "manifold": false
+     },
+     "client": {
+      "naked": 60,
+      "over": 0,
+      "weldedVerts": 158,
+      "manifold": false
+     }
+    },
+    {
+     "name": "COMPOUND",
+     "verts": 63,
+     "tris": 61,
+     "raw": {
+      "naked": 63,
+      "over": 0,
+      "weldedVerts": 63,
+      "manifold": false
+     },
+     "client": {
+      "naked": 63,
+      "over": 0,
+      "weldedVerts": 63,
+      "manifold": false
+     }
+    },
+    {
+     "name": "COMPOUND",
+     "verts": 38,
+     "tris": 36,
+     "raw": {
+      "naked": 38,
+      "over": 0,
+      "weldedVerts": 38,
+      "manifold": false
+     },
+     "client": {
+      "naked": 38,
+      "over": 0,
+      "weldedVerts": 38,
+      "manifold": false
+     }
+    }
+   ]
+  },
+  {
+   "file": "face_recognition_sample_part.stp",
+   "sizeKB": 36,
+   "declared": {
+    "solids": 1,
+    "closedShells": 1,
+    "openShells": 0,
+    "faces": 23,
+    "edges": 56,
+    "edgeValence": {
+     "2": 56
+    },
+    "closedByDeclaration": true,
+    "system": "SIEMENS PLM Software NX 9.0"
+   },
+   "bodies": 1,
+   "verts": 162,
+   "tris": 320,
+   "stepMs": 32,
+   "engineMs": 30,
+   "smoothMs": 2,
+   "weldMeta": {
+    "bodies": 1,
+    "watertight": 1,
+    "stillBroken": 0,
+    "edgesTopo": 56,
+    "edgesResidual": 0,
+    "edgesMismatch": 0,
+    "trisDropped": 0,
+    "legacyFallback": 1,
+    "enabled": true
+   },
+   "raw": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 162
+   },
+   "client": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 162
+   },
+   "brokenBodies": []
+  },
+  {
+   "file": "io1-cm-214.stp",
+   "sizeKB": 41,
+   "declared": {
+    "solids": 1,
+    "closedShells": 1,
+    "openShells": 0,
+    "faces": 29,
+    "edges": 70,
+    "edgeValence": {
+     "2": 70
+    },
+    "closedByDeclaration": true,
+    "system": "CoCreate Modeling 16.00  06-May-2008 (C) Parametric Technology GmbH"
+   },
+   "bodies": 1,
+   "verts": 1632,
+   "tris": 3288,
+   "stepMs": 55,
+   "engineMs": 53,
+   "smoothMs": 5,
+   "weldMeta": {
+    "bodies": 1,
+    "watertight": 1,
+    "stillBroken": 0,
+    "edgesTopo": 70,
+    "edgesResidual": 0,
+    "edgesMismatch": 0,
+    "trisDropped": 0,
+    "legacyFallback": 0,
+    "enabled": true
+   },
+   "raw": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 1632
+   },
+   "client": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 1632
+   },
+   "brokenBodies": []
+  },
+  {
+   "file": "dm1-pe-214.stp",
+   "sizeKB": 75,
+   "declared": {
+    "solids": 3,
+    "closedShells": 3,
+    "openShells": 0,
+    "faces": 31,
+    "edges": 72,
+    "edgeValence": {
+     "2": 72
+    },
+    "closedByDeclaration": true,
+    "system": "PRO/ENGINEER BY PARAMETRIC TECHNOLOGY CORPORATION, 2008490"
+   },
+   "bodies": 7,
+   "verts": 760,
+   "tris": 1520,
+   "stepMs": 46,
+   "engineMs": 44,
+   "smoothMs": 2,
+   "weldMeta": {
+    "bodies": 7,
+    "watertight": 7,
+    "stillBroken": 0,
+    "edgesTopo": 132,
+    "edgesResidual": 0,
+    "edgesMismatch": 0,
+    "trisDropped": 0,
+    "legacyFallback": 0,
+    "enabled": true
+   },
+   "raw": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 760
+   },
+   "client": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 760
+   },
+   "brokenBodies": []
+  },
+  {
+   "file": "io1-tu-203.stp",
+   "sizeKB": 75,
+   "declared": {
+    "solids": 1,
+    "closedShells": 1,
+    "openShells": 0,
+    "faces": 29,
+    "edges": 70,
+    "edgeValence": {
+     "2": 70
+    },
+    "closedByDeclaration": true,
+    "system": "UG"
+   },
+   "bodies": 1,
+   "verts": 1046,
+   "tris": 2116,
+   "stepMs": 114,
+   "engineMs": 112,
+   "smoothMs": 4,
+   "weldMeta": {
+    "bodies": 1,
+    "watertight": 1,
+    "stillBroken": 0,
+    "edgesTopo": 70,
+    "edgesResidual": 0,
+    "edgesMismatch": 0,
+    "trisDropped": 0,
+    "legacyFallback": 1,
+    "enabled": true
+   },
+   "raw": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 1046
+   },
+   "client": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 1046
+   },
+   "brokenBodies": []
+  },
+  {
+   "file": "dm1-id-214.stp",
+   "sizeKB": 84,
+   "declared": {
+    "solids": 3,
+    "closedShells": 3,
+    "openShells": 0,
+    "faces": 24,
+    "edges": 51,
+    "edgeValence": {
+     "2": 51
+    },
+    "closedByDeclaration": true,
+    "system": "UNIX"
+   },
+   "bodies": 7,
+   "verts": 848,
+   "tris": 1696,
+   "stepMs": 69,
+   "engineMs": 67,
+   "smoothMs": 2,
+   "weldMeta": {
+    "bodies": 7,
+    "watertight": 7,
+    "stillBroken": 0,
+    "edgesTopo": 80,
+    "edgesResidual": 0,
+    "edgesMismatch": 0,
+    "trisDropped": 0,
+    "legacyFallback": 0,
+    "enabled": true
+   },
+   "raw": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 848
+   },
+   "client": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 848
+   },
+   "brokenBodies": []
+  },
+  {
+   "file": "as1_pe_203.stp",
+   "sizeKB": 133,
+   "declared": {
+    "solids": 5,
+    "closedShells": 5,
+    "openShells": 0,
+    "faces": 53,
+    "edges": 126,
+    "edgeValence": {
+     "2": 126
+    },
+    "closedByDeclaration": true,
+    "system": "PRO/ENGINEER BY PARAMETRIC TECHNOLOGY CORPORATION, 2008340"
+   },
+   "bodies": 18,
+   "verts": 1948,
+   "tris": 3912,
+   "stepMs": 79,
+   "engineMs": 76,
+   "smoothMs": 3,
+   "weldMeta": {
+    "bodies": 18,
+    "watertight": 18,
+    "stillBroken": 0,
+    "edgesTopo": 354,
+    "edgesResidual": 0,
+    "edgesMismatch": 0,
+    "trisDropped": 0,
+    "legacyFallback": 18,
+    "enabled": true
+   },
+   "raw": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 1948
+   },
+   "client": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 1948
+   },
+   "brokenBodies": []
+  },
+  {
+   "file": "as1-tu-203.stp",
+   "sizeKB": 136,
+   "declared": {
+    "solids": 5,
+    "closedShells": 5,
+    "openShells": 0,
+    "faces": 53,
+    "edges": 126,
+    "edgeValence": {
+     "2": 126
+    },
+    "closedByDeclaration": true,
+    "system": "UG"
+   },
+   "bodies": 18,
+   "verts": 2304,
+   "tris": 4624,
+   "stepMs": 118,
+   "engineMs": 115,
+   "smoothMs": 4,
+   "weldMeta": {
+    "bodies": 18,
+    "watertight": 18,
+    "stillBroken": 0,
+    "edgesTopo": 354,
+    "edgesResidual": 0,
+    "edgesMismatch": 0,
+    "trisDropped": 0,
+    "legacyFallback": 0,
+    "enabled": true
+   },
+   "raw": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 2304
+   },
+   "client": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 2304
+   },
+   "brokenBodies": []
+  },
+  {
+   "file": "dm1-oc-214.stp",
+   "sizeKB": 217,
+   "declared": {
+    "solids": 3,
+    "closedShells": 3,
+    "openShells": 0,
+    "faces": 31,
+    "edges": 72,
+    "edgeValence": {
+     "2": 72
+    },
+    "closedByDeclaration": true,
+    "system": "Open CASCADE 6.1"
+   },
+   "bodies": 7,
+   "verts": 946,
+   "tris": 1892,
+   "stepMs": 96,
+   "engineMs": 92,
+   "smoothMs": 3,
+   "weldMeta": {
+    "bodies": 7,
+    "watertight": 7,
+    "stillBroken": 0,
+    "edgesTopo": 132,
+    "edgesResidual": 0,
+    "edgesMismatch": 0,
+    "trisDropped": 0,
+    "legacyFallback": 0,
+    "enabled": true
+   },
+   "raw": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 946
+   },
+   "client": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 946
+   },
+   "brokenBodies": []
+  },
+  {
+   "file": "as1-oc-214.stp",
+   "sizeKB": 423,
+   "declared": {
+    "solids": 5,
+    "closedShells": 5,
+    "openShells": 0,
+    "faces": 53,
+    "edges": 126,
+    "edgeValence": {
+     "2": 126
+    },
+    "closedByDeclaration": true,
+    "system": "Open CASCADE 6.1"
+   },
+   "bodies": 18,
+   "verts": 2542,
+   "tris": 5100,
+   "stepMs": 168,
+   "engineMs": 159,
+   "smoothMs": 4,
+   "weldMeta": {
+    "bodies": 18,
+    "watertight": 18,
+    "stillBroken": 0,
+    "edgesTopo": 354,
+    "edgesResidual": 0,
+    "edgesMismatch": 0,
+    "trisDropped": 0,
+    "legacyFallback": 0,
+    "enabled": true
+   },
+   "raw": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 2542
+   },
+   "client": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 2542
+   },
+   "brokenBodies": []
+  },
+  {
+   "file": "11752.stp",
+   "sizeKB": 1542,
+   "declared": {
+    "solids": 1,
+    "closedShells": 1,
+    "openShells": 0,
+    "faces": 1018,
+    "edges": 1712,
+    "edgeValence": {
+     "2": 1712
+    },
+    "closedByDeclaration": true,
+    "system": "Autodesk Inventor 2013"
+   },
+   "bodies": 1,
+   "verts": 27088,
+   "tris": 54800,
+   "stepMs": 1871,
+   "engineMs": 1842,
+   "smoothMs": 71,
+   "weldMeta": {
+    "bodies": 1,
+    "watertight": 0,
+    "stillBroken": 1,
+    "edgesTopo": 1741,
+    "edgesResidual": 0,
+    "edgesMismatch": 0,
+    "trisDropped": 0,
+    "legacyFallback": 0,
+    "enabled": true
+   },
+   "raw": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 27046
+   },
+   "client": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 27046
+   },
+   "brokenBodies": []
+  },
+  {
+   "file": "Ventilator.stp",
+   "sizeKB": 2205,
+   "declared": {
+    "solids": 1,
+    "closedShells": 1,
+    "openShells": 0,
+    "faces": 305,
+    "edges": 790,
+    "edgeValence": {
+     "2": 790
+    },
+    "closedByDeclaration": true,
+    "system": "CATIA V5 STEP AP203"
+   },
+   "bodies": 1,
+   "verts": 9486,
+   "tris": 18972,
+   "stepMs": 1090,
+   "engineMs": 1069,
+   "smoothMs": 21,
+   "weldMeta": {
+    "bodies": 1,
+    "watertight": 1,
+    "stillBroken": 0,
+    "edgesTopo": 790,
+    "edgesResidual": 0,
+    "edgesMismatch": 0,
+    "trisDropped": 0,
+    "legacyFallback": 0,
+    "enabled": true
+   },
+   "raw": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 9486
+   },
+   "client": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 9486
+   },
+   "brokenBodies": []
+  },
+  {
+   "file": "KR600_R2830-4.stp",
+   "sizeKB": 12292,
+   "declared": {
+    "solids": 60,
+    "closedShells": 65,
+    "openShells": 0,
+    "faces": 4121,
+    "edges": 9094,
+    "edgeValence": {
+     "2": 9094
+    },
+    "closedByDeclaration": true,
+    "system": "SIEMENS PLM Software NX 7.5"
+   },
+   "bodies": 61,
+   "verts": 68144,
+   "tris": 134100,
+   "stepMs": 7350,
+   "engineMs": 7178,
+   "smoothMs": 58,
+   "weldMeta": {
+    "bodies": 61,
+    "watertight": 33,
+    "stillBroken": 28,
+    "edgesTopo": 9295,
+    "edgesResidual": 2,
+    "edgesMismatch": 0,
+    "trisDropped": 46,
+    "legacyFallback": 0,
+    "enabled": true
+   },
+   "raw": {
+    "bodiesBroken": 8,
+    "naked": 692,
+    "over": 184,
+    "weldedVerts": 66850
+   },
+   "client": {
+    "bodiesBroken": 8,
+    "naked": 686,
+    "over": 326,
+    "weldedVerts": 66716
+   },
+   "brokenBodies": [
+    {
+     "name": "Grep3AD1ka2p",
+     "verts": 4002,
+     "tris": 7714,
+     "raw": {
+      "naked": 162,
+      "over": 38,
+      "weldedVerts": 3840,
+      "manifold": false
+     },
+     "client": {
+      "naked": 162,
+      "over": 44,
+      "weldedVerts": 3834,
+      "manifold": false
+     }
+    },
+    {
+     "name": "Grep3AD1ka2p",
+     "verts": 3685,
+     "tris": 7092,
+     "raw": {
+      "naked": 162,
+      "over": 44,
+      "weldedVerts": 3527,
+      "manifold": false
+     },
+     "client": {
+      "naked": 161,
+      "over": 52,
+      "weldedVerts": 3523,
+      "manifold": false
+     }
+    },
+    {
+     "name": "Grep3AD1ka2p",
+     "verts": 4002,
+     "tris": 7714,
+     "raw": {
+      "naked": 162,
+      "over": 38,
+      "weldedVerts": 3840,
+      "manifold": false
+     },
+     "client": {
+      "naked": 161,
+      "over": 49,
+      "weldedVerts": 3842,
+      "manifold": false
+     }
+    },
+    {
+     "name": "Grep3AD1ka2p",
+     "verts": 3685,
+     "tris": 7092,
+     "raw": {
+      "naked": 162,
+      "over": 44,
+      "weldedVerts": 3527,
+      "manifold": false
+     },
+     "client": {
+      "naked": 158,
+      "over": 104,
+      "weldedVerts": 3478,
+      "manifold": false
+     }
+    },
+    {
+     "name": "Grep3AD1ka2p",
+     "verts": 1488,
+     "tris": 2963,
+     "raw": {
+      "naked": 7,
+      "over": 0,
+      "weldedVerts": 1483,
+      "manifold": false
+     },
+     "client": {
+      "naked": 7,
+      "over": 0,
+      "weldedVerts": 1483,
+      "manifold": false
+     }
+    },
+    {
+     "name": "Grep3AD1ka2p",
+     "verts": 2786,
+     "tris": 5518,
+     "raw": {
+      "naked": 22,
+      "over": 15,
+      "weldedVerts": 2741,
+      "manifold": false
+     },
+     "client": {
+      "naked": 22,
+      "over": 50,
+      "weldedVerts": 2691,
+      "manifold": false
+     }
+    },
+    {
+     "name": "Grep3AD1ka2p",
+     "verts": 1760,
+     "tris": 3493,
+     "raw": {
+      "naked": 11,
+      "over": 5,
+      "weldedVerts": 1740,
+      "manifold": false
+     },
+     "client": {
+      "naked": 11,
+      "over": 27,
+      "weldedVerts": 1714,
+      "manifold": false
+     }
+    },
+    {
+     "name": "Grep3AD1ka2p",
+     "verts": 4892,
+     "tris": 9734,
+     "raw": {
+      "naked": 4,
+      "over": 0,
+      "weldedVerts": 4867,
+      "manifold": false
+     },
+     "client": {
+      "naked": 4,
+      "over": 0,
+      "weldedVerts": 4866,
+      "manifold": false
+     }
+    }
+   ]
+  },
+  {
+   "file": "RC_Buggy_2_front_suspension.stp",
+   "sizeKB": 14900,
+   "declared": {
+    "solids": 91,
+    "closedShells": 95,
+    "openShells": 0,
+    "faces": 5680,
+    "edges": 13174,
+    "edgeValence": {
+     "2": 13129,
+     "4": 45
+    },
+    "closedByDeclaration": false,
+    "system": "Autodesk Inventor 2018"
+   },
+   "bodies": 211,
+   "verts": 298992,
+   "tris": 586766,
+   "stepMs": 17892,
+   "engineMs": 17612,
+   "smoothMs": 230,
+   "weldMeta": {
+    "bodies": 211,
+    "watertight": 23,
+    "stillBroken": 188,
+    "edgesTopo": 24610,
+    "edgesResidual": 405,
+    "edgesMismatch": 0,
+    "trisDropped": 462,
+    "legacyFallback": 0,
+    "enabled": true
+   },
+   "raw": {
+    "bodiesBroken": 3,
+    "naked": 52,
+    "over": 122,
+    "weldedVerts": 293115
+   },
+   "client": {
+    "bodiesBroken": 3,
+    "naked": 52,
+    "over": 122,
+    "weldedVerts": 293117
+   },
+   "brokenBodies": [
+    {
+     "name": "Difi ház_2",
+     "verts": 4313,
+     "tris": 8566,
+     "raw": {
+      "naked": 52,
+      "over": 0,
+      "weldedVerts": 4301,
+      "manifold": false
+     },
+     "client": {
+      "naked": 52,
+      "over": 0,
+      "weldedVerts": 4301,
+      "manifold": false
+     }
+    },
+    {
+     "name": "Lengéscsillapító rugótámasztó\r_felső",
+     "verts": 3970,
+     "tris": 7674,
+     "raw": {
+      "naked": 0,
+      "over": 61,
+      "weldedVerts": 3775,
+      "manifold": false
+     },
+     "client": {
+      "naked": 0,
+      "over": 61,
+      "weldedVerts": 3775,
+      "manifold": false
+     }
+    },
+    {
+     "name": "Lengéscsillapító rugótámasztó\r_felső",
+     "verts": 3970,
+     "tris": 7674,
+     "raw": {
+      "naked": 0,
+      "over": 61,
+      "weldedVerts": 3775,
+      "manifold": false
+     },
+     "client": {
+      "naked": 0,
+      "over": 61,
+      "weldedVerts": 3775,
+      "manifold": false
+     }
+    }
+   ]
+  }
+ ],
+ "platform": "Ubuntu 24.04, OCCT 7.6.3 (apt), Manifold v3.5.3, g++ 13, 4 cores",
+ "source": "MEDUSA_SOURCE/nasscad_medusa.cpp @ d038996 (main)"
+}

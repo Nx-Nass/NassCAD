@@ -110,7 +110,6 @@
 #include <BRepTools.hxx>                    // [FIX 27/09] faces sans triangulation, cf. etage A'
 #include <BRepTools_WireExplorer.hxx>
 #include <GCPnts_TangentialDeflection.hxx>
-#include <ShapeAnalysis_Curve.hxx>
 #include <BRepPrimAPI_MakeBox.hxx>          // [21/09] --selftest-weld
 #include <BRepPrimAPI_MakeCylinder.hxx>
 #include <BRepPrimAPI_MakeCone.hxx>
@@ -1326,6 +1325,7 @@ struct Diag {
     int  microCollapsed= 0;   // etage C : micro-aretes (< 2 um) contractees sous condition de lien
     int  microClusters = 0;   // etage C : amas de sommets distincts a moins de 2 um, fusionnes
     int  trisCancelled = 0;   // etage C : triangles opposes NES de cette fusion, annules par paires
+    int  shortCollapsed= 0;   // etage C : aretes a plus de 2 triangles, sous la deflexion, contractees
     int  nakedEdges    = 0;   // etat FINAL
     int  overValenced  = 0;
     int  bowtieVerts   = 0;
@@ -1353,6 +1353,7 @@ struct Diag {
         if (microCollapsed)o << ", micro-edges-collapsed " << microCollapsed;
         if (microClusters) o << ", micro-clusters " << microClusters;
         if (trisCancelled) o << ", -cancelled-tri " << trisCancelled;
+        if (shortCollapsed)o << ", short-edges-collapsed " << shortCollapsed;
         if (watertight())  o << " => WATERTIGHT";
         else o << " => naked " << nakedEdges << ", over-valenced " << overValenced
                << ", bowtie " << bowtieVerts;
@@ -1555,6 +1556,25 @@ static int extractIntoTopo(const TopoDS_Shape& shape, const std::string& name,
     const double diagLen = std::sqrt((hi[0]-lo[0])*(hi[0]-lo[0])
                                    + (hi[1]-lo[1])*(hi[1]-lo[1])
                                    + (hi[2]-lo[2])*(hi[2]-lo[2]));
+
+    // [FIX 27/09] Deflexion a laquelle CE corps a ete maille : celle que
+    // tessellateShape a memorisee pour son TShape ; a defaut la plus grande des
+    // triangulations, si elle est significative — une face plane rend une
+    // deflexion de 1e-15, et OCCT refuse de discretiser sous 1e-7 ; a defaut
+    // encore 0,1 % de la diagonale. Sert au remplissage (etage A') et au
+    // plafond des contractions (etage C).
+    double bodyDefl = 0.0;
+    {
+        std::lock_guard<std::mutex> lk(gTessMemoMx);
+        auto it = gTessMemo.find(shape.TShape().get());
+        if (it != gTessMemo.end() && it->second.outcome == TessOutcome::Done) bodyDefl = it->second.defl;
+    }
+    if (!(bodyDefl > 0.0)) {
+        for (const FaceSlot& s : slots)
+            if (s.nb && s.tri->Deflection() > bodyDefl) bodyDefl = s.tri->Deflection();
+        if (!(bodyDefl > 1e-6 * diagLen) || !(bodyDefl > 1e-6)) bodyDefl = 1e-3 * diagLen;
+        if (!(bodyDefl > 1e-6)) bodyDefl = 1e-3;
+    }
 
     DSU dsu(nodesIn);
 
@@ -1783,19 +1803,38 @@ static int extractIntoTopo(const TopoDS_Shape& shape, const std::string& name,
     //
     // Cout : l'etage ne s'arme que si la couture exacte laisse une arete nue ou
     // qu'une face n'a pas de triangulation. Un corps sain ne paie rien.
+    // Aretes nues de la soupe courante ; rend aussi « au moins une arete a plus
+    // de deux triangles ». Un seul comptage sert a armer l'etage A' ET, s'il ne
+    // s'arme pas, d'entree a l'etage B.
+    auto nakedList = [&](std::vector<std::pair<uint32_t,uint32_t>>& outNaked) -> bool {
+        std::unordered_map<uint64_t, int> ec;
+        ec.reserve(triIdx.size());
+        for (size_t t = 0; t + 2 < triIdx.size(); t += 3) {
+            ec[edgeKey(triIdx[t],   triIdx[t+1])]++;
+            ec[edgeKey(triIdx[t+1], triIdx[t+2])]++;
+            ec[edgeKey(triIdx[t+2], triIdx[t])]++;
+        }
+        outNaked.clear();
+        bool over = false;
+        for (size_t t = 0; t + 2 < triIdx.size(); t += 3) {
+            const uint32_t v[3] = { triIdx[t], triIdx[t+1], triIdx[t+2] };
+            for (int k = 0; k < 3; ++k) {
+                const uint32_t a = v[k], b = v[(k+1)%3];
+                auto it = ec.find(edgeKey(a,b));
+                if (it == ec.end()) continue;
+                if (it->second == 1) outNaked.push_back({a,b});
+                else if (it->second > 2) over = true;
+            }
+        }
+        return over;
+    };
+    std::vector<std::pair<uint32_t,uint32_t>> nakedA;
+    bool armedA = false;
     {
         bool arm = false;
         for (const FaceSlot& s : slots) if (!s.nb) { arm = true; break; }
-        if (!arm) {
-            std::unordered_map<uint64_t, int> ec;
-            ec.reserve(triIdx.size());
-            for (size_t t = 0; t + 2 < triIdx.size(); t += 3) {
-                ec[edgeKey(triIdx[t], triIdx[t+1])]++;
-                ec[edgeKey(triIdx[t+1], triIdx[t+2])]++;
-                ec[edgeKey(triIdx[t+2], triIdx[t])]++;
-            }
-            for (const auto& kv : ec) if (kv.second != 2) { arm = true; break; }
-        }
+        if (nakedList(nakedA) || !nakedA.empty()) arm = true;
+        armedA = arm;
         if (arm) {
             // ── Detection : triangulation absente, ou dont le bord ne suit pas
             // les polygones de ses propres aretes (segment de polygone absent ou
@@ -1844,12 +1883,7 @@ static int extractIntoTopo(const TopoDS_Shape& shape, const std::string& name,
             for (uint32_t si = 0; si < (uint32_t)slots.size(); ++si)
                 if (!slots[si].nb || !consistent(si)) replaced[si] = 1;
 
-            // Deflexion de reference : celle que BRepMesh a retenue pour ce corps.
-            double fillDefl = 0.0;
-            for (const FaceSlot& s : slots)
-                if (s.nb && s.tri->Deflection() > fillDefl) fillDefl = s.tri->Deflection();
-            if (!(fillDefl > 0.0)) fillDefl = 1e-3 * diagLen;
-            if (!(fillDefl > 0.0)) fillDefl = 1e-3;
+            const double fillDefl = bodyDefl;
 
             auto newNode = [&](const gp_Pnt& p) -> uint32_t {
                 pp.push_back(p.X()); pp.push_back(p.Y()); pp.push_back(p.Z());
@@ -1902,15 +1936,18 @@ static int extractIntoTopo(const TopoDS_Shape& shape, const std::string& name,
                     if (best->pol->HasParameters()) {
                         for (int i = 1; i <= n; ++i) ch.t.push_back(best->pol->Parameter(i));
                     } else {
-                        BRepAdaptor_Curve C(E);
-                        ShapeAnalysis_Curve sac;
-                        for (int i = 1; i <= n; ++i) {
-                            const uint32_t g = ch.g[(size_t)i - 1];
-                            gp_Pnt proj; double prm = 0.0;
-                            sac.Project(C, gp_Pnt(pp[(size_t)g*3], pp[(size_t)g*3+1], pp[(size_t)g*3+2]),
-                                        Precision::Confusion(), proj, prm);
-                            ch.t.push_back(prm);
+                        // Polygone sans parametres (BRepMesh en range toujours ; repli
+                        // seulement) : abscisse curviligne sur [f, l]. Suffisant ici, ou
+                        // le parametre ne sert qu'a placer le noeud dans le plan UV.
+                        double f = 0, l = 0;
+                        BRep_Tool::Range(E, f, l);
+                        std::vector<double> acc(1, 0.0);
+                        for (int i = 2; i <= n; ++i) {
+                            const uint32_t g0 = ch.g[(size_t)i - 2], g1 = ch.g[(size_t)i - 1];
+                            acc.push_back(acc.back() + distG(g0, g1));
                         }
+                        for (int i = 0; i < n; ++i)
+                            ch.t.push_back(acc.back() > 0.0 ? f + (l - f) * acc[(size_t)i] / acc.back() : f);
                     }
                     if (n >= 2 && ch.t.front() > ch.t.back()) {
                         std::reverse(ch.g.begin(), ch.g.end());
@@ -2039,63 +2076,61 @@ static int extractIntoTopo(const TopoDS_Shape& shape, const std::string& name,
                         }
                     }
                 }
-                // 0. LAMELLE (aire < 1e-3 x perimetre^2, sans trou) : fermeture
-                // eclair entre ses deux flancs. Les deux sommets les plus eloignes
-                // coupent le contour en deux chaines ; on avance sur l'une ou
-                // l'autre par la diagonale la plus courte. Chaque barreau relie un
-                // noeud d'un flanc au noeud d'en face : sur une lamelle de 0,6 um
-                // (KR600, corps 19), ce sont des micro-aretes que la contraction
-                // de l'etage C saura refermer — la ou un eventail, reliant un
-                // sommet a tous les autres, violait la condition de lien et
-                // laissait le controle de NASSCAD les ecraser a l'aveugle.
+                // 0. LAMELLE (aire < 1e-3 x perimetre^2, sans trou). Aire EXACTE de la
+                // face (BRepGProp), pas celle du contour projete : un cylindre, dont
+                // le contour parcourt deux cercles en sens opposes, a une aire de
+                // Newell nulle et n'est pas une lamelle. On y decoupe toujours
+                // l'oreille dont la diagonale 3D est la plus COURTE : sur une bande
+                // de 0,6 um (KR600, corps 19) ce sont les barreaux d'un flanc a
+                // l'autre, sur une lentille la decoupe avance depuis les pointes.
+                // Chaque barreau sous le micron devient une micro-arete que la
+                // contraction de l'etage C refermera proprement — la ou un eventail,
+                // reliant un sommet a tous les autres, violait la condition de lien
+                // et laissait le controle de NASSCAD les ecraser a l'aveugle.
                 bool zipped = false;
                 if (holes.empty() && outer.size() >= 4) {
-                    double nx = 0, ny = 0, nz = 0, per = 0;
-                    for (size_t k = 0; k < outer.size(); ++k) {
-                        const gp_Pnt pa = P3(G[outer[k]]), pb = P3(G[outer[(k + 1) % outer.size()]]);
-                        nx += (pa.Y() - pb.Y()) * (pa.Z() + pb.Z());
-                        ny += (pa.Z() - pb.Z()) * (pa.X() + pb.X());
-                        nz += (pa.X() - pb.X()) * (pa.Y() + pb.Y());
-                        per += pa.Distance(pb);
-                    }
-                    const double area = 0.5 * std::sqrt(nx*nx + ny*ny + nz*nz);
-                    if (per > 0.0 && area < 1e-3 * per * per) {
-                        const size_t n = outer.size();
-                        auto far = [&](size_t from) {
-                            size_t best = from; double bd = -1.0;
-                            for (size_t k = 0; k < n; ++k) {
-                                const double d = P3(G[outer[k]]).SquareDistance(P3(G[outer[from]]));
-                                if (d > bd) { bd = d; best = k; }
+                    double per = 0.0, area = -1.0;
+                    for (size_t k = 0; k < outer.size(); ++k)
+                        per += P3(G[outer[k]]).Distance(P3(G[outer[(k + 1) % outer.size()]]));
+                    try {
+                        GProp_GProps gp;
+                        BRepGProp::SurfaceProperties(fFwd, gp);
+                        area = std::fabs(gp.Mass());
+                    } catch (...) { area = -1.0; }
+                    if (per > 0.0 && area >= 0.0 && area < 1e-3 * per * per) {
+                        std::vector<uint32_t> v(outer);
+                        std::unordered_set<uint64_t> have;
+                        auto gid = [&](uint32_t lv) { return dsu.find(G[lv]); };
+                        for (size_t k = 0; k < v.size(); ++k) have.insert(edgeKey(gid(v[k]), gid(v[(k + 1) % v.size()])));
+                        while (v.size() > 3) {
+                            size_t pick = SIZE_MAX, alt = SIZE_MAX;
+                            double best = 1e300, bestAlt = 1e300;
+                            for (size_t i = 0; i < v.size(); ++i) {
+                                const uint32_t pv = v[(i + v.size() - 1) % v.size()], nv = v[(i + 1) % v.size()];
+                                const double d = P3(G[pv]).SquareDistance(P3(G[nv]));
+                                const bool clash = gid(pv) == gid(nv) || have.count(edgeKey(gid(pv), gid(nv)));
+                                if (!clash && d < best) { best = d; pick = i; }
+                                if (d < bestAlt) { bestAlt = d; alt = i; }
                             }
-                            return best;
-                        };
-                        const size_t i0 = far(far(0)), i1 = far(i0);
-                        std::vector<uint32_t> A, B;                   // A : i0 -> i1 ; B : i0 -> i1 par l'autre flanc
-                        for (size_t k = i0; ; k = (k + 1) % n) { A.push_back(outer[k]); if (k == i1) break; }
-                        for (size_t k = i0; ; k = (k + n - 1) % n) { B.push_back(outer[k]); if (k == i1) break; }
-                        if (i0 != i1 && A.size() >= 3 && B.size() >= 3) {
-                            auto d3 = [&](uint32_t a, uint32_t b) { return P3(G[a]).Distance(P3(G[b])); };
-                            // Le contour parcourt A dans l'ordre et B a rebours : chaque triangle
-                            // reprend ses aretes de bord dans le sens du contour.
-                            T.push_back(A[0]); T.push_back(A[1]); T.push_back(B[1]);
-                            size_t ka = 1, kb = 1;
-                            const size_t la = A.size() - 1, lb = B.size() - 1;   // indice de i1
-                            while (!(ka == la - 1 && kb == lb - 1)) {
-                                const bool canA = (ka + 1 < la), canB = (kb + 1 < lb);
-                                const bool advA = canA && (!canB || d3(A[ka + 1], B[kb]) <= d3(A[ka], B[kb + 1]));
-                                if (advA) { T.push_back(A[ka]); T.push_back(A[ka + 1]); T.push_back(B[kb]); ka++; }
-                                else      { T.push_back(B[kb + 1]); T.push_back(B[kb]); T.push_back(A[ka]); kb++; }
-                            }
-                            T.push_back(A[ka]); T.push_back(A[la]); T.push_back(B[kb]);
-                            zipped = true;
+                            if (pick == SIZE_MAX) pick = alt;          // tout redoublerait : le moins long
+                            const size_t ip = (pick + v.size() - 1) % v.size(), in = (pick + 1) % v.size();
+                            have.insert(edgeKey(gid(v[ip]), gid(v[in])));
+                            T.push_back(v[ip]); T.push_back(v[pick]); T.push_back(v[in]);
+                            v.erase(v.begin() + (std::ptrdiff_t)pick);
                         }
+                        T.push_back(v[0]); T.push_back(v[1]); T.push_back(v[2]);
+                        zipped = true;
                     }
                 }
                 // 1. UV strict, 2. Newell strict, 3. force (UV si disponible), 4. eventail.
                 std::vector<uint32_t> ident(G.size());   // identite topologique de chaque sommet local
                 for (size_t k = 0; k < G.size(); ++k) ident[k] = dsu.find(G[k]);
+                // Newell n'est tente que si l'UV est degenere : quand l'UV existe et que
+                // la decoupe stricte y echoue, c'est le contour qui se croise, et il se
+                // croise aussi dans le plan moyen (sur une face plane, c'est le meme).
                 if (T.empty() && !Puv.empty()) viaUV = fillTriangulate2D(Puv, outer, holes, T, false, &ident);
-                if (!viaUV && !Pnw.empty() && !fillTriangulate2D(Pnw, outer, holes, T, false, &ident)) T.clear();
+                if (!viaUV && T.empty() && Puv.empty() && !Pnw.empty()
+                    && !fillTriangulate2D(Pnw, outer, holes, T, false, &ident)) T.clear();
                 if (!viaUV && T.empty()) {
                     if (!Puv.empty()) viaUV = fillTriangulate2D(Puv, outer, holes, T, true, &ident);
                     if (!viaUV && !Pnw.empty() && !fillTriangulate2D(Pnw, outer, holes, T, true, &ident)) T.clear();
@@ -2274,27 +2309,11 @@ static int extractIntoTopo(const TopoDS_Shape& shape, const std::string& name,
     };
 
     // ═══ ETAGE B — couture residuelle, bords uniquement, tolerance progressive
-    auto nakedList = [&](std::vector<std::pair<uint32_t,uint32_t>>& outNaked) {
-        std::unordered_map<uint64_t, int> ec;
-        ec.reserve(triIdx.size());
-        for (size_t t = 0; t + 2 < triIdx.size(); t += 3) {
-            ec[edgeKey(triIdx[t],   triIdx[t+1])]++;
-            ec[edgeKey(triIdx[t+1], triIdx[t+2])]++;
-            ec[edgeKey(triIdx[t+2], triIdx[t])]++;
-        }
-        outNaked.clear();
-        for (size_t t = 0; t + 2 < triIdx.size(); t += 3) {
-            const uint32_t v[3] = { triIdx[t], triIdx[t+1], triIdx[t+2] };
-            for (int k = 0; k < 3; ++k) {
-                const uint32_t a = v[k], b = v[(k+1)%3];
-                auto it = ec.find(edgeKey(a,b));
-                if (it != ec.end() && it->second == 1) outNaked.push_back({a,b});
-            }
-        }
-    };
-
+    // [FIX 27/09] Liste des aretes nues deja calculee avant l'etage A' (nakedList
+    // est desormais definie plus haut) : on ne la refait que si A' a retouche
+    // la soupe.
     std::vector<std::pair<uint32_t,uint32_t>> naked;
-    nakedList(naked);
+    if (armedA) nakedList(naked); else naked.swap(nakedA);
     if (!naked.empty() && diagLen > 0.0) {
         const double ladder[3] = { 1e-9 * diagLen, 1e-7 * diagLen, 1e-5 * diagLen };
         for (int li = 0; li < 3 && !naked.empty(); ++li) {
@@ -2581,28 +2600,57 @@ static int extractIntoTopo(const TopoDS_Shape& shape, const std::string& name,
         for (uint32_t t = 0; t < ntri; ++t)
             if (!triDead[t]) for (int k = 0; k < 3; ++k) live[md.indices[t*3+k]] = 1;
         for (uint32_t v = 0; v < vertsOut; ++v) if (nmVert[v]) live[v] = 0;
-        std::unordered_map<uint64_t, std::vector<uint32_t>> grid;
+        // Grille de pas kMicro en table a adressage ouvert (tete de liste par
+        // cellule + chainage des sommets) : aucune allocation par cellule, et
+        // seulement la moitie des voisines (13 + la sienne), la relation etant
+        // symetrique. Sur un corps sain, c'est le seul cout de cette passe.
         auto cell = [&](double x) { return (int64_t)std::floor(x / kMicro); };
         auto ckey = [](int64_t i, int64_t j, int64_t k) {
             return ((uint64_t)(uint32_t)i * 73856093ull) ^ ((uint64_t)(uint32_t)j * 19349663ull)
                  ^ ((uint64_t)(uint32_t)k * 83492791ull);
         };
-        for (uint32_t v = 0; v < vertsOut; ++v)
-            if (live[v]) grid[ckey(cell(vp[(size_t)v*3]), cell(vp[(size_t)v*3+1]), cell(vp[(size_t)v*3+2]))].push_back(v);
-        DSU cl(vertsOut);
-        bool anyPair = false;
+        std::vector<int64_t> ci((size_t)vertsOut * 3);
+        uint32_t nLive = 0;
         for (uint32_t v = 0; v < vertsOut; ++v) {
             if (!live[v]) continue;
-            const int64_t ci = cell(vp[(size_t)v*3]), cj = cell(vp[(size_t)v*3+1]), ck = cell(vp[(size_t)v*3+2]);
-            for (int a = -1; a <= 1; ++a) for (int b = -1; b <= 1; ++b) for (int c = -1; c <= 1; ++c) {
-                auto it = grid.find(ckey(ci + a, cj + b, ck + c));
-                if (it == grid.end()) continue;
-                for (uint32_t w : it->second) {
-                    if (w <= v) continue;
-                    double d2 = 0;
-                    for (int k = 0; k < 3; ++k) { const double dd = vp[(size_t)v*3+k] - vp[(size_t)w*3+k]; d2 += dd * dd; }
-                    if (d2 < kMicro * kMicro) { cl.unite(v, w); anyPair = true; }
-                }
+            nLive++;
+            for (int k = 0; k < 3; ++k) ci[(size_t)v*3+k] = cell(vp[(size_t)v*3+k]);
+        }
+        size_t cap = 16;
+        while (cap < (size_t)nLive * 2) cap <<= 1;
+        std::vector<uint32_t> head(cap, UINT32_MAX), nextV(vertsOut, UINT32_MAX);
+        std::vector<int64_t> slotCell(cap * 3);
+        auto findSlot = [&](int64_t i, int64_t j, int64_t k, bool insert) -> size_t {
+            size_t h = (size_t)ckey(i, j, k) & (cap - 1);
+            for (;;) {
+                if (head[h] == UINT32_MAX) return insert ? h : SIZE_MAX;
+                if (slotCell[h*3] == i && slotCell[h*3+1] == j && slotCell[h*3+2] == k) return h;
+                h = (h + 1) & (cap - 1);
+            }
+        };
+        for (uint32_t v = 0; v < vertsOut; ++v) {
+            if (!live[v]) continue;
+            const size_t h = findSlot(ci[(size_t)v*3], ci[(size_t)v*3+1], ci[(size_t)v*3+2], true);
+            if (head[h] == UINT32_MAX) { slotCell[h*3] = ci[(size_t)v*3]; slotCell[h*3+1] = ci[(size_t)v*3+1]; slotCell[h*3+2] = ci[(size_t)v*3+2]; }
+            nextV[v] = head[h]; head[h] = v;
+        }
+        DSU cl(vertsOut);
+        bool anyPair = false;
+        auto test = [&](uint32_t v, uint32_t w) {
+            double d2 = 0;
+            for (int k = 0; k < 3; ++k) { const double dd = vp[(size_t)v*3+k] - vp[(size_t)w*3+k]; d2 += dd * dd; }
+            if (d2 < kMicro * kMicro) { cl.unite(v, w); anyPair = true; }
+        };
+        static const int kHalf[13][3] = { {1,0,0}, {-1,1,0}, {0,1,0}, {1,1,0}, {-1,-1,1}, {0,-1,1}, {1,-1,1},
+                                          {-1,0,1}, {0,0,1}, {1,0,1}, {-1,1,1}, {0,1,1}, {1,1,1} };
+        for (uint32_t v = 0; v < vertsOut; ++v) {
+            if (!live[v]) continue;
+            const int64_t i = ci[(size_t)v*3], j = ci[(size_t)v*3+1], k = ci[(size_t)v*3+2];
+            for (uint32_t w = nextV[v]; w != UINT32_MAX; w = nextV[w]) test(v, w);   // meme cellule
+            for (const auto& o : kHalf) {
+                const size_t h = findSlot(i + o[0], j + o[1], k + o[2], false);
+                if (h == SIZE_MAX) continue;
+                for (uint32_t w = head[h]; w != UINT32_MAX; w = nextV[w]) test(v, w);
             }
         }
         if (anyPair) {
@@ -2664,7 +2712,8 @@ static int extractIntoTopo(const TopoDS_Shape& shape, const std::string& name,
     // [FIX 27/09] Nettoyage de ce que contractions et fusions ont fabrique, et de
     // cela SEUL (triangles portant un sommet deplace) : doublons stricts,
     // paires de triangles opposes, quadrilateres opposes.
-    if (std::find(touchedV.begin(), touchedV.end(), (char)1) != touchedV.end()) {
+    auto cleanupTouched = [&]() {
+      if (std::find(touchedV.begin(), touchedV.end(), (char)1) != touchedV.end()) {
         const uint32_t ntri = (uint32_t)(md.indices.size() / 3);
         {
             std::unordered_map<TriKey, std::vector<uint32_t>, TriKeyHash> byKey;
@@ -2744,6 +2793,8 @@ static int extractIntoTopo(const TopoDS_Shape& shape, const std::string& name,
             }
         }
     }
+    };
+    cleanupTouched();
 
     // [FIX 27/09] DIAGONALE COMMUNE A DEUX FACES. KR600, corps 17 : deux faces
     // qui se rejoignent en lame au meme sommet ont chacune coupe leur coin par
@@ -2760,7 +2811,7 @@ static int extractIntoTopo(const TopoDS_Shape& shape, const std::string& name,
     // concave, et l'un des deux nouveaux triangles est une lamelle d'aire
     // quasi nulle (mesure KR600 : -6,5 contre +4 779, 0,14 %). On retient la
     // face ou le basculement est le moins penalisant.
-    {
+    auto flipPass = [&]() {
         std::unordered_map<uint64_t, std::vector<uint32_t>> et;
         const uint32_t ntri = (uint32_t)(md.indices.size() / 3);
         bool any = false;
@@ -2825,6 +2876,78 @@ static int extractIntoTopo(const TopoDS_Shape& shape, const std::string& name,
                     diag.diagFlips++;
                 }
             }
+        }
+    };
+    // [FIX 27/09] Sur un corps sain, un seul comptage decide qu'il n'y a rien a
+    // basculer ni a contracter.
+    bool overLeft = false;
+    {
+        std::unordered_map<uint64_t, int> ec;
+        const uint32_t ntri = (uint32_t)(md.indices.size() / 3);
+        ec.reserve((size_t)ntri * 3);
+        for (uint32_t t = 0; t < ntri && !overLeft; ++t) {
+            if (triDead[t]) continue;
+            for (int k = 0; k < 3; ++k)
+                if (++ec[edgeKey(md.indices[t*3+k], md.indices[t*3+(k+1)%3])] > 2) overLeft = true;
+        }
+    }
+    if (overLeft) flipPass();
+
+    // [FIX 27/09] SOUS LA DEFLEXION DE LA PIECE. Ce qui reste a plus de deux
+    // triangles apres tout cela est une arete courte qui porte une geometrie plus
+    // fine que ce que le maillage sait representer : la pointe de revolution
+    // d'une broche de 1,3 mm (support de piles 4xAAA, bibliotheque FreeCAD),
+    // rayon sous le micron sur plusieurs microns — a cette resolution, une ligne.
+    // Toute soudure au micron (celle du controle de NASSCAD comprise) en fait une
+    // « reliure » : une arete de 7 um portee par dix triangles. Meme famille :
+    // une arete de 3 um interieure a DEUX faces B-spline (DCMotorEncoder). On
+    // contracte donc ces aretes-la, et elles seules (defaut constate, pas de
+    // recherche), tant qu'elles sont plus courtes que la deflexion du corps — en
+    // dessous, une arete n'est pas une information : le maillage lui-meme ne
+    // garantit rien plus fin — et que 0,02 mm, pour qu'un gros corps a grosse
+    // deflexion ne perde jamais une arete visible. Puis nettoyage et bascule,
+    // comme apres les fusions. Quatre tours au plus.
+    if (overLeft) {
+        const double sc = std::fabs(instLoc.Transformation().ScaleFactor());
+        const double kMax = std::min(bodyDefl, 0.02 / (sc > 0.0 ? sc : 1.0));
+        const uint32_t ntri = (uint32_t)(md.indices.size() / 3);
+        for (int round = 0; round < 4 && kMax > 0.0; ++round) {
+            std::unordered_map<uint64_t, int> ec;
+            ec.reserve((size_t)ntri * 3);
+            for (uint32_t t = 0; t < ntri; ++t) {
+                if (triDead[t]) continue;
+                for (int k = 0; k < 3; ++k) ec[edgeKey(md.indices[t*3+k], md.indices[t*3+(k+1)%3])]++;
+            }
+            std::vector<std::pair<double, uint64_t>> bad;
+            for (const auto& kv : ec) {
+                if (kv.second <= 2) continue;
+                const uint32_t a = (uint32_t)(kv.first >> 32), b = (uint32_t)(kv.first & 0xFFFFFFFFu);
+                if (nmVert[a] || nmVert[b]) continue;          // recouvrement DECLARE : on n'y touche pas
+                double d2 = 0;
+                for (int k = 0; k < 3; ++k) { const double dd = vp[(size_t)a*3+k] - vp[(size_t)b*3+k]; d2 += dd * dd; }
+                if (d2 < kMax * kMax) bad.push_back({ d2, kv.first });
+            }
+            if (bad.empty()) break;
+            std::sort(bad.begin(), bad.end());
+            std::vector<uint32_t> to(vertsOut);
+            for (uint32_t v = 0; v < vertsOut; ++v) to[v] = v;
+            auto R = [&](uint32_t v) { while (to[v] != v) { to[v] = to[to[v]]; v = to[v]; } return v; };
+            for (const auto& be : bad) {
+                const uint32_t a = R((uint32_t)(be.second >> 32)), b = R((uint32_t)(be.second & 0xFFFFFFFFu));
+                if (a == b) continue;
+                for (int k = 0; k < 3; ++k) vp[(size_t)a*3+k] = 0.5 * (vp[(size_t)a*3+k] + vp[(size_t)b*3+k]);
+                to[b] = a;
+                touchedV[a] = 1;
+                diag.shortCollapsed++;
+            }
+            for (uint32_t t = 0; t < ntri; ++t) {
+                if (triDead[t]) continue;
+                for (int k = 0; k < 3; ++k) md.indices[t*3+k] = R(md.indices[t*3+k]);
+                const uint32_t a = md.indices[t*3], b = md.indices[t*3+1], c = md.indices[t*3+2];
+                if (a == b || b == c || c == a) { triDead[t] = 1; diag.trisDegen++; }
+            }
+            cleanupTouched();
+            flipPass();
         }
     }
 
@@ -2906,7 +3029,8 @@ static int extractIntoTopo(const TopoDS_Shape& shape, const std::string& name,
         || diag.edgesOverUsed || diag.edgesSeamOnly
         // [FIX 27/09] et tout corps que les nouveaux etages ont du reprendre
         || diag.edgesNmPaired || diag.facesFilled || diag.facesRedone
-        || diag.facesCollapsed || diag.facesUnfilled || diag.diagFlips || diag.microCollapsed || diag.microClusters) {
+        || diag.facesCollapsed || diag.facesUnfilled || diag.diagFlips || diag.microCollapsed || diag.microClusters
+        || diag.shortCollapsed) {
         if (!diag.watertight()) gManifoldIssueCount++;
         std::ostringstream oss;
         oss << "[WELD] \"" << name.substr(0, 48) << "\" " << diag.brief() << "\n";
@@ -6621,7 +6745,9 @@ static bool fillTriangulate2D(const std::vector<std::pair<double, double>>& pts,
     q.reserve(outer.size());
     for (uint32_t k : outer) q.push_back(P[k]);
     std::vector<uint32_t> t;
-    if (!nasifc::tri::earClip(q, t)) {
+    // En mode force on ne refait pas d'abord la decoupe stricte (O(n^3)) : la
+    // boucle ci-dessous prend deja une oreille valide des qu'il en existe une.
+    if (forced || !nasifc::tri::earClip(q, t)) {
         if (!forced || q.size() < 3) return false;
         t.clear();
         std::vector<uint32_t> v(q.size());
@@ -11799,7 +11925,11 @@ static int runWeldSelfTestCli() {
         return v;
     };
 
-    struct Case { std::string name; TopoDS_Shape shape; double defl; };
+    // [FIX 27/09] `drop` : face dont on RETIRE la triangulation apres maillage,
+    // pour rejouer l'echec de BRepMesh et exercer l'etage A' (remplissage depuis
+    // les voisines). 0 = aucune, 1 = premiere face non plane, 2 = la face qui a
+    // le plus de fils (celle qui porte les trous).
+    struct Case { std::string name; TopoDS_Shape shape; double defl; int drop = 0; };
     std::vector<Case> cases;
     {
         const TopoDS_Shape cyl = BRepPrimAPI_MakeCylinder(5.0, 20.0).Shape();
@@ -11815,6 +11945,18 @@ static int runWeldSelfTestCli() {
         cases.push_back({ "cone r8->0 h15 (apex degen)",  BRepPrimAPI_MakeCone(8.0, 0.0, 15.0).Shape(),  0.02 });
         cases.push_back({ "sphere r7 (2 poles + seam)",   BRepPrimAPI_MakeSphere(7.0).Shape(),           0.02 });
         cases.push_back({ "torus R20 r4 (2 seams)",       BRepPrimAPI_MakeTorus(20.0, 4.0).Shape(),      0.02 });
+        // [FIX 27/09] Faces non maillees, remplies depuis leur bord. Le cylindre
+        // est le piege d'un critere de lamelle par aire projetee : son contour
+        // parcourt deux cercles en sens opposes, aire de Newell nulle.
+        cases.push_back({ "cylinder, lateral face unmeshed", BRepPrimAPI_MakeCylinder(5.0, 20.0).Shape(), 0.02, 1 });
+        cases.push_back({ "cone r8->3, lateral unmeshed",    BRepPrimAPI_MakeCone(8.0, 3.0, 15.0).Shape(), 0.02, 1 });
+        {
+            TopoDS_Shape plate = BRepPrimAPI_MakeBox(60.0, 30.0, 5.0).Shape();
+            gp_Ax2 a1(gp_Pnt(15.0, 15.0, -1.0), gp_Dir(0, 0, 1)), a2(gp_Pnt(45.0, 15.0, -1.0), gp_Dir(0, 0, 1));
+            plate = BRepAlgoAPI_Cut(plate, BRepPrimAPI_MakeCylinder(a1, 6.0, 7.0).Shape()).Shape();
+            plate = BRepAlgoAPI_Cut(plate, BRepPrimAPI_MakeCylinder(a2, 4.0, 7.0).Shape()).Shape();
+            cases.push_back({ "plate 2 holes, pierced face unmeshed", plate, 0.02, 2 });
+        }
     }
 
     int fails = 0;
@@ -11835,6 +11977,21 @@ static int runWeldSelfTestCli() {
         } catch (const std::exception& e) {
             std::cout << "FAIL " << pad(c.name, 34) << " meshing failed: " << e.what() << "\n";
             fails++; continue;
+        }
+        if (c.drop) {
+            TopoDS_Face victim;
+            int bestWires = -1;
+            for (TopExp_Explorer fe(proto, TopAbs_FACE); fe.More(); fe.Next()) {
+                const TopoDS_Face f = TopoDS::Face(fe.Current());
+                if (c.drop == 1) {
+                    if (BRepAdaptor_Surface(f).GetType() != GeomAbs_Plane) { victim = f; break; }
+                } else {
+                    int nw = 0;
+                    for (TopExp_Explorer we(f, TopAbs_WIRE); we.More(); we.Next()) nw++;
+                    if (nw > bestWires) { bestWires = nw; victim = f; }
+                }
+            }
+            if (!victim.IsNull()) BRep_Builder().UpdateFace(victim, Handle(Poly_Triangulation)());
         }
 
         // Volume exact du B-Rep — la reference.
