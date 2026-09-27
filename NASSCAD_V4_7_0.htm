@@ -1597,6 +1597,17 @@ canvas{display:block;width:100%;height:100%;}
         <input type="range" id="nt-spitch" min="0.10" max="10" value="1.0" step="0.05" oninput="document.getElementById('nt-vpitch').value=parseFloat(this.value).toFixed(2);_nutRebuild()">
         <input type="number" id="nt-vpitch" class="vb-input pdr-num" style="width:100%;color:var(--accent);" min="0.10" max="10" step="0.05" value="1.00" onchange="_gInp(this,'nt-spitch')" onkeydown="_genKey(event)">
       </div>
+      <!-- [FIX V4.7.1 — 27/09] Sens du filet (RH = défaut ISO) + jeu radial d'impression -->
+      <div style="font-size:9px;letter-spacing:2px;color:var(--accent);font-weight:700;">HAND (THREAD DIRECTION)</div>
+      <div style="display:flex;gap:4px;">
+        <button class="vb-btn active" id="nt-hand-right" style="flex:1;font-size:10px" onclick="_nutSetHand('right')" title="Right-hand thread — ISO default, tightens clockwise">↻ Right-hand (RH)</button>
+        <button class="vb-btn" id="nt-hand-left" style="flex:1;font-size:10px" onclick="_nutSetHand('left')" title="Left-hand thread — designated LH, tightens counter-clockwise">↺ Left-hand (LH)</button>
+      </div>
+      <div style="display:grid;grid-template-columns:90px 1fr 60px;align-items:center;gap:3px 6px;">
+        <label style="font-size:12px" title="Radial clearance in mm: the nut thread is enlarged by this amount. 0 = ISO basic profile (CAD). FDM printing: 0.10–0.20 mm">Clearance</label>
+        <input type="range" id="nt-sclr" min="0" max="0.5" value="0" step="0.05" oninput="document.getElementById('nt-vclr').value=parseFloat(this.value).toFixed(2);_nutRebuild()">
+        <input type="number" id="nt-vclr" class="vb-input pdr-num" style="width:100%;color:var(--accent);" min="0" max="0.5" step="0.05" value="0.00" onchange="_gInp(this,'nt-sclr')" onkeydown="_genKey(event)">
+      </div>
       <div style="font-size:9px;letter-spacing:2px;color:var(--accent);font-weight:700;">STYLE (HEIGHT)</div>
       <div style="display:flex;gap:4px;">
         <button class="vb-btn active" id="nt-st-normal" style="flex:1;font-size:10px" onclick="_nutSetStyle('normal')">ISO 4032</button>
@@ -1613,6 +1624,10 @@ canvas{display:block;width:100%;height:100%;}
         <button class="vb-btn active" id="nt-ch-on" style="flex:1;font-size:11px" onclick="_nutSetChamfer(true)">✓ ON</button>
         <button class="vb-btn" id="nt-ch-off" style="flex:1;font-size:11px" onclick="_nutSetChamfer(false)">OFF</button>
       </div>
+      <label style="display:flex;gap:7px;align-items:center;font-size:12px;cursor:pointer" title="Higbee cut: removes the thin, incomplete first turn of the thread on both faces. Stronger start, no cross-threading — recommended for 3D printing">
+        <input type="checkbox" id="nt-blunt" checked onchange="_nutRebuild()">
+        <span>Blunt thread start (Higbee cut)</span>
+      </label>
       <div style="font-size:9px;letter-spacing:2px;color:var(--accent);font-weight:700;">RADIAL SEGMENTS</div>
       <div style="display:flex;gap:4px;align-items:center;">
         <button class="vb-btn" id="nt-nrad-32" style="flex:1;font-size:11px;padding:3px 0" onclick="_nutSetNRad(32)">32</button>
@@ -1660,6 +1675,18 @@ canvas{display:block;width:100%;height:100%;}
         </div>
       </div>
 
+      <!-- [FIX V4.7.1 — 27/09] Sens du filet (RH = défaut ISO) + jeu radial d'impression -->
+      <div style="font-size:9px;letter-spacing:2px;color:var(--accent);font-weight:700;">HAND (THREAD DIRECTION)</div>
+      <div style="display:flex;gap:4px;">
+        <button class="vb-btn active" id="sc-hand-right" style="flex:1;font-size:10px" onclick="_screwSetHand('right')" title="Right-hand thread — ISO default, tightens clockwise">↻ Right-hand (RH)</button>
+        <button class="vb-btn"        id="sc-hand-left"  style="flex:1;font-size:10px" onclick="_screwSetHand('left')" title="Left-hand thread — designated LH, tightens counter-clockwise">↺ Left-hand (LH)</button>
+      </div>
+      <div style="display:grid;grid-template-columns:85px 1fr 60px;align-items:center;gap:3px 6px;">
+        <label style="font-size:12px" title="Radial clearance in mm: the screw thread is reduced by this amount. 0 = ISO basic profile (CAD). FDM printing: 0.10–0.20 mm">Clearance</label>
+        <input type="range" id="sc-sclr" min="0" max="0.5" value="0" step="0.05" oninput="document.getElementById('sc-vclr').value=parseFloat(this.value).toFixed(2);_screwRebuild()">
+        <input type="number" id="sc-vclr" class="vb-input pdr-num" style="width:100%;color:var(--accent);" min="0" max="0.5" step="0.05" value="0.00" onchange="_gInp(this,'sc-sclr')" onkeydown="_genKey(event)">
+      </div>
+
       <div style="font-size:9px;letter-spacing:2px;color:var(--accent);font-weight:700;">LENGTH (mm)</div>
       <div style="display:grid;grid-template-columns:85px 1fr 60px;align-items:center;gap:3px 6px;">
         <label style="font-size:12px">Length</label>
@@ -1684,7 +1711,11 @@ canvas{display:block;width:100%;height:100%;}
       <div style="font-size:9px;letter-spacing:2px;color:var(--accent);font-weight:700;">OPTIONS</div>
       <label style="display:flex;gap:7px;align-items:center;font-size:12px;cursor:pointer">
         <input type="checkbox" id="sc-chamfer-about" checked onchange="_screwRebuild()">
-        <span>Lead-in chamfer (thread entry)</span>
+        <span>ISO 4753 end chamfer 45° (thread entry)</span>
+      </label>
+      <label style="display:flex;gap:7px;align-items:center;font-size:12px;cursor:pointer" title="Higbee cut: removes the thin, incomplete first turn of the thread. Stronger start, no cross-threading — recommended for 3D printing">
+        <input type="checkbox" id="sc-blunt" checked onchange="_screwRebuild()">
+        <span>Blunt thread start (Higbee cut)</span>
       </label>
 
       <div style="font-size:9px;letter-spacing:2px;color:var(--accent);font-weight:700;">RADIAL SEGMENTS</div>
@@ -11238,7 +11269,10 @@ async function _buildLeafGeo(c){
     if (c._csgGeo && c.genType === 'screw' && c.genParams) {
       // Screw.Gen : reconstruction depuis genParams (nRad piloté par genParams, pas SEG_CSG)
       const _p2  = c.genParams;
-      const _sgr = _makeScrew(_p2);
+      // [FIX V4.7.1 — 27/09] Vis d'avant le correctif de chiralité (genParams
+      // sans « hand ») : générées à gauche → reconstruites à gauche, cohérent
+      // avec leur maillage affiché (cf. bandeau Screw.Gen, nasscad-gens.js).
+      const _sgr = _makeScrew(_p2.hand ? _p2 : Object.assign({}, _p2, {hand:'left'}));
       g = new THREE.BufferGeometry();
       g.setAttribute('position', new THREE.Float32BufferAttribute(new Float32Array(_sgr.vPos), 3));
       g.setIndex(new THREE.BufferAttribute(new Uint32Array(_sgr.tris), 1));
