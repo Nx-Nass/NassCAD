@@ -1,0 +1,113 @@
+{
+  "comment": "STEP test set for tests/medusa_step_harness.js. Files are downloaded by tests/fetch_step_files.js into this folder (not versioned, see .gitignore). Each entry is pinned to a commit and checked by SHA-256. Any other .stp/.step dropped into this folder is also picked up by the harness.",
+  "files": [
+    {
+      "name": "as1-oc-214.stp",
+      "sha256": "bc7964773fa00c1ddedc80b58930ae531f91cfc5f1f42d693f903b4dc88c21ca",
+      "url": "https://raw.githubusercontent.com/kovacsv/occt-import-js/41e470890ae0f9dc69ac50ffd5fc73e03576f4eb/test/testfiles/cax-if/as1-oc-214.stp",
+      "origin": "CAx-IF AS1 assembly, AP214 (via occt-import-js test files)"
+    },
+    {
+      "name": "as1_pe_203.stp",
+      "sha256": "be1254354f6929a08ce1c8049d4a0a2f4406da4ea283fc4247d009c81976641c",
+      "url": "https://raw.githubusercontent.com/kovacsv/occt-import-js/41e470890ae0f9dc69ac50ffd5fc73e03576f4eb/test/testfiles/cax-if/as1_pe_203.stp",
+      "origin": "CAx-IF AS1 assembly, AP203"
+    },
+    {
+      "name": "as1-tu-203.stp",
+      "sha256": "d2cac7ebad7240c7b7dd719c769a0e0d4a137d4229a31f25098f9073f6dd69c3",
+      "url": "https://raw.githubusercontent.com/kovacsv/occt-import-js/41e470890ae0f9dc69ac50ffd5fc73e03576f4eb/test/testfiles/cax-if/as1-tu-203.stp",
+      "origin": "CAx-IF AS1 assembly, AP203"
+    },
+    {
+      "name": "io1-cm-214.stp",
+      "sha256": "eb234e26bca411a6da39c311e74d5a47b5e7a1248ae589a3a86cd2dee1f91f9b",
+      "url": "https://raw.githubusercontent.com/kovacsv/occt-import-js/41e470890ae0f9dc69ac50ffd5fc73e03576f4eb/test/testfiles/cax-if/io1-cm-214.stp",
+      "origin": "CAx-IF IO1 part, AP214"
+    },
+    {
+      "name": "io1-tu-203.stp",
+      "sha256": "9c5013bb7c60fa6fde168ba119949069aa083f43b395c4970253fa1c6bc58006",
+      "url": "https://raw.githubusercontent.com/kovacsv/occt-import-js/41e470890ae0f9dc69ac50ffd5fc73e03576f4eb/test/testfiles/cax-if/io1-tu-203.stp",
+      "origin": "CAx-IF IO1 part, AP203"
+    },
+    {
+      "name": "dm1-id-214.stp",
+      "sha256": "59281108a72af555ef32f05597d38e293ad7667d86ff1baa10241cc76dea8b14",
+      "url": "https://raw.githubusercontent.com/kovacsv/occt-import-js/41e470890ae0f9dc69ac50ffd5fc73e03576f4eb/test/testfiles/cax-if/dm1-id-214.stp",
+      "origin": "CAx-IF DM1 part, AP214"
+    },
+    {
+      "name": "dm1-oc-214.stp",
+      "sha256": "ae08c9bafcf8939875aa5e09d02c7cc40e6f70c26a06aca7b9e3135eec24e2b5",
+      "url": "https://raw.githubusercontent.com/kovacsv/occt-import-js/41e470890ae0f9dc69ac50ffd5fc73e03576f4eb/test/testfiles/cax-if/dm1-oc-214.stp",
+      "origin": "CAx-IF DM1 part, AP214"
+    },
+    {
+      "name": "dm1-pe-214.stp",
+      "sha256": "eb596afbc044f32875b55a2b81463ae0fef7da74de93939f88eee22be14dc631",
+      "url": "https://raw.githubusercontent.com/kovacsv/occt-import-js/41e470890ae0f9dc69ac50ffd5fc73e03576f4eb/test/testfiles/cax-if/dm1-pe-214.stp",
+      "origin": "CAx-IF DM1 part, AP214"
+    },
+    {
+      "name": "sg1-c5-214.stp",
+      "sha256": "5e8ff5347d6edc7b648455e469ec84850237faf9e96b8d3bc14f00afcdffe443",
+      "url": "https://raw.githubusercontent.com/kovacsv/occt-import-js/41e470890ae0f9dc69ac50ffd5fc73e03576f4eb/test/testfiles/cax-if/sg1-c5-214.stp",
+      "origin": "CAx-IF SG1 part, AP214"
+    },
+    {
+      "name": "rounded-cube.step",
+      "sha256": "370c5474e50dc94923f0dacb5113f7258233601620ab530d937c18571869d49e",
+      "url": "https://raw.githubusercontent.com/kovacsv/occt-import-js/41e470890ae0f9dc69ac50ffd5fc73e03576f4eb/test/testfiles/rounded-cube/rounded-cube.step",
+      "origin": "occt-import-js test file"
+    },
+    {
+      "name": "conical-surface.step",
+      "sha256": "c4a65756a022264d8448b417fddbcc0ad24ccc02c4d1f41099b57ba0cd643b67",
+      "url": "https://raw.githubusercontent.com/kovacsv/occt-import-js/41e470890ae0f9dc69ac50ffd5fc73e03576f4eb/test/testfiles/conical-surface/conical-surface.step",
+      "origin": "occt-import-js test file"
+    },
+    {
+      "name": "cube-in.step",
+      "sha256": "f52324692b57eba7684739c45c7f6ddbb7019a70c7e96bf70a6da726e70fbde1",
+      "url": "https://raw.githubusercontent.com/kovacsv/occt-import-js/41e470890ae0f9dc69ac50ffd5fc73e03576f4eb/test/testfiles/cube-units/cube-in.step",
+      "origin": "occt-import-js test file (inch units)"
+    },
+    {
+      "name": "face_recognition_sample_part.stp",
+      "sha256": "de7b8a513ae923cd11de2323e798ac084cc94f9aa7d7a2a8adab65fc592f8d0b",
+      "url": "https://raw.githubusercontent.com/tpaviot/pythonocc-demos/fba0372f66cf228535b794e9e998910fd4831dba/assets/models/face_recognition_sample_part.stp",
+      "origin": "pythonocc-demos asset"
+    },
+    {
+      "name": "splinecage.stp",
+      "sha256": "e6d3c25c4a3777de1cb71c4988fc1a5cbb9fb5587e4085273d1844a479ddfe33",
+      "url": "https://raw.githubusercontent.com/tpaviot/pythonocc-demos/fba0372f66cf228535b794e9e998910fd4831dba/assets/models/splinecage.stp",
+      "origin": "pythonocc-demos asset"
+    },
+    {
+      "name": "11752.stp",
+      "sha256": "c2748324a36018ff1d88cfb0a80946636f29431417b9f1052a0dfc13576b0d41",
+      "url": "https://raw.githubusercontent.com/tpaviot/pythonocc-demos/fba0372f66cf228535b794e9e998910fd4831dba/assets/models/11752.stp",
+      "origin": "pythonocc-demos asset"
+    },
+    {
+      "name": "Ventilator.stp",
+      "sha256": "19a11c6949aff4d003a4750d0d9f7e4ee21ab12401dfb07bd97350777266e4d5",
+      "url": "https://raw.githubusercontent.com/tpaviot/pythonocc-demos/fba0372f66cf228535b794e9e998910fd4831dba/assets/models/Ventilator.stp",
+      "origin": "pythonocc-demos asset (assembly)"
+    },
+    {
+      "name": "KR600_R2830-4.stp",
+      "sha256": "8beb257cb915240f7012474c2dcfb55a820a343abde082faadeacfdbe93823ce",
+      "url": "https://raw.githubusercontent.com/tpaviot/pythonocc-demos/fba0372f66cf228535b794e9e998910fd4831dba/assets/models/KR600_R2830-4.stp",
+      "origin": "pythonocc-demos asset (KUKA KR600 robot, assembly)"
+    },
+    {
+      "name": "RC_Buggy_2_front_suspension.stp",
+      "sha256": "7640da77c19d10c3373b15cbbf40c39755ab4047166aca6d5293cb3efb79ed8b",
+      "url": "https://raw.githubusercontent.com/tpaviot/pythonocc-demos/fba0372f66cf228535b794e9e998910fd4831dba/assets/models/RC_Buggy_2_front_suspension.stp",
+      "origin": "pythonocc-demos asset (assembly)"
+    }
+  ]
+}
