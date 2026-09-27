@@ -8267,8 +8267,17 @@ function setSphereResLive(v){
 let _sresRebuildT = null;
 function _sresRebuild(o, v){
   if(!o || !o.mesh) return;
-  // Rebuild base geometry — scale/position/rotation on mesh are untouched
+  // Rebuild base geometry — rotation untouched, scale/position ajustées (cf. FIX)
   const oldGeo = o.mesh.geometry;
+  // [FIX 27/09] L'échelle de la pièce compense l'emprise de SA géométrie
+  // (setDim = cote / emprise). Une demi-sphère créée à 18 ou 30 segments n'a
+  // pas de sommet en ±Z : emprise < 20, échelle > 1. Rebâtie à 56 segments
+  // avec la même échelle, elle passait de 20.000 à 20.110 (20.309 depuis 12).
+  // On relève l'emprise et le dessous avant, et on les rend après.
+  oldGeo.computeBoundingBox();
+  const _oS = oldGeo.boundingBox.getSize(new THREE.Vector3());
+  o.mesh.updateMatrixWorld(true);
+  const _prevMinY = new THREE.Box3().setFromObject(o.mesh).min.y;
   let newGeo;
   if(o.type==='sphere'){
     newGeo = new THREE.SphereGeometry(PS/2, v, v);
@@ -8277,8 +8286,13 @@ function _sresRebuild(o, v){
     newGeo.translate(0, -PS/2, 0);
     delete o.primRes; // géo = _makeHalfSphere(sphereRes), plus celle de création
   }
+  newGeo.computeBoundingBox();
+  const _nS = newGeo.boundingBox.getSize(new THREE.Vector3());
   o.mesh.geometry = newGeo;
   oldGeo.dispose();
+  for(const a of ['x','y','z']) if(_nS[a] > 1e-9) o.mesh.scale[a] *= _oS[a] / _nS[a];
+  o.mesh.updateMatrixWorld(true);
+  o.mesh.position.y += _prevMinY - new THREE.Box3().setFromObject(o.mesh).min.y;
   _invalidateBbox(o.mesh);
   _camDirty = true;
   updStats();
