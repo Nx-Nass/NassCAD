@@ -839,228 +839,517 @@ function _arcSphereToScene() {
 //                                                                    shared by every primitive dialog)
 // ══════════════════════════════════════════════════════════════════════════
 // ══════════════════════════════════════════════════════════════════
-// 🔩 Screw.Gen — Parametric fastener ISO 68-1 / ASME B1.1/B1.2
-// Profil V ISO 60° · Tête hex / CHC / aucune · Hélicoïde réel
-// Lead-in / lead-out · Watertight manifold
+// 🔩 Screw.Gen — Parametric fastener ISO 68-1 / ASME B1.1
+// Profil de base 60° · Tête H ISO 4017 / CHC ISO 4762 / aucune
+// Pas à DROITE par défaut (ISO : « LH » est l'exception désignée)
+// Maillage aligné sur l'hélice · arêtes vives · Watertight manifold
+// ══════════════════════════════════════════════════════════════════
+//
+// [FIX V4.7.1 — 27/09 — Nass : « sens de vissage » + « l'aspect du nut,
+// c'est affreux »] REFONTE Screw.Gen + Nut.Gen. Ce qui était faux, mesuré :
+//
+//  1. SENS DE VISSAGE — vis ET écrou sortaient avec un pas À GAUCHE.
+//     Sommet (r·cosθ, y, r·sinθ) avec φ = y/P − θ/2π : quand y monte, θ croît,
+//     le point tourne de +X vers +Z = rotation NÉGATIVE autour de +Y dans le
+//     repère direct de three.js → hélice gauche (mesuré : dα/dy = −2π/P).
+//     Piège classique : la formule Z-up (x=r cosθ, y=r sinθ, z=Pθ/2π, qui est
+//     à droite) recopiée en Y-up en PERMUTANT y et z. Une permutation est un
+//     miroir (dét. −1) : elle retourne la chiralité. Les exports STL/OBJ/3MF
+//     font (x,y,z)→(x,−z,y), une rotation (dét. +1) : les pièces imprimées
+//     étaient donc bien à gauche. Vis et écrou cohérents entre eux, mais
+//     incompatibles avec toute visserie du commerce.
+//     → φ = y/P + s·θ/2π, s = +1 (RH, défaut) / −1 (LH, option).
+//  2. PROFIL CRÉNELÉ — anneaux à 32/pas pour 48 colonnes : les cassures du
+//     profil (φ = 1/16, 6/16, 10/16, 15/16) tombaient au milieu des triangles
+//     → crêtes en dents de scie, effet « disques empilés ». Ici : anneaux
+//     espacés de P/N et quads cisaillés qui SUIVENT l'hélice ; chaque triangle
+//     couvre exactement un pas de phase 1/N, N multiple de 16 → chaque cassure
+//     est une arête. Profil ISO exact, sans sur-échantillonnage.
+//  3. ENTRÉE DE FILET DE LA VIS — le « fade » remontait le fond du filet
+//     jusqu'au Ø majeur sur le premier pas : la gorge était bouchée à
+//     l'endroit précis où la crête de l'écrou doit s'engager (interférence
+//     ≈ 0,4·H1 même avec le chanfrein). Règle : une entrée de filet se fait
+//     vers le FOND du filet (vis : Ø mineur ; écrou : Ø majeur). Ici :
+//     chanfrein ISO 4753 « CH » 45° jusque sous le Ø mineur (≈ d − 1,6P),
+//     fond de filet intact. Le raccord sous tête garde un dégagement 1P.
+//  4. ÉCROU — « phase +0,5 = filet femelle » : le profil de base ISO 68-1 est
+//     COMMUN à la vis et à l'écrou ; le même rayon r(φ) sépare la matière de
+//     la vis (r < r(φ)) de celle de l'écrou (r > r(φ)). Le +0,5 ne rendait pas
+//     le filet « femelle », il le décalait d'un demi-pas : écrou posé à un
+//     multiple du pas = interférence maximale. Supprimé (phase 0 → une vis et
+//     un écrou décalés de k·P s'emboîtent exactement).
+//  5. ASPECT DE L'ÉCROU — trois défauts cumulés : (a) computeVertexNormals sur
+//     un maillage indexé qui partage les sommets entre pans, chanfreins et
+//     faces → normales moyennées à travers les arêtes vives = « savon » ;
+//     (b) « chanfrein » = décalage radial constant de tout le contour
+//     hexagonal (biseau de gemme) au lieu du cône 30° qui ne mord que les
+//     coins et dessine les arcs caractéristiques sur les pans ; (c) coins
+//     échantillonnés par N_RAD : 32 et 64 ne sont pas multiples de 6 → quatre
+//     coins sur six rognés. Et cotes « à la louche » (s = 1,7d, m = 0,8d :
+//     M12 → s 20,4 au lieu de 18). Ici : cotes ISO 4032/4033/4017/4762
+//     tabulées, contour hexagonal exact et indépendant de N, chanfreins
+//     coniques 30° (ISO 4032 β 15..30°, cercle ≥ dw), fraisures 120° (ISO 4032
+//     θ 90..120°, Ø da), et un jeu de sommets PAR FACE lisse (pans, cônes,
+//     faces planes, segments du profil) → arêtes vives au rendu. La soudure
+//     par position (_prepCSGMeshes/MEDUSA, _weldAndCheckManifold) referme le
+//     tout : le solide reste étanche.
+//  6. CHC sans six pans creux ni cotes ISO 4762 → ajoutés (dk, k, s, t).
+//
+// COMPAT PROJETS : un objet sauvegardé AVANT ce correctif n'a pas de champ
+// « hand » dans genParams. Il a été généré à gauche : à la ré-édition (et au
+// Deep re-run) il le RESTE, et le dialog l'affiche « LH » — on ne retourne pas
+// en silence le sens d'une pièce qui s'accouple peut-être déjà avec une autre
+// pièce gauche de la même scène. Idem pour l'ancien décalage d'écrou (+0,5),
+// conservé dans genParams.phase. Mêmes principes que chamferAbout (V4.5.2).
 // ══════════════════════════════════════════════════════════════════
 
+const _IN = 25.4;
+// s, m, mH, dw, da : écrou ISO 4032 (style 1) / ISO 4033 (style 2) — s nominal,
+//   m et mH = m max, dw = Ø d'appui min, da = Ø de fraisure max.
+// k, dwH, c : tête hexagonale ISO 4017 (k nominal, dw min, c max de la collerette).
+// dk, kS, sS, tS : tête cylindrique six pans creux ISO 4762 (dk max, k max,
+//   s nominal de la clé, t min).
+// Impérial : écrous ASME B18.2.2 (hex nut / hex thick nut), écrous de vis à
+//   métaux B18.6.3 (#4..#10), têtes H B18.2.1 (sH = plats de tête, ≠ écrou en
+//   7/16"), CHC B18.3. Têtes H #4..#10 : vis à métaux B18.6.3, tête hexagonale
+//   normale (A et H max) — plats de tête ≠ plats d'écrou sur ces tailles.
 const _SCREW_DB = {
   metric: [
-    { name:'M2',   dia: 2.0,  coarse:0.40, fine:0.25 },
-    { name:'M2.5', dia: 2.5,  coarse:0.45, fine:0.35 },
-    { name:'M3',   dia: 3.0,  coarse:0.50, fine:0.35 },
-    { name:'M4',   dia: 4.0,  coarse:0.70, fine:0.50 },
-    { name:'M5',   dia: 5.0,  coarse:0.80, fine:0.50 },
-    { name:'M6',   dia: 6.0,  coarse:1.00, fine:0.75 },
-    { name:'M8',   dia: 8.0,  coarse:1.25, fine:1.00 },
-    { name:'M10',  dia:10.0,  coarse:1.50, fine:1.25 },
-    { name:'M12',  dia:12.0,  coarse:1.75, fine:1.50 },
-    { name:'M14',  dia:14.0,  coarse:2.00, fine:1.50 },
-    { name:'M16',  dia:16.0,  coarse:2.00, fine:1.50 },
-    { name:'M20',  dia:20.0,  coarse:2.50, fine:1.50 },
-    { name:'M24',  dia:24.0,  coarse:3.00, fine:2.00 },
+    { name:'M2',   dia: 2.0, coarse:0.40, fine:0.25, s: 4.0, m: 1.6,          dw: 3.1,  da: 2.3,  k: 1.4, dwH: 2.95, c:0.25, dk: 3.8, kS: 2.0, sS: 1.5, tS: 1.0 },
+    { name:'M2.5', dia: 2.5, coarse:0.45, fine:0.35, s: 5.0, m: 2.0,          dw: 4.1,  da: 2.9,  k: 1.7, dwH: 3.95, c:0.25, dk: 4.5, kS: 2.5, sS: 2.0, tS: 1.1 },
+    { name:'M3',   dia: 3.0, coarse:0.50, fine:0.35, s: 5.5, m: 2.4,          dw: 4.6,  da: 3.45, k: 2.0, dwH: 4.45, c:0.40, dk: 5.5, kS: 3.0, sS: 2.5, tS: 1.3 },
+    { name:'M4',   dia: 4.0, coarse:0.70, fine:0.50, s: 7.0, m: 3.2,          dw: 5.9,  da: 4.6,  k: 2.8, dwH: 5.74, c:0.40, dk: 7.0, kS: 4.0, sS: 3.0, tS: 2.0 },
+    { name:'M5',   dia: 5.0, coarse:0.80, fine:0.50, s: 8.0, m: 4.7, mH: 5.1, dw: 6.9,  da: 5.75, k: 3.5, dwH: 6.74, c:0.50, dk: 8.5, kS: 5.0, sS: 4.0, tS: 2.5 },
+    { name:'M6',   dia: 6.0, coarse:1.00, fine:0.75, s:10.0, m: 5.2, mH: 5.7, dw: 8.9,  da: 6.75, k: 4.0, dwH: 8.74, c:0.50, dk:10.0, kS: 6.0, sS: 5.0, tS: 3.0 },
+    { name:'M8',   dia: 8.0, coarse:1.25, fine:1.00, s:13.0, m: 6.8, mH: 7.5, dw:11.6,  da: 8.75, k: 5.3, dwH:11.47, c:0.60, dk:13.0, kS: 8.0, sS: 6.0, tS: 4.0 },
+    { name:'M10',  dia:10.0, coarse:1.50, fine:1.25, s:16.0, m: 8.4, mH: 9.3, dw:14.6,  da:10.8,  k: 6.4, dwH:14.47, c:0.60, dk:16.0, kS:10.0, sS: 8.0, tS: 5.0 },
+    { name:'M12',  dia:12.0, coarse:1.75, fine:1.50, s:18.0, m:10.8, mH:12.0, dw:16.6,  da:13.0,  k: 7.5, dwH:16.47, c:0.60, dk:18.0, kS:12.0, sS:10.0, tS: 6.0 },
+    { name:'M14',  dia:14.0, coarse:2.00, fine:1.50, s:21.0, m:12.8, mH:14.1, dw:19.6,  da:15.1,  k: 8.8, dwH:19.15, c:0.60, dk:21.0, kS:14.0, sS:12.0, tS: 7.0 },
+    { name:'M16',  dia:16.0, coarse:2.00, fine:1.50, s:24.0, m:14.8, mH:16.4, dw:22.5,  da:17.3,  k:10.0, dwH:22.0,  c:0.80, dk:24.0, kS:16.0, sS:14.0, tS: 8.0 },
+    { name:'M20',  dia:20.0, coarse:2.50, fine:1.50, s:30.0, m:18.0, mH:20.3, dw:27.7,  da:21.6,  k:12.5, dwH:27.7,  c:0.80, dk:30.0, kS:20.0, sS:17.0, tS:10.0 },
+    { name:'M24',  dia:24.0, coarse:3.00, fine:2.00, s:36.0, m:21.5, mH:23.9, dw:33.3,  da:25.9,  k:15.0, dwH:33.25, c:0.80, dk:36.0, kS:24.0, sS:19.0, tS:12.0 },
   ],
   imperial: [
-    { name:'#4  — 0.112"',  dia: 2.845, coarse:40,  fine:48  },
-    { name:'#6  — 0.138"',  dia: 3.505, coarse:32,  fine:40  },
-    { name:'#8  — 0.164"',  dia: 4.166, coarse:32,  fine:36  },
-    { name:'#10 — 0.190"',  dia: 4.826, coarse:24,  fine:32  },
-    { name:'1/4"',          dia: 6.350, coarse:20,  fine:28  },
-    { name:'5/16"',         dia: 7.938, coarse:18,  fine:24  },
-    { name:'3/8"',          dia: 9.525, coarse:16,  fine:24  },
-    { name:'7/16"',         dia:11.113, coarse:14,  fine:20  },
-    { name:'1/2"',          dia:12.700, coarse:13,  fine:20  },
-    { name:'5/8"',          dia:15.875, coarse:11,  fine:18  },
-    { name:'3/4"',          dia:19.050, coarse:10,  fine:16  },
-    { name:'7/8"',          dia:22.225, coarse: 9,  fine:14  },
-    { name:'1"',            dia:25.400, coarse: 8,  fine:12  },
+    { name:'#4  — 0.112"', dia: 2.845, coarse:40, fine:48, s:1/4*_IN,   m:3/32*_IN,  sH:0.188*_IN, k:0.060*_IN,     dk:0.183*_IN,  kS:0.112*_IN,  sS:3/32*_IN, tS:0.055*_IN },
+    { name:'#6  — 0.138"', dia: 3.505, coarse:32, fine:40, s:5/16*_IN,  m:7/64*_IN,  sH:0.250*_IN, k:0.093*_IN,     dk:0.226*_IN,  kS:0.138*_IN,  sS:7/64*_IN, tS:0.064*_IN },
+    { name:'#8  — 0.164"', dia: 4.166, coarse:32, fine:36, s:11/32*_IN, m:1/8*_IN,   sH:0.250*_IN, k:0.110*_IN,     dk:0.270*_IN,  kS:0.164*_IN,  sS:9/64*_IN, tS:0.077*_IN },
+    { name:'#10 — 0.190"', dia: 4.826, coarse:24, fine:32, s:3/8*_IN,   m:1/8*_IN,   sH:0.312*_IN, k:0.120*_IN,     dk:0.312*_IN,  kS:0.190*_IN,  sS:5/32*_IN, tS:0.087*_IN },
+    { name:'1/4"',  dia: 6.350, coarse:20, fine:28, s:7/16*_IN,  m:7/32*_IN,  mH:9/32*_IN,  sH:7/16*_IN,  k:5/32*_IN,  dk:0.375*_IN,  kS:0.250*_IN,  sS:3/16*_IN, tS:0.120*_IN },
+    { name:'5/16"', dia: 7.938, coarse:18, fine:24, s:1/2*_IN,   m:17/64*_IN, mH:21/64*_IN, sH:1/2*_IN,   k:13/64*_IN, dk:0.469*_IN,  kS:0.3125*_IN, sS:1/4*_IN,  tS:0.151*_IN },
+    { name:'3/8"',  dia: 9.525, coarse:16, fine:24, s:9/16*_IN,  m:21/64*_IN, mH:13/32*_IN, sH:9/16*_IN,  k:15/64*_IN, dk:0.5625*_IN, kS:0.375*_IN,  sS:5/16*_IN, tS:0.182*_IN },
+    { name:'7/16"', dia:11.113, coarse:14, fine:20, s:11/16*_IN, m:3/8*_IN,   mH:29/64*_IN, sH:5/8*_IN,   k:9/32*_IN,  dk:0.656*_IN,  kS:0.4375*_IN, sS:3/8*_IN,  tS:0.213*_IN },
+    { name:'1/2"',  dia:12.700, coarse:13, fine:20, s:3/4*_IN,   m:7/16*_IN,  mH:9/16*_IN,  sH:3/4*_IN,   k:5/16*_IN,  dk:0.750*_IN,  kS:0.500*_IN,  sS:3/8*_IN,  tS:0.245*_IN },
+    { name:'5/8"',  dia:15.875, coarse:11, fine:18, s:15/16*_IN, m:35/64*_IN, mH:23/32*_IN, sH:15/16*_IN, k:25/64*_IN, dk:0.938*_IN,  kS:0.625*_IN,  sS:1/2*_IN,  tS:0.307*_IN },
+    { name:'3/4"',  dia:19.050, coarse:10, fine:16, s:9/8*_IN,   m:41/64*_IN, mH:13/16*_IN, sH:9/8*_IN,   k:15/32*_IN, dk:1.125*_IN,  kS:0.750*_IN,  sS:5/8*_IN,  tS:0.370*_IN },
+    { name:'7/8"',  dia:22.225, coarse: 9, fine:14, s:21/16*_IN, m:3/4*_IN,   mH:29/32*_IN, sH:21/16*_IN, k:35/64*_IN, dk:1.312*_IN,  kS:0.875*_IN,  sS:3/4*_IN,  tS:0.432*_IN },
+    { name:'1"',    dia:25.400, coarse: 8, fine:12, s:3/2*_IN,   m:55/64*_IN, mH:1*_IN,     sH:3/2*_IN,   k:39/64*_IN, dk:1.500*_IN,  kS:1.000*_IN,  sS:3/4*_IN,  tS:0.495*_IN },
   ],
 };
 
+// ══ Noyau filetage partagé Screw/Nut ════════════════════════════════
+// (Nut.Gen dépend déjà de _SCREW_DB déclaré ici — même contrat d'ordre de
+// chargement, rien de nouveau : Screw doit précéder Nut.)
+
+// Pas du filet (mm) — même convention qu'avant pour genParams.
+function _thrPitch(spec, sys, thread, pitchCustom) {
+  if (thread === 'none')   return 0;
+  if (thread === 'custom') return Math.max(0.05, pitchCustom || 1.0);
+  const v = thread === 'fine' ? spec.fine : spec.coarse;
+  return sys === 'metric' ? v : 25.4 / v;
+}
+
+// Colonnes par tour : multiple de 16 obligatoire (les cassures du profil de
+// base sont des multiples de P/16). 32/48/64/96 d'avant passent tels quels.
+function _thrN(n) {
+  const v = Math.round((+n || 48) / 16) * 16;
+  return Math.max(16, Math.min(192, v));
+}
+
+// Profil de base ISO 68-1 (identique UNC/UNF, ASME B1.1), phase φ de période 1 :
+//   [15/16, 1/16] plat au Ø majeur (P/8) · [1/16, 6/16] flanc 30°
+//   [6/16, 10/16] plat au Ø mineur (P/4) · [10/16, 15/16] flanc 30°
+// Vis : matière pour r < r(φ). Écrou : matière pour r > r(φ). MÊME profil.
+function _thrProfileR(phi, rMaj, rMin) {
+  const p  = phi - Math.floor(phi);
+  const HR = rMaj - rMin;
+  if (p < 1/16 || p >= 15/16) return rMaj;
+  if (p < 6/16)   return rMaj - HR * (p - 1/16)  / (5/16);
+  if (p <= 10/16) return rMin;
+  return rMin + HR * (p - 10/16) / (5/16);
+}
+// Profil de CONCEPTION du filet extérieur (ISO 965-1, fond arrondi au rayon
+// max) : identique au profil de base sauf le fond, où le plat P/4 au Ø d1 est
+// remplacé par un arc de rayon R = H/6 tangent aux deux flancs, qui descend à
+// d3 = d − 1,2269·P (d1 − H/6). L'arc part pile des extrémités du plat
+// (φ = 6/16 et 10/16, au rayon rMin) : continu et tangent aux flancs.
+function _thrProfileExtR(phi, rMaj, rMin, H, P) {
+  const p = phi - Math.floor(phi);
+  if (p <= 6/16 || p >= 10/16) return _thrProfileR(p, rMaj, rMin);
+  const u = (p - 0.5) * P, R = H / 6;
+  return rMin + H / 12 - Math.sqrt(Math.max(0, R * R - u * u));
+}
+// Groupes de lissage du profil arrondi : crête vive (0) | flanc–arc–flanc (1),
+// tangents entre eux, donc lissés ensemble.
+function _thrSegExt(phi) {
+  const p = phi - Math.floor(phi);
+  return (p < 1/16 || p >= 15/16) ? 0 : 1;
+}
+// Segment du profil (0 plat majeur, 1 flanc, 2 plat mineur, 3 flanc) → groupe
+// de lissage : les normales ne sont jamais moyennées à travers une cassure.
+function _thrSeg(phi) {
+  const p = phi - Math.floor(phi);
+  if (p < 1/16 || p >= 15/16) return 0;
+  if (p < 6/16)  return 1;
+  if (p < 10/16) return 2;
+  return 3;
+}
+
+// Mini-constructeur de maillage : sommets DUPLIQUÉS entre faces lisses
+// différentes (arêtes vives au rendu), soudés par position côté CSG/export.
+function _fbV(M, x, y, z) { M.P.push(x, y, z); return M.P.length / 3 - 1; }
+// Bande entre deux anneaux de même taille. L « bas », U « haut » ; normale =
+// (U−L) × tangente(θ croissant). closed : anneaux fermés. flip : inverse.
+function _fbBand(M, L, U, closed, flip) {
+  const n = L.length, last = closed ? n : n - 1;
+  for (let j = 0; j < last; j++) {
+    const j1 = (j + 1) % n;
+    if (!flip) M.T.push(L[j], U[j], U[j1],  L[j], U[j1], L[j1]);
+    else       M.T.push(L[j], U[j1], U[j],  L[j], L[j1], U[j1]);
+  }
+}
+// Couronne plane entre un anneau intérieur I et un anneau extérieur O
+// d'échantillonnages différents (angles croissants, tous deux partant de 0).
+// up : normale +Y (face du haut) ; sinon −Y.
+function _fbZip(M, I, aI, O, aO, up) {
+  const nI = I.length, nO = O.length, TAU = Math.PI * 2;
+  const angI = t => t < nI ? aI[t] : aI[t - nI] + TAU;
+  const angO = t => t < nO ? aO[t] : aO[t - nO] + TAU;
+  let i = 0, k = 0;
+  while (i < nI || k < nO) {
+    const Ii = I[i % nI], Ok = O[k % nO];
+    if (k >= nO || (i < nI && angI(i + 1) <= angO(k + 1))) {
+      const In = I[(i + 1) % nI];
+      if (up) M.T.push(Ii, In, Ok); else M.T.push(Ii, Ok, In);
+      i++;
+    } else {
+      const On = O[(k + 1) % nO];
+      if (up) M.T.push(Ii, On, Ok); else M.T.push(Ii, Ok, On);
+      k++;
+    }
+  }
+}
+// Éventail plan depuis un centre (disque). up : normale +Y.
+function _fbFan(M, C, R, up) {
+  const n = R.length;
+  for (let j = 0; j < n; j++) {
+    const j1 = (j + 1) % n;
+    if (up) M.T.push(C, R[j1], R[j]); else M.T.push(C, R[j], R[j1]);
+  }
+}
+// Anneau circulaire de n sommets (angles 2πj/n), y constant.
+function _fbCircle(M, r, y, n) {
+  const idx = [], ang = [];
+  for (let j = 0; j < n; j++) {
+    const t = (j / n) * Math.PI * 2;
+    idx.push(_fbV(M, Math.cos(t) * r, y, Math.sin(t) * r)); ang.push(t);
+  }
+  return { idx, ang };
+}
+function _fbCopy(M, pts) { return pts.map(p => _fbV(M, p[0], p[1], p[2])); }
+
+// Contour hexagonal exact : coins à θ = 0°, 60°… (orientation inchangée),
+// nPer segments par pan, resserrés vers les coins (où l'arc de chanfrein
+// tourne le plus). Indépendant de N : les 6 coins sont TOUJOURS des sommets.
+function _hexOutline(s, nPer) {
+  const Rc = s / Math.sqrt(3), pts = [];
+  for (let f = 0; f < 6; f++) {
+    const a0 = f * Math.PI / 3, a1 = (f + 1) * Math.PI / 3;
+    const x0 = Rc * Math.cos(a0), z0 = Rc * Math.sin(a0);
+    const x1 = Rc * Math.cos(a1), z1 = Rc * Math.sin(a1);
+    for (let k = 0; k < nPer; k++) {
+      const u = k / nPer, t = 0.5 * u + 0.25 * (1 - Math.cos(Math.PI * u));
+      const x = x0 + (x1 - x0) * t, z = z0 + (z1 - z0) * t;
+      let a = (f === 0 && k === 0) ? 0 : Math.atan2(z, x);
+      if (a < 0) a += Math.PI * 2;
+      pts.push({ x, z, rho: Math.hypot(x, z), a });
+    }
+  }
+  return pts;
+}
+
+// Prisme hexagonal + chanfreins CONIQUES 30° (ISO 4032 : β 15..30°, cône qui
+// ne mord que les coins → arcs sur les pans, face d'appui circulaire Ø 2·rc).
+// chB/chT : chanfrein bas/haut. Construit pans + cônes ; renvoie les anneaux
+// de bord des deux faces planes (positions + angles) pour les couronnes.
+function _hexShell(M, pts, y0, y1, rc, chB, chT) {
+  const n = pts.length, nPer = n / 6, T30 = Math.tan(Math.PI / 6);
+  const hMax = 0.45 * (y1 - y0);
+  const dep = pts.map(p => Math.min(hMax, Math.max(0, (p.rho - rc) * T30)));
+  const yb = pts.map((p, k) => chB ? y0 + dep[k] : y0);
+  const yt = pts.map((p, k) => chT ? y1 - dep[k] : y1);
+  // Pans : un jeu de sommets par pan (plan) → coins vifs.
+  for (let f = 0; f < 6; f++) {
+    const L = [], U = [];
+    for (let k = 0; k <= nPer; k++) {
+      const q = (f * nPer + k) % n, p = pts[q];
+      L.push(_fbV(M, p.x, yb[q], p.z)); U.push(_fbV(M, p.x, yt[q], p.z));
+    }
+    _fbBand(M, L, U, false, false);
+  }
+  const ang = pts.map(p => p.a);
+  const ringOf = (r, y) => pts.map(p => [Math.cos(p.a) * r, y, Math.sin(p.a) * r]);
+  const bot = { pts: chB ? ringOf(rc, y0) : pts.map(p => [p.x, y0, p.z]), ang };
+  const top = { pts: chT ? ringOf(rc, y1) : pts.map(p => [p.x, y1, p.z]), ang };
+  // Cônes : un seul jeu de sommets par cône (surface lisse), génératrices radiales.
+  if (chB) {
+    const C = _fbCopy(M, bot.pts), E = pts.map((p, k) => _fbV(M, p.x, yb[k], p.z));
+    _fbBand(M, C, E, true, false);
+  }
+  if (chT) {
+    const E = pts.map((p, k) => _fbV(M, p.x, yt[k], p.z)), C = _fbCopy(M, top.pts);
+    _fbBand(M, E, C, true, false);
+  }
+  return { bot, top };
+}
+
+// Surface filetée : anneaux y = ys[i], colonnes θj = 2πj/N. Les anneaux
+// « réguliers » sont espacés de q·P/N : l'anneau i+1 est décalé de −s·q
+// colonnes, donc les côtés de chaque quad suivent l'hélice (phase constante)
+// et chaque triangle couvre UN pas de phase 1/N → cassures du profil = arêtes.
+// o = { N, ys, reg(i) → anneau régulier ?, iPhase(i) → q·i (entier),
+//       yPhase(y) → phase flottante (anneaux non réguliers), sgn, q, phase0,
+//       rad(y, φ) → [r, code] (0 profil, 1 enveloppe cône/fraisure, 2 dent
+//       supprimée par le démarrage émoussé), seg(φ) optionnel, inward }
+// Retourne ringPts(i) : positions de l'anneau i (pour les faces/bouchons).
+function _thrSurface(M, o) {
+  const { N, ys, sgn, q, inward } = o, nR = ys.length, TAU = Math.PI * 2;
+  const bx = new Float64Array(nR * N), by = new Float64Array(nR * N), bz = new Float64Array(nR * N);
+  const ph = new Float64Array(nR * N), env = new Uint8Array(nR * N);
+  const cs = [], sn = [];
+  for (let j = 0; j < N; j++) { const t = (j / N) * TAU; cs.push(Math.cos(t)); sn.push(Math.sin(t)); }
+  for (let i = 0; i < nR; i++) {
+    const y = ys[i];
+    for (let j = 0; j < N; j++) {
+      let phi;
+      if (o.reg(i)) { // entier exact → cassures pile sur les multiples de 1/16
+        const Phi = ((o.iPhase(i) + sgn * j) % N + N) % N;
+        phi = Phi / N + o.phase0;
+      } else {
+        phi = o.yPhase(y) + sgn * j / N + o.phase0;
+      }
+      const k = i * N + j, rr = o.rad(y, phi);
+      bx[k] = cs[j] * rr[0]; by[k] = y; bz[k] = sn[j] * rr[0];
+      ph[k] = phi; env[k] = rr[1] ? +rr[1] : 0;
+    }
+  }
+  const G = 6, map = new Int32Array(nR * N * G).fill(-1);
+  const segOf = o.seg || _thrSeg;
+  const vid = (k, g) => {
+    const key = k * G + g;
+    let v = map[key];
+    if (v < 0) { v = map[key] = _fbV(M, bx[k], by[k], bz[k]); }
+    return v;
+  };
+  const sh = -sgn * q;
+  for (let i = 0; i < nR - 1; i++) {
+    for (let j = 0; j < N; j++) {
+      const j1 = (j + 1) % N;
+      const u0 = ((j + sh) % N + N) % N, u1 = (u0 + 1) % N;
+      const kA = i * N + j, kD = i * N + j1, kB = (i + 1) * N + u0, kC = (i + 1) * N + u1;
+      const e = env[kA];
+      const g = (e && env[kB] === e && env[kC] === e && env[kD] === e) ? 3 + e
+              : (o.plain ? 0 : segOf(ph[kA] + sgn * 0.5 / N));
+      const a = vid(kA, g), b = vid(kB, g), c = vid(kC, g), d = vid(kD, g);
+      // Diagonale a–c (RH) ou b–d (LH) : le maillage LH est le miroir EXACT du RH.
+      if (sgn > 0) { if (!inward) M.T.push(a, b, c,  a, c, d); else M.T.push(a, c, b,  a, d, c); }
+      else         { if (!inward) M.T.push(a, b, d,  b, c, d); else M.T.push(a, d, b,  b, d, c); }
+    }
+  }
+  return {
+    ringPts(i) { const r = []; for (let j = 0; j < N; j++) { const k = i * N + j; r.push([bx[k], by[k], bz[k]]); } return r; },
+    ringAng() { const a = []; for (let j = 0; j < N; j++) a.push((j / N) * TAU); return a; },
+  };
+}
+
+// Anneaux axiaux : pas q·P/N depuis y0 (réguliers), dernier anneau calé sur y1.
+// Budget : on élargit q (diviseur de N) tant que le maillage dépasse ~800k tri.
+function _thrRings(y0, y1, pitch, N) {
+  let q = 1;
+  for (const d of [1, 2, 3, 4, 6, 8, 12, 16]) {
+    if (N % d) continue;
+    q = d;
+    const rings = Math.ceil((y1 - y0) / (pitch * d / N)) + 1;
+    if (rings * N * 2 <= 800000 || N / d <= 8) break;
+  }
+  const dy = pitch * q / N, ys = [], nReg = Math.floor((y1 - y0) / dy + 1e-9);
+  for (let i = 0; i <= nReg; i++) ys.push(y0 + i * dy);
+  let regCount = ys.length;
+  if (y1 - ys[ys.length - 1] > 0.25 * dy) ys.push(y1);
+  else { ys[ys.length - 1] = y1; regCount--; }
+  return { ys, q, regCount };
+}
+// Anneaux d'un fût lisse (sans filet) : seulement là où l'enveloppe casse.
+function _plainRings(y0, y1, cuts) {
+  const ys = [y0, y1];
+  for (const c of cuts) if (c > y0 + 1e-6 && c < y1 - 1e-6) ys.push(c);
+  ys.sort((a, b) => a - b);
+  return ys.filter((y, i) => i === 0 || y - ys[i - 1] > 1e-6);
+}
+
 // ── Constructeur géométrie pure (sans Three.js) ────────────────────
-// params: { system, specIdx, thread, pitchCustom, length, head, nRad }
-// Retourne { vPos: Float32Array, tris: Uint32Array }
-// Géométrie posée sur Y=0 (base vis). Tête vers Y = length + headH.
+// params: { system, specIdx, thread, pitchCustom, length, head, nRad,
+//           chamferAbout, hand ('right'|'left', défaut 'right'), clearance (mm, radial),
+//           bluntStart (démarrage émoussé / Higbee aux bouts libres) }
+// Retourne { vPos: Float32Array, tris: number[] }
+// Géométrie posée sur Y=0 (bout libre). Tête vers Y = length + k.
 function _makeScrew(params) {
   const sys      = params.system   || 'metric';
   const spIdx    = params.specIdx  !== undefined ? params.specIdx : 5; // M6 défaut
   const db       = _SCREW_DB[sys]  || _SCREW_DB.metric;
   const spec     = db[Math.min(Math.max(0, spIdx), db.length - 1)];
   const D        = spec.dia;
-  const rCrest   = D / 2;
   const thread   = params.thread   || 'coarse';
   const length   = Math.max(1, params.length || 20);
   const headType = params.head     || 'hex';
-  const N_RAD    = params.nRad     || 48;
+  const N        = _thrN(params.nRad || 48);
+  const sgn      = params.hand === 'left' ? -1 : 1;
+  const clr      = Math.max(0, +params.clearance || 0);
+  const pitch    = _thrPitch(spec, sys, thread, params.pitchCustom);
+  const hasHead  = headType !== 'none';
 
-  // ── Pas du filet ────────────────────────────────────────────────
-  let pitch = 0, rRoot = rCrest;
-  if (thread !== 'none') {
-    if      (thread === 'custom') pitch = Math.max(0.05, params.pitchCustom || 1.0);
-    else if (thread === 'fine')   pitch = sys === 'metric' ? spec.fine   : 25.4 / spec.fine;
-    else                          pitch = sys === 'metric' ? spec.coarse : 25.4 / spec.coarse;
-    const Hv = (Math.sqrt(3) / 2) * pitch;
-    rRoot    = rCrest - (5 / 8) * Hv;   // rayon mineur externe ISO 60°
-  }
+  // Profil : Ø majeur/mineur de base, décalés vers l'axe du jeu radial.
+  const H       = (Math.sqrt(3) / 2) * pitch;
+  const rMaj    = D / 2 - clr;
+  const rMinRaw = D / 2 - (5 / 8) * H - clr;
+  const rMin    = pitch > 0 ? Math.max(0.2 * D / 2, rMinRaw) : rMaj;
+  // Fond de filet ARRONDI (profil de conception ISO 965-1) — sauf pas « custom »
+  // absurde où rMin a dû être borné (flancs plus à 60° : l'arc ne serait plus
+  // tangent) : on garde alors le plat du profil de base.
+  const rounded = pitch > 0 && rMin === rMinRaw;
+  const prof = rounded ? (phi => _thrProfileExtR(phi, rMaj, rMin, H, pitch))
+                       : (phi => _thrProfileR(phi, rMaj, rMin));
 
-  // ── Profil V ISO 60° ────────────────────────────────────────────
-  // φ ∈ [0,1/16[ ∪ [15/16,1[ → crête (rCrest)
-  // φ ∈ [1/16,  6/16[         → flanc descendant
-  // φ ∈ [6/16, 10/16]         → gorge (rRoot)
-  // φ ∈ ]10/16,15/16[         → flanc remontant
-  function profileR(phi) {
-    const p  = ((phi % 1) + 1) % 1;
-    const HR = rCrest - rRoot;
-    if (p < 1/16 || p >= 15/16) return rCrest;
-    if (p < 6/16)   return rCrest - HR * (p - 1/16)  / (5/16);
-    if (p <= 10/16) return rRoot;
-    return rRoot + HR * (p - 10/16) / (5/16);
-  }
+  // Bout(s) libre(s) : chanfrein ISO 4753 « CH » — 45°, jusque sous le Ø
+  // mineur (≈ d − 1,6P), filet incomplet u < 2P. Fond de filet intact.
+  const cham   = !!params.chamferAbout;
+  const rEnd   = Math.max(0.3 * rMaj, (pitch > 0 ? D / 2 - 0.8 * pitch : D / 2 - 0.08 * D) - clr);
+  const chLen  = rMaj - rEnd;                       // 45° : axial = radial
+  const runLen = (hasHead && pitch > 0) ? pitch : 0; // dégagement sous tête
+  const Y0 = 0, Y1 = length;
 
-  // ── Résolution axiale ───────────────────────────────────────────
-  const N_PER_TURN = 32;      // anneaux par tour de filet
-  const N_AX_MAX   = 3200;    // cap perf
-  const nTurns     = pitch > 0 ? length / pitch : 1;
-  const N_AX       = pitch > 0
-    ? Math.max(N_PER_TURN, Math.min(N_AX_MAX, Math.ceil(nTurns * N_PER_TURN)))
-    : 48;
-
-  // ── Tête : géométrie ISO ─────────────────────────────────────────
-  // Largeur sur plats ≈ 1.70·D (DIN 931/933) ; inradius = flat/2
-  const headH   = D * 0.64;
-  const headInr = D * 1.70 / 2;
-
-  function headR(theta) {
-    if (headType === 'hex') {
-      const localA = theta % (Math.PI / 3) - Math.PI / 6;
-      return headInr / Math.cos(localA);
-    }
-    return headInr; // chc = cylindre
-  }
-
-  const verts = [];
-  const idxs  = [];
-  const Y0    = 0;      // base sur la grille NASSCAD
-  const Y1    = length;
-
-  // ══ 1. TIGE ══════════════════════════════════════════════════════
-  // Lead-in/lead-out : fade linéaire sur 1 pas → anneaux lisses aux extrémités
-  // (INCHANGé, s'applique toujours aux deux bouts, chanfrein ou pas).
-  // [FIX V4.5.3] Chanfrein d'about ISO 4753 (Y0, pointe libre) : s'applique
-  // EN PLUS du fade (pas à sa place) — fade normal d'abord, clip conique
-  // par-dessus ensuite. Ma 1re version (V4.5.2) remplaçait le fade par un
-  // cône calé sur le 45° strict (Lcham=rCrest-rRoot, <1 pas) : trop court
-  // face à la période hélicoïdale du filet, ça tronquait à mi-cycle et donnait
-  // un effet de disques empilés au lieu d'un cône lisse. Longueur recalibrée
-  // à 1,5×pas (~20° réel, toujours < 2P donc conforme à la norme) : assez
-  // long pour lisser sur plusieurs tours, validé visuellement.
-  const fadeDist     = pitch > 0 ? pitch : 1;
-  const chamferAbout = !!params.chamferAbout;
-  const chamferLen   = chamferAbout
-    ? (pitch > 0 ? pitch * 1.5 : (rCrest - rRoot > 0 ? rCrest - rRoot : rCrest * 0.4))
-    : 0;
-  // [NEW V4.5.4] Sans tête (goujon fileté des deux bouts), Y1 est AUSSI une
-  // extrémité libre d'entrée de filet (tige qui se visse aux deux bouts) —
-  // même chanfrein que Y0, symétrique. Avec une tête, Y1 = base de tête,
-  // jamais insérée nulle part : pas de chanfrein là. Automatique, pas une
-  // case en plus — découle directement du choix HEAD déjà fait.
-  const chamferBothEnds = chamferAbout && headType === 'none';
-  for (let i = 0; i <= N_AX; i++) {
-    const y = Y0 + (i / N_AX) * length;
-    for (let j = 0; j < N_RAD; j++) {
-      const theta = (j / N_RAD) * Math.PI * 2;
-      let r;
-      if (pitch <= 0) {
-        r = rCrest;
-      } else {
-        const phi  = y / pitch - theta / (Math.PI * 2); // hélice droite
-        const rFull = profileR(phi);
-        let fade    = 1.0;
-        if (y - Y0 < fadeDist) fade = Math.min(fade, (y - Y0) / fadeDist);
-        if (Y1 - y < fadeDist) fade = Math.min(fade, (Y1 - y) / fadeDist);
-        r = rCrest - (rCrest - rFull) * fade;
-        if (chamferLen > 0 && (y - Y0) < chamferLen) {
-          const rEnv = rRoot + (rCrest - rRoot) * ((y - Y0) / chamferLen);
-          r = Math.min(r, rEnv);
-        }
-        if (chamferBothEnds && (Y1 - y) < chamferLen) {
-          const rEnvTop = rRoot + (rCrest - rRoot) * ((Y1 - y) / chamferLen);
-          r = Math.min(r, rEnvTop);
-        }
+  // Démarrage émoussé (« Higbee cut », ASME B1.7 « blunt start ») : on retire
+  // la dent sur sa première spire incomplète, celle qui finit en lame de rasoir
+  // dans le chanfrein. La dent commence d'un coup, à profil complet, sur une
+  // face radiale : pas d'amorce fragile, pas de départ de travers. Seuil yB =
+  // hauteur du centre de la première dent entière : sa crête (±P/16) doit être
+  // au-dessus du chanfrein, ses flancs (±6P/16) au-dessus du bout.
+  const yB    = cham ? chLen + pitch / 16 : pitch * 6 / 16;
+  const blunt = !!params.bluntStart && pitch > 0
+             && (Y1 - Y0) - yB * (hasHead ? 1 : 2) > pitch;   // garder ≥ 1 spire
+  function rad(y, phi) {
+    let r = pitch > 0 ? prof(phi) : rMaj;
+    let code = 0;
+    if (blunt) {
+      const d = phi - Math.round(phi);             // écart au centre de la dent
+      if (Math.abs(d) < 6 / 16) {
+        const yc = y - d * pitch;                  // hauteur du centre de la dent ici
+        if ((yc - Y0 < yB || (!hasHead && Y1 - yc < yB)) && r > rMin) { r = rMin; code = 2; }
       }
-      verts.push(Math.cos(theta) * r, y, Math.sin(theta) * r);
     }
+    if (runLen > 0 && Y1 - y < runLen) {           // filet qui s'éteint sous la tête
+      const f = Math.max(0, (Y1 - y) / runLen);
+      r = rMaj - (rMaj - r) * f;
+    }
+    if (cham) {
+      const e0 = rEnd + (y - Y0);
+      if (e0 < r) { r = e0; code = 1; }
+      if (!hasHead) { const e1 = rEnd + (Y1 - y); if (e1 < r) { r = e1; code = 1; } }
+    }
+    return [r, code];
   }
 
-  // ══ 2. TÊTE ══════════════════════════════════════════════════════
-  const headBaseOfs = (N_AX + 1) * N_RAD;
-  const headTopOfs  = headBaseOfs + N_RAD;
-  if (headType !== 'none') {
-    for (let j = 0; j < N_RAD; j++) {
-      const theta = (j / N_RAD) * Math.PI * 2;
-      const r = headR(theta);
-      verts.push(Math.cos(theta) * r, Y1, Math.sin(theta) * r);           // base tête
-    }
-    for (let j = 0; j < N_RAD; j++) {
-      const theta = (j / N_RAD) * Math.PI * 2;
-      const r = headR(theta);
-      verts.push(Math.cos(theta) * r, Y1 + headH, Math.sin(theta) * r);   // sommet tête
-    }
-  }
-
-  // ══ Centres de bouchons ═══════════════════════════════════════════
-  const botCtrIdx = verts.length / 3;
-  verts.push(0, Y0, 0);
-  const topCtrIdx = verts.length / 3;
-  const capTopY   = (headType !== 'none') ? Y1 + headH : Y1;
-  verts.push(0, capTopY, 0);
-
-  // ══ 3. TRIANGULATION ═════════════════════════════════════════════
-
-  // 3a. Latérale tige hélicoïdale
-  for (let i = 0; i < N_AX; i++) {
-    for (let j = 0; j < N_RAD; j++) {
-      const j1 = (j + 1) % N_RAD;
-      const a = i * N_RAD + j,       b = (i + 1) * N_RAD + j;
-      const c = (i + 1) * N_RAD + j1, d = i * N_RAD + j1;
-      idxs.push(a, b, c,  a, c, d);
-    }
-  }
-
-  // 3b. Cap bas − normale −Y
-  for (let j = 0; j < N_RAD; j++) {
-    idxs.push(botCtrIdx, j, (j + 1) % N_RAD);
-  }
-
-  if (headType !== 'none') {
-    // 3c. Washer (face d'appui) − anneau sommet-tige → base-tête
-    const shaftLastRing = N_AX * N_RAD;
-    for (let j = 0; j < N_RAD; j++) {
-      const j1   = (j + 1) % N_RAD;
-      const inJ  = shaftLastRing + j,  inJ1 = shaftLastRing + j1;
-      const outJ = headBaseOfs + j,   outJ1 = headBaseOfs + j1;
-      idxs.push(inJ, outJ, outJ1,  inJ, outJ1, inJ1);
-    }
-    // 3d. Latérale tête
-    for (let j = 0; j < N_RAD; j++) {
-      const j1 = (j + 1) % N_RAD;
-      const a = headBaseOfs + j,   b = headTopOfs + j;
-      const c = headTopOfs + j1,   d = headBaseOfs + j1;
-      idxs.push(a, b, c,  a, c, d);
-    }
-    // 3e. Cap haut tête − normale +Y
-    for (let j = 0; j < N_RAD; j++) {
-      idxs.push(topCtrIdx, headTopOfs + (j + 1) % N_RAD, headTopOfs + j);
-    }
+  const M = { P: [], T: [] };
+  let surf;
+  if (pitch > 0) {
+    const R = _thrRings(Y0, Y1, pitch, N);
+    surf = _thrSurface(M, {
+      N, ys: R.ys, sgn, q: R.q, phase0: 0, inward: false,
+      reg: i => i < R.regCount, iPhase: i => R.q * i,
+      yPhase: y => (y - Y0) / pitch, rad, seg: rounded ? _thrSegExt : _thrSeg,
+    });
+    surf.nR = R.ys.length;
   } else {
-    // 3c'. Cap haut tige − normale +Y
-    const shaftTopOfs = N_AX * N_RAD;
-    for (let j = 0; j < N_RAD; j++) {
-      idxs.push(topCtrIdx, shaftTopOfs + (j + 1) % N_RAD, shaftTopOfs + j);
+    const cuts = cham ? [Y0 + chLen, hasHead ? Y1 : Y1 - chLen] : [];
+    const ys = _plainRings(Y0, Y1, cuts);
+    surf = _thrSurface(M, {
+      N, ys, sgn: 1, q: 0, phase0: 0, inward: false, plain: true,
+      reg: () => false, iPhase: () => 0, yPhase: () => 0, rad,
+    });
+    surf.nR = ys.length;
+  }
+  const angN = surf.ringAng();
+
+  // Bout libre bas (normale −Y).
+  _fbFan(M, _fbV(M, 0, Y0, 0), _fbCopy(M, surf.ringPts(0)), false);
+
+  const shankTop = surf.ringPts(surf.nR - 1);
+  if (headType === 'hex') {
+    // ── Tête H ISO 4017 : collerette d'appui Ø dw × c, hexagone s × k,
+    //    chanfrein conique 30° en haut (cercle ≈ (dw+s)/2), dessous plat.
+    const sH  = spec.sH || spec.s || D * 1.7;
+    const kH  = spec.k  || D * 0.65;
+    const cW  = spec.dwH && spec.c ? spec.c * 0.6 : 0;          // collerette : ~60 % de c max
+    const rW  = spec.dwH ? spec.dwH / 2 : 0;
+    const rcT = ((spec.dwH || 0.9 * sH) + sH) / 4;               // cercle du chanfrein haut
+    const nPer = Math.max(8, Math.ceil(N / 4));
+    const pts = _hexOutline(sH, nPer);
+    const yHex = Y1 + cW, yTop = Y1 + kH;
+    const shell = _hexShell(M, pts, yHex, yTop, rcT, false, true);
+    if (cW > 0) {
+      const w0 = _fbCircle(M, rW, Y1, N);
+      _fbBand(M, _fbCopy(M, shankTop), w0.idx, true, false);        // dessous collerette (−Y)
+      const w0b = _fbCircle(M, rW, Y1, N), w1 = _fbCircle(M, rW, yHex, N);
+      _fbBand(M, w0b.idx, w1.idx, true, false);                     // flanc collerette
+      const w1b = _fbCircle(M, rW, yHex, N);
+      _fbZip(M, w1b.idx, w1b.ang, _fbCopy(M, shell.bot.pts), shell.bot.ang, false); // dessous hexagone
+    } else {
+      _fbZip(M, _fbCopy(M, shankTop), angN, _fbCopy(M, shell.bot.pts), shell.bot.ang, false);
     }
+    _fbFan(M, _fbV(M, 0, yTop, 0), _fbCopy(M, shell.top.pts), true); // face du haut (+Y)
+  } else if (headType === 'chc') {
+    // ── Tête cylindrique six pans creux ISO 4762 : Ø dk × k, arête haute
+    //    chanfreinée, empreinte hexagonale s × t, fond conique 118°.
+    const dk  = spec.dk || D * 1.5, kS = spec.kS || D;
+    const sS  = spec.sS || D * 0.8, tS = Math.min(spec.tS || D * 0.5, kS * 0.7);
+    const rk  = dk / 2, ch = Math.min(0.06 * dk, 0.15 * kS);
+    const yTop = Y1 + kS, yCh = yTop - ch;
+    const c0 = _fbCircle(M, rk, Y1, N);
+    _fbBand(M, _fbCopy(M, shankTop), c0.idx, true, false);          // dessous de tête (−Y)
+    const c0b = _fbCircle(M, rk, Y1, N), c1 = _fbCircle(M, rk, yCh, N);
+    _fbBand(M, c0b.idx, c1.idx, true, false);                        // fût de tête
+    const c1b = _fbCircle(M, rk, yCh, N), c2 = _fbCircle(M, rk - ch, yTop, N);
+    _fbBand(M, c1b.idx, c2.idx, true, false);                        // chanfrein 45°
+    const sp = _hexOutline(sS, Math.max(2, Math.ceil(N / 16)));
+    const c2b = _fbCircle(M, rk - ch, yTop, N);
+    _fbZip(M, sp.map(p => _fbV(M, p.x, yTop, p.z)), sp.map(p => p.a), c2b.idx, c2b.ang, true); // face haut (+Y)
+    const ySb = yTop - tS, nS = sp.length, nPs = nS / 6;
+    for (let f = 0; f < 6; f++) {                                    // parois de l'empreinte
+      const L = [], U = [];
+      for (let k = 0; k <= nPs; k++) {
+        const p = sp[(f * nPs + k) % nS];
+        L.push(_fbV(M, p.x, ySb, p.z)); U.push(_fbV(M, p.x, yTop, p.z));
+      }
+      _fbBand(M, L, U, false, true);                                 // normales vers l'axe
+    }
+    const apex = _fbV(M, 0, ySb - (sS / Math.sqrt(3)) * Math.tan(31 * Math.PI / 180), 0);
+    const B = sp.map(p => _fbV(M, p.x, ySb, p.z));
+    for (let k = 0; k < nS; k++) M.T.push(apex, B[(k + 1) % nS], B[k]); // fond (normale vers le haut)
+  } else {
+    // ── Sans tête (goujon) : bout libre haut (+Y).
+    _fbFan(M, _fbV(M, 0, Y1, 0), _fbCopy(M, shankTop), true);
   }
 
-  return { vPos: new Float32Array(verts), tris: idxs };
+  return { vPos: new Float32Array(M.P), tris: M.T };
 }
 
 // ── État dialog ───────────────────────────────────────────────────
@@ -1068,6 +1357,19 @@ let _screwSys    = 'metric';
 let _screwThread = 'coarse';
 let _screwHead   = 'hex';
 let _screwNRad   = 48;
+let _screwHand   = 'right';
+
+// Petits utilitaires DOM tolérants : ce fichier doit rester utilisable avec un
+// htm antérieur qui n'a pas encore les rangées HAND / CLEARANCE.
+function _gToggle(id, on) { const e = document.getElementById(id); if (e) e.classList.toggle('active', on); }
+function _gNum(id, dflt) { const e = document.getElementById(id); const v = e ? +e.value : NaN; return isNaN(v) ? dflt : v; }
+// Champ affiché : .value pour un <input>, .textContent sinon (span d'un htm ancien).
+function _gChk(id, dflt) { const e = document.getElementById(id); return e ? !!e.checked : dflt; }
+function _gSetChk(id, v) { const e = document.getElementById(id); if (e) e.checked = !!v; }
+function _gSetVal(id, v) {
+  const e = document.getElementById(id); if (!e) return;
+  if (e.tagName === 'INPUT' || e.tagName === 'SELECT') e.value = v; else e.textContent = v;
+}
 
 // ── Populate le select taille selon le système ─────────────────────
 function _screwPopulateSpec(targetIdx) {
@@ -1103,6 +1405,13 @@ function _screwSetThread(v) {
   _screwRebuild();
 }
 
+function _screwSetHand(v) {
+  _screwHand = v === 'left' ? 'left' : 'right';
+  _gToggle('sc-hand-right', _screwHand === 'right');
+  _gToggle('sc-hand-left',  _screwHand === 'left');
+  _screwRebuild();
+}
+
 function _screwSetHead(v) {
   _screwHead = v;
   ['none','hex','chc'].forEach(h =>
@@ -1122,9 +1431,10 @@ function _screwSetNRad(v) {
 
 function _screwLenPreset(v) {
   const sl = document.getElementById('sc-slen');
-  const lb = document.getElementById('sc-vlen');
   if (sl) sl.value = v;
-  if (lb) lb.textContent = v;
+  // [FIX V4.7.1] sc-vlen est un <input type=number> : .textContent ne l'affichait
+  // pas → le champ restait sur l'ancienne longueur après un clic 5/10/20/30/50.
+  _gSetVal('sc-vlen', v);
   _screwRebuild();
 }
 
@@ -1134,16 +1444,20 @@ function _screwRebuild() {
   const length      = +document.getElementById('sc-slen').value;
   const pitchCustom = +document.getElementById('sc-spitch').value;
   const chamferAbout = document.getElementById('sc-chamfer-about').checked;
+  const clearance   = _gNum('sc-sclr', 0);
+  const bluntStart  = _gChk('sc-blunt', false);
   const geo = _makeScrew({
     system:_screwSys, specIdx, thread:_screwThread,
-    pitchCustom, length, head:_screwHead, nRad:_screwNRad, chamferAbout
+    pitchCustom, length, head:_screwHead, nRad:_screwNRad, chamferAbout,
+    hand:_screwHand, clearance, bluntStart
   });
   const triCnt = geo.tris.length / 3;
   const vtxCnt = geo.vPos.length / 3;
   const db   = _SCREW_DB[_screwSys] || _SCREW_DB.metric;
   const spec = db[Math.min(specIdx, db.length-1)] || {};
+  const P    = _thrPitch(spec, _screwSys, _screwThread, pitchCustom);
   document.getElementById('sc-stats').textContent =
-    `${spec.name||'?'} · Ø${spec.dia ? spec.dia.toFixed(1) : '?'} mm · ▲ ${triCnt.toLocaleString('fr-FR')} tri · ◎ ${vtxCnt.toLocaleString('fr-FR')} vtx`;
+    `${spec.name||'?'}${P > 0 ? '×' + (+P.toFixed(3)) : ''} ${P > 0 ? (_screwHand === 'left' ? 'LH' : 'RH') : ''} · ▲ ${triCnt.toLocaleString('fr-FR')} tri · ◎ ${vtxCnt.toLocaleString('fr-FR')} vtx`;
   _genLiveUpdate({ vPos: geo.vPos, tris: geo.tris });
 }
 
@@ -1154,43 +1468,52 @@ function showScrewDialog(obj) {
   else _genEditObj = null;
 
   const p = editMode && obj.genParams ? obj.genParams
-    : { system:'metric', specIdx:5, thread:'coarse', pitchCustom:1.0, length:20, head:'hex', nRad:48, chamferAbout:true };
+    : { system:'metric', specIdx:5, thread:'coarse', pitchCustom:1.0, length:20, head:'hex', nRad:48,
+        chamferAbout:true, hand:'right', clearance:0, bluntStart:true };
 
   _screwSys    = p.system || 'metric';
   _screwThread = p.thread || 'coarse';
   _screwHead   = p.head   || 'hex';
   _screwNRad   = p.nRad   || 48;
+  // [FIX V4.7.1] Vis antérieures (genParams sans « hand ») : générées À GAUCHE
+  // par le bug de chiralité → elles le restent à la ré-édition, affichées LH.
+  // Les vis neuves ont hand:'right' via le littéral ci-dessus.
+  _screwHand   = p.hand || 'left';
   // [NEW V4.5.2] Vis anciennes sans ce champ (projets sauvegardés avant cette
   // version) -> false par défaut : zéro changement de géométrie surprise à la
   // ré-édition. Les vis neuves l'ont à true via le littéral ci-dessus.
   document.getElementById('sc-chamfer-about').checked =
     p.chamferAbout !== undefined ? p.chamferAbout : false;
+  // [NEW V4.7.1] Démarrage émoussé : true pour les vis neuves (littéral
+  // ci-dessus), false pour les vis d'avant — même règle que chamferAbout.
+  _gSetChk('sc-blunt', p.bluntStart !== undefined ? p.bluntStart : false);
+  _gSetVal('sc-sclr', p.clearance || 0);
+  _gSetVal('sc-vclr', (p.clearance || 0).toFixed(2));
 
   // Sync boutons système (avant populateSpec pour le bon filtre)
   document.getElementById('sc-sys-metric').classList.toggle('active',   _screwSys === 'metric');
   document.getElementById('sc-sys-imperial').classList.toggle('active', _screwSys === 'imperial');
   _screwPopulateSpec(p.specIdx !== undefined ? p.specIdx : (_screwSys === 'metric' ? 5 : 4));
 
+  _gToggle('sc-hand-right', _screwHand === 'right');
+  _gToggle('sc-hand-left',  _screwHand === 'left');
   _screwSetThread(_screwThread);
   _screwSetHead(_screwHead);
   _screwSetNRad(_screwNRad);
 
-  const slenEl = document.getElementById('sc-slen');
-  const vlenEl = document.getElementById('sc-vlen');
-  if (slenEl) slenEl.value = p.length || 20;
-  if (vlenEl) vlenEl.textContent = p.length || 20;
-
-  const spEl = document.getElementById('sc-spitch');
-  const vpEl = document.getElementById('sc-vpitch');
-  if (spEl) spEl.value = (p.pitchCustom || 1.0).toFixed(2);
-  if (vpEl) vpEl.textContent = (p.pitchCustom || 1.0).toFixed(2);
+  // [FIX V4.7.1] Champs numériques : .value (c'étaient des .textContent sur des
+  // <input> → à la ré-édition, le champ montrait 20 / 1.00 quelle que soit la vis).
+  _gSetVal('sc-slen',   p.length || 20);
+  _gSetVal('sc-vlen',   p.length || 20);
+  _gSetVal('sc-spitch', (p.pitchCustom || 1.0).toFixed(2));
+  _gSetVal('sc-vpitch', (p.pitchCustom || 1.0).toFixed(2));
 
   _genDialogMode('screw-modal', editMode, '🔩 Screw.Gen — Parametric fastener', 'screw-apply-btn');
   _screwRebuild();
 
   const el = document.getElementById('screw-modal');
   el.style.left = Math.max(196, innerWidth  - 360 - 332) + 'px';
-  el.style.top  = Math.max(34,  innerHeight - 560 - 32)  + 'px';
+  el.style.top  = Math.max(34,  innerHeight - 640 - 32)  + 'px';
   el.classList.add('open');
 }
 
@@ -1216,9 +1539,13 @@ function _screwToScene() {
 
   // MODE ÉDITION
   const chamferAbout = document.getElementById('sc-chamfer-about').checked;
+  const clearance    = _gNum('sc-sclr', 0);
+  const bluntStart   = _gChk('sc-blunt', false);
+  const genParams = { system:_screwSys, specIdx, thread:_screwThread,
+                      pitchCustom, length, head:_screwHead, nRad:_screwNRad, chamferAbout,
+                      hand:_screwHand, clearance, bluntStart };
   if (_genEditObj) {
-    _genEditObj.genParams = { system:_screwSys, specIdx, thread:_screwThread,
-                               pitchCustom, length, head:_screwHead, nRad:_screwNRad, chamferAbout };
+    _genEditObj.genParams = genParams;
     nasLog('OK','Screw.Gen edited: '+_genEditObj.name);
     _csgLog && _csgLog('✏ Screw.Gen edited → '+_genEditObj.name);
     hideScrewDialog(false);
@@ -1229,8 +1556,7 @@ function _screwToScene() {
   const label = `${spec.name||specIdx}_L${length}`;
   showSpinner('Screw.Gen', label);
   try {
-    const sgr = _makeScrew({ system:_screwSys, specIdx, thread:_screwThread,
-                              pitchCustom, length, head:_screwHead, nRad:_screwNRad, chamferAbout });
+    const sgr = _makeScrew(genParams);
 
     const geo = new THREE.BufferGeometry();
     geo.setAttribute('position', new THREE.Float32BufferAttribute(sgr.vPos, 3));
@@ -1243,8 +1569,7 @@ function _screwToScene() {
       label: 'Screw.Gen', geo,
       name: (n) => `screw_${spec.name||specIdx}_L${length}_${n}`,
       genType: 'screw',
-      genParams: { system:_screwSys, specIdx, thread:_screwThread,
-                   pitchCustom, length, head:_screwHead, nRad:_screwNRad, chamferAbout },
+      genParams,
       hideDialogFn: () => hideScrewDialog(false)
     });
   } catch(err) {
@@ -1279,13 +1604,17 @@ function _screwToScene() {
 // ══════════════════════════════════════════════════════════════════════════
 // ══════════════════════════════════════════════════════════════════
 // ⬡ NUT.GEN — Écrou paramétrique ISO 4032/4033 · ASME B18.2.2
-// Géométrie watertight : hex ext + bore intérieur fileté ISO 60°
-// + chanfrein 30° optionnel sur les faces haut/bas
+// Géométrie watertight : hexagone ISO + chanfreins coniques 30° + fraisures
+// 120° + alésage fileté au profil de base ISO 68-1 (le MÊME que Screw.Gen)
+// [FIX V4.7.1 — 27/09] Refonte : voir le bandeau de Screw.Gen (points 1, 4, 5).
 // ══════════════════════════════════════════════════════════════════
 
 // ── Constructeur géométrie pure ────────────────────────────────────
-// params: { system, specIdx, thread, pitchCustom, style, mCustom, chamfer, nRad }
-// Retourne { vPos: Float32Array, tris: Uint32Array }
+// params: { system, specIdx, thread, pitchCustom, style, mCustom, chamfer, nRad,
+//           hand ('right'|'left', défaut 'right'), clearance (mm, radial),
+//           phase (décalage de phase du filet, 0 ; 0.5 = écrous d'avant V4.7.1),
+//           bluntStart (démarrage émoussé / Higbee sur les deux faces) }
+// Retourne { vPos: Float32Array, tris: number[] }
 // Géométrie posée sur Y=0 (face bas). Face haut à Y = m.
 function _makeNut(params) {
   const sys     = params.system  || 'metric';
@@ -1293,177 +1622,90 @@ function _makeNut(params) {
   const db      = _SCREW_DB[sys] || _SCREW_DB.metric;
   const spec    = db[Math.min(Math.max(0, spIdx), db.length - 1)];
   const D       = spec.dia;
-  const rCrest  = D / 2;
   const thread  = params.thread  || 'coarse';
   const style   = params.style   || 'normal';
   const chamfer = params.chamfer !== false;
-  const N_RAD   = params.nRad    || 48;
+  const N       = _thrN(params.nRad || 48);
+  const sgn     = params.hand === 'left' ? -1 : 1;
+  const clr     = Math.max(0, +params.clearance || 0);
+  const phase0  = +params.phase || 0;
+  const pitch   = _thrPitch(spec, sys, thread, params.pitchCustom);
 
-  // ── Hauteur de l'écrou ────────────────────────────────────────
+  // ── Hauteur : ISO 4032 (style 1, « normal ») / ISO 4033 (style 2, « high »)
   let m;
   if      (style === 'custom') m = Math.max(1, params.mCustom || D * 0.8);
-  else if (style === 'high')   m = spec.m_high !== undefined ? spec.m_high : (spec.m || D * 0.8) * 1.2;
-  else                         m = spec.m      !== undefined ? spec.m      : D * 0.8;
+  else if (style === 'high')   m = spec.mH !== undefined ? spec.mH : (spec.m || D * 0.8) * 1.2;
+  else                         m = spec.m  !== undefined ? spec.m  : D * 0.8;
   m = Math.max(1, m);
 
-  // ── Pas du filet (même convention que _makeScrew) ─────────────
-  let pitch = 0, rRoot = rCrest;
-  if (thread !== 'none') {
-    if      (thread === 'custom') pitch = Math.max(0.05, params.pitchCustom || 1.0);
-    else if (thread === 'fine')   pitch = sys === 'metric' ? spec.fine   : 25.4 / spec.fine;
-    else                          pitch = sys === 'metric' ? spec.coarse : 25.4 / spec.coarse;
-    const Hv = (Math.sqrt(3) / 2) * pitch;
-    rRoot    = rCrest - (5 / 8) * Hv;
-  }
+  // ── Hexagone et faces d'appui
+  const s   = spec.s !== undefined ? spec.s : D * 1.7;
+  const a   = s / 2;                                   // apothème
+  // Cercle de chanfrein : entre dw min (ISO 4032) et s ; défaut ≈ 0,95·s.
+  const rc  = Math.min(0.985 * a, ((spec.dw || 0.9 * s) + s) / 4);
 
-  // ── Hexagone externe ──────────────────────────────────────────
-  const hexApothem = spec.s !== undefined ? spec.s / 2 : D * 0.85;
-  function hexR(theta) {
-    const a = theta % (Math.PI / 3) - Math.PI / 6;
-    return hexApothem / Math.cos(a);
-  }
+  // ── Filet intérieur : même profil de base que la vis, écarté du jeu radial.
+  const rMaj = D / 2 + clr;                            // fond du filet d'écrou
+  const rMin = pitch > 0
+    ? Math.max(0.2 * D / 2, D / 2 - (5 / 8) * (Math.sqrt(3) / 2) * pitch) + clr
+    : rMaj;                                            // « Plain » : alésage Ø d
+  // Fraisure 120° (ISO 4032 : θ 90..120°), Ø à la face = milieu [d ; da max].
+  const daMax = spec.da || D * 1.08;
+  const rDa   = Math.min(Math.max(rMaj + 0.02 * D, (D + daMax) / 4 + clr), 0.92 * rc);
+  const S3    = Math.sqrt(3);                          // 120° inclus → 30° / face
 
-  // ── Profil filet ISO 60° — phase +0.5 = filet femelle ─────────
-  // Crêtes écrou (vers axe) là où la vis a ses gorges, et vice-versa.
-  function profileR(phi) {
-    const p  = ((phi % 1) + 1) % 1;
-    const HR = rCrest - rRoot;
-    if (p < 1/16 || p >= 15/16) return rCrest;
-    if (p < 6/16)   return rCrest - HR * (p - 1/16)  / (5/16);
-    if (p <= 10/16) return rRoot;
-    return rRoot + HR * (p - 10/16) / (5/16);
-  }
-
-  // ── Résolution axiale bore ────────────────────────────────────
-  const N_PER_TURN = 32, N_AX_MAX = 3200;
-  const N_AX = pitch > 0
-    ? Math.max(N_PER_TURN, Math.min(N_AX_MAX, Math.ceil((m / pitch) * N_PER_TURN)))
-    : 48;
-
-  // ── Chanfrein 30° (face haut/bas) — ISO 4032 ─────────────────
-  // ch_h = hauteur axiale du chanfrein
-  // r_cham(θ) = rayon à la face plate (Y=0 ou Y=m) = hexR(θ) − ch_h · √3
-  const SQRT3 = Math.sqrt(3);
-  const ch_h  = chamfer ? Math.min(m * 0.22, (hexApothem - rCrest) * 0.90 / SQRT3) : 0;
-  function rCham(theta) { return Math.max(rCrest + 0.01, hexR(theta) - ch_h * SQRT3); }
-
-  const verts = [], idxs = [];
-
-  // ════════════════ ANNEAUX DE SOMMETS ════════════════════════════
-
-  // Parois hex bas / haut (décalées de ch_h si chanfrein)
-  const yBot = chamfer ? ch_h : 0;
-  const yTop = chamfer ? m - ch_h : m;
-
-  const HEX_BOT = 0;
-  for (let j = 0; j < N_RAD; j++) {
-    const t = (j / N_RAD) * Math.PI * 2;
-    verts.push(Math.cos(t) * hexR(t), yBot, Math.sin(t) * hexR(t));
-  }
-  const HEX_TOP = N_RAD;
-  for (let j = 0; j < N_RAD; j++) {
-    const t = (j / N_RAD) * Math.PI * 2;
-    verts.push(Math.cos(t) * hexR(t), yTop, Math.sin(t) * hexR(t));
-  }
-
-  // Bore intérieur fileté (N_AX+1 anneaux, Y=0 → Y=m)
-  const fadeDist = pitch > 0 ? pitch : 1;
-  const BORE = 2 * N_RAD;
-  for (let i = 0; i <= N_AX; i++) {
-    const y = (i / N_AX) * m;
-    for (let j = 0; j < N_RAD; j++) {
-      const t = (j / N_RAD) * Math.PI * 2;
-      let r;
-      if (pitch <= 0) {
-        r = rCrest;
-      } else {
-        const phi   = y / pitch - t / (Math.PI * 2);
-        const rFull = profileR(phi + 0.5); // +0.5 → filet femelle
-        let fade    = 1.0;
-        if (y < fadeDist)     fade = Math.min(fade, y / fadeDist);
-        if (m - y < fadeDist) fade = Math.min(fade, (m - y) / fadeDist);
-        r = rCrest - (rCrest - rFull) * fade;
+  // Démarrage émoussé (Higbee) des deux côtés : la dent d'écrou (centrée sur
+  // φ ≡ 0,5, crête ±P/8, flancs ±7P/16) est retirée sur sa spire incomplète.
+  // Seuil : sa crête doit être sous la fraisure (profondeur où le cône 120°
+  // atteint le Ø mineur) + P/8. Désactivé s'il ne resterait pas une spire.
+  const yB    = (rDa - rMin) / S3 + pitch / 8;
+  const blunt = !!params.bluntStart && pitch > 0 && m - 2 * yB > pitch;
+  function rad(y, phi) {
+    let r = pitch > 0 ? _thrProfileR(phi, rMaj, rMin) : rMaj;
+    let code = 0;
+    if (blunt) {
+      const d = phi - 0.5 - Math.round(phi - 0.5); // écart au centre de la dent
+      if (Math.abs(d) < 7 / 16) {
+        const yc = y - d * pitch;
+        if ((yc < yB || m - yc < yB) && r < rMaj) { r = rMaj; code = 2; }
       }
-      verts.push(Math.cos(t) * r, y, Math.sin(t) * r);
     }
+    const cB = rDa - y * S3, cT = rDa - (m - y) * S3; // fraisures bas / haut
+    if (cB > r) { r = cB; code = 1; }
+    if (cT > r) { r = cT; code = 1; }
+    return [r, code];
   }
 
-  // Arêtes intérieures de chanfrein (r_cham, Y=0 / Y=m)
-  const CH_BOT = chamfer ? verts.length / 3 : -1;
-  if (chamfer) {
-    for (let j = 0; j < N_RAD; j++) {
-      const t = (j / N_RAD) * Math.PI * 2;
-      verts.push(Math.cos(t) * rCham(t), 0, Math.sin(t) * rCham(t));
-    }
+  const M = { P: [], T: [] };
+  let surf, nR;
+  if (pitch > 0) {
+    const R = _thrRings(0, m, pitch, N);
+    surf = _thrSurface(M, {
+      N, ys: R.ys, sgn, q: R.q, phase0, inward: true,
+      reg: i => i < R.regCount, iPhase: i => R.q * i,
+      yPhase: y => y / pitch, rad,
+    });
+    nR = R.ys.length;
+  } else {
+    const dC = (rDa - rMaj) / S3;
+    const ys = _plainRings(0, m, [dC, m - dC, m / 2]);
+    surf = _thrSurface(M, {
+      N, ys, sgn: 1, q: 0, phase0: 0, inward: true, plain: true,
+      reg: () => false, iPhase: () => 0, yPhase: () => 0, rad,
+    });
+    nR = ys.length;
   }
-  const CH_TOP = chamfer ? verts.length / 3 : -1;
-  if (chamfer) {
-    for (let j = 0; j < N_RAD; j++) {
-      const t = (j / N_RAD) * Math.PI * 2;
-      verts.push(Math.cos(t) * rCham(t), m, Math.sin(t) * rCham(t));
-    }
-  }
+  const angN = surf.ringAng();
 
-  // ════════════════ TRIANGULATION ═════════════════════════════════
+  // ── Enveloppe extérieure : pans + chanfreins coniques 30° (si activés)
+  const nPer  = Math.max(8, Math.ceil(N / 4));
+  const shell = _hexShell(M, _hexOutline(s, nPer), 0, m, rc, chamfer, chamfer);
 
-  // 1. Parois hex ext — normales sortantes (convention Screw.Gen : a,c,d,a,d,b)
-  for (let j = 0; j < N_RAD; j++) {
-    const j1 = (j + 1) % N_RAD;
-    const a = HEX_BOT + j, b = HEX_BOT + j1;
-    const c = HEX_TOP + j, d = HEX_TOP + j1;
-    idxs.push(a, c, d,  a, d, b);
-  }
+  // ── Faces d'appui (couronnes planes) : fraisure → cercle de chanfrein
+  _fbZip(M, _fbCopy(M, surf.ringPts(0)),      angN, _fbCopy(M, shell.bot.pts), shell.bot.ang, false);
+  _fbZip(M, _fbCopy(M, surf.ringPts(nR - 1)), angN, _fbCopy(M, shell.top.pts), shell.top.ang, true);
 
-  // 2. Bore fileté — normales vers l'axe (winding inversé : a,c,b,a,d,c)
-  for (let i = 0; i < N_AX; i++) {
-    for (let j = 0; j < N_RAD; j++) {
-      const j1 = (j + 1) % N_RAD;
-      const a = BORE + i       * N_RAD + j;
-      const b = BORE + (i + 1) * N_RAD + j;
-      const c = BORE + (i + 1) * N_RAD + j1;
-      const d = BORE + i       * N_RAD + j1;
-      idxs.push(a, c, b,  a, d, c);
-    }
-  }
-
-  // 3. Face annulaire bas — normale -Y
-  const BORE_BOT = BORE, BORE_TOP = BORE + N_AX * N_RAD;
-  for (let j = 0; j < N_RAD; j++) {
-    const j1 = (j + 1) % N_RAD;
-    const oj  = chamfer ? CH_BOT + j  : HEX_BOT + j;
-    const oj1 = chamfer ? CH_BOT + j1 : HEX_BOT + j1;
-    const ij  = BORE_BOT + j, ij1 = BORE_BOT + j1;
-    idxs.push(oj, ij1, ij,  oj, oj1, ij1);
-  }
-
-  // 4. Face annulaire haut — normale +Y
-  for (let j = 0; j < N_RAD; j++) {
-    const j1 = (j + 1) % N_RAD;
-    const oj  = chamfer ? CH_TOP + j  : HEX_TOP + j;
-    const oj1 = chamfer ? CH_TOP + j1 : HEX_TOP + j1;
-    const ij  = BORE_TOP + j, ij1 = BORE_TOP + j1;
-    idxs.push(oj, ij, ij1,  oj, ij1, oj1);
-  }
-
-  // 5. Surfaces de chanfrein (si activé) — normales sortantes-obliques
-  if (chamfer) {
-    // Chanfrein bas : CH_BOT (r_cham, Y=0) → HEX_BOT (hexR, Y=ch_h)
-    for (let j = 0; j < N_RAD; j++) {
-      const j1 = (j + 1) % N_RAD;
-      const a = CH_BOT + j,  b = CH_BOT + j1;
-      const c = HEX_BOT + j, d = HEX_BOT + j1;
-      idxs.push(a, c, d,  a, d, b);
-    }
-    // Chanfrein haut : HEX_TOP (hexR, Y=m-ch_h) → CH_TOP (r_cham, Y=m)
-    for (let j = 0; j < N_RAD; j++) {
-      const j1 = (j + 1) % N_RAD;
-      const a = HEX_TOP + j,  b = HEX_TOP + j1;
-      const c = CH_TOP + j,   d = CH_TOP + j1;
-      idxs.push(a, c, d,  a, d, b);
-    }
-  }
-
-  return { vPos: new Float32Array(verts), tris: idxs };
+  return { vPos: new Float32Array(M.P), tris: M.T };
 }
 
 // ── État dialog ────────────────────────────────────────────────────
@@ -1472,6 +1714,8 @@ let _nutThread  = 'coarse';
 let _nutStyle   = 'normal';
 let _nutChamfer = true;
 let _nutNRad    = 48;
+let _nutHand    = 'right';
+let _nutPhase   = 0;
 
 function _nutPopulateSpec(targetIdx) {
   const sel = document.getElementById('nt-spec');
@@ -1504,6 +1748,13 @@ function _nutSetThread(v) {
   _nutRebuild();
 }
 
+function _nutSetHand(v) {
+  _nutHand = v === 'left' ? 'left' : 'right';
+  _gToggle('nt-hand-right', _nutHand === 'right');
+  _gToggle('nt-hand-left',  _nutHand === 'left');
+  _nutRebuild();
+}
+
 function _nutSetStyle(v) {
   _nutStyle = v;
   ['normal','high','custom'].forEach(s =>
@@ -1529,24 +1780,31 @@ function _nutSetNRad(v) {
   _nutRebuild();
 }
 
+function _nutParamsFromUI() {
+  return {
+    system: _nutSys, specIdx: +document.getElementById('nt-spec').value,
+    thread: _nutThread, pitchCustom: +document.getElementById('nt-spitch').value,
+    style:  _nutStyle,  mCustom: +document.getElementById('nt-sheight').value,
+    chamfer: _nutChamfer, nRad: _nutNRad,
+    hand: _nutHand, clearance: _gNum('nt-sclr', 0), phase: _nutPhase,
+    bluntStart: _gChk('nt-blunt', false)
+  };
+}
+
 function _nutRebuild() {
-  const specIdx     = +document.getElementById('nt-spec').value;
-  const pitchCustom = +document.getElementById('nt-spitch').value;
-  const mCustom     = +document.getElementById('nt-sheight').value;
-  const geo = _makeNut({
-    system: _nutSys, specIdx,
-    thread: _nutThread, pitchCustom,
-    style:  _nutStyle,  mCustom,
-    chamfer: _nutChamfer, nRad: _nutNRad
-  });
+  const p   = _nutParamsFromUI();
+  const geo = _makeNut(p);
   const db   = _SCREW_DB[_nutSys] || _SCREW_DB.metric;
-  const spec = db[Math.min(specIdx, db.length - 1)] || {};
-  const mVal = _nutStyle === 'custom' ? mCustom
-             : _nutStyle === 'high'   ? (spec.m_high || spec.m || 0)
-             : (spec.m || 0);
+  const spec = db[Math.min(p.specIdx, db.length - 1)] || {};
+  const mVal = _nutStyle === 'custom' ? p.mCustom
+             : _nutStyle === 'high'   ? (spec.mH !== undefined ? spec.mH : (spec.m || (spec.dia || 0) * 0.8) * 1.2)
+             : (spec.m !== undefined ? spec.m : (spec.dia || 0) * 0.8);
+  const sVal = spec.s !== undefined ? spec.s : (spec.dia || 0) * 1.7;
+  const P    = _thrPitch(spec, _nutSys, _nutThread, p.pitchCustom);
   document.getElementById('nt-stats').textContent =
-    `${spec.name || '?'} · Ø${spec.dia ? spec.dia.toFixed(1) : '?'} mm · h=${mVal.toFixed ? mVal.toFixed(1) : mVal} mm`
-    + ` · ▲ ${(geo.tris.length / 3).toLocaleString('fr-FR')} tri · ◎ ${(geo.vPos.length / 3).toLocaleString('fr-FR')} vtx`;
+    `${spec.name || '?'}${P > 0 ? '×' + (+P.toFixed(3)) + ' ' + (_nutHand === 'left' ? 'LH' : 'RH') : ''}`
+    + ` · s=${+sVal.toFixed(2)} · m=${+(+mVal).toFixed(2)} mm`
+    + ` · ▲ ${(geo.tris.length / 3).toLocaleString('fr-FR')} tri`;
   _genLiveUpdate({ vPos: geo.vPos, tris: geo.tris });
 }
 
@@ -1556,17 +1814,28 @@ function showNutDialog(obj) {
 
   const p = (editMode && obj.genParams) ? obj.genParams
     : { system:'metric', specIdx:5, thread:'coarse', pitchCustom:1.0,
-        style:'normal', mCustom:5, chamfer:true, nRad:48 };
+        style:'normal', mCustom:5, chamfer:true, nRad:48,
+        hand:'right', clearance:0, phase:0, bluntStart:true };
 
   _nutSys     = p.system  || 'metric';
   _nutThread  = p.thread  || 'coarse';
   _nutStyle   = p.style   || 'normal';
   _nutChamfer = p.chamfer !== false;
   _nutNRad    = p.nRad    || 48;
+  // [FIX V4.7.1] Écrous antérieurs (sans « hand ») : générés À GAUCHE avec un
+  // décalage de phase de 0,5 → conservés tels quels à la ré-édition (affichés
+  // LH) pour rester accouplés aux vis d'avant de la même scène.
+  _nutHand    = p.hand || 'left';
+  _nutPhase   = p.hand ? (+p.phase || 0) : 0.5;
 
   document.getElementById('nt-sys-metric').classList.toggle('active',   _nutSys === 'metric');
   document.getElementById('nt-sys-imperial').classList.toggle('active', _nutSys === 'imperial');
   _nutPopulateSpec(p.specIdx !== undefined ? p.specIdx : (_nutSys === 'metric' ? 5 : 4));
+  _gToggle('nt-hand-right', _nutHand === 'right');
+  _gToggle('nt-hand-left',  _nutHand === 'left');
+  _gSetChk('nt-blunt', p.bluntStart !== undefined ? p.bluntStart : false);
+  _gSetVal('nt-sclr', p.clearance || 0);
+  _gSetVal('nt-vclr', (p.clearance || 0).toFixed(2));
   _nutSetThread(_nutThread);
   _nutSetStyle(_nutStyle);
   _nutSetChamfer(_nutChamfer);
@@ -1582,7 +1851,7 @@ function showNutDialog(obj) {
 
   const el = document.getElementById('nut-modal');
   el.style.left = Math.max(196, innerWidth  - 390 - 332) + 'px';
-  el.style.top  = Math.max(34,  innerHeight - 660 - 32)  + 'px';
+  el.style.top  = Math.max(34,  innerHeight - 740 - 32)  + 'px';
   el.classList.add('open');
 }
 
@@ -1593,33 +1862,27 @@ function hideNutDialog(cancel) {
 }
 
 function _nutToScene() {
-  const specIdx     = +document.getElementById('nt-spec').value;
-  const pitchCustom = +document.getElementById('nt-spitch').value;
-  const mCustom     = +document.getElementById('nt-sheight').value;
+  const p    = _nutParamsFromUI();
   const db   = _SCREW_DB[_nutSys] || _SCREW_DB.metric;
-  const spec = db[Math.min(specIdx, db.length - 1)] || {};
+  const spec = db[Math.min(p.specIdx, db.length - 1)] || {};
 
-  if(!_numsOK(specIdx)){
+  if(!_numsOK(p.specIdx)){
     nasLog('ERROR','Nut.Gen: invalid specification');
     _nasAlert('⚠ Nut.Gen: check the specification field.');
     return;
   }
 
   if (_genEditObj) {
-    _genEditObj.genParams = { system:_nutSys, specIdx, thread:_nutThread,
-                               pitchCustom, style:_nutStyle, mCustom,
-                               chamfer:_nutChamfer, nRad:_nutNRad };
+    _genEditObj.genParams = p;
     nasLog && nasLog('OK', 'Nut.Gen edited: ' + _genEditObj.name);
     hideNutDialog(false);
     return;
   }
 
-  const label = spec.name || ('spec_' + specIdx);
+  const label = spec.name || ('spec_' + p.specIdx);
   showSpinner && showSpinner('Nut.Gen', label);
   try {
-    const ngr = _makeNut({ system:_nutSys, specIdx, thread:_nutThread,
-                            pitchCustom, style:_nutStyle, mCustom,
-                            chamfer:_nutChamfer, nRad:_nutNRad });
+    const ngr = _makeNut(p);
 
     const geo = new THREE.BufferGeometry();
     geo.setAttribute('position', new THREE.Float32BufferAttribute(ngr.vPos, 3));
@@ -1636,9 +1899,7 @@ function _nutToScene() {
       label: 'Nut.Gen', geo,
       name: (n) => 'nut_' + label.replace(/[^A-Za-z0-9]/g,'_') + '_' + n,
       genType: 'nut',
-      genParams: { system:_nutSys, specIdx, thread:_nutThread,
-                  pitchCustom, style:_nutStyle, mCustom,
-                  chamfer:_nutChamfer, nRad:_nutNRad },
+      genParams: p,
       hideDialogFn: () => hideNutDialog(false)
     });
   } catch(err) {
