@@ -3180,6 +3180,7 @@ const GeometryPool = (function() {
         ...(o.type === 'tube'   ? { tubeRo: o.tubeRo, tubeRi: o.tubeRi } : {}),
         ...(o.type === 'hollowbox' ? { hboxOw: o.hboxOw, hboxIw: o.hboxIw } : {}),
         ...(o.sphereRes         ? { sphereRes: o.sphereRes }              : {}),
+        ...(o.primRes           ? { primRes: o.primRes }                  : {}),
         ...(o.genType           ? { genType: o.genType, genParams: o.genParams || null } : {}),
         ...(o.type === 'csg'    ? { gslot: geoStore(o.mesh.geometry) }    : {}),
       })),
@@ -3228,13 +3229,13 @@ const GeometryPool = (function() {
             : new THREE.BoxGeometry(S,S,S);
           break;
         case 'tube':
-          g = _makeTube(S, SEG_VIEW.tube||48, od.tubeRo||S/2, od.tubeRi!=null?od.tubeRi:S/4);
+          g = _makeTube(S, _segViewOf(od).tube||48, od.tubeRo||S/2, od.tubeRi!=null?od.tubeRi:S/4);
           g.translate(0,-S/2,0);
           break;
         case 'hollowbox':
           g = _makeHollowBox(S, od.hboxOw||S/2, od.hboxIw!=null?od.hboxIw:S/4);
           break;
-        default: g = makeGeo(od.type, S, SEG_VIEW); break;
+        default: g = makeGeo(od.type, S, _segViewOf(od)); break;
       }
       const isHole = od.isHole || false;
       const mat = new THREE.MeshPhongMaterial({
@@ -3256,6 +3257,7 @@ const GeometryPool = (function() {
       // BUG-02 fix V4.2.5 : restaurer champs gen (alignement snapSave ↔ _buildSceneFromData)
       if (od.genType)   { _ro.genType = od.genType; _ro.genParams = od.genParams || null; }
       if (od.sphereRes) { _ro.sphereRes = od.sphereRes; }
+      if (od.primRes)   { _ro.primRes = od.primRes; }
       objs.push(_ro);
     });
     updProps(); updOList(); updStats();
@@ -3441,8 +3443,7 @@ function _resInfoColor(v){
   return v >= 256 ? 'var(--danger)' : (v >= 128 ? 'var(--warn)' : 'var(--muted)');
 }
 
-function _segViewLive(){
-  const v = _newPrimRes;
+function _segViewLive(v = _newPrimRes){
   return { ...SEG_VIEW,
     sphere:[v, v],
     cylinder: Math.min(v * 2, RES_EXP_CAP),
@@ -3452,6 +3453,17 @@ function _segViewLive(){
     roofarc:    Math.round(v * 1.5)
   };
 }
+// [FIX 27/09 — Nass : « un 20 mm rechargé fait 20.001 »] Cylindre, cône,
+// arc, demi-sphère et tube naissent à la résolution du slider (_newPrimRes),
+// mais seul sphereRes était mémorisé : au rechargement (projet, undo, Re-run,
+// explode) ils repartaient sur SEG_VIEW. Autre nombre de segments = autre
+// emprise (un polygone à 18 côtés n'a pas de sommet en ±Z) → Dim relue
+// 20.309 au lieu de 20, et un cylindre créé à 128 revenait à 64 facettes.
+// On note la résolution de création dans o.primRes et on la rejoue partout.
+// Absente (projets antérieurs, tube du dialogue) → SEG_VIEW, comme avant.
+const _PRIMRES_TYPES = new Set(['cylinder','cone','roofarc','halfsphere','tube']);
+function _segViewOf(o){ return (o && o.primRes) ? _segViewLive(o.primRes) : SEG_VIEW; }
+
 let _expQuality = 128;
 function _getSEGPRINT(){ const s=_expQuality; return { sphere:[s,s], cylinder:s, cone:s, roofarc:s, halfsphere:s, tube:s, lathe:s, arcsphere:[s,Math.max(2,Math.round(s/2))] }; }
 function setExpQuality(v){
@@ -7781,6 +7793,7 @@ function addPrimitive(t){
   const o={id:objCnt,name:n,type:t,mesh,color:c,isHole:isHole};
   if(t==='tube'){o.tubeRo=PS/2;o.tubeRi=PS/4;}
   if(t==='sphere'||t==='halfsphere'){o.sphereRes=_newPrimRes;}
+  if(_PRIMRES_TYPES.has(t)) o.primRes=_newPrimRes;
   objs.push(o);
   if(_xrayActive) _applyXRay(o);
   nasLog('DBG',`addPrimitive: ${n} [${t}] pos=(${mesh.position.x.toFixed(1)},${mesh.position.y.toFixed(1)},${mesh.position.z.toFixed(1)}) hole=${isHole}`);
@@ -7990,7 +8003,8 @@ function setTr(p,a,v){
       o.mesh.updateMatrixWorld(true);
       const _b=new THREE.Box3().setFromObject(o.mesh);
       const offset=o.mesh.position.y-_b.min.y;
-      o.mesh.position.y=_sv(f+offset);
+      // [FIX 27/09] arrondir la valeur tapée (le dessous), pas le centre
+      o.mesh.position.y=_sv(f)+offset;
     } else {
       o.mesh.position[a]=_sv(f);
     }
@@ -8123,7 +8137,7 @@ function applyTubeDims(){
   const rI = Math.min(rO-0.5, Math.max(0.5, dint/2));
   hideTubeDialog();
   const S = PS;
-  const segs = SEG_VIEW.tube||48;
+  const segs = _segViewOf(dlg._editObj).tube||48;
   if(dlg._editObj){
     // Edit
     undoPush('tube');
@@ -8270,6 +8284,7 @@ function _sresRebuild(o, v){
   } else {
     newGeo = _makeHalfSphere(PS, v);
     newGeo.translate(0, -PS/2, 0);
+    delete o.primRes; // géo = _makeHalfSphere(sphereRes), plus celle de création
   }
   o.mesh.geometry = newGeo;
   oldGeo.dispose();
@@ -8525,6 +8540,7 @@ function dupSel(){
       ...(o.isManifold!==undefined&&{isManifold:o.isManifold})};
     if(o.type==='tube'){n.tubeRo=o.tubeRo;n.tubeRi=o.tubeRi;}
     if(o.type==='sphere'||o.type==='halfsphere'){n.sphereRes=o.sphereRes||32;}
+    if(o.primRes) n.primRes=o.primRes;
     if(o.genType){n.genType=o.genType;n.genParams=o.genParams||null;}
     // P7 FIX — propager le slot Pool (doublon silencieux évité)
     if(o._poolSlot !== undefined) n._poolSlot = o._poolSlot;
@@ -8556,7 +8572,7 @@ function copyObjs(){
     pos:o.mesh.position.clone(), rot:o.mesh.rotation.clone(), scale:o.mesh.scale.clone(),
     geo:o.mesh.geometry.clone(),
     genType:o.genType||null, genParams:o.genParams||null,
-    tubeRo:o.tubeRo, tubeRi:o.tubeRi, sphereRes:o.sphereRes,
+    tubeRo:o.tubeRo, tubeRi:o.tubeRi, sphereRes:o.sphereRes, primRes:o.primRes,
     isManifold:o.isManifold,
     // [FIX 25/07] Même trou que dupSel (cf commentaire là-bas) — capturé ici,
     // restauré dans pasteObjs() sous le nouvel id. null si l'objet n'a pas
@@ -8577,7 +8593,7 @@ function pasteObjs(){
       geo=snap.geo.clone();geo.computeVertexNormals();
     }else{
       const fakeObj={type:snap.type,mesh:{scale:{x:snap.scale.x,y:snap.scale.y,z:snap.scale.z}},
-        tubeRo:snap.tubeRo,tubeRi:snap.tubeRi,sphereRes:snap.sphereRes,genType:snap.genType,genParams:snap.genParams};
+        tubeRo:snap.tubeRo,tubeRi:snap.tubeRi,sphereRes:snap.sphereRes,primRes:snap.primRes,genType:snap.genType,genParams:snap.genParams};
       geo=makeGeoCSG(fakeObj);
     }
     const mat=new THREE.MeshPhongMaterial({
@@ -8595,6 +8611,7 @@ function pasteObjs(){
       ...(snap.isManifold!==undefined&&{isManifold:snap.isManifold}),
       ...(snap.tubeRo!==undefined&&{tubeRo:snap.tubeRo,tubeRi:snap.tubeRi}),
       ...(snap.sphereRes!==undefined&&{sphereRes:snap.sphereRes}),
+      ...(snap.primRes&&{primRes:snap.primRes}),
       ...(snap.genType&&{genType:snap.genType,genParams:snap.genParams})
     };
     if(typeof _xrayActive!=='undefined'&&_xrayActive)_applyXRay(n);
@@ -8815,11 +8832,16 @@ function mMove(e){
       const _cmx=e.clientX-_cr.left,_cmy=e.clientY-_cr.top;
       if(_hDrag.type==='ylift'){
         // ── Y translation (lift / pose) ───────────────────────
-        let _wDY=(_hDrag.startMY-_cmy)*_hDrag.worldPerPix; // dy screen → dy monde
-        if(snap)_wDY=Math.round(_wDY/snapSz)*snapSz;
-        const _newY=Math.max(0,_hDrag.startPosY+_wDY);
+        const _wDY=(_hDrag.startMY-_cmy)*_hDrag.worldPerPix; // dy screen → dy monde
+        // [FIX 27/09] écart centre→dessous mesuré une fois (1er move, pièce
+        // encore à startPosY) : c'est le dessous qu'on aligne sur le pas.
+        // Borne : dessous ≥ 0 (« pose » = pile sur le plateau), sauf pièce
+        // déjà dessous au départ — même règle que Alt+↓.
+        if(_hDrag._yOff===undefined){ _hm.updateMatrixWorld(true); _hDrag._yOff=_hDrag.startPosY-new THREE.Box3().setFromObject(_hm).min.y; }
+        const _bot0=_hDrag.startPosY-_hDrag._yOff;
+        const _newY=Math.max(Math.min(0,_bot0),_sv(_bot0+_wDY))+_hDrag._yOff;
         if(!_hDrag._pushed){_hDrag._pushed=true;undoPush('move');}
-        _hm.position.y=_sv(_newY);
+        _hm.position.y=_newY;
         _invalidateBbox(_hm);_cotBoxCache=null;_camDirty=true;
         updProps();
       } else if(_hDrag.type==='height'){
@@ -9200,9 +9222,15 @@ function onKey(e){
     const active=selObjs[selObjs.length-1];
     const step=snap?snapSz:1;
     if(!_arrowUndoPushed){_arrowUndoPushed=true;undoPush('keyboard move');}
-    if(e.key==='ArrowUp') active.mesh.position.y+=step;
-    else active.mesh.position.y=Math.max(0,active.mesh.position.y-step);
-    active.mesh.position.y=_sv(active.mesh.position.y);
+    // [FIX 27/09] le pas s'applique au dessous (ce qu'affiche Pos Y), pas au centre
+    active.mesh.updateMatrixWorld(true);
+    const _bot=new THREE.Box3().setFromObject(active.mesh).min.y;
+    const _off=active.mesh.position.y-_bot;
+    // Descente bornée au plateau (dessous ≥ 0) — l'ancien Math.max(0, centre)
+    // laissait la pièce s'enfoncer jusqu'à mi-hauteur. Une pièce déjà sous le
+    // plateau (trou) reste où elle est au lieu de sauter à 0.
+    const _nb=_sv(_bot+(e.key==='ArrowUp'?step:-step));
+    active.mesh.position.y=(e.key==='ArrowUp'?_nb:Math.max(Math.min(0,_bot),_nb))+_off;
     _invalidateBbox(active.mesh);
     updProps();return;
   }
@@ -9253,7 +9281,8 @@ function onKey(e){
   if(moved){
     e.preventDefault();
     active.mesh.position.x=_sv(active.mesh.position.x);
-    active.mesh.position.y=_sv(active.mesh.position.y);
+    // [FIX 27/09] Y non touché : fwd/rgt sont horizontaux. L'arrondir ici
+    // décalait le dessous de la pièce à chaque flèche.
     active.mesh.position.z=_sv(active.mesh.position.z);
     _invalidateBbox(active.mesh); // BVH — position changée par flèche
     updProps();
@@ -9312,6 +9341,7 @@ function _journalData(){
         ...(o._medusaRef ? { medusaRef: o._medusaRef } : {}),
         tubeRo:o.tubeRo||null, tubeRi:o.tubeRi||null,
         sphereRes:o.sphereRes||null,
+        primRes:o.primRes||null,
         genType:o.genType||null, genParams:o.genParams||null,
         opacity:(_mat1(o.mesh.material)||{}).opacity, wireframe:(_mat1(o.mesh.material)||{}).wireframe,
         // [11/09] Palette par face — sans elle, un Ctrl+Z repeignait chaque
@@ -10741,7 +10771,7 @@ async function doCSG(op) {
             op: _effectiveOp, cg: [mesh.position.x, mesh.position.y, mesh.position.z],
             children: workObjs.map(o => ({
               id: o.id, name: o.name, type: o.type, color: o.color, isHole: o.isHole || false,
-              tubeRo: o.tubeRo, tubeRi: o.tubeRi,
+              tubeRo: o.tubeRo, tubeRi: o.tubeRi, primRes: o.primRes,
               genType: o.genType || null, genParams: o.genParams || null,
               p: [o.mesh.position.x, o.mesh.position.y, o.mesh.position.z],
               r: [o.mesh.rotation.x, o.mesh.rotation.y, o.mesh.rotation.z],
@@ -10821,7 +10851,7 @@ async function doCSG(op) {
             cg:[_meshP.position.x,_meshP.position.y,_meshP.position.z],
             children: workObjs.map(o=>({
               id:o.id, name:o.name, type:o.type, color:o.color, isHole:o.isHole||false,
-              tubeRo:o.tubeRo, tubeRi:o.tubeRi,
+              tubeRo:o.tubeRo, tubeRi:o.tubeRi, primRes:o.primRes,
               genType:o.genType||null, genParams:o.genParams||null,
               p:[o.mesh.position.x,o.mesh.position.y,o.mesh.position.z],
               r:[o.mesh.rotation.x,o.mesh.rotation.y,o.mesh.rotation.z],
@@ -10971,7 +11001,7 @@ async function doCSG(op) {
             cg:[mesh.position.x,mesh.position.y,mesh.position.z],
             children: workObjs.map(o=>({
               id:o.id, name:o.name, type:o.type, color:o.color, isHole:o.isHole||false,
-              tubeRo:o.tubeRo, tubeRi:o.tubeRi,
+              tubeRo:o.tubeRo, tubeRi:o.tubeRi, primRes:o.primRes,
               genType:o.genType||null, genParams:o.genParams||null,
               p:[o.mesh.position.x,o.mesh.position.y,o.mesh.position.z],
               r:[o.mesh.rotation.x,o.mesh.rotation.y,o.mesh.rotation.z],
@@ -11511,9 +11541,9 @@ async function rerunCSG(){
     // Dès qu'une géo est stockée, elle fait foi.
     if(c._csgGeo) g=deserializeGeo(c._csgGeo);
     else if(c.type==='tube'&&c.tubeRo){
-      g=_makeTube(PS,SEG_VIEW.tube||48,c.tubeRo,c.tubeRi);
+      g=_makeTube(PS,_segViewOf(c).tube||48,c.tubeRo,c.tubeRi);
       g.translate(0,-PS/2,0);
-    } else g=makeGeo(c.type,PS,SEG_VIEW);
+    } else g=makeGeo(c.type,PS,_segViewOf(c));
     const col=typeof c.color==='string'?parseInt(c.color.replace('#',''),16):c.color;
     const mat=new THREE.MeshPhongMaterial({
       color:c.isHole?0xff3333:col,shininess: 8, specular: 0x1a1a1a,
@@ -11524,6 +11554,7 @@ async function rerunCSG(){
     scene.add(m);
     const ro={id:c.id,name:c.name,type:c.type,mesh:m,color:c.color,isHole:c.isHole};
     if(c.type==='tube'){ro.tubeRo=c.tubeRo;ro.tubeRi=c.tubeRi;}
+    if(c.primRes) ro.primRes=c.primRes;
     if(c.genType){ro.genType=c.genType;ro.genParams=c.genParams||null;}
     if(c._csgTree) _csgTree.set(c.id,c._csgTree);
     restored.push(ro);
@@ -11583,8 +11614,8 @@ function _explodeMakeLeaf(c, o, node){
   let g;
   // [FIX 05/09 — Nass] idem : géo stockée = géo qui fait foi (cf. Re-run).
   if(c._csgGeo) g=deserializeGeo(c._csgGeo);
-  else if(c.type==='tube'&&c.tubeRo){ g=_makeTube(PS,SEG_VIEW.tube||48,c.tubeRo,c.tubeRi); g.translate(0,-PS/2,0); }
-  else g=makeGeo(c.type,PS,SEG_VIEW);
+  else if(c.type==='tube'&&c.tubeRo){ g=_makeTube(PS,_segViewOf(c).tube||48,c.tubeRo,c.tubeRi); g.translate(0,-PS/2,0); }
+  else g=makeGeo(c.type,PS,_segViewOf(c));
   const col=typeof c.color==='string'?parseInt(c.color.replace('#',''),16):c.color;
   const mat=new THREE.MeshPhongMaterial({
     color:c.isHole?0xff3333:col,shininess:8,specular:0x1a1a1a,
@@ -11596,6 +11627,7 @@ function _explodeMakeLeaf(c, o, node){
   objCnt++;
   const ro={id:objCnt,name:c.name,type:c.type,mesh:m,color:c.color,isHole:c.isHole};
   if(c.type==='tube'){ro.tubeRo=c.tubeRo;ro.tubeRi=c.tubeRi;}
+  if(c.primRes) ro.primRes=c.primRes;
   if(c.genType){ro.genType=c.genType;ro.genParams=c.genParams||null;}
   return ro;
 }
@@ -12740,6 +12772,7 @@ function saveProject(){
         // BUG-B FIX V4.2.5 : sphereRes absent → sphère custom perdait sa résolution au reload
         // Alignement avec _journalData() qui le sérialise depuis la V4.2.x.
         ...(o.sphereRes ? { sphereRes: o.sphereRes } : {}),
+        ...(o.primRes ? { primRes: o.primRes } : {}),
         ...(o.stepGroupId ? { stepGroupId: o.stepGroupId, stepGroupLabel: o.stepGroupLabel } : {}),
         ...(o.ifc ? { ifc: o.ifc } : {}),
         ...(o.origTf ? { origTf: o.origTf } : {}),
@@ -12801,6 +12834,7 @@ async function saveProjectAs(){
         ...(o.type==='hollowbox' ? { hboxOw:o.hboxOw, hboxIw:o.hboxIw } : {}),
         genType:o.genType||null,genParams:o.genParams||null,
         ...(o.sphereRes ? { sphereRes: o.sphereRes } : {}),
+        ...(o.primRes ? { primRes: o.primRes } : {}),
         ...(o.stepGroupId ? { stepGroupId: o.stepGroupId, stepGroupLabel: o.stepGroupLabel } : {}),
         ...(o.ifc ? { ifc: o.ifc } : {}),
         ...(o.origTf ? { origTf: o.origTf } : {}),
@@ -12923,16 +12957,18 @@ function _buildSceneFromData(d, keepJournal=false){
       // ── Primitives paramétriques (géométrie recréée à la résolution VIEW) ──
       case'cube':      g=makeGeo('cube',S,SEG_VIEW);break;
       case'sphere':    g=od.sphereRes ? new THREE.SphereGeometry(S/2,od.sphereRes,od.sphereRes) : makeGeo('sphere',S,SEG_VIEW);break;
-      case'cylinder':  g=makeGeo('cylinder',S,SEG_VIEW);break;
-      case'cone':      g=makeGeo('cone',S,SEG_VIEW);break;
+      case'cylinder':  g=makeGeo('cylinder',S,_segViewOf(od));break;
+      case'cone':      g=makeGeo('cone',S,_segViewOf(od));break;
       case'pyramid':   g=makeGeo('pyramid',S,SEG_VIEW);break;
       case'roof':      g=makeGeo('roof',S,SEG_VIEW);break;
-      case'roofarc':   g=makeGeo('roofarc',S,SEG_VIEW);break;
-      case'halfsphere':{ if(od.sphereRes){g=_makeHalfSphere(S,od.sphereRes);g.translate(0,-S/2,0);}else g=makeGeo('halfsphere',S,SEG_VIEW); }break;
+      case'roofarc':   g=makeGeo('roofarc',S,_segViewOf(od));break;
+      // primRes d'abord : c'est la géométrie de création (makeGeo à v×1,5).
+      // sphereRes seul = demi-sphère passée par le slider (_sresRebuild).
+      case'halfsphere':{ if(od.primRes) g=makeGeo('halfsphere',S,_segViewOf(od)); else if(od.sphereRes){g=_makeHalfSphere(S,od.sphereRes);g.translate(0,-S/2,0);}else g=makeGeo('halfsphere',S,SEG_VIEW); }break;
       case'wedge':     g=makeGeo('wedge',S,SEG_VIEW);break;
       // ── Tube creux (paramètres tubeRo/tubeRi persistés dans l'objet) ──
       case'tube':
-        g=_makeTube(S,SEG_VIEW.tube||48,od.tubeRo||S/2,od.tubeRi!=null?od.tubeRi:S/4);
+        g=_makeTube(S,_segViewOf(od).tube||48,od.tubeRo||S/2,od.tubeRi!=null?od.tubeRi:S/4);
         g.translate(0,-S/2,0);break;
       // ── Boîte creuse (parois hboxOw/hboxIw persistées dans l'objet) ──
       // [FIX 05/09 — Nass] absente du switch → tombait dans `default`, et sans
@@ -13004,6 +13040,7 @@ function _buildSceneFromData(d, keepJournal=false){
     // reperdait les parois.
     if(od.type==='hollowbox'){ _lo.hboxOw=od.hboxOw!=null?od.hboxOw:S/2; _lo.hboxIw=od.hboxIw!=null?od.hboxIw:S/4; }
     if(od.type==='sphere'||od.type==='halfsphere'){ _lo.sphereRes=od.sphereRes||32; }
+    if(od.primRes) _lo.primRes=od.primRes;
     // FIX V4.2.43 — genType/genParams non restaurés → double-clic .gen après loadFile rouvrait un dialog vide
     if(od.genType){ _lo.genType=od.genType; _lo.genParams=od.genParams||null; }
     objs.push(_lo);
