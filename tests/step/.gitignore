@@ -1,0 +1,5 @@
+# Downloaded by tests/fetch_step_files.js (see manifest.json), not versioned
+*.stp
+*.step
+*.STP
+*.STEP
