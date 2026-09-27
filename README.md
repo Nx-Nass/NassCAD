@@ -115,6 +115,7 @@ web-ifc-LICENSE.md          web-ifc license (MPL 2.0)
 NASSCAD_bench_perf.js       Performance benchmark (NassScript)
 capture_csg.js              CSG payload capture, for engine debugging
 
+MEDUSA_SOURCE/              MEDUSA engine — C++ source (nasscad_medusa.cpp)
 DEPLOY_WINDOWS_11_MSVC/     Medusa_Engine_MSVC.zip — MEDUSA, MSVC build (source + CMake + vcpkg)
 DEPLOY_UBUNTU_LINUX/        DEPLOY_UBUNTU.zip      — MEDUSA, native Ubuntu installer
 DEPLOY_UBUNTU_WSL/          DEPLOY_UBUNTU_WSL.zip  — MEDUSA, WSL deployment
@@ -136,7 +137,7 @@ MEDUSA is a small native binary that runs **on your own machine** and listens on
 
 **Engine log — on demand, not on disk.** MEDUSA writes no log file. The last 20 000 lines are kept in memory and served as plain text by `GET /log?n=<max>` — the jellyfish button in the NASSCAD Logs panel pulls them into the panel, next to the browser-side log of the same session. Pass `--logfile` to also write a timestamped `medusa-logs-<date>.txt`, as earlier builds did.
 
-Build bundles are zipped in the `DEPLOY_*` folders — extract the one for your platform:
+The C++ source is readable in [`MEDUSA_SOURCE/`](MEDUSA_SOURCE/). Build bundles are zipped in the `DEPLOY_*` folders — extract the one for your platform:
 
 | Target | Zip | Contents |
 |--------|-----|----------|
