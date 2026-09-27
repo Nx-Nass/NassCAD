@@ -8826,11 +8826,9 @@ function mMove(e){
         const _wDY=(_hDrag.startMY-_cmy)*_hDrag.worldPerPix; // dy screen → dy monde
         // [FIX 27/09] écart centre→dessous mesuré une fois (1er move, pièce
         // encore à startPosY) : c'est le dessous qu'on aligne sur le pas.
-        // Borne : dessous ≥ 0 (« pose » = pile sur le plateau), sauf pièce
-        // déjà dessous au départ — même règle que Alt+↓.
+        // Borne inchangée : centre ≥ 0 (cf. Alt+↓).
         if(_hDrag._yOff===undefined){ _hm.updateMatrixWorld(true); _hDrag._yOff=_hDrag.startPosY-new THREE.Box3().setFromObject(_hm).min.y; }
-        const _bot0=_hDrag.startPosY-_hDrag._yOff;
-        const _newY=Math.max(Math.min(0,_bot0),_sv(_bot0+_wDY))+_hDrag._yOff;
+        const _newY=Math.max(0,_sv(_hDrag.startPosY-_hDrag._yOff+_wDY)+_hDrag._yOff);
         if(!_hDrag._pushed){_hDrag._pushed=true;undoPush('move');}
         _hm.position.y=_newY;
         _invalidateBbox(_hm);_cotBoxCache=null;_camDirty=true;
@@ -9217,11 +9215,10 @@ function onKey(e){
     active.mesh.updateMatrixWorld(true);
     const _bot=new THREE.Box3().setFromObject(active.mesh).min.y;
     const _off=active.mesh.position.y-_bot;
-    // Descente bornée au plateau (dessous ≥ 0) — l'ancien Math.max(0, centre)
-    // laissait la pièce s'enfoncer jusqu'à mi-hauteur. Une pièce déjà sous le
-    // plateau (trou) reste où elle est au lieu de sauter à 0.
-    const _nb=_sv(_bot+(e.key==='ArrowUp'?step:-step));
-    active.mesh.position.y=(e.key==='ArrowUp'?_nb:Math.max(Math.min(0,_bot),_nb))+_off;
+    // Borne inchangée : centre ≥ 0 en descente (un trou peut s'enfoncer
+    // jusqu'à mi-hauteur sous le plateau, comme avant).
+    const _ny=_sv(_bot+(e.key==='ArrowUp'?step:-step))+_off;
+    active.mesh.position.y=e.key==='ArrowUp'?_ny:Math.max(0,_ny);
     _invalidateBbox(active.mesh);
     updProps();return;
   }
@@ -13059,6 +13056,9 @@ function _buildSceneFromData(d, keepJournal=false){
     camA={theta:d.camera.theta,phi:d.camera.phi,dist:d.camera.dist};
     const ct=d.camera.target;
     if(ct) Array.isArray(ct)?camT.set(...ct):camT.set(ct.x,ct.y,ct.z);
+    // [FIX 27/09] la vue vient du fichier/journal : le cumul de pan Alt
+    // (cf. _gridPanBy) ne s'y rapporte plus — « Recenter » la décalerait.
+    _gridPan.set(0,0,0); _updateGridResetBtnState();
     updCam();
   }
 
