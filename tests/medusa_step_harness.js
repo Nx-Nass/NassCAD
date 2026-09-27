@@ -29,8 +29,10 @@
 //   --engine   lance ce binaire sur --port (sinon : moteur deja demarre a --url)
 //   --baseline compare a un resultat precedent (JSON produit par --out) :
 //              tableau avant/apres dans --md
-//   --strict   code de sortie 1 si un corps d'un fichier declare ferme sort
-//              avec une arete nue ou sur-partagee (lecture client)
+//   --strict   code de sortie 1 si un corps que son B-Rep declare ferme (champ
+//              NSTP `brep`) sort avec une arete nue ou sur-partagee (lecture
+//              client), ou si un fichier ne s'importe pas. Moteur plus ancien
+//              sans `brep` : critere du fichier entier (step-declare.js).
 // ═══════════════════════════════════════════════════════════════════════════
 'use strict';
 const fs = require('fs');
@@ -214,7 +216,6 @@ async function runFile(file) {
     weldLog = lines.slice(from).filter(l => /\[WELD\]|\[WARN\]|REPAIR|MANIFOLD-RAW/.test(l));
   } catch (e) { /* journal facultatif */ }
 
-  const sum = key => bodies.reduce((a, b) => a + (b[key] ? 1 : 0), 0);
   // `closed*` : les seuls corps que leur B-Rep declare fermes (champ NSTP
   // `brep`, MEDUSA >= 27/09). Un moteur plus ancien ne l'emet pas : null.
   const hasBrep = bodies.some(b => b.brep);
@@ -233,7 +234,6 @@ async function runFile(file) {
     }
     return a;
   };
-  void sum;
   return {
     file: path.basename(file), sizeKB: Math.round(buf.length / 1024),
     declared: brief(declared),
