@@ -73,9 +73,10 @@ CC BY-NC 4.0. Each component remains under its own license, and those licenses
 prevail for the corresponding files. See THIRD-PARTY.md for the complete list,
 which includes (non-exhaustively):
 
-  three.js                 MIT                       Mr.doob and contributors
+  three.js                 MIT                       three.js authors
   OpenCASCADE Technology   LGPL 2.1 with exception   Open Cascade SAS
-  occt-import-js           MIT                       Viktor Kovács
+  occt-import-js           LGPL 2.1                  Viktor Kovács
+  web-ifc                  MPL 2.0                   That Open Company
   Draco                    Apache 2.0                Google
   Manifold                 Apache 2.0                Emmett Lalish et al.
   oneTBB                   Apache 2.0                Intel / UXL Foundation
