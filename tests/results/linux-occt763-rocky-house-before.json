@@ -1,0 +1,266 @@
+{
+ "label": "before",
+ "engine": {
+  "engine": "nasscad-medusa-engine",
+  "version": "3.1",
+  "occt": "7.6.3",
+  "protocol": "NSTP1",
+  "csgtree": true,
+  "stepexport": true,
+  "stepload": true,
+  "ramMB": 16095,
+  "availMB": 15581,
+  "cores": 4,
+  "runawayThreads": 0,
+  "deviationPct": 0.5
+ },
+ "date": "2026-09-28T01:46:35.694Z",
+ "results": [
+  {
+   "file": "Rocky_House.stp",
+   "sizeKB": 17779,
+   "declared": {
+    "solids": 143,
+    "closedShells": 147,
+    "openShells": 0,
+    "faces": 7721,
+    "edges": 19721,
+    "edgeValence": {
+     "2": 19721
+    },
+    "closedByDeclaration": true,
+    "system": "DEX"
+   },
+   "bodies": 161,
+   "verts": 71529,
+   "tris": 141922,
+   "stepMs": 13560,
+   "engineMs": 13230,
+   "smoothMs": 62,
+   "weldMeta": {
+    "bodies": 161,
+    "watertight": 127,
+    "stillBroken": 34,
+    "edgesTopo": 21168,
+    "edgesResidual": 0,
+    "edgesMismatch": 0,
+    "trisDropped": 76,
+    "legacyFallback": 0,
+    "enabled": true
+   },
+   "raw": {
+    "bodiesBroken": 11,
+    "naked": 355,
+    "over": 69,
+    "weldedVerts": 70925,
+    "closedBodies": null,
+    "closedBroken": null,
+    "closedNaked": null,
+    "closedOver": null
+   },
+   "client": {
+    "bodiesBroken": 11,
+    "naked": 355,
+    "over": 69,
+    "weldedVerts": 70924,
+    "closedBodies": null,
+    "closedBroken": null,
+    "closedNaked": null,
+    "closedOver": null
+   },
+   "brep": null,
+   "brokenBodies": [
+    {
+     "name": "Body",
+     "verts": 8008,
+     "tris": 15953,
+     "raw": {
+      "naked": 166,
+      "over": 5,
+      "weldedVerts": 7985,
+      "manifold": false
+     },
+     "client": {
+      "naked": 166,
+      "over": 5,
+      "weldedVerts": 7984,
+      "manifold": false
+     }
+    },
+    {
+     "name": "Sofa",
+     "verts": 1580,
+     "tris": 3102,
+     "raw": {
+      "naked": 4,
+      "over": 0,
+      "weldedVerts": 1547,
+      "manifold": false
+     },
+     "client": {
+      "naked": 4,
+      "over": 0,
+      "weldedVerts": 1547,
+      "manifold": false
+     }
+    },
+    {
+     "name": "Chair",
+     "verts": 439,
+     "tris": 875,
+     "raw": {
+      "naked": 17,
+      "over": 8,
+      "weldedVerts": 439,
+      "manifold": false
+     },
+     "client": {
+      "naked": 17,
+      "over": 8,
+      "weldedVerts": 439,
+      "manifold": false
+     }
+    },
+    {
+     "name": "Chair",
+     "verts": 439,
+     "tris": 875,
+     "raw": {
+      "naked": 17,
+      "over": 8,
+      "weldedVerts": 439,
+      "manifold": false
+     },
+     "client": {
+      "naked": 17,
+      "over": 8,
+      "weldedVerts": 439,
+      "manifold": false
+     }
+    },
+    {
+     "name": "Chair_mir",
+     "verts": 439,
+     "tris": 875,
+     "raw": {
+      "naked": 17,
+      "over": 8,
+      "weldedVerts": 439,
+      "manifold": false
+     },
+     "client": {
+      "naked": 17,
+      "over": 8,
+      "weldedVerts": 439,
+      "manifold": false
+     }
+    },
+    {
+     "name": "Chair",
+     "verts": 439,
+     "tris": 875,
+     "raw": {
+      "naked": 17,
+      "over": 8,
+      "weldedVerts": 439,
+      "manifold": false
+     },
+     "client": {
+      "naked": 17,
+      "over": 8,
+      "weldedVerts": 439,
+      "manifold": false
+     }
+    },
+    {
+     "name": "Chair",
+     "verts": 439,
+     "tris": 875,
+     "raw": {
+      "naked": 17,
+      "over": 8,
+      "weldedVerts": 439,
+      "manifold": false
+     },
+     "client": {
+      "naked": 17,
+      "over": 8,
+      "weldedVerts": 439,
+      "manifold": false
+     }
+    },
+    {
+     "name": "Chair",
+     "verts": 439,
+     "tris": 875,
+     "raw": {
+      "naked": 17,
+      "over": 8,
+      "weldedVerts": 439,
+      "manifold": false
+     },
+     "client": {
+      "naked": 17,
+      "over": 8,
+      "weldedVerts": 439,
+      "manifold": false
+     }
+    },
+    {
+     "name": "Chair",
+     "verts": 439,
+     "tris": 875,
+     "raw": {
+      "naked": 17,
+      "over": 8,
+      "weldedVerts": 439,
+      "manifold": false
+     },
+     "client": {
+      "naked": 17,
+      "over": 8,
+      "weldedVerts": 439,
+      "manifold": false
+     }
+    },
+    {
+     "name": "Chair",
+     "verts": 439,
+     "tris": 875,
+     "raw": {
+      "naked": 17,
+      "over": 8,
+      "weldedVerts": 439,
+      "manifold": false
+     },
+     "client": {
+      "naked": 17,
+      "over": 8,
+      "weldedVerts": 439,
+      "manifold": false
+     }
+    },
+    {
+     "name": "L_0_Ground",
+     "verts": 2770,
+     "tris": 5545,
+     "raw": {
+      "naked": 49,
+      "over": 0,
+      "weldedVerts": 2770,
+      "manifold": false
+     },
+     "client": {
+      "naked": 49,
+      "over": 0,
+      "weldedVerts": 2770,
+      "manifold": false
+     }
+    }
+   ]
+  }
+ ],
+ "platform": "Ubuntu 24.04, OCCT 7.6.3 (apt), Manifold v3.5.3, g++ 13, 4 cores",
+ "source": "MEDUSA_SOURCE/nasscad_medusa.cpp @ d038996 (main)",
+ "input": "Rocky_House.stp (18 MB, ST-Developer v16.7 / DEX, AP214) — supplied by the user, not versioned"
+}
