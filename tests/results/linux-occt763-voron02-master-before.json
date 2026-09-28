@@ -1,0 +1,1059 @@
+{
+ "label": "before",
+ "engine": {
+  "engine": "nasscad-medusa-engine",
+  "version": "3.1",
+  "occt": "7.6.3",
+  "protocol": "NSTP1",
+  "csgtree": true,
+  "stepexport": true,
+  "stepload": true,
+  "ramMB": 16095,
+  "availMB": 15284,
+  "cores": 4,
+  "runawayThreads": 0,
+  "deviationPct": 0.5
+ },
+ "date": "2026-09-28T03:02:34.897Z",
+ "results": [
+  {
+   "file": "V0.2 Master Assembly RC2.step",
+   "sizeKB": 163818,
+   "declared": {
+    "solids": 936,
+    "closedShells": 937,
+    "openShells": 0,
+    "faces": 57776,
+    "edges": 155345,
+    "edgeValence": {
+     "2": 155345
+    },
+    "closedByDeclaration": true,
+    "system": "Autodesk Translation Framework v11.17.0.187"
+   },
+   "bodies": 3065,
+   "verts": 1067305,
+   "tris": 2129071,
+   "stepMs": 269225,
+   "engineMs": 266937,
+   "smoothMs": 872,
+   "weldMeta": {
+    "bodies": 3065,
+    "watertight": 2574,
+    "stillBroken": 491,
+    "edgesTopo": 264592,
+    "edgesResidual": 1082,
+    "edgesMismatch": 0,
+    "trisDropped": 358,
+    "legacyFallback": 7,
+    "enabled": true
+   },
+   "raw": {
+    "bodiesBroken": 33,
+    "naked": 267,
+    "over": 21,
+    "weldedVerts": 1063799,
+    "closedBodies": null,
+    "closedBroken": null,
+    "closedNaked": null,
+    "closedOver": null
+   },
+   "client": {
+    "bodiesBroken": 33,
+    "naked": 267,
+    "over": 22,
+    "weldedVerts": 1063866,
+    "closedBodies": null,
+    "closedBroken": null,
+    "closedNaked": null,
+    "closedOver": null
+   },
+   "brep": null,
+   "brokenBodies": [
+    {
+     "name": "MGN7H Carriage (1)",
+     "verts": 220,
+     "tris": 436,
+     "raw": {
+      "naked": 4,
+      "over": 0,
+      "weldedVerts": 220,
+      "manifold": false
+     },
+     "client": {
+      "naked": 4,
+      "over": 0,
+      "weldedVerts": 220,
+      "manifold": false
+     }
+    },
+    {
+     "name": "MGN7H Carriage (1)",
+     "verts": 220,
+     "tris": 436,
+     "raw": {
+      "naked": 4,
+      "over": 0,
+      "weldedVerts": 220,
+      "manifold": false
+     },
+     "client": {
+      "naked": 4,
+      "over": 0,
+      "weldedVerts": 220,
+      "manifold": false
+     }
+    },
+    {
+     "name": "MGN7H Carriage (2)",
+     "verts": 220,
+     "tris": 436,
+     "raw": {
+      "naked": 4,
+      "over": 0,
+      "weldedVerts": 220,
+      "manifold": false
+     },
+     "client": {
+      "naked": 4,
+      "over": 0,
+      "weldedVerts": 220,
+      "manifold": false
+     }
+    },
+    {
+     "name": "MGN7H Carriage (2)",
+     "verts": 220,
+     "tris": 436,
+     "raw": {
+      "naked": 4,
+      "over": 0,
+      "weldedVerts": 220,
+      "manifold": false
+     },
+     "client": {
+      "naked": 4,
+      "over": 0,
+      "weldedVerts": 220,
+      "manifold": false
+     }
+    },
+    {
+     "name": "MGN7H Carriage (3)",
+     "verts": 220,
+     "tris": 436,
+     "raw": {
+      "naked": 4,
+      "over": 0,
+      "weldedVerts": 220,
+      "manifold": false
+     },
+     "client": {
+      "naked": 4,
+      "over": 0,
+      "weldedVerts": 220,
+      "manifold": false
+     }
+    },
+    {
+     "name": "MGN7H Carriage (3)",
+     "verts": 220,
+     "tris": 436,
+     "raw": {
+      "naked": 4,
+      "over": 0,
+      "weldedVerts": 220,
+      "manifold": false
+     },
+     "client": {
+      "naked": 4,
+      "over": 0,
+      "weldedVerts": 220,
+      "manifold": false
+     }
+    },
+    {
+     "name": "MGN7H Carriage v2 (3)",
+     "verts": 220,
+     "tris": 436,
+     "raw": {
+      "naked": 4,
+      "over": 0,
+      "weldedVerts": 220,
+      "manifold": false
+     },
+     "client": {
+      "naked": 4,
+      "over": 0,
+      "weldedVerts": 220,
+      "manifold": false
+     }
+    },
+    {
+     "name": "MGN7H Carriage v2 (3)",
+     "verts": 220,
+     "tris": 436,
+     "raw": {
+      "naked": 4,
+      "over": 0,
+      "weldedVerts": 220,
+      "manifold": false
+     },
+     "client": {
+      "naked": 4,
+      "over": 0,
+      "weldedVerts": 220,
+      "manifold": false
+     }
+    },
+    {
+     "name": "Z Endstop Mount",
+     "verts": 408,
+     "tris": 824,
+     "raw": {
+      "naked": 4,
+      "over": 0,
+      "weldedVerts": 408,
+      "manifold": false
+     },
+     "client": {
+      "naked": 4,
+      "over": 0,
+      "weldedVerts": 408,
+      "manifold": false
+     }
+    },
+    {
+     "name": "A Idler Upper",
+     "verts": 841,
+     "tris": 1704,
+     "raw": {
+      "naked": 4,
+      "over": 0,
+      "weldedVerts": 839,
+      "manifold": false
+     },
+     "client": {
+      "naked": 4,
+      "over": 0,
+      "weldedVerts": 839,
+      "manifold": false
+     }
+    },
+    {
+     "name": "M2x6 FHCS",
+     "verts": 240,
+     "tris": 476,
+     "raw": {
+      "naked": 4,
+      "over": 0,
+      "weldedVerts": 240,
+      "manifold": false
+     },
+     "client": {
+      "naked": 4,
+      "over": 0,
+      "weldedVerts": 240,
+      "manifold": false
+     }
+    },
+    {
+     "name": "M2x6 FHCS",
+     "verts": 240,
+     "tris": 476,
+     "raw": {
+      "naked": 4,
+      "over": 0,
+      "weldedVerts": 240,
+      "manifold": false
+     },
+     "client": {
+      "naked": 4,
+      "over": 0,
+      "weldedVerts": 240,
+      "manifold": false
+     }
+    },
+    {
+     "name": "M2x6 FHCS",
+     "verts": 240,
+     "tris": 476,
+     "raw": {
+      "naked": 4,
+      "over": 0,
+      "weldedVerts": 240,
+      "manifold": false
+     },
+     "client": {
+      "naked": 4,
+      "over": 0,
+      "weldedVerts": 240,
+      "manifold": false
+     }
+    },
+    {
+     "name": "M2x6 FHCS",
+     "verts": 240,
+     "tris": 476,
+     "raw": {
+      "naked": 4,
+      "over": 0,
+      "weldedVerts": 240,
+      "manifold": false
+     },
+     "client": {
+      "naked": 4,
+      "over": 0,
+      "weldedVerts": 240,
+      "manifold": false
+     }
+    },
+    {
+     "name": "M2x6 FHCS",
+     "verts": 240,
+     "tris": 476,
+     "raw": {
+      "naked": 4,
+      "over": 0,
+      "weldedVerts": 240,
+      "manifold": false
+     },
+     "client": {
+      "naked": 4,
+      "over": 0,
+      "weldedVerts": 240,
+      "manifold": false
+     }
+    },
+    {
+     "name": "M2x6 FHCS",
+     "verts": 240,
+     "tris": 476,
+     "raw": {
+      "naked": 4,
+      "over": 0,
+      "weldedVerts": 240,
+      "manifold": false
+     },
+     "client": {
+      "naked": 4,
+      "over": 0,
+      "weldedVerts": 240,
+      "manifold": false
+     }
+    },
+    {
+     "name": "M2x6 FHCS",
+     "verts": 240,
+     "tris": 476,
+     "raw": {
+      "naked": 4,
+      "over": 0,
+      "weldedVerts": 240,
+      "manifold": false
+     },
+     "client": {
+      "naked": 4,
+      "over": 0,
+      "weldedVerts": 240,
+      "manifold": false
+     }
+    },
+    {
+     "name": "M2x6 FHCS",
+     "verts": 240,
+     "tris": 476,
+     "raw": {
+      "naked": 4,
+      "over": 0,
+      "weldedVerts": 240,
+      "manifold": false
+     },
+     "client": {
+      "naked": 4,
+      "over": 0,
+      "weldedVerts": 240,
+      "manifold": false
+     }
+    },
+    {
+     "name": "MGN7H Carriage",
+     "verts": 220,
+     "tris": 436,
+     "raw": {
+      "naked": 4,
+      "over": 0,
+      "weldedVerts": 220,
+      "manifold": false
+     },
+     "client": {
+      "naked": 4,
+      "over": 0,
+      "weldedVerts": 220,
+      "manifold": false
+     }
+    },
+    {
+     "name": "MGN7H Carriage",
+     "verts": 220,
+     "tris": 436,
+     "raw": {
+      "naked": 4,
+      "over": 0,
+      "weldedVerts": 220,
+      "manifold": false
+     },
+     "client": {
+      "naked": 4,
+      "over": 0,
+      "weldedVerts": 220,
+      "manifold": false
+     }
+    },
+    {
+     "name": "Guidler",
+     "verts": 640,
+     "tris": 1276,
+     "raw": {
+      "naked": 0,
+      "over": 4,
+      "weldedVerts": 632,
+      "manifold": false
+     },
+     "client": {
+      "naked": 0,
+      "over": 4,
+      "weldedVerts": 632,
+      "manifold": false
+     }
+    },
+    {
+     "name": "Idler Gear",
+     "verts": 1258,
+     "tris": 2524,
+     "raw": {
+      "naked": 4,
+      "over": 0,
+      "weldedVerts": 1256,
+      "manifold": false
+     },
+     "client": {
+      "naked": 4,
+      "over": 0,
+      "weldedVerts": 1256,
+      "manifold": false
+     }
+    },
+    {
+     "name": "Drive Gear",
+     "verts": 1361,
+     "tris": 2726,
+     "raw": {
+      "naked": 4,
+      "over": 0,
+      "weldedVerts": 1361,
+      "manifold": false
+     },
+     "client": {
+      "naked": 4,
+      "over": 0,
+      "weldedVerts": 1361,
+      "manifold": false
+     }
+    },
+    {
+     "name": "M2x6 FHCS (1)",
+     "verts": 240,
+     "tris": 476,
+     "raw": {
+      "naked": 4,
+      "over": 0,
+      "weldedVerts": 240,
+      "manifold": false
+     },
+     "client": {
+      "naked": 4,
+      "over": 0,
+      "weldedVerts": 240,
+      "manifold": false
+     }
+    },
+    {
+     "name": "Yellow Die Spring",
+     "verts": 6209,
+     "tris": 12414,
+     "raw": {
+      "naked": 0,
+      "over": 2,
+      "weldedVerts": 6209,
+      "manifold": false
+     },
+     "client": {
+      "naked": 0,
+      "over": 2,
+      "weldedVerts": 6209,
+      "manifold": false
+     }
+    },
+    {
+     "name": "Yellow Die Spring",
+     "verts": 6209,
+     "tris": 12414,
+     "raw": {
+      "naked": 0,
+      "over": 2,
+      "weldedVerts": 6209,
+      "manifold": false
+     },
+     "client": {
+      "naked": 0,
+      "over": 2,
+      "weldedVerts": 6209,
+      "manifold": false
+     }
+    },
+    {
+     "name": "Yellow Die Spring",
+     "verts": 6209,
+     "tris": 12414,
+     "raw": {
+      "naked": 0,
+      "over": 2,
+      "weldedVerts": 6209,
+      "manifold": false
+     },
+     "client": {
+      "naked": 0,
+      "over": 2,
+      "weldedVerts": 6209,
+      "manifold": false
+     }
+    },
+    {
+     "name": "Z Motor Mount",
+     "verts": 2707,
+     "tris": 5434,
+     "raw": {
+      "naked": 0,
+      "over": 2,
+      "weldedVerts": 2699,
+      "manifold": false
+     },
+     "client": {
+      "naked": 0,
+      "over": 2,
+      "weldedVerts": 2699,
+      "manifold": false
+     }
+    },
+    {
+     "name": "Encoder Knob",
+     "verts": 1653,
+     "tris": 3285,
+     "raw": {
+      "naked": 9,
+      "over": 0,
+      "weldedVerts": 1647,
+      "manifold": false
+     },
+     "client": {
+      "naked": 9,
+      "over": 0,
+      "weldedVerts": 1647,
+      "manifold": false
+     }
+    },
+    {
+     "name": "V0 Display PCB",
+     "verts": 10604,
+     "tris": 21240,
+     "raw": {
+      "naked": 0,
+      "over": 0,
+      "weldedVerts": 10188,
+      "manifold": true
+     },
+     "client": {
+      "naked": 0,
+      "over": 2,
+      "weldedVerts": 10222,
+      "manifold": false
+     }
+    },
+    {
+     "name": "5558720272",
+     "verts": 1911,
+     "tris": 3818,
+     "raw": {
+      "naked": 0,
+      "over": 1,
+      "weldedVerts": 1894,
+      "manifold": false
+     },
+     "client": {
+      "naked": 0,
+      "over": 0,
+      "weldedVerts": 1897,
+      "manifold": true
+     }
+    },
+    {
+     "name": "COMPOUND",
+     "verts": 2576,
+     "tris": 5174,
+     "raw": {
+      "naked": 104,
+      "over": 8,
+      "weldedVerts": 2554,
+      "manifold": false
+     },
+     "client": {
+      "naked": 104,
+      "over": 8,
+      "weldedVerts": 2554,
+      "manifold": false
+     }
+    },
+    {
+     "name": "COMPOUND",
+     "verts": 852,
+     "tris": 1636,
+     "raw": {
+      "naked": 58,
+      "over": 0,
+      "weldedVerts": 849,
+      "manifold": false
+     },
+     "client": {
+      "naked": 58,
+      "over": 0,
+      "weldedVerts": 849,
+      "manifold": false
+     }
+    },
+    {
+     "name": "Pulley Jig",
+     "verts": 1885,
+     "tris": 3772,
+     "raw": {
+      "naked": 4,
+      "over": 0,
+      "weldedVerts": 1884,
+      "manifold": false
+     },
+     "client": {
+      "naked": 4,
+      "over": 0,
+      "weldedVerts": 1884,
+      "manifold": false
+     }
+    }
+   ],
+   "weldLog": [
+    "[03:02:22][MANIFOLD-RAW] \"Drag Chain Spacer\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 8 naked edge(s), 0 over-valenced edge(s), 484 triangle(s)",
+    "[03:02:22][WELD] \"Stealth Bed Front\" verts 2006->915, topo 285, residual 6 @tol 7.89705e-08 => naked 12, over-valenced 0, bowtie 0",
+    "[03:02:22][MANIFOLD-RAW] \"Stealth Bed Front\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 12 naked edge(s), 0 over-valenced edge(s), 1846 triangle(s)",
+    "[03:02:22][WELD] \"Thumb Nut\" verts 3066->1797, topo 273 => naked 24, over-valenced 0, bowtie 0",
+    "[03:02:22][MANIFOLD-RAW] \"Thumb Nut\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 24 naked edge(s), 0 over-valenced edge(s), 3576 triangle(s)",
+    "[03:02:22][WELD] \"Thumb Nut\" verts 3066->1797, topo 273 => naked 24, over-valenced 0, bowtie 0",
+    "[03:02:22][MANIFOLD-RAW] \"Thumb Nut\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 24 naked edge(s), 0 over-valenced edge(s), 3576 triangle(s)",
+    "[WELD] \"Thumb Nut\" verts 3066->1797, topo 273 => naked 24, over-valenced 0, bowtie 0",
+    "[03:02:22][MANIFOLD-RAW] \"Thumb Nut\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 24 naked edge(s), 0 over-valenced edge(s), 3576 triangle(s)",
+    "[03:02:22][WELD] \"Rear Bed Mount Right\" verts 6559->3585, topo 493 => naked 36, over-valenced 0, bowtie 0",
+    "[03:02:22][MANIFOLD-RAW] \"Rear Bed Mount Right\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 36 naked edge(s), 0 over-valenced edge(s), 7208 triangle(s)",
+    "[03:02:22][WELD] \"M3 Hexnut (13)\" verts 574->266, topo 47, residual 2 @tol 8.73747e-09 => naked 4, over-valenced 0, bowtie 0",
+    "[03:02:22][MANIFOLD-RAW] \"M3 Hexnut (13)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 4 naked edge(s), 0 over-valenced edge(s), 532 triangle(s)",
+    "[03:02:22][WELD] \"M3 Hexnut (13)\" verts 574->266, topo 47, residual 2 @tol 8.73747e-09 => naked 4, over-valenced 0, bowtie 0",
+    "[03:02:22][MANIFOLD-RAW] \"M3 Hexnut (13)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 4 naked edge(s), 0 over-valenced edge(s), 532 triangle(s)",
+    "[03:02:22][WELD] \"M3 Hexnut (13)\" verts 574->266, topo 47, residual 2 @tol 8.73747e-09 => naked 4, over-valenced 0, bowtie 0",
+    "[03:02:22][MANIFOLD-RAW] \"M3 Hexnut (13)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 4 naked edge(s), 0 over-valenced edge(s), 532 triangle(s)",
+    "[03:02:22][WELD] \"M3 Hexnut (13)\" verts 574->266, topo 47, residual 2 @tol 8.73747e-09 => naked 4, over-valenced 0, bowtie 0",
+    "[03:02:22][MANIFOLD-RAW] \"M3 Hexnut (13)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 4 naked edge(s), 0 over-valenced edge(s), 532 triangle(s)",
+    "[WELD] \"M3 Hexnut (5)\" verts 574->266, topo 47, residual 2 @tol 8.73747e-09 => naked 4, over-valenced 0, bowtie 0",
+    "[03:02:22][MANIFOLD-RAW] \"M3 Hexnut (5)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 4 naked edge(s), 0 over-valenced edge(s), 532 triangle(s)",
+    "[03:02:22][WELD] \"M3 Hexnut (5)\" verts 574->266, topo 47, residual 2 @tol 8.73747e-09 => naked 4, over-valenced 0, bowtie 0",
+    "[03:02:22][MANIFOLD-RAW] \"M3 Hexnut (5)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 4 naked edge(s), 0 over-valenced edge(s), 532 triangle(s)",
+    "[03:02:22][WELD] \"M3 Hexnut (5)\" verts 574->266, topo 47, residual 2 @tol 8.73747e-09 => naked 4, over-valenced 0, bowtie 0",
+    "[03:02:22][MANIFOLD-RAW] \"M3 Hexnut (5)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 4 naked edge(s), 0 over-valenced edge(s), 532 triangle(s)",
+    "[03:02:22][WELD] \"Z Motor Mount\" verts 5320->2707, topo 536, degen 12, -degen-tri 12, opposed-tri 2 => naked 32, over-valenced 2, bowtie 0",
+    "[03:02:22][WELD] \"M3 Hexnut (5)\" verts 574->266, topo 47, residual 2 @tol 8.73747e-09 => naked 4, over-valenced 0, bowtie 0",
+    "[03:02:22][MANIFOLD-RAW] \"M3 Hexnut (5)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 4 naked edge(s), 0 over-valenced edge(s), 532 triangle(s)",
+    "[03:02:22][WELD] \"M3 Hexnut (5)\" verts 574->266, topo 47, residual 2 @tol 8.73747e-09 => naked 4, over-valenced 0, bowtie 0",
+    "[03:02:22][MANIFOLD-RAW] \"M3 Hexnut (5)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 4 naked edge(s), 0 over-valenced edge(s), 532 triangle(s)",
+    "[03:02:22][MANIFOLD-RAW] \"Z Motor Mount\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 32 naked edge(s), 2 over-valenced edge(s), 5434 triangle(s)",
+    "[03:02:22][WELD] \"M3 Hexnut (5)\" verts 574->266, topo 47, residual 2 @tol 8.73747e-09 => naked 4, over-valenced 0, bowtie 0",
+    "[03:02:22][MANIFOLD-RAW] \"M3 Hexnut (5)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 4 naked edge(s), 0 over-valenced edge(s), 532 triangle(s)",
+    "[03:02:22][WELD] \"M3 Hexnut (5)\" verts 574->266, topo 47, residual 2 @tol 8.73747e-09 => naked 4, over-valenced 0, bowtie 0",
+    "[03:02:22][MANIFOLD-RAW] \"M3 Hexnut (5)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 4 naked edge(s), 0 over-valenced edge(s), 532 triangle(s)",
+    "[03:02:22][WELD] \"M3 Hexnut (5)\" verts 574->266, topo 47, residual 2 @tol 8.73747e-09 => naked 4, over-valenced 0, bowtie 0",
+    "[03:02:22][MANIFOLD-RAW] \"M3 Hexnut (5)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 4 naked edge(s), 0 over-valenced edge(s), 532 triangle(s)",
+    "[03:02:22][WELD] \"M3 Hexnut (5)\" verts 574->266, topo 47, residual 2 @tol 8.73747e-09 => naked 4, over-valenced 0, bowtie 0",
+    "[03:02:22][MANIFOLD-RAW] \"M3 Hexnut (5)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 4 naked edge(s), 0 over-valenced edge(s), 532 triangle(s)",
+    "[03:02:22][WELD] \"M3 Hexnut (5)\" verts 574->266, topo 47, residual 2 @tol 8.73747e-09 => naked 4, over-valenced 0, bowtie 0",
+    "[03:02:22][MANIFOLD-RAW] \"M3 Hexnut (5)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 4 naked edge(s), 0 over-valenced edge(s), 532 triangle(s)",
+    "[03:02:22][WELD] \"M3 Hexnut (5)\" verts 574->266, topo 47, residual 2 @tol 8.73747e-09 => naked 4, over-valenced 0, bowtie 0",
+    "[03:02:22][MANIFOLD-RAW] \"M3 Hexnut (5)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 4 naked edge(s), 0 over-valenced edge(s), 532 triangle(s)",
+    "[03:02:22][WELD] \"M3 Hexnut (5)\" verts 574->266, topo 47, residual 2 @tol 8.73747e-09 => naked 4, over-valenced 0, bowtie 0",
+    "[03:02:22][MANIFOLD-RAW] \"M3 Hexnut (5)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 4 naked edge(s), 0 over-valenced edge(s), 532 triangle(s)",
+    "[03:02:22][WELD] \"Logo Insert\" verts 338->143, topo 63, residual 2 @tol 2.20454e-08 => WATERTIGHT",
+    "[03:02:23][WELD] \"Logo Insert\" verts 338->143, topo 63, residual 2 @tol 2.20454e-08 => WATERTIGHT",
+    "[WELD] \"Foot Accent\" verts 1686->850, topo 133 => naked 8, over-valenced 0, bowtie 0",
+    "[03:02:23][MANIFOLD-RAW] \"Foot Accent\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 8 naked edge(s), 0 over-valenced edge(s), 1702 triangle(s)",
+    "[03:02:23][WELD] \"200mm Integrated Leadscrew Stepper\" verts 29272->14358, topo 846, residual 2 @tol 2.33783e-07 => naked 4, over-valenced 0, bowtie 0",
+    "[03:02:23][MANIFOLD-RAW] \"200mm Integrated Leadscrew Stepper\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 4 naked edge(s), 0 over-valenced edge(s), 28712 triangle(s)",
+    "[03:02:23][WELD] \"Mains Inlet\" verts 810->463, topo 68, degen 3, -degen-tri 3 => naked 8, over-valenced 0, bowtie 0",
+    "[03:02:23][MANIFOLD-RAW] \"Mains Inlet\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 8 naked edge(s), 0 over-valenced edge(s), 916 triangle(s)",
+    "[03:02:23][WELD] \"Mains Inlet Foot (1)\" verts 3604->1528, topo 701 => naked 22, over-valenced 0, bowtie 0",
+    "[03:02:23][MANIFOLD-RAW] \"Mains Inlet Foot (1)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 22 naked edge(s), 0 over-valenced edge(s), 3072 triangle(s)",
+    "[03:02:23][WELD] \"M3 Hexnut (5)\" verts 574->266, topo 47, residual 2 @tol 8.73747e-09 => naked 4, over-valenced 0, bowtie 0",
+    "[03:02:23][MANIFOLD-RAW] \"M3 Hexnut (5)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 4 naked edge(s), 0 over-valenced edge(s), 532 triangle(s)",
+    "[03:02:23][WELD] \"M3 Hexnut (5)\" verts 574->266, topo 47, residual 2 @tol 8.73747e-09 => naked 4, over-valenced 0, bowtie 0",
+    "[03:02:23][MANIFOLD-RAW] \"M3 Hexnut (5)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 4 naked edge(s), 0 over-valenced edge(s), 532 triangle(s)",
+    "[WELD] \"M2x10 Self Tapper (1)\" verts 4063->2090, topo 186, residual 9 @tol 1.27529e-08 => naked 18, over-valenced 0, bowtie 0",
+    "[03:02:23][MANIFOLD-RAW] \"M2x10 Self Tapper (1)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 18 naked edge(s), 0 over-valenced edge(s), 4176 triangle(s)",
+    "[03:02:23][WELD] \"M2x10 Self Tapper (1)\" verts 4063->2090, topo 186, residual 9 @tol 1.27529e-08 => naked 18, over-valenced 0, bowtie 0",
+    "[03:02:23][MANIFOLD-RAW] \"M2x10 Self Tapper (1)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 18 naked edge(s), 0 over-valenced edge(s), 4176 triangle(s)",
+    "[03:02:23][WELD] \"Rubber Foot\" verts 704->447, topo 9 => naked 30, over-valenced 0, bowtie 0",
+    "[03:02:23][MANIFOLD-RAW] \"Rubber Foot\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 30 naked edge(s), 0 over-valenced edge(s), 870 triangle(s)",
+    "[03:02:23][WELD] \"Foot Accent (1)\" verts 1679->849, topo 132 => naked 8, over-valenced 0, bowtie 0",
+    "[03:02:23][MANIFOLD-RAW] \"Foot Accent (1)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 8 naked edge(s), 0 over-valenced edge(s), 1700 triangle(s)",
+    "[03:02:23][WELD] \"SOLID\" verts 3198->1375, topo 663, residual 2 @tol 8.71803e-09 => WATERTIGHT",
+    "[03:02:23][WELD] \"M2x10 Self Tapper (1)\" verts 4063->2090, topo 186, residual 9 @tol 1.27529e-08 => naked 18, over-valenced 0, bowtie 0",
+    "[03:02:23][MANIFOLD-RAW] \"M2x10 Self Tapper (1)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 18 naked edge(s), 0 over-valenced edge(s), 4176 triangle(s)",
+    "[03:02:23][WELD] \"Rubber Foot\" verts 704->447, topo 9 => naked 30, over-valenced 0, bowtie 0",
+    "[03:02:23][MANIFOLD-RAW] \"Rubber Foot\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 30 naked edge(s), 0 over-valenced edge(s), 870 triangle(s)",
+    "[03:02:23][WELD] \"M2x10 Self Tapper (1)\" verts 4063->2090, topo 186, residual 9 @tol 1.27529e-08 => naked 18, over-valenced 0, bowtie 0",
+    "[03:02:23][MANIFOLD-RAW] \"M2x10 Self Tapper (1)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 18 naked edge(s), 0 over-valenced edge(s), 4176 triangle(s)",
+    "[03:02:23][WELD] \"SOLID\" verts 3198->1375, topo 663, residual 2 @tol 8.71803e-09 => WATERTIGHT",
+    "[03:02:23][WELD] \"Front Left Foot (1)\" verts 3265->1771, topo 353, degen 2, -degen-tri 2 => naked 12, over-valenced 0, bowtie 0",
+    "[03:02:23][MANIFOLD-RAW] \"Front Left Foot (1)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 12 naked edge(s), 0 over-valenced edge(s), 3540 triangle(s)",
+    "[03:02:23][WELD] \"M2x10 Self Tapper (1)\" verts 4063->2090, topo 186, residual 9 @tol 1.27529e-08 => naked 18, over-valenced 0, bowtie 0",
+    "[03:02:23][MANIFOLD-RAW] \"M2x10 Self Tapper (1)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 18 naked edge(s), 0 over-valenced edge(s), 4176 triangle(s)",
+    "[03:02:23][WELD] \"Foot Accent (2)\" verts 1690->854, topo 133 => naked 8, over-valenced 0, bowtie 0",
+    "[03:02:23][MANIFOLD-RAW] \"Foot Accent (2)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 8 naked edge(s), 0 over-valenced edge(s), 1710 triangle(s)",
+    "[03:02:23][WELD] \"M2x10 Self Tapper (1)\" verts 4063->2090, topo 186, residual 9 @tol 1.27529e-08 => naked 18, over-valenced 0, bowtie 0",
+    "[03:02:23][MANIFOLD-RAW] \"M2x10 Self Tapper (1)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 18 naked edge(s), 0 over-valenced edge(s), 4176 triangle(s)",
+    "[03:02:23][WELD] \"Rubber Foot\" verts 704->447, topo 9 => naked 30, over-valenced 0, bowtie 0",
+    "[03:02:23][MANIFOLD-RAW] \"Rubber Foot\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 30 naked edge(s), 0 over-valenced edge(s), 870 triangle(s)",
+    "[03:02:23][WELD] \"M2x10 Self Tapper (1)\" verts 4063->2090, topo 186, residual 9 @tol 1.27529e-08 => naked 18, over-valenced 0, bowtie 0",
+    "[03:02:23][MANIFOLD-RAW] \"M2x10 Self Tapper (1)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 18 naked edge(s), 0 over-valenced edge(s), 4176 triangle(s)",
+    "[03:02:23][WELD] \"Front Right Foot (1)\" verts 3270->1774, topo 353, degen 2, -degen-tri 2 => naked 12, over-valenced 0, bowtie 0",
+    "[03:02:23][MANIFOLD-RAW] \"Front Right Foot (1)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 12 naked edge(s), 0 over-valenced edge(s), 3546 triangle(s)",
+    "[03:02:23][WELD] \"SOLID\" verts 3198->1375, topo 663, residual 2 @tol 8.71803e-09 => WATERTIGHT",
+    "[03:02:23][WELD] \"M2x10 Self Tapper (1)\" verts 4063->2090, topo 186, residual 9 @tol 1.27529e-08 => naked 18, over-valenced 0, bowtie 0",
+    "[03:02:23][MANIFOLD-RAW] \"M2x10 Self Tapper (1)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 18 naked edge(s), 0 over-valenced edge(s), 4176 triangle(s)",
+    "[03:02:23][WELD] \"Rubber Foot\" verts 704->447, topo 9 => naked 30, over-valenced 0, bowtie 0",
+    "[03:02:23][MANIFOLD-RAW] \"Rubber Foot\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 30 naked edge(s), 0 over-valenced edge(s), 870 triangle(s)",
+    "[03:02:23][WELD] \"SOLID\" verts 3198->1375, topo 663, residual 2 @tol 8.71803e-09 => WATERTIGHT",
+    "[WELD] \"Foot Accent (3)\" verts 1679->849, topo 132 => naked 8, over-valenced 0, bowtie 0",
+    "[03:02:23][MANIFOLD-RAW] \"Foot Accent (3)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 8 naked edge(s), 0 over-valenced edge(s), 1700 triangle(s)",
+    "[03:02:23][WELD] \"SOLID\" verts 3198->1375, topo 663, residual 2 @tol 8.71803e-09 => WATERTIGHT",
+    "[03:02:23][WELD] \"Rear Right Foot\" verts 3017->1522, topo 330 => naked 12, over-valenced 0, bowtie 0",
+    "[03:02:23][MANIFOLD-RAW] \"Rear Right Foot\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 12 naked edge(s), 0 over-valenced edge(s), 3046 triangle(s)",
+    "[03:02:23][WELD] \"SOLID\" verts 3198->1375, topo 663, residual 2 @tol 8.71803e-09 => WATERTIGHT",
+    "[03:02:23][WELD] \"Display Faceplate\" verts 4240->1863, topo 783, degen 4, -degen-tri 4 => naked 4, over-valenced 0, bowtie 0",
+    "[03:02:23][MANIFOLD-RAW] \"Display Faceplate\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 4 naked edge(s), 0 over-valenced edge(s), 3744 triangle(s)",
+    "[03:02:23][WELD] \"Encoder Knob\" verts 3202->1653, topo 321 => naked 29, over-valenced 0, bowtie 0",
+    "[03:02:23][MANIFOLD-RAW] \"Encoder Knob\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 29 naked edge(s), 0 over-valenced edge(s), 3285 triangle(s)",
+    "[03:02:23][WELD] \"V0 Display PCB\" verts 1698->833, topo 271 => naked 16, over-valenced 0, bowtie 0",
+    "[03:02:23][MANIFOLD-RAW] \"V0 Display PCB\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 16 naked edge(s), 0 over-valenced edge(s), 1648 triangle(s)",
+    "[03:02:23][WELD] \"V0 Display PCB\" verts 5089->2709, topo 503, degen 4, -degen-tri 4 => naked 56, over-valenced 0, bowtie 0",
+    "[03:02:23][MANIFOLD-RAW] \"V0 Display PCB\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 56 naked edge(s), 0 over-valenced edge(s), 5378 triangle(s)",
+    "[03:02:23][WELD] \"M2x10 Self Tapper (1)\" verts 4063->2090, topo 186, residual 9 @tol 1.27529e-08 => naked 18, over-valenced 0, bowtie 0",
+    "[03:02:23][MANIFOLD-RAW] \"M2x10 Self Tapper (1)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 18 naked edge(s), 0 over-valenced edge(s), 4176 triangle(s)",
+    "[03:02:23][WELD] \"M2x10 Self Tapper (1)\" verts 4063->2090, topo 186, residual 9 @tol 1.27529e-08 => naked 18, over-valenced 0, bowtie 0",
+    "[03:02:23][MANIFOLD-RAW] \"M2x10 Self Tapper (1)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 18 naked edge(s), 0 over-valenced edge(s), 4176 triangle(s)",
+    "[03:02:23][WELD] \"M2x10 Self Tapper (1)\" verts 4063->2090, topo 186, residual 9 @tol 1.27529e-08 => naked 18, over-valenced 0, bowtie 0",
+    "[03:02:23][MANIFOLD-RAW] \"M2x10 Self Tapper (1)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 18 naked edge(s), 0 over-valenced edge(s), 4176 triangle(s)",
+    "[03:02:23][WELD] \"M2x10 Self Tapper (1)\" verts 4063->2090, topo 186, residual 9 @tol 1.27529e-08 => naked 18, over-valenced 0, bowtie 0",
+    "[03:02:23][MANIFOLD-RAW] \"M2x10 Self Tapper (1)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 18 naked edge(s), 0 over-valenced edge(s), 4176 triangle(s)",
+    "[03:02:23][WELD] \"M3 Hexnut (5)\" verts 574->266, topo 47, residual 2 @tol 8.73747e-09 => naked 4, over-valenced 0, bowtie 0",
+    "[03:02:23][MANIFOLD-RAW] \"M3 Hexnut (5)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 4 naked edge(s), 0 over-valenced edge(s), 532 triangle(s)",
+    "[03:02:23][WELD] \"M3 Hexnut (5)\" verts 574->266, topo 47, residual 2 @tol 8.73747e-09 => naked 4, over-valenced 0, bowtie 0",
+    "[03:02:23][MANIFOLD-RAW] \"M3 Hexnut (5)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 4 naked edge(s), 0 over-valenced edge(s), 532 triangle(s)",
+    "[03:02:23][WELD] \"Right Top Panel Clip\" verts 554->239, topo 102 => naked 4, over-valenced 0, bowtie 0",
+    "[03:02:23][MANIFOLD-RAW] \"Right Top Panel Clip\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 4 naked edge(s), 0 over-valenced edge(s), 480 triangle(s)",
+    "[WELD] \"Left Top Clip\" verts 554->239, topo 102 => naked 4, over-valenced 0, bowtie 0",
+    "[03:02:23][MANIFOLD-RAW] \"Left Top Clip\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 4 naked edge(s), 0 over-valenced edge(s), 480 triangle(s)",
+    "[03:02:23][WELD] \"Right Top Panel Clip\" verts 554->239, topo 102 => naked 4, over-valenced 0, bowtie 0",
+    "[03:02:23][MANIFOLD-RAW] \"Right Top Panel Clip\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 4 naked edge(s), 0 over-valenced edge(s), 480 triangle(s)",
+    "[03:02:23][WELD] \"Upper Hinge Clip\" verts 810->366, topo 105 => naked 8, over-valenced 0, bowtie 0",
+    "[03:02:23][MANIFOLD-RAW] \"Upper Hinge Clip\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 8 naked edge(s), 0 over-valenced edge(s), 736 triangle(s)",
+    "[03:02:23][WELD] \"M3 Hexnut (2)\" verts 574->266, topo 47, residual 2 @tol 8.73747e-09 => naked 4, over-valenced 0, bowtie 0",
+    "[03:02:23][WELD] \"M3 Hexnut (2)\" verts 574->266, topo 47, residual 2 @tol 8.73747e-09 => naked 4, over-valenced 0, bowtie 0",
+    "[03:02:23][MANIFOLD-RAW] \"M3 Hexnut (2)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 4 naked edge(s), 0 over-valenced edge(s), 532 triangle(s)",
+    "[03:02:23][MANIFOLD-RAW] \"M3 Hexnut (2)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 4 naked edge(s), 0 over-valenced edge(s), 532 triangle(s)",
+    "[03:02:23][WELD] \"M3 Hexnut (2)\" verts 574->266, topo 47, residual 2 @tol 8.73747e-09 => naked 4, over-valenced 0, bowtie 0",
+    "[03:02:23][WELD] \"M3 Hexnut (2)\" verts 574->266, topo 47, residual 2 @tol 8.73747e-09 => naked 4, over-valenced 0, bowtie 0",
+    "[03:02:23][MANIFOLD-RAW] \"M3 Hexnut (2)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 4 naked edge(s), 0 over-valenced edge(s), 532 triangle(s)",
+    "[03:02:23][WELD] \"M3 Hexnut (2)\" verts 574->266, topo 47, residual 2 @tol 8.73747e-09 => naked 4, over-valenced 0, bowtie 0",
+    "[03:02:23][MANIFOLD-RAW] \"M3 Hexnut (2)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 4 naked edge(s), 0 over-valenced edge(s), 532 triangle(s)",
+    "[03:02:23][MANIFOLD-RAW] \"M3 Hexnut (2)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 4 naked edge(s), 0 over-valenced edge(s), 532 triangle(s)",
+    "[03:02:23][WELD] \"M3 Hexnut (2)\" verts 574->266, topo 47, residual 2 @tol 8.73747e-09 => naked 4, over-valenced 0, bowtie 0",
+    "[03:02:23][MANIFOLD-RAW] \"M3 Hexnut (2)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 4 naked edge(s), 0 over-valenced edge(s), 532 triangle(s)",
+    "[03:02:23][WELD] \"M3 Hexnut (2)\" verts 574->266, topo 47, residual 2 @tol 8.73747e-09 => naked 4, over-valenced 0, bowtie 0",
+    "[03:02:23][WELD] \"M3 Hexnut (2)\" verts 574->266, topo 47, residual 2 @tol 8.73747e-09 => naked 4, over-valenced 0, bowtie 0",
+    "[03:02:23][MANIFOLD-RAW] \"M3 Hexnut (2)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 4 naked edge(s), 0 over-valenced edge(s), 532 triangle(s)",
+    "[03:02:23][MANIFOLD-RAW] \"M3 Hexnut (2)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 4 naked edge(s), 0 over-valenced edge(s), 532 triangle(s)",
+    "[03:02:23][WELD] \"M3 Hexnut (2)\" verts 574->266, topo 47, residual 2 @tol 8.73747e-09 => naked 4, over-valenced 0, bowtie 0",
+    "[03:02:23][MANIFOLD-RAW] \"M3 Hexnut (2)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 4 naked edge(s), 0 over-valenced edge(s), 532 triangle(s)",
+    "[WELD] \"M3 Hexnut (2)\" verts 574->266, topo 47, residual 2 @tol 8.73747e-09 => naked 4, over-valenced 0, bowtie 0",
+    "[03:02:23][WELD] \"M3 Hexnut (2)\" verts 574->266, topo 47, residual 2 @tol 8.73747e-09 => naked 4, over-valenced 0, bowtie 0",
+    "[03:02:23][MANIFOLD-RAW] \"M3 Hexnut (2)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 4 naked edge(s), 0 over-valenced edge(s), 532 triangle(s)",
+    "[03:02:23][MANIFOLD-RAW] \"M3 Hexnut (2)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 4 naked edge(s), 0 over-valenced edge(s), 532 triangle(s)",
+    "[03:02:23][WELD] \"M3 Hexnut (2)\" verts 574->266, topo 47, residual 2 @tol 8.73747e-09 => naked 4, over-valenced 0, bowtie 0",
+    "[03:02:23][MANIFOLD-RAW] \"M3 Hexnut (2)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 4 naked edge(s), 0 over-valenced edge(s), 532 triangle(s)",
+    "[03:02:23][WELD] \"M3 Hexnut (3)\" verts 574->266, topo 47, residual 2 @tol 8.73747e-09 => naked 4, over-valenced 0, bowtie 0",
+    "[03:02:23][MANIFOLD-RAW] \"M3 Hexnut (3)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 4 naked edge(s), 0 over-valenced edge(s), 532 triangle(s)",
+    "[03:02:23][WELD] \"M3 Hexnut (3)\" verts 574->266, topo 47, residual 2 @tol 8.73747e-09 => naked 4, over-valenced 0, bowtie 0",
+    "[03:02:23][MANIFOLD-RAW] \"M3 Hexnut (3)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 4 naked edge(s), 0 over-valenced edge(s), 532 triangle(s)",
+    "[03:02:23][WELD] \"M3 Hexnut (3)\" verts 574->266, topo 47, residual 2 @tol 8.73747e-09 => naked 4, over-valenced 0, bowtie 0",
+    "[03:02:23][MANIFOLD-RAW] \"M3 Hexnut (3)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 4 naked edge(s), 0 over-valenced edge(s), 532 triangle(s)",
+    "[03:02:23][WELD] \"M3 Hexnut (3)\" verts 574->266, topo 47, residual 2 @tol 8.73747e-09 => naked 4, over-valenced 0, bowtie 0",
+    "[03:02:23][MANIFOLD-RAW] \"M3 Hexnut (3)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 4 naked edge(s), 0 over-valenced edge(s), 532 triangle(s)",
+    "[03:02:23][WELD] \"M3 Hexnut (3)\" verts 574->266, topo 47, residual 2 @tol 8.73747e-09 => naked 4, over-valenced 0, bowtie 0",
+    "[03:02:23][MANIFOLD-RAW] \"M3 Hexnut (3)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 4 naked edge(s), 0 over-valenced edge(s), 532 triangle(s)",
+    "[03:02:23][WELD] \"M3 Hexnut (3)\" verts 574->266, topo 47, residual 2 @tol 8.73747e-09 => naked 4, over-valenced 0, bowtie 0",
+    "[03:02:23][MANIFOLD-RAW] \"M3 Hexnut (3)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 4 naked edge(s), 0 over-valenced edge(s), 532 triangle(s)",
+    "[03:02:23][WELD] \"M3 Hexnut (3)\" verts 574->266, topo 47, residual 2 @tol 8.73747e-09 => naked 4, over-valenced 0, bowtie 0",
+    "[03:02:23][MANIFOLD-RAW] \"M3 Hexnut (3)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 4 naked edge(s), 0 over-valenced edge(s), 532 triangle(s)",
+    "[03:02:23][WELD] \"M3 Hexnut (3)\" verts 574->266, topo 47, residual 2 @tol 8.73747e-09 => naked 4, over-valenced 0, bowtie 0",
+    "[03:02:23][MANIFOLD-RAW] \"M3 Hexnut (3)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 4 naked edge(s), 0 over-valenced edge(s), 532 triangle(s)",
+    "[03:02:23][WELD] \"M3 Hexnut (3)\" verts 574->266, topo 47, residual 2 @tol 8.73747e-09 => naked 4, over-valenced 0, bowtie 0",
+    "[03:02:23][MANIFOLD-RAW] \"M3 Hexnut (3)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 4 naked edge(s), 0 over-valenced edge(s), 532 triangle(s)",
+    "[03:02:23][WELD] \"M3 Hexnut (3)\" verts 574->266, topo 47, residual 2 @tol 8.73747e-09 => naked 4, over-valenced 0, bowtie 0",
+    "[03:02:23][MANIFOLD-RAW] \"M3 Hexnut (3)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 4 naked edge(s), 0 over-valenced edge(s), 532 triangle(s)",
+    "[03:02:23][WELD] \"M3 Hexnut (3)\" verts 574->266, topo 47, residual 2 @tol 8.73747e-09 => naked 4, over-valenced 0, bowtie 0",
+    "[03:02:23][MANIFOLD-RAW] \"M3 Hexnut (3)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 4 naked edge(s), 0 over-valenced edge(s), 532 triangle(s)",
+    "[03:02:23][WELD] \"M3 Hexnut (3)\" verts 574->266, topo 47, residual 2 @tol 8.73747e-09 => naked 4, over-valenced 0, bowtie 0",
+    "[03:02:23][MANIFOLD-RAW] \"M3 Hexnut (3)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 4 naked edge(s), 0 over-valenced edge(s), 532 triangle(s)",
+    "[WELD] \"M3 Hexnut (1) (1)\" verts 574->266, topo 47, residual 2 @tol 8.73747e-09 => naked 4, over-valenced 0, bowtie 0",
+    "[03:02:23][MANIFOLD-RAW] \"M3 Hexnut (1) (1)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 4 naked edge(s), 0 over-valenced edge(s), 532 triangle(s)",
+    "[03:02:23][WELD] \"M3 Hexnut (1) (1)\" verts 574->266, topo 47, residual 2 @tol 8.73747e-09 => naked 4, over-valenced 0, bowtie 0",
+    "[03:02:23][MANIFOLD-RAW] \"M3 Hexnut (1) (1)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 4 naked edge(s), 0 over-valenced edge(s), 532 triangle(s)",
+    "[03:02:23][WELD] \"M3 Hexnut (1) (1)\" verts 574->266, topo 47, residual 2 @tol 8.73747e-09 => naked 4, over-valenced 0, bowtie 0",
+    "[03:02:23][WELD] \"M3 Hexnut (1) (1)\" verts 574->266, topo 47, residual 2 @tol 8.73747e-09 => naked 4, over-valenced 0, bowtie 0",
+    "[03:02:23][MANIFOLD-RAW] \"M3 Hexnut (1) (1)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 4 naked edge(s), 0 over-valenced edge(s), 532 triangle(s)",
+    "[03:02:23][MANIFOLD-RAW] \"M3 Hexnut (1) (1)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 4 naked edge(s), 0 over-valenced edge(s), 532 triangle(s)",
+    "[03:02:23][WELD] \"M3 Hexnut (1) (1)\" verts 574->266, topo 47, residual 2 @tol 8.73747e-09 => naked 4, over-valenced 0, bowtie 0",
+    "[03:02:23][MANIFOLD-RAW] \"M3 Hexnut (1) (1)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 4 naked edge(s), 0 over-valenced edge(s), 532 triangle(s)",
+    "[03:02:23][WELD] \"M3 Hexnut (1) (1)\" verts 574->266, topo 47, residual 2 @tol 8.73747e-09 => naked 4, over-valenced 0, bowtie 0",
+    "[03:02:23][MANIFOLD-RAW] \"M3 Hexnut (1) (1)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 4 naked edge(s), 0 over-valenced edge(s), 532 triangle(s)",
+    "[03:02:23][WELD] \"Hinge A Bottom\" verts 1202->546, topo 147 => naked 4, over-valenced 0, bowtie 0",
+    "[03:02:23][WELD] \"Hinge B Bottom\" verts 1202->546, topo 147 => naked 4, over-valenced 0, bowtie 0",
+    "[03:02:23][MANIFOLD-RAW] \"Hinge A Bottom\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 4 naked edge(s), 0 over-valenced edge(s), 1098 triangle(s)",
+    "[03:02:23][MANIFOLD-RAW] \"Hinge B Bottom\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 4 naked edge(s), 0 over-valenced edge(s), 1098 triangle(s)",
+    "[WELD] \"M3 Hexnut (1)\" verts 574->266, topo 47, residual 2 @tol 8.73747e-09 => naked 4, over-valenced 0, bowtie 0",
+    "[03:02:23][WELD] \"M3 Hexnut (1)\" verts 574->266, topo 47, residual 2 @tol 8.73747e-09 => naked 4, over-valenced 0, bowtie 0",
+    "[03:02:23][WELD] \"M3 Hexnut (1)\" verts 574->266, topo 47, residual 2 @tol 8.73747e-09 => naked 4, over-valenced 0, bowtie 0",
+    "[03:02:23][MANIFOLD-RAW] \"M3 Hexnut (1)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 4 naked edge(s), 0 over-valenced edge(s), 532 triangle(s)",
+    "[03:02:23][MANIFOLD-RAW] \"M3 Hexnut (1)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 4 naked edge(s), 0 over-valenced edge(s), 532 triangle(s)",
+    "[03:02:23][MANIFOLD-RAW] \"M3 Hexnut (1)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 4 naked edge(s), 0 over-valenced edge(s), 532 triangle(s)",
+    "[03:02:23][WELD] \"M3 Hexnut (1)\" verts 574->266, topo 47, residual 2 @tol 8.73747e-09 => naked 4, over-valenced 0, bowtie 0",
+    "[03:02:23][MANIFOLD-RAW] \"M3 Hexnut (1)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 4 naked edge(s), 0 over-valenced edge(s), 532 triangle(s)",
+    "[03:02:23][WELD] \"M3 Hexnut (1)\" verts 574->266, topo 47, residual 2 @tol 8.73747e-09 => naked 4, over-valenced 0, bowtie 0",
+    "[03:02:23][MANIFOLD-RAW] \"M3 Hexnut (1)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 4 naked edge(s), 0 over-valenced edge(s), 532 triangle(s)",
+    "[03:02:23][WELD] \"M3 Hexnut (4)\" verts 574->266, topo 47, residual 2 @tol 8.73747e-09 => naked 4, over-valenced 0, bowtie 0",
+    "[03:02:23][MANIFOLD-RAW] \"M3 Hexnut (4)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 4 naked edge(s), 0 over-valenced edge(s), 532 triangle(s)",
+    "[03:02:23][WELD] \"M3 Hexnut (4)\" verts 574->266, topo 47, residual 2 @tol 8.73747e-09 => naked 4, over-valenced 0, bowtie 0",
+    "[03:02:23][MANIFOLD-RAW] \"M3 Hexnut (4)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 4 naked edge(s), 0 over-valenced edge(s), 532 triangle(s)",
+    "[03:02:23][WELD] \"Door Handle\" verts 1524->688, topo 198 => naked 16, over-valenced 0, bowtie 0",
+    "[03:02:23][MANIFOLD-RAW] \"Door Handle\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 16 naked edge(s), 0 over-valenced edge(s), 1380 triangle(s)",
+    "[03:02:23][WELD] \"6x3mm Magnet\" verts 908->762, topo 6 => naked 28, over-valenced 0, bowtie 0",
+    "[03:02:23][MANIFOLD-RAW] \"6x3mm Magnet\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 28 naked edge(s), 0 over-valenced edge(s), 1496 triangle(s)",
+    "[03:02:23][WELD] \"6x3mm Magnet\" verts 908->762, topo 6 => naked 28, over-valenced 0, bowtie 0",
+    "[03:02:23][MANIFOLD-RAW] \"6x3mm Magnet\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 28 naked edge(s), 0 over-valenced edge(s), 1496 triangle(s)",
+    "[03:02:23][WELD] \"6x3mm Magnet\" verts 908->762, topo 6 => naked 28, over-valenced 0, bowtie 0",
+    "[03:02:23][MANIFOLD-RAW] \"6x3mm Magnet\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 28 naked edge(s), 0 over-valenced edge(s), 1496 triangle(s)",
+    "[03:02:23][WELD] \"6x3mm Magnet\" verts 908->762, topo 6 => naked 28, over-valenced 0, bowtie 0",
+    "[03:02:23][MANIFOLD-RAW] \"6x3mm Magnet\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 28 naked edge(s), 0 over-valenced edge(s), 1496 triangle(s)",
+    "[03:02:23][WELD] \"6x3mm Magnet\" verts 908->762, topo 6 => naked 28, over-valenced 0, bowtie 0",
+    "[03:02:23][MANIFOLD-RAW] \"6x3mm Magnet\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 28 naked edge(s), 0 over-valenced edge(s), 1496 triangle(s)",
+    "[03:02:23][WELD] \"6x3mm Magnet\" verts 908->762, topo 6 => naked 28, over-valenced 0, bowtie 0",
+    "[03:02:23][MANIFOLD-RAW] \"6x3mm Magnet\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 28 naked edge(s), 0 over-valenced edge(s), 1496 triangle(s)",
+    "[WELD] \"6x3mm Magnet\" verts 908->762, topo 6 => naked 28, over-valenced 0, bowtie 0",
+    "[03:02:23][MANIFOLD-RAW] \"6x3mm Magnet\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 28 naked edge(s), 0 over-valenced edge(s), 1496 triangle(s)",
+    "[03:02:23][WELD] \"6x3mm Magnet\" verts 908->762, topo 6 => naked 28, over-valenced 0, bowtie 0",
+    "[03:02:23][MANIFOLD-RAW] \"6x3mm Magnet\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 28 naked edge(s), 0 over-valenced edge(s), 1496 triangle(s)",
+    "[WELD] \"Top Panel Clip\" verts 614->263, topo 114 => naked 4, over-valenced 0, bowtie 0",
+    "[03:02:24][MANIFOLD-RAW] \"Top Panel Clip\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 4 naked edge(s), 0 over-valenced edge(s), 528 triangle(s)",
+    "[03:02:24][WELD] \"Top Panel Clip\" verts 614->263, topo 114 => naked 4, over-valenced 0, bowtie 0",
+    "[03:02:24][WELD] \"Top Panel Clip\" verts 614->263, topo 114 => naked 4, over-valenced 0, bowtie 0",
+    "[03:02:24][MANIFOLD-RAW] \"Top Panel Clip\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 4 naked edge(s), 0 over-valenced edge(s), 528 triangle(s)",
+    "[03:02:24][MANIFOLD-RAW] \"Top Panel Clip\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 4 naked edge(s), 0 over-valenced edge(s), 528 triangle(s)",
+    "[03:02:24][WELD] \"Top Panel Clip\" verts 614->263, topo 114 => naked 4, over-valenced 0, bowtie 0",
+    "[03:02:24][MANIFOLD-RAW] \"Top Panel Clip\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 4 naked edge(s), 0 over-valenced edge(s), 528 triangle(s)",
+    "[WELD] \"M3 Hexnut\" verts 574->266, topo 47, residual 2 @tol 8.73747e-09 => naked 4, over-valenced 0, bowtie 0",
+    "[03:02:24][MANIFOLD-RAW] \"M3 Hexnut\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 4 naked edge(s), 0 over-valenced edge(s), 532 triangle(s)",
+    "[03:02:24][WELD] \"M3 Hexnut\" verts 574->266, topo 47, residual 2 @tol 8.73747e-09 => naked 4, over-valenced 0, bowtie 0",
+    "[03:02:24][WELD] \"M3 Hexnut\" verts 574->266, topo 47, residual 2 @tol 8.73747e-09 => naked 4, over-valenced 0, bowtie 0",
+    "[03:02:24][MANIFOLD-RAW] \"M3 Hexnut\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 4 naked edge(s), 0 over-valenced edge(s), 532 triangle(s)",
+    "[03:02:24][MANIFOLD-RAW] \"M3 Hexnut\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 4 naked edge(s), 0 over-valenced edge(s), 532 triangle(s)",
+    "[03:02:24][WELD] \"M3 Hexnut\" verts 574->266, topo 47, residual 2 @tol 8.73747e-09 => naked 4, over-valenced 0, bowtie 0",
+    "[03:02:24][MANIFOLD-RAW] \"M3 Hexnut\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 4 naked edge(s), 0 over-valenced edge(s), 532 triangle(s)",
+    "[03:02:24][WELD] \"M3 Hexnut\" verts 574->266, topo 47, residual 2 @tol 8.73747e-09 => naked 4, over-valenced 0, bowtie 0",
+    "[03:02:24][WELD] \"M3 Hexnut\" verts 574->266, topo 47, residual 2 @tol 8.73747e-09 => naked 4, over-valenced 0, bowtie 0",
+    "[03:02:24][MANIFOLD-RAW] \"M3 Hexnut\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 4 naked edge(s), 0 over-valenced edge(s), 532 triangle(s)",
+    "[03:02:24][MANIFOLD-RAW] \"M3 Hexnut\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 4 naked edge(s), 0 over-valenced edge(s), 532 triangle(s)",
+    "[03:02:24][WELD] \"M3 Hexnut\" verts 574->266, topo 47, residual 2 @tol 8.73747e-09 => naked 4, over-valenced 0, bowtie 0",
+    "[03:02:24][MANIFOLD-RAW] \"M3 Hexnut\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 4 naked edge(s), 0 over-valenced edge(s), 532 triangle(s)",
+    "[03:02:24][WELD] \"M3 Hexnut\" verts 574->266, topo 47, residual 2 @tol 8.73747e-09 => naked 4, over-valenced 0, bowtie 0",
+    "[03:02:24][MANIFOLD-RAW] \"M3 Hexnut\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 4 naked edge(s), 0 over-valenced edge(s), 532 triangle(s)",
+    "[03:02:24][WELD] \"M3 Hexnut\" verts 574->266, topo 47, residual 2 @tol 8.73747e-09 => naked 4, over-valenced 0, bowtie 0",
+    "[03:02:24][MANIFOLD-RAW] \"M3 Hexnut\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 4 naked edge(s), 0 over-valenced edge(s), 532 triangle(s)",
+    "[03:02:24][WELD] \"M3 Hexnut\" verts 574->266, topo 47, residual 2 @tol 8.73747e-09 => naked 4, over-valenced 0, bowtie 0",
+    "[03:02:24][MANIFOLD-RAW] \"M3 Hexnut\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 4 naked edge(s), 0 over-valenced edge(s), 532 triangle(s)",
+    "[03:02:24][WELD] \"M3 Hexnut\" verts 574->266, topo 47, residual 2 @tol 8.73747e-09 => naked 4, over-valenced 0, bowtie 0",
+    "[03:02:24][MANIFOLD-RAW] \"M3 Hexnut\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 4 naked edge(s), 0 over-valenced edge(s), 532 triangle(s)",
+    "[03:02:24][WELD] \"M3 Hexnut\" verts 574->266, topo 47, residual 2 @tol 8.73747e-09 => naked 4, over-valenced 0, bowtie 0",
+    "[03:02:24][MANIFOLD-RAW] \"M3 Hexnut\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 4 naked edge(s), 0 over-valenced edge(s), 532 triangle(s)",
+    "[03:02:24][WELD] \"M3 Hexnut\" verts 574->266, topo 47, residual 2 @tol 8.73747e-09 => naked 4, over-valenced 0, bowtie 0",
+    "[03:02:24][WELD] \"M3 Hexnut\" verts 574->266, topo 47, residual 2 @tol 8.73747e-09 => naked 4, over-valenced 0, bowtie 0",
+    "[03:02:24][MANIFOLD-RAW] \"M3 Hexnut\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 4 naked edge(s), 0 over-valenced edge(s), 532 triangle(s)",
+    "[03:02:24][MANIFOLD-RAW] \"M3 Hexnut\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 4 naked edge(s), 0 over-valenced edge(s), 532 triangle(s)",
+    "[03:02:24][WELD] \"M3 Hexnut\" verts 574->266, topo 47, residual 2 @tol 8.73747e-09 => naked 4, over-valenced 0, bowtie 0",
+    "[03:02:24][MANIFOLD-RAW] \"M3 Hexnut\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 4 naked edge(s), 0 over-valenced edge(s), 532 triangle(s)",
+    "[03:02:24][WELD] \"M3 Hexnut\" verts 574->266, topo 47, residual 2 @tol 8.73747e-09 => naked 4, over-valenced 0, bowtie 0",
+    "[03:02:24][MANIFOLD-RAW] \"M3 Hexnut\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 4 naked edge(s), 0 over-valenced edge(s), 532 triangle(s)",
+    "[03:02:24][WELD] \"M3 Hexnut\" verts 574->266, topo 47, residual 2 @tol 8.73747e-09 => naked 4, over-valenced 0, bowtie 0",
+    "[03:02:24][MANIFOLD-RAW] \"M3 Hexnut\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 4 naked edge(s), 0 over-valenced edge(s), 532 triangle(s)",
+    "[03:02:24][WELD] \"M3 Hexnut\" verts 574->266, topo 47, residual 2 @tol 8.73747e-09 => naked 4, over-valenced 0, bowtie 0",
+    "[03:02:24][MANIFOLD-RAW] \"M3 Hexnut\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 4 naked edge(s), 0 over-valenced edge(s), 532 triangle(s)",
+    "[03:02:24][WELD] \"M3 Hexnut\" verts 574->266, topo 47, residual 2 @tol 8.73747e-09 => naked 4, over-valenced 0, bowtie 0",
+    "[03:02:24][MANIFOLD-RAW] \"M3 Hexnut\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 4 naked edge(s), 0 over-valenced edge(s), 532 triangle(s)",
+    "[03:02:24][WELD] \"M3 Hexnut\" verts 574->266, topo 47, residual 2 @tol 8.73747e-09 => naked 4, over-valenced 0, bowtie 0",
+    "[03:02:24][MANIFOLD-RAW] \"M3 Hexnut\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 4 naked edge(s), 0 over-valenced edge(s), 532 triangle(s)",
+    "[03:02:24][WELD] \"M3 Hexnut\" verts 574->266, topo 47, residual 2 @tol 8.73747e-09 => naked 4, over-valenced 0, bowtie 0",
+    "[03:02:24][MANIFOLD-RAW] \"M3 Hexnut\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 4 naked edge(s), 0 over-valenced edge(s), 532 triangle(s)",
+    "[03:02:24][WELD] \"M3 Hexnut\" verts 574->266, topo 47, residual 2 @tol 8.73747e-09 => naked 4, over-valenced 0, bowtie 0",
+    "[03:02:24][MANIFOLD-RAW] \"M3 Hexnut\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 4 naked edge(s), 0 over-valenced edge(s), 532 triangle(s)",
+    "[03:02:24][WELD] \"M3 Hexnut\" verts 574->266, topo 47, residual 2 @tol 8.73747e-09 => naked 4, over-valenced 0, bowtie 0",
+    "[03:02:24][MANIFOLD-RAW] \"M3 Hexnut\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 4 naked edge(s), 0 over-valenced edge(s), 532 triangle(s)",
+    "[WELD] \"M3 Hexnut\" verts 574->266, topo 47, residual 2 @tol 8.73747e-09 => naked 4, over-valenced 0, bowtie 0",
+    "[03:02:24][MANIFOLD-RAW] \"M3 Hexnut\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 4 naked edge(s), 0 over-valenced edge(s), 532 triangle(s)",
+    "[03:02:24][WELD] \"M3 Hexnut\" verts 574->266, topo 47, residual 2 @tol 8.73747e-09 => naked 4, over-valenced 0, bowtie 0",
+    "[03:02:24][MANIFOLD-RAW] \"M3 Hexnut\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 4 naked edge(s), 0 over-valenced edge(s), 532 triangle(s)",
+    "[03:02:24][WELD] \"M3 Hexnut\" verts 574->266, topo 47, residual 2 @tol 8.73747e-09 => naked 4, over-valenced 0, bowtie 0",
+    "[03:02:24][MANIFOLD-RAW] \"M3 Hexnut\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 4 naked edge(s), 0 over-valenced edge(s), 532 triangle(s)",
+    "[03:02:24][WELD] \"M3 Hexnut\" verts 574->266, topo 47, residual 2 @tol 8.73747e-09 => naked 4, over-valenced 0, bowtie 0",
+    "[03:02:24][MANIFOLD-RAW] \"M3 Hexnut\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 4 naked edge(s), 0 over-valenced edge(s), 532 triangle(s)",
+    "[03:02:24][WELD] \"M3 Hexnut\" verts 574->266, topo 47, residual 2 @tol 8.73747e-09 => naked 4, over-valenced 0, bowtie 0",
+    "[03:02:24][MANIFOLD-RAW] \"M3 Hexnut\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 4 naked edge(s), 0 over-valenced edge(s), 532 triangle(s)",
+    "[03:02:24][WELD] \"M3 Hexnut\" verts 574->266, topo 47, residual 2 @tol 8.73747e-09 => naked 4, over-valenced 0, bowtie 0",
+    "[03:02:24][MANIFOLD-RAW] \"M3 Hexnut\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 4 naked edge(s), 0 over-valenced edge(s), 532 triangle(s)",
+    "[03:02:24][WELD] \"M3 Hexnut\" verts 574->266, topo 47, residual 2 @tol 8.73747e-09 => naked 4, over-valenced 0, bowtie 0",
+    "[03:02:24][MANIFOLD-RAW] \"M3 Hexnut\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 4 naked edge(s), 0 over-valenced edge(s), 532 triangle(s)",
+    "[03:02:24][WELD] \"M3 Hexnut\" verts 574->266, topo 47, residual 2 @tol 8.73747e-09 => naked 4, over-valenced 0, bowtie 0",
+    "[03:02:24][MANIFOLD-RAW] \"M3 Hexnut\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 4 naked edge(s), 0 over-valenced edge(s), 532 triangle(s)",
+    "[03:02:24][WELD] \"M3 Hexnut\" verts 574->266, topo 47, residual 2 @tol 8.73747e-09 => naked 4, over-valenced 0, bowtie 0",
+    "[03:02:24][WELD] \"M3 Hexnut\" verts 574->266, topo 47, residual 2 @tol 8.73747e-09 => naked 4, over-valenced 0, bowtie 0",
+    "[03:02:24][MANIFOLD-RAW] \"M3 Hexnut\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 4 naked edge(s), 0 over-valenced edge(s), 532 triangle(s)",
+    "[03:02:24][MANIFOLD-RAW] \"M3 Hexnut\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 4 naked edge(s), 0 over-valenced edge(s), 532 triangle(s)",
+    "[03:02:24][WELD] \"M3 Hexnut\" verts 574->266, topo 47, residual 2 @tol 8.73747e-09 => naked 4, over-valenced 0, bowtie 0",
+    "[03:02:24][MANIFOLD-RAW] \"M3 Hexnut\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 4 naked edge(s), 0 over-valenced edge(s), 532 triangle(s)",
+    "[03:02:24][WELD] \"M3 Threaded Insert\" verts 3198->1375, topo 663, residual 2 @tol 8.71803e-09 => WATERTIGHT",
+    "[03:02:24][WELD] \"M3 Threaded Insert\" verts 3198->1375, topo 663, residual 2 @tol 8.71803e-09 => WATERTIGHT",
+    "[03:02:24][WELD] \"M3 Threaded Insert\" verts 3198->1375, topo 663, residual 2 @tol 8.71803e-09 => WATERTIGHT",
+    "[WELD] \"M3 Threaded Insert\" verts 3198->1375, topo 663, residual 2 @tol 8.71803e-09 => WATERTIGHT",
+    "[03:02:24][WELD] \"Fan Mount Upper\" verts 830->362, topo 121 => naked 8, over-valenced 0, bowtie 0",
+    "[03:02:24][MANIFOLD-RAW] \"Fan Mount Upper\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 8 naked edge(s), 0 over-valenced edge(s), 724 triangle(s)",
+    "[03:02:24][WELD] \"Fan Mount Lower\" verts 1672->760, topo 178 => naked 16, over-valenced 0, bowtie 0",
+    "[03:02:24][MANIFOLD-RAW] \"Fan Mount Lower\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 16 naked edge(s), 0 over-valenced edge(s), 1524 triangle(s)",
+    "[WELD] \"SL-E\" verts 2026->1438, topo 169 => naked 70, over-valenced 0, bowtie 0",
+    "[03:02:24][MANIFOLD-RAW] \"SL-E\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 70 naked edge(s), 0 over-valenced edge(s), 2808 triangle(s)",
+    "[WELD] \"ºñ¶È1.8_µÄÒý½Å\" verts 834->486, topo 89, degen 2, -degen-tri 2 => naked 6, over-valenced 0, bowtie 0",
+    "[03:02:24][MANIFOLD-RAW] \"ºñ¶È1.8_µÄÒý½Å\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 6 naked edge(s), 0 over-valenced edge(s), 964 triangle(s)",
+    "[03:02:24][WELD] \"ºñ¶È1.8_µÄÒý½Å\" verts 834->486, topo 89, degen 2, -degen-tri 2 => naked 6, over-valenced 0, bowtie 0",
+    "[03:02:24][MANIFOLD-RAW] \"ºñ¶È1.8_µÄÒý½Å\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 6 naked edge(s), 0 over-valenced edge(s), 964 triangle(s)",
+    "[03:02:24][WELD] \"ºñ¶È1.8_µÄÒý½Å\" verts 834->486, topo 89, degen 2, -degen-tri 2 => naked 6, over-valenced 0, bowtie 0",
+    "[03:02:24][MANIFOLD-RAW] \"ºñ¶È1.8_µÄÒý½Å\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 6 naked edge(s), 0 over-valenced edge(s), 964 triangle(s)",
+    "[03:02:24][WELD] \"ºñ¶È1.8_µÄÒý½Å\" verts 834->486, topo 89, degen 2, -degen-tri 2 => naked 6, over-valenced 0, bowtie 0",
+    "[03:02:24][MANIFOLD-RAW] \"ºñ¶È1.8_µÄÒý½Å\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 6 naked edge(s), 0 over-valenced edge(s), 964 triangle(s)",
+    "[WELD] \"SL-E\" verts 2026->1438, topo 169 => naked 70, over-valenced 0, bowtie 0",
+    "[03:02:24][MANIFOLD-RAW] \"SL-E\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 70 naked edge(s), 0 over-valenced edge(s), 2808 triangle(s)",
+    "[WELD] \"ºñ¶È1.5_µÄÒý½Å\" verts 833->485, topo 89, degen 2, -degen-tri 2 => naked 6, over-valenced 0, bowtie 0",
+    "[03:02:24][MANIFOLD-RAW] \"ºñ¶È1.5_µÄÒý½Å\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 6 naked edge(s), 0 over-valenced edge(s), 962 triangle(s)",
+    "[WELD] \"ºñ¶È1.5_µÄÒý½Å\" verts 833->485, topo 89, degen 2, -degen-tri 2 => naked 6, over-valenced 0, bowtie 0",
+    "[03:02:24][MANIFOLD-RAW] \"ºñ¶È1.5_µÄÒý½Å\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 6 naked edge(s), 0 over-valenced edge(s), 962 triangle(s)",
+    "[03:02:24][WELD] \"ºñ¶È1.5_µÄÒý½Å\" verts 833->485, topo 89, degen 2, -degen-tri 2 => naked 6, over-valenced 0, bowtie 0",
+    "[03:02:24][MANIFOLD-RAW] \"ºñ¶È1.5_µÄÒý½Å\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 6 naked edge(s), 0 over-valenced edge(s), 962 triangle(s)",
+    "[03:02:24][WELD] \"ºñ¶È1.5_µÄÒý½Å\" verts 833->485, topo 89, degen 2, -degen-tri 2 => naked 6, over-valenced 0, bowtie 0",
+    "[03:02:24][MANIFOLD-RAW] \"ºñ¶È1.5_µÄÒý½Å\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 6 naked edge(s), 0 over-valenced edge(s), 962 triangle(s)",
+    "[03:02:24][WELD] \"ºñ¶È1.5_µÄÒý½Å\" verts 833->485, topo 89, degen 2, -degen-tri 2 => naked 6, over-valenced 0, bowtie 0",
+    "[03:02:24][MANIFOLD-RAW] \"ºñ¶È1.5_µÄÒý½Å\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 6 naked edge(s), 0 over-valenced edge(s), 962 triangle(s)",
+    "[03:02:24][WELD] \"ºñ¶È1.5_µÄÒý½Å\" verts 833->485, topo 89, degen 2, -degen-tri 2 => naked 6, over-valenced 0, bowtie 0",
+    "[03:02:24][MANIFOLD-RAW] \"ºñ¶È1.5_µÄÒý½Å\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 6 naked edge(s), 0 over-valenced edge(s), 962 triangle(s)",
+    "[03:02:24][WELD] \"ºñ¶È1.5_µÄÒý½Å\" verts 833->485, topo 89, degen 2, -degen-tri 2 => naked 6, over-valenced 0, bowtie 0",
+    "[03:02:24][MANIFOLD-RAW] \"ºñ¶È1.5_µÄÒý½Å\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 6 naked edge(s), 0 over-valenced edge(s), 962 triangle(s)",
+    "[03:02:24][WELD] \"ºñ¶È1.5_µÄÒý½Å\" verts 833->485, topo 89, degen 2, -degen-tri 2 => naked 6, over-valenced 0, bowtie 0",
+    "[03:02:24][MANIFOLD-RAW] \"ºñ¶È1.5_µÄÒý½Å\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 6 naked edge(s), 0 over-valenced edge(s), 962 triangle(s)",
+    "[WELD] \"KF301\" verts 4657->2589, topo 526 => naked 30, over-valenced 0, bowtie 0",
+    "[03:02:25][WELD] \"KF301\" verts 4657->2589, topo 526 => naked 30, over-valenced 0, bowtie 0",
+    "[03:02:25][MANIFOLD-RAW] \"KF301\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 30 naked edge(s), 0 over-valenced edge(s), 5148 triangle(s)",
+    "[03:02:25][MANIFOLD-RAW] \"KF301\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 30 naked edge(s), 0 over-valenced edge(s), 5148 triangle(s)",
+    "[WELD] \"SL-E\" verts 2026->1438, topo 169 => naked 70, over-valenced 0, bowtie 0",
+    "[03:02:25][WELD] \"SL-E\" verts 2026->1438, topo 169 => naked 70, over-valenced 0, bowtie 0",
+    "[03:02:25][MANIFOLD-RAW] \"SL-E\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 70 naked edge(s), 0 over-valenced edge(s), 2808 triangle(s)",
+    "[03:02:25][MANIFOLD-RAW] \"SL-E\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 70 naked edge(s), 0 over-valenced edge(s), 2808 triangle(s)",
+    "[WELD] \"KF301\" verts 4657->2589, topo 526 => naked 30, over-valenced 0, bowtie 0",
+    "[03:02:25][MANIFOLD-RAW] \"KF301\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 30 naked edge(s), 0 over-valenced edge(s), 5148 triangle(s)",
+    "[WELD] \"KF301\" verts 4657->2589, topo 526 => naked 30, over-valenced 0, bowtie 0",
+    "[03:02:25][MANIFOLD-RAW] \"KF301\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 30 naked edge(s), 0 over-valenced edge(s), 5148 triangle(s)",
+    "[WELD] \"KF301\" verts 4657->2589, topo 526 => naked 30, over-valenced 0, bowtie 0",
+    "[03:02:25][MANIFOLD-RAW] \"KF301\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 30 naked edge(s), 0 over-valenced edge(s), 5148 triangle(s)",
+    "[03:02:25][WELD] \"KF301\" verts 4657->2589, topo 526 => naked 30, over-valenced 0, bowtie 0",
+    "[03:02:25][MANIFOLD-RAW] \"KF301\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 30 naked edge(s), 0 over-valenced edge(s), 5148 triangle(s)",
+    "[WELD] \"SL-E\" verts 2026->1438, topo 169 => naked 70, over-valenced 0, bowtie 0",
+    "[03:02:25][MANIFOLD-RAW] \"SL-E\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 70 naked edge(s), 0 over-valenced edge(s), 2808 triangle(s)",
+    "[WELD] \"M2x10 Self Tapper\" verts 3940->2036, topo 186 => naked 18, over-valenced 0, bowtie 0",
+    "[03:02:25][WELD] \"M2x10 Self Tapper\" verts 3940->2036, topo 186 => naked 18, over-valenced 0, bowtie 0",
+    "[03:02:25][MANIFOLD-RAW] \"M2x10 Self Tapper\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 18 naked edge(s), 0 over-valenced edge(s), 4054 triangle(s)",
+    "[03:02:25][WELD] \"M2x10 Self Tapper\" verts 3940->2036, topo 186 => naked 18, over-valenced 0, bowtie 0",
+    "[03:02:25][MANIFOLD-RAW] \"M2x10 Self Tapper\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 18 naked edge(s), 0 over-valenced edge(s), 4054 triangle(s)",
+    "[03:02:25][MANIFOLD-RAW] \"M2x10 Self Tapper\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 18 naked edge(s), 0 over-valenced edge(s), 4054 triangle(s)",
+    "[03:02:25][MANIFOLD-RAW] \"M2x10 Self Tapper\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 18 naked edge(s), 0 over-valenced edge(s), 4054 triangle(s)",
+    "[03:02:25][WELD] \"M2x10 Self Tapper\" verts 3940->2036, topo 186 => naked 18, over-valenced 0, bowtie 0",
+    "[03:02:25][MANIFOLD-RAW] \"M2x10 Self Tapper\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 18 naked edge(s), 0 over-valenced edge(s), 4054 triangle(s)",
+    "[03:02:25][WELD] \"M2x10 Self Tapper\" verts 3940->2036, topo 186 => naked 18, over-valenced 0, bowtie 0",
+    "[03:02:25][MANIFOLD-RAW] \"M2x10 Self Tapper\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 18 naked edge(s), 0 over-valenced edge(s), 4054 triangle(s)",
+    "[03:02:25][WELD] \"M2x10 Self Tapper\" verts 3940->2036, topo 186 => naked 18, over-valenced 0, bowtie 0",
+    "[03:02:25][WELD] \"M2x10 Self Tapper\" verts 3940->2036, topo 186 => naked 18, over-valenced 0, bowtie 0",
+    "[03:02:25][MANIFOLD-RAW] \"M2x10 Self Tapper\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 18 naked edge(s), 0 over-valenced edge(s), 4054 triangle(s)",
+    "[03:02:25][WELD] \"PCB DIN Clip\" verts 1164->400, topo 428 => naked 8, over-valenced 0, bowtie 0",
+    "[03:02:25][MANIFOLD-RAW] \"PCB DIN Clip\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 8 naked edge(s), 0 over-valenced edge(s), 808 triangle(s)",
+    "[03:02:25][MANIFOLD-RAW] \"M2x10 Self Tapper\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 18 naked edge(s), 0 over-valenced edge(s), 4054 triangle(s)",
+    "[03:02:25][WELD] \"M2x10 Self Tapper\" verts 3940->2036, topo 186 => naked 18, over-valenced 0, bowtie 0",
+    "[03:02:25][MANIFOLD-RAW] \"M2x10 Self Tapper\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 18 naked edge(s), 0 over-valenced edge(s), 4054 triangle(s)",
+    "[03:02:25][WELD] \"M2x10 Self Tapper\" verts 3940->2036, topo 186 => naked 18, over-valenced 0, bowtie 0",
+    "[03:02:25][MANIFOLD-RAW] \"M2x10 Self Tapper\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 18 naked edge(s), 0 over-valenced edge(s), 4054 triangle(s)",
+    "[03:02:25][WELD] \"M2x10 Self Tapper\" verts 3940->2036, topo 186 => naked 18, over-valenced 0, bowtie 0",
+    "[03:02:25][WELD] \"PCB DIN Clip\" verts 1164->400, topo 428 => naked 8, over-valenced 0, bowtie 0",
+    "[03:02:25][MANIFOLD-RAW] \"M2x10 Self Tapper\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 18 naked edge(s), 0 over-valenced edge(s), 4054 triangle(s)",
+    "[03:02:25][MANIFOLD-RAW] \"PCB DIN Clip\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 8 naked edge(s), 0 over-valenced edge(s), 808 triangle(s)",
+    "[03:02:25][WELD] \"M2x10 Self Tapper\" verts 3940->2036, topo 186 => naked 18, over-valenced 0, bowtie 0",
+    "[03:02:25][MANIFOLD-RAW] \"M2x10 Self Tapper\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 18 naked edge(s), 0 over-valenced edge(s), 4054 triangle(s)",
+    "[03:02:25][WELD] \"Raspberry SKRPico Mount\" verts 5687->3199, topo 287, degen 8, -degen-tri 8 => naked 80, over-valenced 0, bowtie 0",
+    "[03:02:25][MANIFOLD-RAW] \"Raspberry SKRPico Mount\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 80 naked edge(s), 0 over-valenced edge(s), 6378 triangle(s)",
+    "[03:02:25][WELD] \"Raspberry SKRPico Mount\" verts 5687->3199, topo 287, degen 8, -degen-tri 8 => naked 80, over-valenced 0, bowtie 0",
+    "[03:02:25][MANIFOLD-RAW] \"Raspberry SKRPico Mount\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 80 naked edge(s), 0 over-valenced edge(s), 6378 triangle(s)",
+    "[WELD] \"COMPOUND\" verts 2170->1170, topo 464 => naked 52, over-valenced 0, bowtie 0",
+    "[03:02:25][MANIFOLD-RAW] \"COMPOUND\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 52 naked edge(s), 0 over-valenced edge(s), 2332 triangle(s)",
+    "[03:02:26][WELD] \"COMPOUND\" verts 1423->852, topo 102, degen 1, -degen-tri 1 => naked 66, over-valenced 0, bowtie 0",
+    "[03:02:26][MANIFOLD-RAW] \"COMPOUND\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 66 naked edge(s), 0 over-valenced edge(s), 1636 triangle(s)",
+    "[03:02:26][WELD] \"COMPOUND\" verts 5654->2576, topo 857 => naked 152, over-valenced 0, bowtie 0",
+    "[03:02:26][MANIFOLD-RAW] \"COMPOUND\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 152 naked edge(s), 0 over-valenced edge(s), 5174 triangle(s)",
+    "[03:02:26][WELD] \"Spool\" verts 1586->1040, topo 60 => naked 28, over-valenced 0, bowtie 0",
+    "[03:02:26][MANIFOLD-RAW] \"Spool\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 28 naked edge(s), 0 over-valenced edge(s), 2072 triangle(s)",
+    "[03:02:26][WELD] \"Reverse Bowden Tube\" verts 8213->8105, topo 4 => naked 188, over-valenced 0, bowtie 0",
+    "[03:02:26][MANIFOLD-RAW] \"Reverse Bowden Tube\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 188 naked edge(s), 0 over-valenced edge(s), 16026 triangle(s)",
+    "[03:02:26][WELD] \"COMPOUND\" verts 16764->9054, topo 2593 => naked 140, over-valenced 0, bowtie 0",
+    "[03:02:26][MANIFOLD-RAW] \"COMPOUND\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 140 naked edge(s), 0 over-valenced edge(s), 18024 triangle(s)",
+    "[03:02:26][WELD] \"Pulley Jig\" verts 4263->1885, topo 876, residual 2 @tol 5.93459e-08 => naked 8, over-valenced 0, bowtie 0",
+    "[03:02:26][MANIFOLD-RAW] \"Pulley Jig\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 8 naked edge(s), 0 over-valenced edge(s), 3772 triangle(s)"
+   ]
+  }
+ ],
+ "platform": "Ubuntu 24.04, OCCT 7.6.3 (apt), Manifold v3.5.3, g++ 13, 4 cores",
+ "source": "MEDUSA_SOURCE/nasscad_medusa.cpp @ d038996 (main)",
+ "input": "V0.2 Master Assembly RC2.step (168 MB, Autodesk Translation Framework v11.17, AP214) — VoronDesign/Voron-0 branch Voron0.2 @ a4d02db, CAD/V0.2 Master Assembly RC2.zip (SHA-256 694d0de2…a09c), not versioned"
+}

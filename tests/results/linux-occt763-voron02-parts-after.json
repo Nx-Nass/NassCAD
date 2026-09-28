@@ -1,0 +1,1567 @@
+{
+ "label": "after",
+ "engine": {
+  "engine": "nasscad-medusa-engine",
+  "version": "3.1",
+  "occt": "7.6.3",
+  "protocol": "NSTP1",
+  "csgtree": true,
+  "stepexport": true,
+  "stepload": true,
+  "ramMB": 16095,
+  "availMB": 15255,
+  "cores": 4,
+  "runawayThreads": 0,
+  "deviationPct": 0.5
+ },
+ "date": "2026-09-28T03:24:44.160Z",
+ "results": [
+  {
+   "file": "Hotend_Mount_Dragonfly_BMS_7_FINS.step",
+   "sizeKB": 84,
+   "declared": {
+    "solids": 1,
+    "closedShells": 1,
+    "openShells": 0,
+    "faces": 49,
+    "edges": 122,
+    "edgeValence": {
+     "2": 122
+    },
+    "closedByDeclaration": true,
+    "system": "Autodesk Translation Framework v11.17.0.187"
+   },
+   "bodies": 1,
+   "verts": 625,
+   "tris": 1258,
+   "stepMs": 62,
+   "engineMs": 57,
+   "smoothMs": 3,
+   "weldMeta": {
+    "bodies": 1,
+    "watertight": 1,
+    "stillBroken": 0,
+    "edgesTopo": 122,
+    "edgesResidual": 0,
+    "edgesMismatch": 0,
+    "trisDropped": 0,
+    "legacyFallback": 0,
+    "facesFilled": 0,
+    "diagonalFlips": 0,
+    "enabled": true
+   },
+   "raw": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 625,
+    "closedBodies": 1,
+    "closedBroken": 0,
+    "closedNaked": 0,
+    "closedOver": 0
+   },
+   "client": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 625,
+    "closedBodies": 1,
+    "closedBroken": 0,
+    "closedNaked": 0,
+    "closedOver": 0
+   },
+   "brep": {
+    "closed": 1
+   },
+   "brokenBodies": [],
+   "weldLog": []
+  },
+  {
+   "file": "FS_Hotend_Mount_Dragonfly_BMS_7_Fins.step",
+   "sizeKB": 161,
+   "declared": {
+    "solids": 1,
+    "closedShells": 1,
+    "openShells": 0,
+    "faces": 102,
+    "edges": 252,
+    "edgeValence": {
+     "2": 252
+    },
+    "closedByDeclaration": true,
+    "system": "Autodesk Translation Framework v11.17.0.187"
+   },
+   "bodies": 1,
+   "verts": 732,
+   "tris": 1476,
+   "stepMs": 111,
+   "engineMs": 109,
+   "smoothMs": 3,
+   "weldMeta": {
+    "bodies": 1,
+    "watertight": 1,
+    "stillBroken": 0,
+    "edgesTopo": 252,
+    "edgesResidual": 0,
+    "edgesMismatch": 0,
+    "trisDropped": 0,
+    "legacyFallback": 0,
+    "facesFilled": 0,
+    "diagonalFlips": 0,
+    "enabled": true
+   },
+   "raw": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 732,
+    "closedBodies": 1,
+    "closedBroken": 0,
+    "closedNaked": 0,
+    "closedOver": 0
+   },
+   "client": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 732,
+    "closedBodies": 1,
+    "closedBroken": 0,
+    "closedNaked": 0,
+    "closedOver": 0
+   },
+   "brep": {
+    "closed": 1
+   },
+   "brokenBodies": [],
+   "weldLog": []
+  },
+  {
+   "file": "Hotend_Mount_Drop_Effect_XG.step",
+   "sizeKB": 223,
+   "declared": {
+    "solids": 1,
+    "closedShells": 1,
+    "openShells": 0,
+    "faces": 125,
+    "edges": 321,
+    "edgeValence": {
+     "2": 321
+    },
+    "closedByDeclaration": true,
+    "system": "Autodesk Translation Framework v11.17.0.187"
+   },
+   "bodies": 1,
+   "verts": 1337,
+   "tris": 2698,
+   "stepMs": 173,
+   "engineMs": 169,
+   "smoothMs": 5,
+   "weldMeta": {
+    "bodies": 1,
+    "watertight": 1,
+    "stillBroken": 0,
+    "edgesTopo": 321,
+    "edgesResidual": 0,
+    "edgesMismatch": 0,
+    "trisDropped": 0,
+    "legacyFallback": 0,
+    "facesFilled": 0,
+    "diagonalFlips": 0,
+    "enabled": true
+   },
+   "raw": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 1337,
+    "closedBodies": 1,
+    "closedBroken": 0,
+    "closedNaked": 0,
+    "closedOver": 0
+   },
+   "client": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 1337,
+    "closedBodies": 1,
+    "closedBroken": 0,
+    "closedNaked": 0,
+    "closedOver": 0
+   },
+   "brep": {
+    "closed": 1
+   },
+   "brokenBodies": [],
+   "weldLog": []
+  },
+  {
+   "file": "Hotend_Mount_MicroSwiss_All_Metal.step",
+   "sizeKB": 242,
+   "declared": {
+    "solids": 1,
+    "closedShells": 1,
+    "openShells": 0,
+    "faces": 136,
+    "edges": 362,
+    "edgeValence": {
+     "2": 362
+    },
+    "closedByDeclaration": true,
+    "system": "Autodesk Translation Framework v11.17.0.187"
+   },
+   "bodies": 1,
+   "verts": 1418,
+   "tris": 2860,
+   "stepMs": 190,
+   "engineMs": 186,
+   "smoothMs": 4,
+   "weldMeta": {
+    "bodies": 1,
+    "watertight": 1,
+    "stillBroken": 0,
+    "edgesTopo": 362,
+    "edgesResidual": 0,
+    "edgesMismatch": 0,
+    "trisDropped": 0,
+    "legacyFallback": 0,
+    "facesFilled": 0,
+    "diagonalFlips": 0,
+    "enabled": true
+   },
+   "raw": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 1418,
+    "closedBodies": 1,
+    "closedBroken": 0,
+    "closedNaked": 0,
+    "closedOver": 0
+   },
+   "client": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 1418,
+    "closedBodies": 1,
+    "closedBroken": 0,
+    "closedNaked": 0,
+    "closedOver": 0
+   },
+   "brep": {
+    "closed": 1
+   },
+   "brokenBodies": [],
+   "weldLog": []
+  },
+  {
+   "file": "Hotend_Mount_Revo_Voron.step",
+   "sizeKB": 245,
+   "declared": {
+    "solids": 1,
+    "closedShells": 1,
+    "openShells": 0,
+    "faces": 109,
+    "edges": 268,
+    "edgeValence": {
+     "2": 268
+    },
+    "closedByDeclaration": true,
+    "system": "Autodesk Translation Framework v11.17.0.187"
+   },
+   "bodies": 1,
+   "verts": 1414,
+   "tris": 2852,
+   "stepMs": 153,
+   "engineMs": 149,
+   "smoothMs": 4,
+   "weldMeta": {
+    "bodies": 1,
+    "watertight": 1,
+    "stillBroken": 0,
+    "edgesTopo": 268,
+    "edgesResidual": 0,
+    "edgesMismatch": 0,
+    "trisDropped": 0,
+    "legacyFallback": 0,
+    "facesFilled": 0,
+    "diagonalFlips": 0,
+    "enabled": true
+   },
+   "raw": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 1414,
+    "closedBodies": 1,
+    "closedBroken": 0,
+    "closedNaked": 0,
+    "closedOver": 0
+   },
+   "client": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 1414,
+    "closedBodies": 1,
+    "closedBroken": 0,
+    "closedNaked": 0,
+    "closedOver": 0
+   },
+   "brep": {
+    "closed": 1
+   },
+   "brokenBodies": [],
+   "weldLog": []
+  },
+  {
+   "file": "Hotend_Mount_Dragonfly_BMO.step",
+   "sizeKB": 277,
+   "declared": {
+    "solids": 1,
+    "closedShells": 1,
+    "openShells": 0,
+    "faces": 155,
+    "edges": 395,
+    "edgeValence": {
+     "2": 395
+    },
+    "closedByDeclaration": true,
+    "system": "Autodesk Translation Framework v11.17.0.187"
+   },
+   "bodies": 1,
+   "verts": 1426,
+   "tris": 2876,
+   "stepMs": 206,
+   "engineMs": 201,
+   "smoothMs": 6,
+   "weldMeta": {
+    "bodies": 1,
+    "watertight": 1,
+    "stillBroken": 0,
+    "edgesTopo": 395,
+    "edgesResidual": 0,
+    "edgesMismatch": 0,
+    "trisDropped": 0,
+    "legacyFallback": 0,
+    "facesFilled": 0,
+    "diagonalFlips": 0,
+    "enabled": true
+   },
+   "raw": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 1426,
+    "closedBodies": 1,
+    "closedBroken": 0,
+    "closedNaked": 0,
+    "closedOver": 0
+   },
+   "client": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 1426,
+    "closedBodies": 1,
+    "closedBroken": 0,
+    "closedNaked": 0,
+    "closedOver": 0
+   },
+   "brep": {
+    "closed": 1
+   },
+   "brokenBodies": [],
+   "weldLog": []
+  },
+  {
+   "file": "Hotend_Mount_Dragon.step",
+   "sizeKB": 285,
+   "declared": {
+    "solids": 1,
+    "closedShells": 1,
+    "openShells": 0,
+    "faces": 154,
+    "edges": 395,
+    "edgeValence": {
+     "2": 395
+    },
+    "closedByDeclaration": true,
+    "system": "Autodesk Translation Framework v11.17.0.187"
+   },
+   "bodies": 1,
+   "verts": 1380,
+   "tris": 2784,
+   "stepMs": 208,
+   "engineMs": 204,
+   "smoothMs": 3,
+   "weldMeta": {
+    "bodies": 1,
+    "watertight": 1,
+    "stillBroken": 0,
+    "edgesTopo": 395,
+    "edgesResidual": 0,
+    "edgesMismatch": 0,
+    "trisDropped": 0,
+    "legacyFallback": 0,
+    "facesFilled": 0,
+    "diagonalFlips": 0,
+    "enabled": true
+   },
+   "raw": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 1380,
+    "closedBodies": 1,
+    "closedBroken": 0,
+    "closedNaked": 0,
+    "closedOver": 0
+   },
+   "client": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 1380,
+    "closedBodies": 1,
+    "closedBroken": 0,
+    "closedNaked": 0,
+    "closedOver": 0
+   },
+   "brep": {
+    "closed": 1
+   },
+   "brokenBodies": [],
+   "weldLog": []
+  },
+  {
+   "file": "FS_Hotend_Mount_Revo_Voron.step",
+   "sizeKB": 419,
+   "declared": {
+    "solids": 1,
+    "closedShells": 1,
+    "openShells": 0,
+    "faces": 178,
+    "edges": 459,
+    "edgeValence": {
+     "2": 459
+    },
+    "closedByDeclaration": true,
+    "system": "Autodesk Translation Framework v11.17.0.187"
+   },
+   "bodies": 1,
+   "verts": 1874,
+   "tris": 3776,
+   "stepMs": 293,
+   "engineMs": 281,
+   "smoothMs": 5,
+   "weldMeta": {
+    "bodies": 1,
+    "watertight": 1,
+    "stillBroken": 0,
+    "edgesTopo": 459,
+    "edgesResidual": 0,
+    "edgesMismatch": 0,
+    "trisDropped": 0,
+    "legacyFallback": 0,
+    "facesFilled": 0,
+    "diagonalFlips": 0,
+    "enabled": true
+   },
+   "raw": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 1874,
+    "closedBodies": 1,
+    "closedBroken": 0,
+    "closedNaked": 0,
+    "closedOver": 0
+   },
+   "client": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 1874,
+    "closedBodies": 1,
+    "closedBroken": 0,
+    "closedNaked": 0,
+    "closedOver": 0
+   },
+   "brep": {
+    "closed": 1
+   },
+   "brokenBodies": [],
+   "weldLog": []
+  },
+  {
+   "file": "FS_Hotend_Mount_Dragonfly_BMO.step",
+   "sizeKB": 432,
+   "declared": {
+    "solids": 1,
+    "closedShells": 1,
+    "openShells": 0,
+    "faces": 205,
+    "edges": 530,
+    "edgeValence": {
+     "2": 530
+    },
+    "closedByDeclaration": true,
+    "system": "Autodesk Translation Framework v11.17.0.187"
+   },
+   "bodies": 1,
+   "verts": 1756,
+   "tris": 3540,
+   "stepMs": 293,
+   "engineMs": 286,
+   "smoothMs": 4,
+   "weldMeta": {
+    "bodies": 1,
+    "watertight": 1,
+    "stillBroken": 0,
+    "edgesTopo": 530,
+    "edgesResidual": 0,
+    "edgesMismatch": 0,
+    "trisDropped": 0,
+    "legacyFallback": 0,
+    "facesFilled": 0,
+    "diagonalFlips": 0,
+    "enabled": true
+   },
+   "raw": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 1756,
+    "closedBodies": 1,
+    "closedBroken": 0,
+    "closedNaked": 0,
+    "closedOver": 0
+   },
+   "client": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 1756,
+    "closedBodies": 1,
+    "closedBroken": 0,
+    "closedNaked": 0,
+    "closedOver": 0
+   },
+   "brep": {
+    "closed": 1
+   },
+   "brokenBodies": [],
+   "weldLog": []
+  },
+  {
+   "file": "FS_Hotend_Mount_Dragon.step",
+   "sizeKB": 453,
+   "declared": {
+    "solids": 1,
+    "closedShells": 1,
+    "openShells": 0,
+    "faces": 209,
+    "edges": 544,
+    "edgeValence": {
+     "2": 544
+    },
+    "closedByDeclaration": true,
+    "system": "Autodesk Translation Framework v11.17.0.187"
+   },
+   "bodies": 1,
+   "verts": 1796,
+   "tris": 3616,
+   "stepMs": 315,
+   "engineMs": 308,
+   "smoothMs": 5,
+   "weldMeta": {
+    "bodies": 1,
+    "watertight": 1,
+    "stillBroken": 0,
+    "edgesTopo": 544,
+    "edgesResidual": 0,
+    "edgesMismatch": 0,
+    "trisDropped": 0,
+    "legacyFallback": 0,
+    "facesFilled": 0,
+    "diagonalFlips": 0,
+    "enabled": true
+   },
+   "raw": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 1796,
+    "closedBodies": 1,
+    "closedBroken": 0,
+    "closedNaked": 0,
+    "closedOver": 0
+   },
+   "client": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 1796,
+    "closedBodies": 1,
+    "closedBroken": 0,
+    "closedNaked": 0,
+    "closedOver": 0
+   },
+   "brep": {
+    "closed": 1
+   },
+   "brokenBodies": [],
+   "weldLog": []
+  },
+  {
+   "file": "Hotend_Mount_Creality_Spider_Pro.step",
+   "sizeKB": 468,
+   "declared": {
+    "solids": 1,
+    "closedShells": 1,
+    "openShells": 0,
+    "faces": 214,
+    "edges": 555,
+    "edgeValence": {
+     "2": 555
+    },
+    "closedByDeclaration": true,
+    "system": "Autodesk Translation Framework v11.17.0.187"
+   },
+   "bodies": 1,
+   "verts": 1914,
+   "tris": 3852,
+   "stepMs": 342,
+   "engineMs": 334,
+   "smoothMs": 5,
+   "weldMeta": {
+    "bodies": 1,
+    "watertight": 1,
+    "stillBroken": 0,
+    "edgesTopo": 555,
+    "edgesResidual": 0,
+    "edgesMismatch": 0,
+    "trisDropped": 0,
+    "legacyFallback": 0,
+    "facesFilled": 0,
+    "diagonalFlips": 0,
+    "enabled": true
+   },
+   "raw": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 1914,
+    "closedBodies": 1,
+    "closedBroken": 0,
+    "closedNaked": 0,
+    "closedOver": 0
+   },
+   "client": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 1914,
+    "closedBodies": 1,
+    "closedBroken": 0,
+    "closedNaked": 0,
+    "closedOver": 0
+   },
+   "brep": {
+    "closed": 1
+   },
+   "brokenBodies": [],
+   "weldLog": []
+  },
+  {
+   "file": "FS_Creality_Spider_Hotend_Mount.step",
+   "sizeKB": 483,
+   "declared": {
+    "solids": 1,
+    "closedShells": 1,
+    "openShells": 0,
+    "faces": 221,
+    "edges": 584,
+    "edgeValence": {
+     "2": 584
+    },
+    "closedByDeclaration": true,
+    "system": "Autodesk Translation Framework v11.17.0.187"
+   },
+   "bodies": 1,
+   "verts": 1872,
+   "tris": 3772,
+   "stepMs": 352,
+   "engineMs": 343,
+   "smoothMs": 6,
+   "weldMeta": {
+    "bodies": 1,
+    "watertight": 1,
+    "stillBroken": 0,
+    "edgesTopo": 584,
+    "edgesResidual": 0,
+    "edgesMismatch": 0,
+    "trisDropped": 0,
+    "legacyFallback": 0,
+    "facesFilled": 0,
+    "diagonalFlips": 0,
+    "enabled": true
+   },
+   "raw": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 1872,
+    "closedBodies": 1,
+    "closedBroken": 0,
+    "closedNaked": 0,
+    "closedOver": 0
+   },
+   "client": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 1872,
+    "closedBodies": 1,
+    "closedBroken": 0,
+    "closedNaked": 0,
+    "closedOver": 0
+   },
+   "brep": {
+    "closed": 1
+   },
+   "brokenBodies": [],
+   "weldLog": []
+  },
+  {
+   "file": "Manta_M4P_Din_Mount_2pc.step",
+   "sizeKB": 578,
+   "declared": {
+    "solids": 2,
+    "closedShells": 2,
+    "openShells": 0,
+    "faces": 388,
+    "edges": 964,
+    "edgeValence": {
+     "2": 964
+    },
+    "closedByDeclaration": true,
+    "system": "Autodesk Translation Framework v11.17.0.187"
+   },
+   "bodies": 2,
+   "verts": 4803,
+   "tris": 9630,
+   "stepMs": 441,
+   "engineMs": 430,
+   "smoothMs": 7,
+   "weldMeta": {
+    "bodies": 2,
+    "watertight": 2,
+    "stillBroken": 0,
+    "edgesTopo": 964,
+    "edgesResidual": 0,
+    "edgesMismatch": 0,
+    "trisDropped": 8,
+    "legacyFallback": 0,
+    "facesFilled": 0,
+    "diagonalFlips": 0,
+    "enabled": true
+   },
+   "raw": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 4803,
+    "closedBodies": 2,
+    "closedBroken": 0,
+    "closedNaked": 0,
+    "closedOver": 0
+   },
+   "client": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 4803,
+    "closedBodies": 2,
+    "closedBroken": 0,
+    "closedNaked": 0,
+    "closedOver": 0
+   },
+   "brep": {
+    "closed": 2
+   },
+   "brokenBodies": [],
+   "weldLog": []
+  },
+  {
+   "file": "FS_Hotend_Mount_Drop_Effect_XG.step",
+   "sizeKB": 705,
+   "declared": {
+    "solids": 1,
+    "closedShells": 1,
+    "openShells": 0,
+    "faces": 240,
+    "edges": 628,
+    "edgeValence": {
+     "2": 628
+    },
+    "closedByDeclaration": true,
+    "system": "Autodesk Translation Framework v11.17.0.187"
+   },
+   "bodies": 1,
+   "verts": 2615,
+   "tris": 5258,
+   "stepMs": 439,
+   "engineMs": 426,
+   "smoothMs": 10,
+   "weldMeta": {
+    "bodies": 1,
+    "watertight": 1,
+    "stillBroken": 0,
+    "edgesTopo": 628,
+    "edgesResidual": 0,
+    "edgesMismatch": 0,
+    "trisDropped": 2,
+    "legacyFallback": 0,
+    "facesFilled": 0,
+    "diagonalFlips": 0,
+    "enabled": true
+   },
+   "raw": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 2615,
+    "closedBodies": 1,
+    "closedBroken": 0,
+    "closedNaked": 0,
+    "closedOver": 0
+   },
+   "client": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 2615,
+    "closedBodies": 1,
+    "closedBroken": 0,
+    "closedNaked": 0,
+    "closedOver": 0
+   },
+   "brep": {
+    "closed": 1
+   },
+   "brokenBodies": [],
+   "weldLog": []
+  },
+  {
+   "file": "VHB_Din_Mount.step",
+   "sizeKB": 1023,
+   "declared": {
+    "solids": 4,
+    "closedShells": 4,
+    "openShells": 0,
+    "faces": 416,
+    "edges": 999,
+    "edgeValence": {
+     "2": 999
+    },
+    "closedByDeclaration": true,
+    "system": "Autodesk Translation Framework v11.17.0.187"
+   },
+   "bodies": 9,
+   "verts": 16115,
+   "tris": 32242,
+   "stepMs": 680,
+   "engineMs": 662,
+   "smoothMs": 14,
+   "weldMeta": {
+    "bodies": 9,
+    "watertight": 9,
+    "stillBroken": 0,
+    "edgesTopo": 1944,
+    "edgesResidual": 0,
+    "edgesMismatch": 0,
+    "trisDropped": 8,
+    "legacyFallback": 0,
+    "facesFilled": 0,
+    "diagonalFlips": 0,
+    "enabled": true
+   },
+   "raw": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 16115,
+    "closedBodies": 9,
+    "closedBroken": 0,
+    "closedNaked": 0,
+    "closedOver": 0
+   },
+   "client": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 16115,
+    "closedBodies": 9,
+    "closedBroken": 0,
+    "closedNaked": 0,
+    "closedOver": 0
+   },
+   "brep": {
+    "closed": 9
+   },
+   "brokenBodies": [],
+   "weldLog": [
+    "[WELD] \"M2x10 self tapping screw for plastic (1)\" verts 3940->2028, topo 189, micro-edges-collapsed 1 => WATERTIGHT",
+    "[WELD] \"M2x10 self tapping screw for plastic (1)\" verts 3940->2028, topo 189, micro-edges-collapsed 1 => WATERTIGHT",
+    "[WELD] \"M2x10 self tapping screw for plastic (1)\" verts 3940->2028, topo 189, micro-edges-collapsed 1 => WATERTIGHT",
+    "[03:24:18][WELD] \"M2x10 self tapping screw for plastic (1)\" verts 3940->2028, topo 189, micro-edges-collapsed 1 => WATERTIGHT",
+    "[WELD] \"M2x10 self tapping screw for plastic (1)\" verts 3940->2028, topo 189, micro-edges-collapsed 1 => WATERTIGHT",
+    "[03:24:18][WELD] \"M2x10 self tapping screw for plastic (1)\" verts 3940->2028, topo 189, micro-edges-collapsed 1 => WATERTIGHT"
+   ]
+  },
+  {
+   "file": "SKR_3_Din_Mount.step",
+   "sizeKB": 1106,
+   "declared": {
+    "solids": 4,
+    "closedShells": 4,
+    "openShells": 0,
+    "faces": 696,
+    "edges": 1658,
+    "edgeValence": {
+     "2": 1658
+    },
+    "closedByDeclaration": true,
+    "system": "Autodesk Translation Framework v11.17.0.187"
+   },
+   "bodies": 4,
+   "verts": 5744,
+   "tris": 11552,
+   "stepMs": 831,
+   "engineMs": 813,
+   "smoothMs": 8,
+   "weldMeta": {
+    "bodies": 4,
+    "watertight": 4,
+    "stillBroken": 0,
+    "edgesTopo": 1658,
+    "edgesResidual": 0,
+    "edgesMismatch": 0,
+    "trisDropped": 8,
+    "legacyFallback": 0,
+    "facesFilled": 0,
+    "diagonalFlips": 0,
+    "enabled": true
+   },
+   "raw": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 5744,
+    "closedBodies": 4,
+    "closedBroken": 0,
+    "closedNaked": 0,
+    "closedOver": 0
+   },
+   "client": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 5744,
+    "closedBodies": 4,
+    "closedBroken": 0,
+    "closedNaked": 0,
+    "closedOver": 0
+   },
+   "brep": {
+    "closed": 4
+   },
+   "brokenBodies": [],
+   "weldLog": []
+  },
+  {
+   "file": "MiniSB_adxl_mount_ldo_15mm_c_c.step",
+   "sizeKB": 1204,
+   "declared": {
+    "solids": 12,
+    "closedShells": 12,
+    "openShells": 0,
+    "faces": 689,
+    "edges": 1743,
+    "edgeValence": {
+     "2": 1743
+    },
+    "closedByDeclaration": true,
+    "system": "Autodesk Translation Framework v11.17.0.187"
+   },
+   "bodies": 12,
+   "verts": 6186,
+   "tris": 12416,
+   "stepMs": 928,
+   "engineMs": 905,
+   "smoothMs": 10,
+   "weldMeta": {
+    "bodies": 12,
+    "watertight": 12,
+    "stillBroken": 0,
+    "edgesTopo": 1735,
+    "edgesResidual": 0,
+    "edgesMismatch": 0,
+    "trisDropped": 12,
+    "legacyFallback": 0,
+    "facesFilled": 2,
+    "diagonalFlips": 0,
+    "enabled": true
+   },
+   "raw": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 6186,
+    "closedBodies": 12,
+    "closedBroken": 0,
+    "closedNaked": 0,
+    "closedOver": 0
+   },
+   "client": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 6186,
+    "closedBodies": 12,
+    "closedBroken": 0,
+    "closedNaked": 0,
+    "closedOver": 0
+   },
+   "brep": {
+    "closed": 12
+   },
+   "brokenBodies": [],
+   "weldLog": [
+    "[WELD] \"M2x6 SHCS:2\" verts 474->247, topo 34, faces-filled 1 => WATERTIGHT",
+    "[WELD] \"MiniSB_adxl_mount_ldo_15mm_c_c (1)\" verts 2132->1039, topo 312, degen 8, -degen-tri 8, micro-edges-collapsed 4 => WATERTIGHT",
+    "[WELD] \"M2x6 SHCS:3\" verts 476->248, topo 34, faces-filled 1 => WATERTIGHT"
+   ]
+  },
+  {
+   "file": "MiniSB_adxl_mount_adafruit_LIS3DH.step",
+   "sizeKB": 1225,
+   "declared": {
+    "solids": 12,
+    "closedShells": 12,
+    "openShells": 0,
+    "faces": 702,
+    "edges": 1784,
+    "edgeValence": {
+     "2": 1784
+    },
+    "closedByDeclaration": true,
+    "system": "Autodesk Translation Framework v11.17.0.187"
+   },
+   "bodies": 12,
+   "verts": 6315,
+   "tris": 12690,
+   "stepMs": 921,
+   "engineMs": 898,
+   "smoothMs": 8,
+   "weldMeta": {
+    "bodies": 12,
+    "watertight": 12,
+    "stillBroken": 0,
+    "edgesTopo": 1776,
+    "edgesResidual": 0,
+    "edgesMismatch": 0,
+    "trisDropped": 12,
+    "legacyFallback": 0,
+    "facesFilled": 2,
+    "diagonalFlips": 0,
+    "enabled": true
+   },
+   "raw": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 6315,
+    "closedBodies": 12,
+    "closedBroken": 0,
+    "closedNaked": 0,
+    "closedOver": 0
+   },
+   "client": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 6315,
+    "closedBodies": 12,
+    "closedBroken": 0,
+    "closedNaked": 0,
+    "closedOver": 0
+   },
+   "brep": {
+    "closed": 12
+   },
+   "brokenBodies": [],
+   "weldLog": [
+    "[WELD] \"MiniSB_adxl_mount_adafruit_LIS3DH (1)\" verts 2159->1050, topo 323, degen 8, -degen-tri 8, micro-edges-collapsed 4 => WATERTIGHT",
+    "[WELD] \"M2x6 SHCS:2\" verts 474->247, topo 34, faces-filled 1 => WATERTIGHT",
+    "[WELD] \"M2x6 SHCS:3\" verts 476->248, topo 34, faces-filled 1 => WATERTIGHT"
+   ]
+  },
+  {
+   "file": "MiniSB_adxl_mount_generic_15.5mm_c_c.step",
+   "sizeKB": 1275,
+   "declared": {
+    "solids": 12,
+    "closedShells": 12,
+    "openShells": 0,
+    "faces": 747,
+    "edges": 1869,
+    "edgeValence": {
+     "2": 1869
+    },
+    "closedByDeclaration": true,
+    "system": "Autodesk Translation Framework v11.17.0.187"
+   },
+   "bodies": 12,
+   "verts": 6671,
+   "tris": 13386,
+   "stepMs": 917,
+   "engineMs": 890,
+   "smoothMs": 11,
+   "weldMeta": {
+    "bodies": 12,
+    "watertight": 12,
+    "stillBroken": 0,
+    "edgesTopo": 1861,
+    "edgesResidual": 0,
+    "edgesMismatch": 0,
+    "trisDropped": 12,
+    "legacyFallback": 0,
+    "facesFilled": 2,
+    "diagonalFlips": 0,
+    "enabled": true
+   },
+   "raw": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 6671,
+    "closedBodies": 12,
+    "closedBroken": 0,
+    "closedNaked": 0,
+    "closedOver": 0
+   },
+   "client": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 6671,
+    "closedBodies": 12,
+    "closedBroken": 0,
+    "closedNaked": 0,
+    "closedOver": 0
+   },
+   "brep": {
+    "closed": 12
+   },
+   "brokenBodies": [],
+   "weldLog": [
+    "[WELD] \"MiniSB_adxl_mount_generic_15.5mm_c_c (1)\" verts 2137->1042, topo 312, degen 8, -degen-tri 8, micro-edges-collapsed 4 => WATERTIGHT",
+    "[WELD] \"M2x6 SHCS:2\" verts 474->247, topo 34, faces-filled 1 => WATERTIGHT",
+    "[WELD] \"M2x6 SHCS:3\" verts 476->248, topo 34, faces-filled 1 => WATERTIGHT"
+   ]
+  },
+  {
+   "file": "SKR_3_EZ_Din_Mount.step",
+   "sizeKB": 1415,
+   "declared": {
+    "solids": 4,
+    "closedShells": 4,
+    "openShells": 0,
+    "faces": 805,
+    "edges": 1968,
+    "edgeValence": {
+     "2": 1968
+    },
+    "closedByDeclaration": true,
+    "system": "Autodesk Translation Framework v11.17.0.187"
+   },
+   "bodies": 4,
+   "verts": 5890,
+   "tris": 11828,
+   "stepMs": 997,
+   "engineMs": 965,
+   "smoothMs": 9,
+   "weldMeta": {
+    "bodies": 4,
+    "watertight": 4,
+    "stillBroken": 0,
+    "edgesTopo": 1968,
+    "edgesResidual": 0,
+    "edgesMismatch": 0,
+    "trisDropped": 8,
+    "legacyFallback": 0,
+    "facesFilled": 0,
+    "diagonalFlips": 0,
+    "enabled": true
+   },
+   "raw": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 5890,
+    "closedBodies": 4,
+    "closedBroken": 0,
+    "closedNaked": 0,
+    "closedOver": 0
+   },
+   "client": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 5890,
+    "closedBodies": 4,
+    "closedBroken": 0,
+    "closedNaked": 0,
+    "closedOver": 0
+   },
+   "brep": {
+    "closed": 4
+   },
+   "brokenBodies": [],
+   "weldLog": []
+  },
+  {
+   "file": "SKR_E3_V3_Din_Mount.step",
+   "sizeKB": 1793,
+   "declared": {
+    "solids": 5,
+    "closedShells": 5,
+    "openShells": 0,
+    "faces": 535,
+    "edges": 1326,
+    "edgeValence": {
+     "2": 1326
+    },
+    "closedByDeclaration": true,
+    "system": "Autodesk Translation Framework v11.17.0.187"
+   },
+   "bodies": 8,
+   "verts": 9648,
+   "tris": 19344,
+   "stepMs": 1083,
+   "engineMs": 1057,
+   "smoothMs": 12,
+   "weldMeta": {
+    "bodies": 8,
+    "watertight": 8,
+    "stillBroken": 0,
+    "edgesTopo": 1424,
+    "edgesResidual": 0,
+    "edgesMismatch": 0,
+    "trisDropped": 8,
+    "legacyFallback": 0,
+    "facesFilled": 3,
+    "diagonalFlips": 2,
+    "enabled": true
+   },
+   "raw": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 9648,
+    "closedBodies": 8,
+    "closedBroken": 0,
+    "closedNaked": 0,
+    "closedOver": 0
+   },
+   "client": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 9648,
+    "closedBodies": 8,
+    "closedBroken": 0,
+    "closedNaked": 0,
+    "closedOver": 0
+   },
+   "brep": {
+    "closed": 8
+   },
+   "brokenBodies": [],
+   "weldLog": [
+    "[WELD] \"M2x10 self tapping screw for plastic:11\" verts 3829->1970, topo 196, faces-filled 1, faces-retriangulated 1, opposed-tri 1, diagonal-flips 1, micro-edges-collapsed 4 => WATERTIGHT",
+    "[WELD] \"M2x10 self tapping screw for plastic:13\" verts 3811->1963, topo 194, faces-filled 1, opposed-tri 1, diagonal-flips 1, micro-edges-collapsed 3 => WATERTIGHT"
+   ]
+  },
+  {
+   "file": "Fly_Gemini_V2_Din_Mount_2pc.step",
+   "sizeKB": 2279,
+   "declared": {
+    "solids": 7,
+    "closedShells": 7,
+    "openShells": 0,
+    "faces": 943,
+    "edges": 2335,
+    "edgeValence": {
+     "2": 2335
+    },
+    "closedByDeclaration": true,
+    "system": "Autodesk Translation Framework v11.17.0.187"
+   },
+   "bodies": 12,
+   "verts": 16167,
+   "tris": 32382,
+   "stepMs": 1378,
+   "engineMs": 1339,
+   "smoothMs": 19,
+   "weldMeta": {
+    "bodies": 12,
+    "watertight": 12,
+    "stillBroken": 0,
+    "edgesTopo": 2823,
+    "edgesResidual": 0,
+    "edgesMismatch": 0,
+    "trisDropped": 8,
+    "legacyFallback": 0,
+    "facesFilled": 6,
+    "diagonalFlips": 4,
+    "enabled": true
+   },
+   "raw": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 16163,
+    "closedBodies": 12,
+    "closedBroken": 0,
+    "closedNaked": 0,
+    "closedOver": 0
+   },
+   "client": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 16167,
+    "closedBodies": 12,
+    "closedBroken": 0,
+    "closedNaked": 0,
+    "closedOver": 0
+   },
+   "brep": {
+    "closed": 12
+   },
+   "brokenBodies": [],
+   "weldLog": [
+    "[WELD] \"M2x10 self tapping screw for plastic:11\" verts 3829->1970, topo 196, faces-filled 1, faces-retriangulated 1, opposed-tri 1, diagonal-flips 1, micro-edges-collapsed 4 => WATERTIGHT",
+    "[WELD] \"M2x10 self tapping screw for plastic:13\" verts 3811->1963, topo 194, faces-filled 1, opposed-tri 1, diagonal-flips 1, micro-edges-collapsed 3 => WATERTIGHT",
+    "[WELD] \"M2x10 self tapping screw for plastic:13\" verts 3811->1963, topo 194, faces-filled 1, opposed-tri 1, diagonal-flips 1, micro-edges-collapsed 3 => WATERTIGHT",
+    "[WELD] \"M2x10 self tapping screw for plastic:11\" verts 3829->1970, topo 196, faces-filled 1, faces-retriangulated 1, opposed-tri 1, diagonal-flips 1, micro-edges-collapsed 4 => WATERTIGHT"
+   ]
+  },
+  {
+   "file": "RPi_or_BTT-Pico_Din_Mount.STEP",
+   "sizeKB": 2283,
+   "declared": {
+    "solids": 3,
+    "closedShells": 3,
+    "openShells": 0,
+    "faces": 599,
+    "edges": 1490,
+    "edgeValence": {
+     "2": 1490
+    },
+    "closedByDeclaration": true,
+    "system": "SolidWorks 2019"
+   },
+   "bodies": 8,
+   "verts": 17763,
+   "tris": 35558,
+   "stepMs": 2321,
+   "engineMs": 2289,
+   "smoothMs": 19,
+   "weldMeta": {
+    "bodies": 8,
+    "watertight": 8,
+    "stillBroken": 0,
+    "edgesTopo": 2955,
+    "edgesResidual": 0,
+    "edgesMismatch": 0,
+    "trisDropped": 8,
+    "legacyFallback": 0,
+    "facesFilled": 0,
+    "diagonalFlips": 0,
+    "enabled": true
+   },
+   "raw": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 17763,
+    "closedBodies": 8,
+    "closedBroken": 0,
+    "closedNaked": 0,
+    "closedOver": 0
+   },
+   "client": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 17763,
+    "closedBodies": 8,
+    "closedBroken": 0,
+    "closedNaked": 0,
+    "closedOver": 0
+   },
+   "brep": {
+    "closed": 8
+   },
+   "brokenBodies": [],
+   "weldLog": [
+    "[03:24:27][WELD] \"M2x10 self tapping screw for plastic\" verts 4272->2161, topo 293, micro-edges-collapsed 2 => WATERTIGHT",
+    "[03:24:27][WELD] \"M2x10 self tapping screw for plastic\" verts 4272->2161, topo 293, micro-edges-collapsed 2 => WATERTIGHT",
+    "[03:24:27][WELD] \"M2x10 self tapping screw for plastic\" verts 4272->2161, topo 293, micro-edges-collapsed 2 => WATERTIGHT",
+    "[03:24:27][WELD] \"M2x10 self tapping screw for plastic\" verts 4272->2161, topo 293, micro-edges-collapsed 2 => WATERTIGHT",
+    "[WELD] \"M2x10 self tapping screw for plastic\" verts 4272->2161, topo 293, micro-edges-collapsed 2 => WATERTIGHT",
+    "[03:24:27][WELD] \"M2x10 self tapping screw for plastic\" verts 4272->2161, topo 293, micro-edges-collapsed 2 => WATERTIGHT"
+   ]
+  },
+  {
+   "file": "MiniSB_adxl_mount_adafruit_19mm_c_c.step",
+   "sizeKB": 7971,
+   "declared": {
+    "solids": 12,
+    "closedShells": 12,
+    "openShells": 0,
+    "faces": 3672,
+    "edges": 9988,
+    "edgeValence": {
+     "2": 9988
+    },
+    "closedByDeclaration": true,
+    "system": "Autodesk Translation Framework v11.17.0.187"
+   },
+   "bodies": 12,
+   "verts": 22141,
+   "tris": 44326,
+   "stepMs": 6864,
+   "engineMs": 6720,
+   "smoothMs": 48,
+   "weldMeta": {
+    "bodies": 12,
+    "watertight": 12,
+    "stillBroken": 0,
+    "edgesTopo": 9980,
+    "edgesResidual": 0,
+    "edgesMismatch": 0,
+    "trisDropped": 81,
+    "legacyFallback": 0,
+    "facesFilled": 2,
+    "diagonalFlips": 0,
+    "enabled": true
+   },
+   "raw": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 22141,
+    "closedBodies": 12,
+    "closedBroken": 0,
+    "closedNaked": 0,
+    "closedOver": 0
+   },
+   "client": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 22141,
+    "closedBodies": 12,
+    "closedBroken": 0,
+    "closedNaked": 0,
+    "closedOver": 0
+   },
+   "brep": {
+    "closed": 12
+   },
+   "brokenBodies": [],
+   "weldLog": [
+    "[WELD] \"MiniSB_adxl_mount_adafruit_19mm_c_c (1)\" verts 2175->1058, topo 320, degen 8, -degen-tri 8, micro-edges-collapsed 4 => WATERTIGHT",
+    "[WELD] \"M2x6 SHCS:2\" verts 474->247, topo 34, faces-filled 1 => WATERTIGHT",
+    "[WELD] \"M2x6 SHCS:3\" verts 476->248, topo 34, faces-filled 1 => WATERTIGHT",
+    "[WELD] \"Male Pin Header v1:9 (1)\" verts 38361->16002, topo 8249, degen 69, -degen-tri 69, micro-edges-collapsed 614, micro-clusters 7, -cancelled-tri 28 => WATERTIGHT"
+   ]
+  },
+  {
+   "file": "MiniSB_Bowden.step",
+   "sizeKB": 10118,
+   "declared": {
+    "solids": 49,
+    "closedShells": 49,
+    "openShells": 0,
+    "faces": 3595,
+    "edges": 9895,
+    "edgeValence": {
+     "2": 9895
+    },
+    "closedByDeclaration": true,
+    "system": "Shapr3D"
+   },
+   "bodies": 49,
+   "verts": 39655,
+   "tris": 79498,
+   "stepMs": 8776,
+   "engineMs": 8599,
+   "smoothMs": 45,
+   "weldMeta": {
+    "bodies": 49,
+    "watertight": 49,
+    "stillBroken": 0,
+    "edgesTopo": 9895,
+    "edgesResidual": 0,
+    "edgesMismatch": 0,
+    "trisDropped": 19,
+    "legacyFallback": 5,
+    "facesFilled": 4,
+    "diagonalFlips": 0,
+    "enabled": true
+   },
+   "raw": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 39655,
+    "closedBodies": 49,
+    "closedBroken": 0,
+    "closedNaked": 0,
+    "closedOver": 0
+   },
+   "client": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 39655,
+    "closedBodies": 49,
+    "closedBroken": 0,
+    "closedNaked": 0,
+    "closedOver": 0
+   },
+   "brep": {
+    "closed": 49
+   },
+   "brokenBodies": [],
+   "weldLog": [
+    "[WELD] \"SOLID\" verts 11301->6635, topo 1299, degen 4, faces-retriangulated 1, -degen-tri 4, micro-edges-collapsed 7 => WATERTIGHT",
+    "[WELD] \"SOLID\" verts 10201->6097, topo 1261, degen 4, faces-retriangulated 1, -degen-tri 4, micro-edges-collapsed 7 => WATERTIGHT",
+    "[WELD] \"3010 Blower Fan (1)\" verts 6341->2940, topo 879, faces-retriangulated 1, micro-edges-collapsed 14 => WATERTIGHT",
+    "[WELD] \"3010 Blower Fan (1)\" verts 6341->2940, topo 879, faces-retriangulated 1, micro-edges-collapsed 14 => WATERTIGHT"
+   ]
+  }
+ ],
+ "platform": "Ubuntu 24.04, OCCT 7.6.3 (apt), Manifold v3.5.3, g++ 13, 4 cores",
+ "source": "MEDUSA_SOURCE/nasscad_medusa.cpp, this branch",
+ "input": "25 part files of CAD/ (hotend, ADXL, electronics mounts, bowden toolhead) — VoronDesign/Voron-0 branch Voron0.2 @ a4d02db, not versioned"
+}
