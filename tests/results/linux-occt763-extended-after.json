@@ -9,12 +9,12 @@
   "stepexport": true,
   "stepload": true,
   "ramMB": 16095,
-  "availMB": 15502,
+  "availMB": 15489,
   "cores": 4,
   "runawayThreads": 0,
   "deviationPct": 0.5
  },
- "date": "2026-09-28T01:51:35.617Z",
+ "date": "2026-09-28T02:20:42.551Z",
  "results": [
   {
    "file": "Electronics_Parts_Motors_DC_motor_Motors_Motor-CC-12V-MITSUMI.step",
@@ -34,9 +34,9 @@
    "bodies": 1,
    "verts": 1228,
    "tris": 2452,
-   "stepMs": 33,
-   "engineMs": 30,
-   "smoothMs": 4,
+   "stepMs": 38,
+   "engineMs": 35,
+   "smoothMs": 5,
    "weldMeta": {
     "bodies": 1,
     "watertight": 1,
@@ -73,7 +73,8 @@
    "brep": {
     "closed": 1
    },
-   "brokenBodies": []
+   "brokenBodies": [],
+   "weldLog": []
   },
   {
    "file": "Electronics_Parts_Inductors_Inductive_sensor_Inductive-Proximity-Sensor.step",
@@ -93,9 +94,9 @@
    "bodies": 1,
    "verts": 517,
    "tris": 1030,
-   "stepMs": 21,
-   "engineMs": 19,
-   "smoothMs": 2,
+   "stepMs": 25,
+   "engineMs": 23,
+   "smoothMs": 3,
    "weldMeta": {
     "bodies": 1,
     "watertight": 1,
@@ -132,7 +133,8 @@
    "brep": {
     "closed": 1
    },
-   "brokenBodies": []
+   "brokenBodies": [],
+   "weldLog": []
   },
   {
    "file": "Electro-pneumatic_Fixings_PM-25-AB-FM.STEP",
@@ -152,8 +154,8 @@
    "bodies": 1,
    "verts": 326,
    "tris": 660,
-   "stepMs": 26,
-   "engineMs": 24,
+   "stepMs": 40,
+   "engineMs": 37,
    "smoothMs": 3,
    "weldMeta": {
     "bodies": 1,
@@ -191,7 +193,8 @@
    "brep": {
     "closed": 1
    },
-   "brokenBodies": []
+   "brokenBodies": [],
+   "weldLog": []
   },
   {
    "file": "Electro-pneumatic_Fixings_PM-16-AB.STEP",
@@ -211,9 +214,9 @@
    "bodies": 1,
    "verts": 316,
    "tris": 640,
-   "stepMs": 24,
-   "engineMs": 23,
-   "smoothMs": 1,
+   "stepMs": 31,
+   "engineMs": 29,
+   "smoothMs": 2,
    "weldMeta": {
     "bodies": 1,
     "watertight": 1,
@@ -250,7 +253,8 @@
    "brep": {
     "closed": 1
    },
-   "brokenBodies": []
+   "brokenBodies": [],
+   "weldLog": []
   },
   {
    "file": "Electrical_Parts_Batteries_battery-AAA.step",
@@ -271,8 +275,8 @@
    "verts": 1868,
    "tris": 3732,
    "stepMs": 32,
-   "engineMs": 30,
-   "smoothMs": 5,
+   "engineMs": 31,
+   "smoothMs": 4,
    "weldMeta": {
     "bodies": 1,
     "watertight": 1,
@@ -309,7 +313,8 @@
    "brep": {
     "closed": 1
    },
-   "brokenBodies": []
+   "brokenBodies": [],
+   "weldLog": []
   },
   {
    "file": "Architectural_Parts_Construction_blocks_Concrete_block_14x19x19.step",
@@ -368,7 +373,8 @@
    "brep": {
     "closed": 1
    },
-   "brokenBodies": []
+   "brokenBodies": [],
+   "weldLog": []
   },
   {
    "file": "Architectural_Parts_Hydro_equipment_ShowerPad1x1m.step",
@@ -427,7 +433,8 @@
    "brep": {
     "closed": 1
    },
-   "brokenBodies": []
+   "brokenBodies": [],
+   "weldLog": []
   },
   {
    "file": "Architectural_Parts_Construction_blocks_Concrete_block_14x39x19.step",
@@ -447,9 +454,9 @@
    "bodies": 1,
    "verts": 136,
    "tris": 276,
-   "stepMs": 35,
-   "engineMs": 33,
-   "smoothMs": 2,
+   "stepMs": 39,
+   "engineMs": 35,
+   "smoothMs": 1,
    "weldMeta": {
     "bodies": 1,
     "watertight": 1,
@@ -486,7 +493,8 @@
    "brep": {
     "closed": 1
    },
-   "brokenBodies": []
+   "brokenBodies": [],
+   "weldLog": []
   },
   {
    "file": "Electrical_Parts_Servos_Emax-ES08A_servo-rounded-horn.step",
@@ -508,7 +516,7 @@
    "tris": 3572,
    "stepMs": 47,
    "engineMs": 45,
-   "smoothMs": 4,
+   "smoothMs": 5,
    "weldMeta": {
     "bodies": 1,
     "watertight": 1,
@@ -545,7 +553,8 @@
    "brep": {
     "closed": 1
    },
-   "brokenBodies": []
+   "brokenBodies": [],
+   "weldLog": []
   },
   {
    "file": "Electronics_Parts_Heatsinks_heat-sink-8x6x5.step",
@@ -565,8 +574,8 @@
    "bodies": 1,
    "verts": 190,
    "tris": 376,
-   "stepMs": 33,
-   "engineMs": 32,
+   "stepMs": 36,
+   "engineMs": 34,
    "smoothMs": 2,
    "weldMeta": {
     "bodies": 1,
@@ -604,7 +613,8 @@
    "brep": {
     "closed": 1
    },
-   "brokenBodies": []
+   "brokenBodies": [],
+   "weldLog": []
   },
   {
    "file": "Architectural_Parts_Hydro_equipment_ShowerPad2x1.2m.step",
@@ -624,8 +634,8 @@
    "bodies": 1,
    "verts": 501,
    "tris": 998,
-   "stepMs": 37,
-   "engineMs": 34,
+   "stepMs": 38,
+   "engineMs": 36,
    "smoothMs": 2,
    "weldMeta": {
     "bodies": 1,
@@ -663,188 +673,12 @@
    "brep": {
     "closed": 1
    },
-   "brokenBodies": []
+   "brokenBodies": [],
+   "weldLog": []
   },
   {
    "file": "Architectural_Parts_Windows_Casement_Simple_2-panes_window.step",
    "sizeKB": 100,
-   "declared": {
-    "solids": 4,
-    "closedShells": 4,
-    "openShells": 0,
-    "faces": 36,
-    "edges": 84,
-    "edgeValence": {
-     "2": 84
-    },
-    "closedByDeclaration": true,
-    "system": "FreeCAD"
-   },
-   "bodies": 4,
-   "verts": 56,
-   "tris": 108,
-   "stepMs": 45,
-   "engineMs": 43,
-   "smoothMs": 1,
-   "weldMeta": {
-    "bodies": 4,
-    "watertight": 4,
-    "stillBroken": 0,
-    "edgesTopo": 84,
-    "edgesResidual": 0,
-    "edgesMismatch": 0,
-    "trisDropped": 0,
-    "legacyFallback": 0,
-    "facesFilled": 0,
-    "diagonalFlips": 0,
-    "enabled": true
-   },
-   "raw": {
-    "bodiesBroken": 0,
-    "naked": 0,
-    "over": 0,
-    "weldedVerts": 56,
-    "closedBodies": 4,
-    "closedBroken": 0,
-    "closedNaked": 0,
-    "closedOver": 0
-   },
-   "client": {
-    "bodiesBroken": 0,
-    "naked": 0,
-    "over": 0,
-    "weldedVerts": 56,
-    "closedBodies": 4,
-    "closedBroken": 0,
-    "closedNaked": 0,
-    "closedOver": 0
-   },
-   "brep": {
-    "closed": 4
-   },
-   "brokenBodies": []
-  },
-  {
-   "file": "Electronics_Parts_Connectors_Audio-connectors_3-5mm-audio-jack.step",
-   "sizeKB": 102,
-   "declared": {
-    "solids": 1,
-    "closedShells": 1,
-    "openShells": 0,
-    "faces": 35,
-    "edges": 86,
-    "edgeValence": {
-     "2": 86
-    },
-    "closedByDeclaration": true,
-    "system": "FreeCAD"
-   },
-   "bodies": 1,
-   "verts": 1381,
-   "tris": 2762,
-   "stepMs": 66,
-   "engineMs": 63,
-   "smoothMs": 4,
-   "weldMeta": {
-    "bodies": 1,
-    "watertight": 1,
-    "stillBroken": 0,
-    "edgesTopo": 86,
-    "edgesResidual": 0,
-    "edgesMismatch": 0,
-    "trisDropped": 0,
-    "legacyFallback": 0,
-    "facesFilled": 0,
-    "diagonalFlips": 0,
-    "enabled": true
-   },
-   "raw": {
-    "bodiesBroken": 0,
-    "naked": 0,
-    "over": 0,
-    "weldedVerts": 1381,
-    "closedBodies": 1,
-    "closedBroken": 0,
-    "closedNaked": 0,
-    "closedOver": 0
-   },
-   "client": {
-    "bodiesBroken": 0,
-    "naked": 0,
-    "over": 0,
-    "weldedVerts": 1381,
-    "closedBodies": 1,
-    "closedBroken": 0,
-    "closedNaked": 0,
-    "closedOver": 0
-   },
-   "brep": {
-    "closed": 1
-   },
-   "brokenBodies": []
-  },
-  {
-   "file": "Architectural_Parts_Doors_Generic_Simple_door.step",
-   "sizeKB": 109,
-   "declared": {
-    "solids": 4,
-    "closedShells": 4,
-    "openShells": 0,
-    "faces": 36,
-    "edges": 84,
-    "edgeValence": {
-     "2": 84
-    },
-    "closedByDeclaration": true,
-    "system": "FreeCAD"
-   },
-   "bodies": 4,
-   "verts": 56,
-   "tris": 96,
-   "stepMs": 44,
-   "engineMs": 42,
-   "smoothMs": 2,
-   "weldMeta": {
-    "bodies": 4,
-    "watertight": 4,
-    "stillBroken": 0,
-    "edgesTopo": 84,
-    "edgesResidual": 0,
-    "edgesMismatch": 0,
-    "trisDropped": 0,
-    "legacyFallback": 0,
-    "facesFilled": 0,
-    "diagonalFlips": 0,
-    "enabled": true
-   },
-   "raw": {
-    "bodiesBroken": 0,
-    "naked": 0,
-    "over": 0,
-    "weldedVerts": 56,
-    "closedBodies": 4,
-    "closedBroken": 0,
-    "closedNaked": 0,
-    "closedOver": 0
-   },
-   "client": {
-    "bodiesBroken": 0,
-    "naked": 0,
-    "over": 0,
-    "weldedVerts": 56,
-    "closedBodies": 4,
-    "closedBroken": 0,
-    "closedNaked": 0,
-    "closedOver": 0
-   },
-   "brep": {
-    "closed": 4
-   },
-   "brokenBodies": []
-  },
-  {
-   "file": "Architectural_Parts_Windows_Casement_2PaneTopOpen.stp",
-   "sizeKB": 110,
    "declared": {
     "solids": 4,
     "closedShells": 4,
@@ -899,7 +733,188 @@
    "brep": {
     "closed": 4
    },
-   "brokenBodies": []
+   "brokenBodies": [],
+   "weldLog": []
+  },
+  {
+   "file": "Electronics_Parts_Connectors_Audio-connectors_3-5mm-audio-jack.step",
+   "sizeKB": 102,
+   "declared": {
+    "solids": 1,
+    "closedShells": 1,
+    "openShells": 0,
+    "faces": 35,
+    "edges": 86,
+    "edgeValence": {
+     "2": 86
+    },
+    "closedByDeclaration": true,
+    "system": "FreeCAD"
+   },
+   "bodies": 1,
+   "verts": 1381,
+   "tris": 2762,
+   "stepMs": 68,
+   "engineMs": 65,
+   "smoothMs": 3,
+   "weldMeta": {
+    "bodies": 1,
+    "watertight": 1,
+    "stillBroken": 0,
+    "edgesTopo": 86,
+    "edgesResidual": 0,
+    "edgesMismatch": 0,
+    "trisDropped": 0,
+    "legacyFallback": 0,
+    "facesFilled": 0,
+    "diagonalFlips": 0,
+    "enabled": true
+   },
+   "raw": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 1381,
+    "closedBodies": 1,
+    "closedBroken": 0,
+    "closedNaked": 0,
+    "closedOver": 0
+   },
+   "client": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 1381,
+    "closedBodies": 1,
+    "closedBroken": 0,
+    "closedNaked": 0,
+    "closedOver": 0
+   },
+   "brep": {
+    "closed": 1
+   },
+   "brokenBodies": [],
+   "weldLog": []
+  },
+  {
+   "file": "Architectural_Parts_Doors_Generic_Simple_door.step",
+   "sizeKB": 109,
+   "declared": {
+    "solids": 4,
+    "closedShells": 4,
+    "openShells": 0,
+    "faces": 36,
+    "edges": 84,
+    "edgeValence": {
+     "2": 84
+    },
+    "closedByDeclaration": true,
+    "system": "FreeCAD"
+   },
+   "bodies": 4,
+   "verts": 56,
+   "tris": 96,
+   "stepMs": 49,
+   "engineMs": 47,
+   "smoothMs": 2,
+   "weldMeta": {
+    "bodies": 4,
+    "watertight": 4,
+    "stillBroken": 0,
+    "edgesTopo": 84,
+    "edgesResidual": 0,
+    "edgesMismatch": 0,
+    "trisDropped": 0,
+    "legacyFallback": 0,
+    "facesFilled": 0,
+    "diagonalFlips": 0,
+    "enabled": true
+   },
+   "raw": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 56,
+    "closedBodies": 4,
+    "closedBroken": 0,
+    "closedNaked": 0,
+    "closedOver": 0
+   },
+   "client": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 56,
+    "closedBodies": 4,
+    "closedBroken": 0,
+    "closedNaked": 0,
+    "closedOver": 0
+   },
+   "brep": {
+    "closed": 4
+   },
+   "brokenBodies": [],
+   "weldLog": []
+  },
+  {
+   "file": "Architectural_Parts_Windows_Casement_2PaneTopOpen.stp",
+   "sizeKB": 110,
+   "declared": {
+    "solids": 4,
+    "closedShells": 4,
+    "openShells": 0,
+    "faces": 36,
+    "edges": 84,
+    "edgeValence": {
+     "2": 84
+    },
+    "closedByDeclaration": true,
+    "system": "FreeCAD"
+   },
+   "bodies": 4,
+   "verts": 56,
+   "tris": 108,
+   "stepMs": 59,
+   "engineMs": 57,
+   "smoothMs": 1,
+   "weldMeta": {
+    "bodies": 4,
+    "watertight": 4,
+    "stillBroken": 0,
+    "edgesTopo": 84,
+    "edgesResidual": 0,
+    "edgesMismatch": 0,
+    "trisDropped": 0,
+    "legacyFallback": 0,
+    "facesFilled": 0,
+    "diagonalFlips": 0,
+    "enabled": true
+   },
+   "raw": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 56,
+    "closedBodies": 4,
+    "closedBroken": 0,
+    "closedNaked": 0,
+    "closedOver": 0
+   },
+   "client": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 56,
+    "closedBodies": 4,
+    "closedBroken": 0,
+    "closedNaked": 0,
+    "closedOver": 0
+   },
+   "brep": {
+    "closed": 4
+   },
+   "brokenBodies": [],
+   "weldLog": []
   },
   {
    "file": "Computing_Storage_HDD_3-5inch-Disk-Drive-SATA.step",
@@ -919,8 +934,8 @@
    "bodies": 1,
    "verts": 508,
    "tris": 1024,
-   "stepMs": 54,
-   "engineMs": 52,
+   "stepMs": 53,
+   "engineMs": 51,
    "smoothMs": 2,
    "weldMeta": {
     "bodies": 1,
@@ -958,7 +973,8 @@
    "brep": {
     "closed": 1
    },
-   "brokenBodies": []
+   "brokenBodies": [],
+   "weldLog": []
   },
   {
    "file": "Electronics_Parts_IC_SMD_DFN-2523-6.step",
@@ -978,8 +994,8 @@
    "bodies": 5,
    "verts": 108,
    "tris": 196,
-   "stepMs": 57,
-   "engineMs": 54,
+   "stepMs": 62,
+   "engineMs": 60,
    "smoothMs": 1,
    "weldMeta": {
     "bodies": 5,
@@ -1017,7 +1033,8 @@
    "brep": {
     "closed": 5
    },
-   "brokenBodies": []
+   "brokenBodies": [],
+   "weldLog": []
   },
   {
    "file": "Architectural_Parts_Electric_equipment_Air_conditionning.stp",
@@ -1037,8 +1054,8 @@
    "bodies": 1,
    "verts": 88,
    "tris": 176,
-   "stepMs": 76,
-   "engineMs": 74,
+   "stepMs": 56,
+   "engineMs": 54,
    "smoothMs": 1,
    "weldMeta": {
     "bodies": 1,
@@ -1076,7 +1093,8 @@
    "brep": {
     "closed": 1
    },
-   "brokenBodies": []
+   "brokenBodies": [],
+   "weldLog": []
   },
   {
    "file": "Electronics_Parts_Capacitors_SMD_C_0402.step",
@@ -1096,9 +1114,9 @@
    "bodies": 3,
    "verts": 357,
    "tris": 702,
-   "stepMs": 73,
-   "engineMs": 69,
-   "smoothMs": 1,
+   "stepMs": 64,
+   "engineMs": 61,
+   "smoothMs": 2,
    "weldMeta": {
     "bodies": 3,
     "watertight": 3,
@@ -1135,7 +1153,11 @@
    "brep": {
     "closed": 3
    },
-   "brokenBodies": []
+   "brokenBodies": [],
+   "weldLog": [
+    "[WELD] \"right-side\" verts 340->145, topo 36, degen 4, -degen-tri 4, micro-edges-collapsed 43 => WATERTIGHT",
+    "[WELD] \"left-side\" verts 340->148, topo 36, degen 4, -degen-tri 4, micro-edges-collapsed 40 => WATERTIGHT"
+   ]
   },
   {
    "file": "Electronics_Parts_Inductors_SMD_L_0603.step",
@@ -1155,8 +1177,8 @@
    "bodies": 3,
    "verts": 440,
    "tris": 868,
-   "stepMs": 65,
-   "engineMs": 61,
+   "stepMs": 78,
+   "engineMs": 75,
    "smoothMs": 2,
    "weldMeta": {
     "bodies": 3,
@@ -1194,7 +1216,8 @@
    "brep": {
     "closed": 3
    },
-   "brokenBodies": []
+   "brokenBodies": [],
+   "weldLog": []
   },
   {
    "file": "Electronics_Parts_Capacitors_SMD_C_0603.step",
@@ -1214,9 +1237,9 @@
    "bodies": 3,
    "verts": 440,
    "tris": 868,
-   "stepMs": 66,
-   "engineMs": 63,
-   "smoothMs": 1,
+   "stepMs": 77,
+   "engineMs": 74,
+   "smoothMs": 2,
    "weldMeta": {
     "bodies": 3,
     "watertight": 3,
@@ -1253,7 +1276,8 @@
    "brep": {
     "closed": 3
    },
-   "brokenBodies": []
+   "brokenBodies": [],
+   "weldLog": []
   },
   {
    "file": "Electronics_Parts_Diodes_SMD_SOD-323.step",
@@ -1273,8 +1297,8 @@
    "bodies": 3,
    "verts": 172,
    "tris": 332,
-   "stepMs": 58,
-   "engineMs": 55,
+   "stepMs": 60,
+   "engineMs": 57,
    "smoothMs": 1,
    "weldMeta": {
     "bodies": 3,
@@ -1312,7 +1336,10 @@
    "brep": {
     "closed": 3
    },
-   "brokenBodies": []
+   "brokenBodies": [],
+   "weldLog": [
+    "[02:20:26][WELD] \"body\" verts 88->40, topo 33, micro-edges-collapsed 1 => WATERTIGHT"
+   ]
   },
   {
    "file": "Architectural_Parts_Wikihouse_Mallet.step",
@@ -1332,8 +1359,8 @@
    "bodies": 4,
    "verts": 80,
    "tris": 144,
-   "stepMs": 66,
-   "engineMs": 63,
+   "stepMs": 64,
+   "engineMs": 61,
    "smoothMs": 1,
    "weldMeta": {
     "bodies": 4,
@@ -1371,7 +1398,8 @@
    "brep": {
     "closed": 4
    },
-   "brokenBodies": []
+   "brokenBodies": [],
+   "weldLog": []
   },
   {
    "file": "Electronics_Parts_Buzzers_Buzzer.step",
@@ -1391,9 +1419,9 @@
    "bodies": 1,
    "verts": 1710,
    "tris": 3416,
-   "stepMs": 107,
-   "engineMs": 102,
-   "smoothMs": 5,
+   "stepMs": 86,
+   "engineMs": 84,
+   "smoothMs": 4,
    "weldMeta": {
     "bodies": 1,
     "watertight": 1,
@@ -1430,7 +1458,8 @@
    "brep": {
     "closed": 1
    },
-   "brokenBodies": []
+   "brokenBodies": [],
+   "weldLog": []
   },
   {
    "file": "Electronics_Parts_LEDs_LED_0603.step",
@@ -1450,8 +1479,8 @@
    "bodies": 5,
    "verts": 216,
    "tris": 412,
-   "stepMs": 78,
-   "engineMs": 75,
+   "stepMs": 77,
+   "engineMs": 71,
    "smoothMs": 2,
    "weldMeta": {
     "bodies": 5,
@@ -1489,7 +1518,8 @@
    "brep": {
     "closed": 5
    },
-   "brokenBodies": []
+   "brokenBodies": [],
+   "weldLog": []
   },
   {
    "file": "Electronics_Parts_Fuses_THT_fuse-MF-R1100.step",
@@ -1509,8 +1539,8 @@
    "bodies": 1,
    "verts": 1308,
    "tris": 2612,
-   "stepMs": 80,
-   "engineMs": 77,
+   "stepMs": 79,
+   "engineMs": 76,
    "smoothMs": 3,
    "weldMeta": {
     "bodies": 1,
@@ -1548,7 +1578,8 @@
    "brep": {
     "closed": 1
    },
-   "brokenBodies": []
+   "brokenBodies": [],
+   "weldLog": []
   },
   {
    "file": "Electronics_Parts_Crystals_xtal-through-hole.step",
@@ -1568,9 +1599,9 @@
    "bodies": 1,
    "verts": 1658,
    "tris": 3312,
-   "stepMs": 80,
-   "engineMs": 77,
-   "smoothMs": 4,
+   "stepMs": 86,
+   "engineMs": 82,
+   "smoothMs": 5,
    "weldMeta": {
     "bodies": 1,
     "watertight": 1,
@@ -1607,7 +1638,8 @@
    "brep": {
     "closed": 1
    },
-   "brokenBodies": []
+   "brokenBodies": [],
+   "weldLog": []
   },
   {
    "file": "Architectural_Parts_Building_Construction_Slab_adjustable_scaffolder.step",
@@ -1627,8 +1659,8 @@
    "bodies": 1,
    "verts": 1266,
    "tris": 2536,
-   "stepMs": 73,
-   "engineMs": 68,
+   "stepMs": 82,
+   "engineMs": 78,
    "smoothMs": 4,
    "weldMeta": {
     "bodies": 1,
@@ -1666,7 +1698,8 @@
    "brep": {
     "closed": 1
    },
-   "brokenBodies": []
+   "brokenBodies": [],
+   "weldLog": []
   },
   {
    "file": "Electronics_Parts_Connectors_Ethernet-connectors_rj45-ethernet-PCB-with-leds.step",
@@ -1686,9 +1719,9 @@
    "bodies": 1,
    "verts": 1490,
    "tris": 2976,
-   "stepMs": 146,
-   "engineMs": 141,
-   "smoothMs": 4,
+   "stepMs": 127,
+   "engineMs": 122,
+   "smoothMs": 5,
    "weldMeta": {
     "bodies": 1,
     "watertight": 1,
@@ -1725,7 +1758,8 @@
    "brep": {
     "closed": 1
    },
-   "brokenBodies": []
+   "brokenBodies": [],
+   "weldLog": []
   },
   {
    "file": "Electrical_Parts_Endstop_endstop.stp",
@@ -1745,9 +1779,9 @@
    "bodies": 3,
    "verts": 554,
    "tris": 1108,
-   "stepMs": 103,
-   "engineMs": 95,
-   "smoothMs": 3,
+   "stepMs": 96,
+   "engineMs": 93,
+   "smoothMs": 2,
    "weldMeta": {
     "bodies": 3,
     "watertight": 3,
@@ -1784,7 +1818,8 @@
    "brep": {
     "closed": 3
    },
-   "brokenBodies": []
+   "brokenBodies": [],
+   "weldLog": []
   },
   {
    "file": "Architectural_Parts_Roof_steel-sheets-3000mm.step",
@@ -1804,8 +1839,8 @@
    "bodies": 1,
    "verts": 392,
    "tris": 780,
-   "stepMs": 108,
-   "engineMs": 104,
+   "stepMs": 99,
+   "engineMs": 96,
    "smoothMs": 2,
    "weldMeta": {
     "bodies": 1,
@@ -1843,7 +1878,8 @@
    "brep": {
     "closed": 1
    },
-   "brokenBodies": []
+   "brokenBodies": [],
+   "weldLog": []
   },
   {
    "file": "Electronics_Parts_LEDs_RGB-LED-5mm.step",
@@ -1863,8 +1899,8 @@
    "bodies": 5,
    "verts": 613,
    "tris": 1206,
-   "stepMs": 117,
-   "engineMs": 112,
+   "stepMs": 106,
+   "engineMs": 102,
    "smoothMs": 2,
    "weldMeta": {
     "bodies": 5,
@@ -1902,7 +1938,8 @@
    "brep": {
     "closed": 5
    },
-   "brokenBodies": []
+   "brokenBodies": [],
+   "weldLog": []
   },
   {
    "file": "Architectural_Parts_Roof_steel-sheets-2000mm.step",
@@ -1922,8 +1959,8 @@
    "bodies": 1,
    "verts": 392,
    "tris": 780,
-   "stepMs": 109,
-   "engineMs": 104,
+   "stepMs": 102,
+   "engineMs": 99,
    "smoothMs": 2,
    "weldMeta": {
     "bodies": 1,
@@ -1961,7 +1998,8 @@
    "brep": {
     "closed": 1
    },
-   "brokenBodies": []
+   "brokenBodies": [],
+   "weldLog": []
   },
   {
    "file": "Electronics_Parts_Crystals_xtal-smd-10x4x3mm.step",
@@ -1981,8 +2019,8 @@
    "bodies": 4,
    "verts": 1638,
    "tris": 3260,
-   "stepMs": 108,
-   "engineMs": 103,
+   "stepMs": 109,
+   "engineMs": 105,
    "smoothMs": 4,
    "weldMeta": {
     "bodies": 4,
@@ -2020,7 +2058,8 @@
    "brep": {
     "closed": 4
    },
-   "brokenBodies": []
+   "brokenBodies": [],
+   "weldLog": []
   },
   {
    "file": "Computing_Storage_HDD_2-5inch-Disk-Drive-7mm-SATA.step",
@@ -2040,8 +2079,8 @@
    "bodies": 1,
    "verts": 554,
    "tris": 1120,
-   "stepMs": 114,
-   "engineMs": 108,
+   "stepMs": 112,
+   "engineMs": 107,
    "smoothMs": 3,
    "weldMeta": {
     "bodies": 1,
@@ -2079,7 +2118,8 @@
    "brep": {
     "closed": 1
    },
-   "brokenBodies": []
+   "brokenBodies": [],
+   "weldLog": []
   },
   {
    "file": "Electro-pneumatic_Cylinders_PM-16-125-CYLINDER.STEP",
@@ -2138,7 +2178,8 @@
    "brep": {
     "closed": 4
    },
-   "brokenBodies": []
+   "brokenBodies": [],
+   "weldLog": []
   },
   {
    "file": "Electro-pneumatic_Cylinders_PM-16-100-CYLINDER.STEP",
@@ -2158,9 +2199,9 @@
    "bodies": 4,
    "verts": 1642,
    "tris": 3284,
-   "stepMs": 142,
-   "engineMs": 138,
-   "smoothMs": 3,
+   "stepMs": 178,
+   "engineMs": 174,
+   "smoothMs": 4,
    "weldMeta": {
     "bodies": 4,
     "watertight": 4,
@@ -2197,7 +2238,8 @@
    "brep": {
     "closed": 4
    },
-   "brokenBodies": []
+   "brokenBodies": [],
+   "weldLog": []
   },
   {
    "file": "Electronics_Parts_Buttons_SMD_SW_SPST_FSMSM.step",
@@ -2217,8 +2259,8 @@
    "bodies": 1,
    "verts": 816,
    "tris": 1628,
-   "stepMs": 115,
-   "engineMs": 111,
+   "stepMs": 118,
+   "engineMs": 114,
    "smoothMs": 2,
    "weldMeta": {
     "bodies": 1,
@@ -2256,7 +2298,8 @@
    "brep": {
     "closed": 1
    },
-   "brokenBodies": []
+   "brokenBodies": [],
+   "weldLog": []
   },
   {
    "file": "Architectural_Parts_Doors_Glass_Double_glass_doors_with_handles_and_transom.step",
@@ -2276,8 +2319,8 @@
    "bodies": 21,
    "verts": 440,
    "tris": 800,
-   "stepMs": 129,
-   "engineMs": 125,
+   "stepMs": 141,
+   "engineMs": 135,
    "smoothMs": 2,
    "weldMeta": {
     "bodies": 21,
@@ -2315,7 +2358,8 @@
    "brep": {
     "closed": 21
    },
-   "brokenBodies": []
+   "brokenBodies": [],
+   "weldLog": []
   },
   {
    "file": "Electronics_Parts_Headers_2.54mm-pitch_female_1x6-female-pin-header.step",
@@ -2335,8 +2379,8 @@
    "bodies": 7,
    "verts": 732,
    "tris": 1436,
-   "stepMs": 196,
-   "engineMs": 190,
+   "stepMs": 159,
+   "engineMs": 154,
    "smoothMs": 2,
    "weldMeta": {
     "bodies": 7,
@@ -2374,7 +2418,8 @@
    "brep": {
     "closed": 7
    },
-   "brokenBodies": []
+   "brokenBodies": [],
+   "weldLog": []
   },
   {
    "file": "Electrical_Parts_Endstop_endstop-v1-2-makerbot.step",
@@ -2394,8 +2439,8 @@
    "bodies": 1,
    "verts": 516,
    "tris": 1044,
-   "stepMs": 153,
-   "engineMs": 146,
+   "stepMs": 155,
+   "engineMs": 149,
    "smoothMs": 2,
    "weldMeta": {
     "bodies": 1,
@@ -2433,7 +2478,8 @@
    "brep": {
     "closed": 1
    },
-   "brokenBodies": []
+   "brokenBodies": [],
+   "weldLog": []
   },
   {
    "file": "Electronics_Parts_Buttons_SMD_sw_smd_6.0x3.8.step",
@@ -2453,9 +2499,9 @@
    "bodies": 5,
    "verts": 925,
    "tris": 1842,
-   "stepMs": 155,
-   "engineMs": 150,
-   "smoothMs": 2,
+   "stepMs": 173,
+   "engineMs": 166,
+   "smoothMs": 3,
    "weldMeta": {
     "bodies": 5,
     "watertight": 5,
@@ -2492,7 +2538,8 @@
    "brep": {
     "closed": 5
    },
-   "brokenBodies": []
+   "brokenBodies": [],
+   "weldLog": []
   },
   {
    "file": "Electrical_Parts_Push_buttons_Blue_Push-button_-_22_mm.step",
@@ -2512,9 +2559,9 @@
    "bodies": 1,
    "verts": 3960,
    "tris": 7924,
-   "stepMs": 350,
-   "engineMs": 339,
-   "smoothMs": 9,
+   "stepMs": 343,
+   "engineMs": 334,
+   "smoothMs": 10,
    "weldMeta": {
     "bodies": 1,
     "watertight": 1,
@@ -2551,7 +2598,8 @@
    "brep": {
     "closed": 1
    },
-   "brokenBodies": []
+   "brokenBodies": [],
+   "weldLog": []
   },
   {
    "file": "Electrical_Parts_Push_buttons_Black_mushroom_head_push_button_-_22_mm.step",
@@ -2571,9 +2619,9 @@
    "bodies": 1,
    "verts": 3950,
    "tris": 7904,
-   "stepMs": 362,
-   "engineMs": 349,
-   "smoothMs": 9,
+   "stepMs": 407,
+   "engineMs": 395,
+   "smoothMs": 10,
    "weldMeta": {
     "bodies": 1,
     "watertight": 1,
@@ -2610,7 +2658,8 @@
    "brep": {
     "closed": 1
    },
-   "brokenBodies": []
+   "brokenBodies": [],
+   "weldLog": []
   },
   {
    "file": "Electronics_Parts_Fuses_SMD_F1812-505k.step",
@@ -2630,8 +2679,8 @@
    "bodies": 8,
    "verts": 588,
    "tris": 1148,
-   "stepMs": 180,
-   "engineMs": 173,
+   "stepMs": 183,
+   "engineMs": 176,
    "smoothMs": 2,
    "weldMeta": {
     "bodies": 8,
@@ -2669,7 +2718,8 @@
    "brep": {
     "closed": 8
    },
-   "brokenBodies": []
+   "brokenBodies": [],
+   "weldLog": []
   },
   {
    "file": "Electronics_Parts_Displays_Display_7_segmentos_Archivos_Display_7_segmentos.step",
@@ -2689,8 +2739,8 @@
    "bodies": 1,
    "verts": 264,
    "tris": 524,
-   "stepMs": 171,
-   "engineMs": 164,
+   "stepMs": 167,
+   "engineMs": 160,
    "smoothMs": 2,
    "weldMeta": {
     "bodies": 1,
@@ -2728,7 +2778,8 @@
    "brep": {
     "closed": 1
    },
-   "brokenBodies": []
+   "brokenBodies": [],
+   "weldLog": []
   },
   {
    "file": "Electronics_Parts_Jumpers_jumper-cap-2.54mm.step",
@@ -2748,8 +2799,8 @@
    "bodies": 3,
    "verts": 670,
    "tris": 1332,
-   "stepMs": 173,
-   "engineMs": 165,
+   "stepMs": 178,
+   "engineMs": 170,
    "smoothMs": 2,
    "weldMeta": {
     "bodies": 3,
@@ -2787,7 +2838,8 @@
    "brep": {
     "closed": 3
    },
-   "brokenBodies": []
+   "brokenBodies": [],
+   "weldLog": []
   },
   {
    "file": "Electrical_Parts_Hotend_CatNozzle.step",
@@ -2808,8 +2860,8 @@
    "bodies": 8,
    "verts": 2976,
    "tris": 5956,
-   "stepMs": 277,
-   "engineMs": 268,
+   "stepMs": 254,
+   "engineMs": 245,
    "smoothMs": 3,
    "weldMeta": {
     "bodies": 8,
@@ -2867,6 +2919,9 @@
       "manifold": false
      }
     }
+   ],
+   "weldLog": [
+    "[WELD] \"Resistencia\" verts 522->285, topo 14, brep-nonmanifold-paired 1 => WATERTIGHT"
    ]
   },
   {
@@ -2887,9 +2942,9 @@
    "bodies": 11,
    "verts": 528,
    "tris": 1012,
-   "stepMs": 242,
-   "engineMs": 232,
-   "smoothMs": 2,
+   "stepMs": 256,
+   "engineMs": 246,
+   "smoothMs": 4,
    "weldMeta": {
     "bodies": 11,
     "watertight": 11,
@@ -2926,7 +2981,8 @@
    "brep": {
     "closed": 11
    },
-   "brokenBodies": []
+   "brokenBodies": [],
+   "weldLog": []
   },
   {
    "file": "Electronics_Parts_Displays_LCD_lcd-4x20-backlight.step",
@@ -2946,9 +3002,9 @@
    "bodies": 14,
    "verts": 1436,
    "tris": 2900,
-   "stepMs": 279,
-   "engineMs": 268,
-   "smoothMs": 4,
+   "stepMs": 291,
+   "engineMs": 278,
+   "smoothMs": 3,
    "weldMeta": {
     "bodies": 14,
     "watertight": 14,
@@ -2985,7 +3041,8 @@
    "brep": {
     "closed": 14
    },
-   "brokenBodies": []
+   "brokenBodies": [],
+   "weldLog": []
   },
   {
    "file": "Electrical_Parts_fans_blower-50x50mm.step",
@@ -3005,8 +3062,8 @@
    "bodies": 2,
    "verts": 1964,
    "tris": 3956,
-   "stepMs": 269,
-   "engineMs": 258,
+   "stepMs": 266,
+   "engineMs": 255,
    "smoothMs": 4,
    "weldMeta": {
     "bodies": 2,
@@ -3044,7 +3101,8 @@
    "brep": {
     "closed": 2
    },
-   "brokenBodies": []
+   "brokenBodies": [],
+   "weldLog": []
   },
   {
    "file": "Electronics_Parts_IC_SMD_14SOIC-N.step",
@@ -3064,9 +3122,9 @@
    "bodies": 1,
    "verts": 964,
    "tris": 1924,
-   "stepMs": 299,
-   "engineMs": 287,
-   "smoothMs": 3,
+   "stepMs": 309,
+   "engineMs": 297,
+   "smoothMs": 4,
    "weldMeta": {
     "bodies": 1,
     "watertight": 1,
@@ -3103,7 +3161,8 @@
    "brep": {
     "closed": 1
    },
-   "brokenBodies": []
+   "brokenBodies": [],
+   "weldLog": []
   },
   {
    "file": "Electronics_Parts_Heatsinks_heat-sink-19x19x5mm.step",
@@ -3123,8 +3182,8 @@
    "bodies": 1,
    "verts": 1260,
    "tris": 2516,
-   "stepMs": 340,
-   "engineMs": 322,
+   "stepMs": 327,
+   "engineMs": 315,
    "smoothMs": 4,
    "weldMeta": {
     "bodies": 1,
@@ -3162,7 +3221,8 @@
    "brep": {
     "closed": 1
    },
-   "brokenBodies": []
+   "brokenBodies": [],
+   "weldLog": []
   },
   {
    "file": "Electrical_Parts_Servos_Emax-ES08A_Emax-es08A.step",
@@ -3182,9 +3242,9 @@
    "bodies": 6,
    "verts": 2867,
    "tris": 5718,
-   "stepMs": 361,
-   "engineMs": 344,
-   "smoothMs": 4,
+   "stepMs": 372,
+   "engineMs": 358,
+   "smoothMs": 8,
    "weldMeta": {
     "bodies": 6,
     "watertight": 6,
@@ -3221,7 +3281,8 @@
    "brep": {
     "closed": 6
    },
-   "brokenBodies": []
+   "brokenBodies": [],
+   "weldLog": []
   },
   {
    "file": "Electronics_Parts_Diodes_SMD_DO-214AC.step",
@@ -3241,8 +3302,8 @@
    "bodies": 3,
    "verts": 578,
    "tris": 1144,
-   "stepMs": 257,
-   "engineMs": 250,
+   "stepMs": 228,
+   "engineMs": 220,
    "smoothMs": 2,
    "weldMeta": {
     "bodies": 3,
@@ -3280,7 +3341,10 @@
    "brep": {
     "closed": 3
    },
-   "brokenBodies": []
+   "brokenBodies": [],
+   "weldLog": [
+    "[WELD] \"body\" verts 710->418, topo 91, degen 4, -degen-tri 4, micro-edges-collapsed 2 => WATERTIGHT"
+   ]
   },
   {
    "file": "Electronics_Parts_Cameras_Wide-170-Angle-Raspi-Camera.step",
@@ -3300,9 +3364,9 @@
    "bodies": 30,
    "verts": 11742,
    "tris": 23432,
-   "stepMs": 499,
-   "engineMs": 481,
-   "smoothMs": 10,
+   "stepMs": 503,
+   "engineMs": 484,
+   "smoothMs": 9,
    "weldMeta": {
     "bodies": 30,
     "watertight": 30,
@@ -3339,7 +3403,10 @@
    "brep": {
     "closed": 30
    },
-   "brokenBodies": []
+   "brokenBodies": [],
+   "weldLog": [
+    "[WELD] \"Body\" verts 1080->487, topo 122, micro-edges-collapsed 8 => WATERTIGHT"
+   ]
   },
   {
    "file": "Electrical_Parts_Power_Supplies_IRM-60_ST_series_power_supply_IRM-60_ST_power_supply.step",
@@ -3359,9 +3426,9 @@
    "bodies": 1,
    "verts": 928,
    "tris": 1868,
-   "stepMs": 314,
-   "engineMs": 303,
-   "smoothMs": 7,
+   "stepMs": 292,
+   "engineMs": 279,
+   "smoothMs": 3,
    "weldMeta": {
     "bodies": 1,
     "watertight": 1,
@@ -3398,7 +3465,8 @@
    "brep": {
     "closed": 1
    },
-   "brokenBodies": []
+   "brokenBodies": [],
+   "weldLog": []
   },
   {
    "file": "Electrical_Parts_fans_fan-40x40mm.step",
@@ -3418,9 +3486,9 @@
    "bodies": 1,
    "verts": 1965,
    "tris": 3954,
-   "stepMs": 443,
-   "engineMs": 414,
-   "smoothMs": 6,
+   "stepMs": 448,
+   "engineMs": 434,
+   "smoothMs": 5,
    "weldMeta": {
     "bodies": 1,
     "watertight": 1,
@@ -3457,7 +3525,8 @@
    "brep": {
     "closed": 1
    },
-   "brokenBodies": []
+   "brokenBodies": [],
+   "weldLog": []
   },
   {
    "file": "Electronics_Parts_Antennas_Antenna-GNSS-STA-901A.step",
@@ -3477,9 +3546,9 @@
    "bodies": 1,
    "verts": 6386,
    "tris": 12768,
-   "stepMs": 706,
-   "engineMs": 693,
-   "smoothMs": 13,
+   "stepMs": 699,
+   "engineMs": 685,
+   "smoothMs": 12,
    "weldMeta": {
     "bodies": 1,
     "watertight": 1,
@@ -3516,7 +3585,8 @@
    "brep": {
     "closed": 1
    },
-   "brokenBodies": []
+   "brokenBodies": [],
+   "weldLog": []
   },
   {
    "file": "Electronics_Parts_Motors_DC_motor_Mabuchi-Encoder_DCMotorEncoder.step",
@@ -3538,8 +3608,8 @@
    "bodies": 13,
    "verts": 10694,
    "tris": 21478,
-   "stepMs": 734,
-   "engineMs": 711,
+   "stepMs": 720,
+   "engineMs": 697,
    "smoothMs": 19,
    "weldMeta": {
     "bodies": 13,
@@ -3597,6 +3667,12 @@
       "manifold": false
      }
     }
+   ],
+   "weldLog": [
+    "[WELD] \"DCMotorEncoder\" verts 48->16, topo 24, faces-collapsed 1 => WATERTIGHT",
+    "[WELD] \"DCMotorEncoder\" verts 960->352, topo 259, brep-overused 1 => naked 0, over-valenced 1, bowtie 0",
+    "[02:20:35][MANIFOLD-RAW] \"DCMotorEncoder\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 0 naked edge(s), 1 over-valenced edge(s), 828 triangle(s)",
+    "[WELD] \"DCMotorEncoder\" verts 10410->9440, topo 75, -degen-tri 18, diagonal-flips 3, micro-edges-collapsed 48, micro-clusters 26, -cancelled-tri 40, short-edges-collapsed 3 => WATERTIGHT"
    ]
   },
   {
@@ -3617,9 +3693,9 @@
    "bodies": 17,
    "verts": 6812,
    "tris": 13744,
-   "stepMs": 1034,
-   "engineMs": 1006,
-   "smoothMs": 14,
+   "stepMs": 1004,
+   "engineMs": 977,
+   "smoothMs": 13,
    "weldMeta": {
     "bodies": 17,
     "watertight": 17,
@@ -3656,7 +3732,10 @@
    "brep": {
     "closed": 17
    },
-   "brokenBodies": []
+   "brokenBodies": [],
+   "weldLog": [
+    "[WELD] \"PICO_REF_BOARD.STEP\" verts 13368->6212, topo 1532, micro-edges-collapsed 32 => WATERTIGHT"
+   ]
   },
   {
    "file": "Electronics_Parts_Boards_Arduino_Nano-Rev3_0.step",
@@ -3676,9 +3755,9 @@
    "bodies": 1,
    "verts": 1112,
    "tris": 2220,
-   "stepMs": 967,
-   "engineMs": 933,
-   "smoothMs": 5,
+   "stepMs": 955,
+   "engineMs": 916,
+   "smoothMs": 4,
    "weldMeta": {
     "bodies": 1,
     "watertight": 1,
@@ -3715,7 +3794,10 @@
    "brep": {
     "closed": 1
    },
-   "brokenBodies": []
+   "brokenBodies": [],
+   "weldLog": [
+    "[02:20:37][WELD] \"Fusion015\" verts 3586->1112, topo 1773, micro-clusters 60, -cancelled-tri 120 => WATERTIGHT"
+   ]
   },
   {
    "file": "Electrical_Parts_Hotend_Lerge_V5_heatblock-PartLerge_V5_Heatblock.step",
@@ -3735,8 +3817,8 @@
    "bodies": 1,
    "verts": 4954,
    "tris": 9924,
-   "stepMs": 657,
-   "engineMs": 638,
+   "stepMs": 630,
+   "engineMs": 607,
    "smoothMs": 10,
    "weldMeta": {
     "bodies": 1,
@@ -3774,7 +3856,8 @@
    "brep": {
     "closed": 1
    },
-   "brokenBodies": []
+   "brokenBodies": [],
+   "weldLog": []
   },
   {
    "file": "Electrical_Parts_Power_Supplies_Switching_power_supply_Switching_power_supply.step",
@@ -3795,9 +3878,9 @@
    "bodies": 14,
    "verts": 22833,
    "tris": 46074,
-   "stepMs": 2516,
-   "engineMs": 2403,
-   "smoothMs": 26,
+   "stepMs": 2279,
+   "engineMs": 2226,
+   "smoothMs": 24,
    "weldMeta": {
     "bodies": 14,
     "watertight": 10,
@@ -3908,6 +3991,17 @@
       "manifold": false
      }
     }
+   ],
+   "weldLog": [
+    "[02:20:40][WELD] \"COMPOUND001\" verts 101->101, topo 0 => naked 20, over-valenced 0, bowtie 0",
+    "[02:20:40][MANIFOLD-RAW] \"COMPOUND001\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 20 naked edge(s), 0 over-valenced edge(s), 180 triangle(s)",
+    "[WELD] \"COMPOUND\" verts 102->102, topo 0 => naked 20, over-valenced 0, bowtie 0",
+    "[02:20:40][MANIFOLD-RAW] \"COMPOUND\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 20 naked edge(s), 0 over-valenced edge(s), 182 triangle(s)",
+    "[WELD] \"COMPOUND003\" verts 102->102, topo 0 => naked 20, over-valenced 0, bowtie 0",
+    "[02:20:40][MANIFOLD-RAW] \"COMPOUND003\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 20 naked edge(s), 0 over-valenced edge(s), 182 triangle(s)",
+    "[WELD] \"COMPOUND002\" verts 102->102, topo 0 => naked 20, over-valenced 0, bowtie 0",
+    "[02:20:40][MANIFOLD-RAW] \"COMPOUND002\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 20 naked edge(s), 0 over-valenced edge(s), 182 triangle(s)",
+    "[WELD] \"COMPOUND009\" verts 290->145, topo 9, faces-retriangulated 1 => WATERTIGHT"
    ]
   },
   {
@@ -3927,11 +4021,11 @@
     "system": "FreeCAD"
    },
    "bodies": 32,
-   "verts": 39709,
-   "tris": 78958,
-   "stepMs": 1382,
-   "engineMs": 1347,
-   "smoothMs": 33,
+   "verts": 39707,
+   "tris": 78942,
+   "stepMs": 1331,
+   "engineMs": 1291,
+   "smoothMs": 37,
    "weldMeta": {
     "bodies": 32,
     "watertight": 20,
@@ -3948,8 +4042,8 @@
    "raw": {
     "bodiesBroken": 12,
     "naked": 452,
-    "over": 11,
-    "weldedVerts": 39709,
+    "over": 0,
+    "weldedVerts": 39707,
     "closedBodies": 20,
     "closedBroken": 0,
     "closedNaked": 0,
@@ -3958,8 +4052,8 @@
    "client": {
     "bodiesBroken": 12,
     "naked": 452,
-    "over": 11,
-    "weldedVerts": 39709,
+    "over": 0,
+    "weldedVerts": 39707,
     "closedBodies": 20,
     "closedBroken": 0,
     "closedNaked": 0,
@@ -4010,16 +4104,16 @@
      "name": "Compound003",
      "brep": "open",
      "verts": 5267,
-     "tris": 10478,
+     "tris": 10474,
      "raw": {
       "naked": 56,
-      "over": 3,
+      "over": 0,
       "weldedVerts": 5267,
       "manifold": false
      },
      "client": {
       "naked": 56,
-      "over": 3,
+      "over": 0,
       "weldedVerts": 5267,
       "manifold": false
      }
@@ -4064,16 +4158,16 @@
      "name": "Compound003",
      "brep": "open",
      "verts": 5248,
-     "tris": 10440,
+     "tris": 10436,
      "raw": {
       "naked": 56,
-      "over": 3,
+      "over": 0,
       "weldedVerts": 5248,
       "manifold": false
      },
      "client": {
       "naked": 56,
-      "over": 3,
+      "over": 0,
       "weldedVerts": 5248,
       "manifold": false
      }
@@ -4117,18 +4211,18 @@
     {
      "name": "Compound003",
      "brep": "open",
-     "verts": 3736,
-     "tris": 7416,
+     "verts": 3734,
+     "tris": 7412,
      "raw": {
       "naked": 52,
-      "over": 2,
-      "weldedVerts": 3736,
+      "over": 0,
+      "weldedVerts": 3734,
       "manifold": false
      },
      "client": {
       "naked": 52,
-      "over": 2,
-      "weldedVerts": 3736,
+      "over": 0,
+      "weldedVerts": 3734,
       "manifold": false
      }
     },
@@ -4172,20 +4266,48 @@
      "name": "Compound003",
      "brep": "open",
      "verts": 5266,
-     "tris": 10476,
+     "tris": 10472,
      "raw": {
       "naked": 56,
-      "over": 3,
+      "over": 0,
       "weldedVerts": 5266,
       "manifold": false
      },
      "client": {
       "naked": 56,
-      "over": 3,
+      "over": 0,
       "weldedVerts": 5266,
       "manifold": false
      }
     }
+   ],
+   "weldLog": [
+    "[WELD] \"Compound003\" verts 1492->331, topo 9, -degen-tri 176, micro-edges-collapsed 932, micro-clusters 13, -cancelled-tri 80, short-edges-collapsed 8 => WATERTIGHT",
+    "[WELD] \"Compound003\" verts 1352->322, topo 9, -degen-tri 184, micro-edges-collapsed 805, micro-clusters 11, -cancelled-tri 64, short-edges-collapsed 5 => WATERTIGHT",
+    "[WELD] \"Compound003\" verts 680->624, topo 2 => naked 30, over-valenced 0, bowtie 0",
+    "[02:20:41][MANIFOLD-RAW] \"Compound003\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 30 naked edge(s), 0 over-valenced edge(s), 1216 triangle(s)",
+    "[WELD] \"Compound003\" verts 680->624, topo 2 => naked 30, over-valenced 0, bowtie 0",
+    "[02:20:41][MANIFOLD-RAW] \"Compound003\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 30 naked edge(s), 0 over-valenced edge(s), 1216 triangle(s)",
+    "[WELD] \"Compound003\" verts 1404->1352, topo 2 => naked 27, over-valenced 0, bowtie 0",
+    "[02:20:41][MANIFOLD-RAW] \"Compound003\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 27 naked edge(s), 0 over-valenced edge(s), 2675 triangle(s)",
+    "[WELD] \"Compound003\" verts 1404->1352, topo 2 => naked 27, over-valenced 0, bowtie 0",
+    "[02:20:41][MANIFOLD-RAW] \"Compound003\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 27 naked edge(s), 0 over-valenced edge(s), 2675 triangle(s)",
+    "[WELD] \"Compound003\" verts 686->630, topo 2 => naked 30, over-valenced 0, bowtie 0",
+    "[02:20:41][MANIFOLD-RAW] \"Compound003\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 30 naked edge(s), 0 over-valenced edge(s), 1228 triangle(s)",
+    "[WELD] \"Compound003\" verts 1480->1425, topo 2 => naked 31, over-valenced 0, bowtie 0",
+    "[02:20:41][MANIFOLD-RAW] \"Compound003\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 31 naked edge(s), 0 over-valenced edge(s), 2817 triangle(s)",
+    "[WELD] \"Compound003\" verts 1404->1352, topo 2 => naked 27, over-valenced 0, bowtie 0",
+    "[02:20:42][MANIFOLD-RAW] \"Compound003\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 27 naked edge(s), 0 over-valenced edge(s), 2675 triangle(s)",
+    "[WELD] \"Compound003\" verts 680->624, topo 2 => naked 30, over-valenced 0, bowtie 0",
+    "[02:20:42][MANIFOLD-RAW] \"Compound003\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 30 naked edge(s), 0 over-valenced edge(s), 1216 triangle(s)",
+    "[WELD] \"Compound003\" verts 5466->5267, topo 1, -cancelled-tri 4 => naked 56, over-valenced 0, bowtie 0",
+    "[02:20:42][MANIFOLD-RAW] \"Compound003\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 56 naked edge(s), 0 over-valenced edge(s), 10474 triangle(s)",
+    "[WELD] \"Compound003\" verts 5447->5248, topo 1, -cancelled-tri 4 => naked 56, over-valenced 0, bowtie 0",
+    "[02:20:42][MANIFOLD-RAW] \"Compound003\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 56 naked edge(s), 0 over-valenced edge(s), 10436 triangle(s)",
+    "[WELD] \"Compound003\" verts 3937->3734, topo 1, -degen-tri 38, -cancelled-tri 4 => naked 52, over-valenced 0, bowtie 0",
+    "[02:20:42][MANIFOLD-RAW] \"Compound003\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 52 naked edge(s), 0 over-valenced edge(s), 7412 triangle(s)",
+    "[WELD] \"Compound003\" verts 5465->5266, topo 1, -cancelled-tri 4 => naked 56, over-valenced 0, bowtie 0",
+    "[02:20:42][MANIFOLD-RAW] \"Compound003\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 56 naked edge(s), 0 over-valenced edge(s), 10472 triangle(s)"
    ]
   }
  ],

@@ -9,12 +9,12 @@
   "stepexport": true,
   "stepload": true,
   "ramMB": 16095,
-  "availMB": 15482,
+  "availMB": 15500,
   "cores": 4,
   "runawayThreads": 0,
   "deviationPct": 0.5
  },
- "date": "2026-09-28T01:50:40.114Z",
+ "date": "2026-09-28T02:20:55.652Z",
  "results": [
   {
    "file": "Rocky_House.stp",
@@ -34,9 +34,9 @@
    "bodies": 161,
    "verts": 70879,
    "tris": 141996,
-   "stepMs": 12686,
-   "engineMs": 12444,
-   "smoothMs": 62,
+   "stepMs": 12234,
+   "engineMs": 11964,
+   "smoothMs": 63,
    "weldMeta": {
     "bodies": 161,
     "watertight": 161,
@@ -73,10 +73,23 @@
    "brep": {
     "closed": 161
    },
-   "brokenBodies": []
+   "brokenBodies": [],
+   "weldLog": [
+    "[02:20:54][WELD] \"Body\" verts 472->225, topo 102, degen 1, -degen-tri 1, micro-edges-collapsed 1 => WATERTIGHT",
+    "[WELD] \"Roof\" verts 2096->907, topo 368, micro-edges-collapsed 17 => WATERTIGHT",
+    "[WELD] \"Body\" verts 17191->7958, topo 3694, degen 17, faces-filled 5, faces-retriangulated 7, faces-collapsed 1, -degen-tri 17, opposed-tri 4, diagonal-flips 5, micro-edges-collapsed 47, -cancelled-tri 2 => WATERTIGHT",
+    "[WELD] \"Chair\" verts 924->439, topo 143, degen 4, faces-retriangulated 2, -degen-tri 4 => WATERTIGHT",
+    "[WELD] \"Chair\" verts 924->439, topo 143, degen 4, faces-retriangulated 2, -degen-tri 4 => WATERTIGHT",
+    "[02:20:54][WELD] \"Chair\" verts 924->439, topo 143, degen 4, faces-retriangulated 2, -degen-tri 4 => WATERTIGHT",
+    "[WELD] \"Chair\" verts 924->439, topo 143, degen 4, faces-retriangulated 2, -degen-tri 4 => WATERTIGHT",
+    "[02:20:54][WELD] \"Chair_mir\" verts 924->439, topo 143, degen 4, faces-retriangulated 2, -degen-tri 4 => WATERTIGHT",
+    "[WELD] \"Chair\" verts 924->439, topo 143, degen 4, faces-retriangulated 2, -degen-tri 4 => WATERTIGHT",
+    "[WELD] \"Chair\" verts 924->439, topo 143, degen 4, faces-retriangulated 2, -degen-tri 4 => WATERTIGHT",
+    "[WELD] \"Bathtube\" verts 3158->1880, topo 248, micro-edges-collapsed 2 => WATERTIGHT",
+    "[WELD] \"L_0_Ground\" verts 4244->2770, topo 663, faces-retriangulated 1 => WATERTIGHT"
+   ]
   }
  ],
  "platform": "Ubuntu 24.04, OCCT 7.6.3 (apt), Manifold v3.5.3, g++ 13, 4 cores",
- "source": "MEDUSA_SOURCE/nasscad_medusa.cpp, this branch",
- "input": "Rocky_House.stp (18 MB, ST-Developer v16.7 / DEX, AP214) — supplied by the user, not versioned"
+ "source": "MEDUSA_SOURCE/nasscad_medusa.cpp, this branch"
 }
