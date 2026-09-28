@@ -1320,7 +1320,7 @@ struct Diag {
     double residualTol = 0.0; // tolerance qui a suffi a l'etage B (0 = inutile)
     int  trisDegen     = 0;   // etage C : supprimes
     int  trisDup       = 0;   // etage C : supprimes
-    int  trisOpposed   = 0;   // etage C : comptes, JAMAIS supprimes
+    int  trisOpposed   = 0;   // etage C : comptes, gardes entre deux faces (paires internes a une face : annulees, [FIX 28/09])
     int  diagFlips     = 0;   // etage C : diagonales basculees (arete a 4 triangles, deux faces)
     int  microCollapsed= 0;   // etage C : micro-aretes (< 2 um) contractees sous condition de lien
     int  microClusters = 0;   // etage C : amas de sommets distincts a moins de 2 um, fusionnes
@@ -2536,6 +2536,52 @@ static int extractIntoTopo(const TopoDS_Shape& shape, const std::string& name,
     // la diagonale d'une cellule du controle (racine de 3 x 1 um). Deplacement
     // maximal d'un sommet : 2 um, rien a l'ecran.
     std::vector<char> triDead(md.indices.size() / 3, 0);
+
+    // [FIX 28/09] TRIANGLES OPPOSES DANS UNE MEME FACE. L'etage C garde les
+    // paires de triangles opposes, et il a raison quand elles viennent de deux
+    // faces : ce peut etre une paroi d'epaisseur nulle voulue. Mais une face
+    // triangulee est une nappe simple — deux de ses triangles sur les memes
+    // trois sommets, en sens contraires, ne decrivent aucune geometrie : c'est
+    // une « nageoire » du mailleur. Stealthburner_CW2_Assembly.step (Autodesk),
+    // corps « Stealthburner_Body », face B-spline 55 : le sommet 655 n'appartient
+    // qu'a cette paire, accrochee a une arete que la face porte deja — quatre
+    // triangles sur cette arete, meme dans le B-Rep le plus sain. On annule donc
+    // les paires opposees internes a une face, et seulement si aucune de leurs
+    // aretes n'en devient nue (compte 0 ou 2 apres retrait, jamais 1).
+    if (diag.trisOpposed) {
+        const uint32_t ntri = (uint32_t)(md.indices.size() / 3);
+        std::unordered_map<TriKey, std::vector<uint32_t>, TriKeyHash> byKey;
+        for (uint32_t t = 0; t < ntri; ++t) {
+            bool opp = false;
+            byKey[canon(md.indices[t*3], md.indices[t*3+1], md.indices[t*3+2], opp)].push_back(t);
+        }
+        std::vector<std::pair<uint32_t, uint32_t>> pairs;
+        for (const auto& kv : byKey) {
+            if (kv.second.size() != 2) continue;
+            const uint32_t t = kv.second[0], u = kv.second[1];
+            if (triSlot[t] != triSlot[u]) continue;             // deux faces : on n'y touche pas
+            pairs.push_back({ t, u });
+        }
+        if (!pairs.empty()) {
+            std::unordered_map<uint64_t, int> ec;
+            ec.reserve((size_t)ntri * 3);
+            for (uint32_t t = 0; t < ntri; ++t)
+                for (int k = 0; k < 3; ++k) ec[edgeKey(md.indices[t*3+k], md.indices[t*3+(k+1)%3])]++;
+            for (const auto& pr : pairs) {
+                bool ok = true;
+                for (int k = 0; k < 3 && ok; ++k) {
+                    const int left = ec[edgeKey(md.indices[pr.first*3+k], md.indices[pr.first*3+(k+1)%3])] - 2;
+                    if (left != 0 && left != 2) ok = false;
+                }
+                if (!ok) continue;
+                for (int k = 0; k < 3; ++k) ec[edgeKey(md.indices[pr.first*3+k], md.indices[pr.first*3+(k+1)%3])] -= 2;
+                triDead[pr.first] = triDead[pr.second] = 1;
+                diag.trisOpposed--;                  // une paire = un seul « opposed » compte a l'emission
+                diag.trisCancelled += 2;
+            }
+        }
+    }
+
     std::vector<char> touchedV(vertsOut, 0); // sommets deplaces par une contraction ou une fusion
     std::vector<char> nmVert(vertsOut, 0);   // sommets d'une arete non manifold DECLAREE
     for (uint32_t g : nmNodes)

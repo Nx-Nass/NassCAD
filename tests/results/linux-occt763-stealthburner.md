@@ -1,3 +1,3 @@
 | File | Declared (file) | Bodies | Non-manifold bodies (before → after) | …of which B-rep closed (after) | Naked edges | Over-shared edges | Vertices | /step time ms |
 |---|---|---:|---:|---:|---:|---:|---:|---:|
-| Rocky_House.stp | closed (143 solids) | 161 → 161 | 11 → 0 | 0 / 161 | 355 → 0 | 69 → 0 | 71529 → 70879 | 13560 → 12234 |
+| Stealthburner_CW2_Assembly.step | closed (107 solids) | 198 → 198 | 4 → 0 | 0 / 198 | 128 → 0 | 15 → 0 | 137932 → 136688 | 16638 → 15119 |
