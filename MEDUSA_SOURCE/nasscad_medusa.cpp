@@ -115,6 +115,7 @@
 #include <BRepPrimAPI_MakeCone.hxx>
 #include <BRepPrimAPI_MakeSphere.hxx>
 #include <BRepPrimAPI_MakeTorus.hxx>
+#include <BRepOffsetAPI_ThruSections.hxx>    // [FIX 28/09] --selftest-weld : poches en tronc de pyramide
 #include <BRepGProp.hxx>                    // [21/09] volume exact du B-Rep (reference du banc)
 #include <GProp_GProps.hxx>
 #include <gp_Vec.hxx>
@@ -1326,6 +1327,7 @@ struct Diag {
     int  microClusters = 0;   // etage C : amas de sommets distincts a moins de 2 um, fusionnes
     int  trisCancelled = 0;   // etage C : triangles opposes NES de cette fusion, annules par paires
     int  shortCollapsed= 0;   // etage C : aretes a plus de 2 triangles, sous la deflexion, contractees
+    bool microReverted = false; // etage C : reparations annulees, elles auraient vide le corps ([FIX 28/09])
     int  nakedEdges    = 0;   // etat FINAL
     int  overValenced  = 0;
     int  bowtieVerts   = 0;
@@ -1354,6 +1356,7 @@ struct Diag {
         if (microClusters) o << ", micro-clusters " << microClusters;
         if (trisCancelled) o << ", -cancelled-tri " << trisCancelled;
         if (shortCollapsed)o << ", short-edges-collapsed " << shortCollapsed;
+        if (microReverted) o << ", micro-repairs-reverted (body thinner than 2 um)";
         if (watertight())  o << " => WATERTIGHT";
         else o << " => naked " << nakedEdges << ", over-valenced " << overValenced
                << ", bowtie " << bowtieVerts;
@@ -2033,11 +2036,25 @@ static int extractIntoTopo(const TopoDS_Shape& shape, const std::string& name,
                 // (ses deux cotes y sont interieurs) ; a defaut d'arete commune, par
                 // un sommet commun (pont de longueur nulle). Identite topologique
                 // (classe du DSU), jamais une distance.
+                // [FIX 28/09] ... ET TROUS QUI SE TOUCHENT ENTRE EUX. Voron_2.4r2_Assembly
+                // .step (Autodesk), corps « Front_Skirt_Logo », face plane 130 : 25 trous
+                // (les lettres du logo), dont cinq paires se touchent par un sommet.
+                // Laisses separes, le pontage relie chaque paire par le pont le plus
+                // court — de longueur NULLE, entre les deux occurrences du sommet
+                // commun : deux aretes nulles, et quatre sommets dont le produit
+                // vectoriel est nul, qui ne peuvent plus jamais etre une oreille. La
+                // decoupe stricte echoue, le mode force pose des triangles qui se
+                // recouvrent : quatre triangles sur une meme arete. Meme remede que
+                // pour le contour : tout fil qui partage un sommet (ou une arete) avec
+                // un autre lui est raccorde, trou avec trou comme trou avec contour —
+                // raccord sans arete nulle, le sommet commun est simplement visite
+                // deux fois. Le contour garde son role : il est toujours le fil
+                // d'indice le plus bas. Recherche par identite (table), pas par paires
+                // de fils : une plaque percee de centaines de trous ne paie rien.
                 {
                     auto idp = [&](const LoopPt& p) { return dsu.find(p.g); };
-                    for (size_t hi = 1; hi < loops.size(); ) {
-                        std::vector<LoopPt>& X = loops[0];
-                        const std::vector<LoopPt>& Y = loops[hi];
+                    // Raccorde Y a X ; X garde son role (contour ou trou).
+                    auto splice = [&](std::vector<LoopPt>& X, const std::vector<LoopPt>& Y) -> bool {
                         const size_t n = X.size(), m = Y.size();
                         std::vector<LoopPt> merged;
                         for (size_t i = 0; i < n && merged.empty(); ++i) {
@@ -2058,11 +2075,22 @@ static int extractIntoTopo(const TopoDS_Shape& shape, const std::string& name,
                                 for (size_t k = 0; k < m; ++k) merged.push_back(Y[(j + k) % m]);
                                 break;
                             }
-                        if (merged.size() >= 3) {
-                            X.swap(merged);
-                            loops.erase(loops.begin() + (std::ptrdiff_t)hi);
-                            hi = 1;   // le contour a grandi : il peut toucher un autre trou
-                        } else ++hi;
+                        if (merged.size() < 3) return false;
+                        X.swap(merged);
+                        return true;
+                    };
+                    for (bool again = loops.size() > 1; again; ) {
+                        again = false;
+                        std::unordered_map<uint32_t, size_t> owner;   // identite -> premier fil qui la porte
+                        for (size_t li = 0; li < loops.size() && !again; ++li)
+                            for (const LoopPt& p : loops[li]) {
+                                const auto ins = owner.emplace(idp(p), li);
+                                if (ins.second || ins.first->second == li) continue;
+                                if (!splice(loops[ins.first->second], loops[li])) continue;
+                                loops.erase(loops.begin() + (std::ptrdiff_t)li);
+                                again = true;   // un fil a grandi : il peut en toucher un autre
+                                break;
+                            }
                     }
                 }
                 // Sommets LOCAUX : un meme noeud global peut y figurer deux fois
@@ -2548,6 +2576,12 @@ static int extractIntoTopo(const TopoDS_Shape& shape, const std::string& name,
     // triangles sur cette arete, meme dans le B-Rep le plus sain. On annule donc
     // les paires opposees internes a une face, et seulement si aucune de leurs
     // aretes n'en devient nue (compte 0 ou 2 apres retrait, jamais 1).
+    // [FIX 28/09] ... et seulement si la paire est ACCROCHEE : une de ses aretes
+    // porte plus de deux triangles. Une paire isolee est un « coussin »
+    // d'epaisseur nulle, ferme et variete (deux triangles par arete) : rien a
+    // reparer, et l'annuler peut vider un corps entier. Voron 0.2, assemblage
+    // complet : 3065 corps soudes, 3061 emis — quatre corps faits de ces seules
+    // paires disparaissaient sans un mot.
     if (diag.trisOpposed) {
         const uint32_t ntri = (uint32_t)(md.indices.size() / 3);
         std::unordered_map<TriKey, std::vector<uint32_t>, TriKeyHash> byKey;
@@ -2568,12 +2602,13 @@ static int extractIntoTopo(const TopoDS_Shape& shape, const std::string& name,
             for (uint32_t t = 0; t < ntri; ++t)
                 for (int k = 0; k < 3; ++k) ec[edgeKey(md.indices[t*3+k], md.indices[t*3+(k+1)%3])]++;
             for (const auto& pr : pairs) {
-                bool ok = true;
+                bool ok = true, hooked = false;
                 for (int k = 0; k < 3 && ok; ++k) {
                     const int left = ec[edgeKey(md.indices[pr.first*3+k], md.indices[pr.first*3+(k+1)%3])] - 2;
                     if (left != 0 && left != 2) ok = false;
+                    if (left > 0) hooked = true;
                 }
-                if (!ok) continue;
+                if (!ok || !hooked) continue;
                 for (int k = 0; k < 3; ++k) ec[edgeKey(md.indices[pr.first*3+k], md.indices[pr.first*3+(k+1)%3])] -= 2;
                 triDead[pr.first] = triDead[pr.second] = 1;
                 diag.trisOpposed--;                  // une paire = un seul « opposed » compte a l'emission
@@ -2582,6 +2617,18 @@ static int extractIntoTopo(const TopoDS_Shape& shape, const std::string& name,
         }
     }
 
+    // [FIX 28/09] JAMAIS UN CORPS VIDE. Les reparations qui suivent (micro-aretes,
+    // amas sous 2 um, parois d'epaisseur nulle, aretes sous la deflexion)
+    // supposent un corps plus epais que 2 um. Voron 0.2, assemblage complet :
+    // quatre « SMD-0630 » qui n'en ont pas l'epaisseur — les amas soudent leurs
+    // deux peaux, les paires opposees s'annulent, et le corps entier disparait
+    // (348 sommets -> 0), la ou l'ancien moteur le livrait ferme. Instantane ici ;
+    // si plus un seul triangle ne survit, on rend le corps tel qu'il etait avant
+    // ces reparations.
+    const std::vector<uint32_t> keepIdx = md.indices;
+    const std::vector<double> keepVp = vp;
+    const std::vector<char> keepDead = triDead;
+    const Diag keepDiag = diag;
     std::vector<char> touchedV(vertsOut, 0); // sommets deplaces par une contraction ou une fusion
     std::vector<char> nmVert(vertsOut, 0);   // sommets d'une arete non manifold DECLAREE
     for (uint32_t g : nmNodes)
@@ -3039,6 +3086,13 @@ static int extractIntoTopo(const TopoDS_Shape& shape, const std::string& name,
             flipPass();
         }
     }
+    if (!keepIdx.empty() && std::find(triDead.begin(), triDead.end(), (char)0) == triDead.end()) {
+        md.indices = keepIdx;
+        vp = keepVp;
+        triDead = keepDead;
+        diag = keepDiag;
+        diag.microReverted = true;
+    }
 
     // [FIX 27/09] Compactage : triangles contractes retires (l'ordre des autres
     // ne bouge pas), sommets non references retires, positions ecrites dans le
@@ -3119,10 +3173,15 @@ static int extractIntoTopo(const TopoDS_Shape& shape, const std::string& name,
         // [FIX 27/09] et tout corps que les nouveaux etages ont du reprendre
         || diag.edgesNmPaired || diag.facesFilled || diag.facesRedone
         || diag.facesCollapsed || diag.facesUnfilled || diag.diagFlips || diag.microCollapsed || diag.microClusters
-        || diag.shortCollapsed) {
+        || diag.shortCollapsed || diag.trisCancelled || diag.microReverted || md.indices.empty()) {
         if (!diag.watertight()) gManifoldIssueCount++;
         std::ostringstream oss;
-        oss << "[WELD] \"" << name.substr(0, 48) << "\" " << diag.brief() << "\n";
+        oss << "[WELD] \"" << name.substr(0, 48) << "\" " << diag.brief();
+        // [FIX 28/09] Un corps que la couture a VIDE n'est pas emis (cf. plus
+        // bas) : il doit au moins laisser une trace, sinon il manque a l'arbre
+        // sans que rien ne le dise.
+        if (md.indices.empty()) oss << " — EMPTY, body not emitted";
+        oss << "\n";
         logFileOnly(oss.str());
     }
 
@@ -12046,6 +12105,29 @@ static int runWeldSelfTestCli() {
             plate = BRepAlgoAPI_Cut(plate, BRepPrimAPI_MakeCylinder(a2, 4.0, 7.0).Shape()).Shape();
             cases.push_back({ "plate 2 holes, pierced face unmeshed", plate, 0.02, 2 });
         }
+        {
+            // [FIX 28/09] Deux poches en tronc de pyramide (parois en depouille)
+            // dont les ouvertures se touchent par UN coin : la face du dessus porte
+            // deux trous qui partagent un sommet, et le B-Rep reste une variete
+            // (toutes les aretes a deux faces). C'est le logo du Voron 2.4.
+            auto frustum = [](double x0, double y0, double x1, double y1, double inset) {
+                BRepBuilderAPI_MakePolygon top(gp_Pnt(x0, y0, 5.0), gp_Pnt(x1, y0, 5.0),
+                                               gp_Pnt(x1, y1, 5.0), gp_Pnt(x0, y1, 5.0), Standard_True);
+                BRepBuilderAPI_MakePolygon bot(gp_Pnt(x0 + inset, y0 + inset, 3.0), gp_Pnt(x1 - inset, y0 + inset, 3.0),
+                                               gp_Pnt(x1 - inset, y1 - inset, 3.0), gp_Pnt(x0 + inset, y1 - inset, 3.0), Standard_True);
+                BRepOffsetAPI_ThruSections ts(Standard_True, Standard_True);
+                ts.AddWire(top.Wire());
+                ts.AddWire(bot.Wire());
+                return ts.Shape();
+            };
+            TopoDS_Shape plate = BRepPrimAPI_MakeBox(60.0, 30.0, 5.0).Shape();
+            plate = BRepAlgoAPI_Cut(plate, frustum(10.0, 5.0, 20.0, 15.0, 2.0)).Shape();
+            plate = BRepAlgoAPI_Cut(plate, frustum(20.0, 15.0, 30.0, 25.0, 2.0)).Shape();
+            cases.push_back({ "plate, 2 holes touching, face unmeshed", plate, 0.02, 2 });
+        }
+        // [FIX 28/09] Plus mince que les reparations au micron (2 um) : elles
+        // souderaient ses deux peaux et l'annuleraient. Il doit sortir entier.
+        cases.push_back({ "sheet 10x10x0.001 (never emptied)", BRepPrimAPI_MakeBox(10.0, 10.0, 0.001).Shape(), 0.02 });
     }
 
     int fails = 0;

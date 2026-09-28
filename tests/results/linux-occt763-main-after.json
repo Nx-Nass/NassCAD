@@ -9,12 +9,12 @@
   "stepexport": true,
   "stepload": true,
   "ramMB": 16095,
-  "availMB": 15520,
+  "availMB": 15451,
   "cores": 4,
   "runawayThreads": 0,
   "deviationPct": 0.5
  },
- "date": "2026-09-28T02:20:25.210Z",
+ "date": "2026-09-28T03:23:27.721Z",
  "results": [
   {
    "file": "conical-surface.step",
@@ -34,8 +34,8 @@
    "bodies": 1,
    "verts": 920,
    "tris": 1840,
-   "stepMs": 102,
-   "engineMs": 99,
+   "stepMs": 117,
+   "engineMs": 114,
    "smoothMs": 4,
    "weldMeta": {
     "bodies": 1,
@@ -75,7 +75,7 @@
    },
    "brokenBodies": [],
    "weldLog": [
-    "[02:19:54][WELD] \"(Unsaved)\" verts 559->920, topo 5, faces-filled 1 => WATERTIGHT"
+    "[03:22:57][WELD] \"(Unsaved)\" verts 559->920, topo 5, faces-filled 1 => WATERTIGHT"
    ]
   },
   {
@@ -96,7 +96,7 @@
    "bodies": 1,
    "verts": 8,
    "tris": 12,
-   "stepMs": 10,
+   "stepMs": 11,
    "engineMs": 9,
    "smoothMs": 1,
    "weldMeta": {
@@ -156,9 +156,9 @@
    "bodies": 1,
    "verts": 44,
    "tris": 84,
-   "stepMs": 12,
-   "engineMs": 10,
-   "smoothMs": 3,
+   "stepMs": 13,
+   "engineMs": 11,
+   "smoothMs": 2,
    "weldMeta": {
     "bodies": 1,
     "watertight": 1,
@@ -216,9 +216,9 @@
    "bodies": 1,
    "verts": 976,
    "tris": 1952,
-   "stepMs": 24,
-   "engineMs": 23,
-   "smoothMs": 2,
+   "stepMs": 25,
+   "engineMs": 24,
+   "smoothMs": 4,
    "weldMeta": {
     "bodies": 1,
     "watertight": 1,
@@ -276,8 +276,8 @@
    "bodies": 4,
    "verts": 281,
    "tris": 371,
-   "stepMs": 14,
-   "engineMs": 12,
+   "stepMs": 15,
+   "engineMs": 13,
    "smoothMs": 2,
    "weldMeta": {
     "bodies": 4,
@@ -390,14 +390,14 @@
     }
    ],
    "weldLog": [
-    "[WELD] \"COMPOUND\" verts 38->38, topo 0 => naked 38, over-valenced 0, bowtie 0",
-    "[02:19:54][MANIFOLD-RAW] \"COMPOUND\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 38 naked edge(s), 0 over-valenced edge(s), 36 triangle(s)",
-    "[WELD] \"COMPOUND\" verts 22->22, topo 0 => naked 22, over-valenced 0, bowtie 0",
-    "[02:19:54][MANIFOLD-RAW] \"COMPOUND\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 22 naked edge(s), 0 over-valenced edge(s), 20 triangle(s)",
+    "[03:22:57][WELD] \"COMPOUND\" verts 22->22, topo 0 => naked 22, over-valenced 0, bowtie 0",
+    "[03:22:57][MANIFOLD-RAW] \"COMPOUND\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 22 naked edge(s), 0 over-valenced edge(s), 20 triangle(s)",
     "[WELD] \"COMPOUND\" verts 63->63, topo 0 => naked 63, over-valenced 0, bowtie 0",
-    "[02:19:54][MANIFOLD-RAW] \"COMPOUND\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 63 naked edge(s), 0 over-valenced edge(s), 61 triangle(s)",
+    "[03:22:57][MANIFOLD-RAW] \"COMPOUND\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 63 naked edge(s), 0 over-valenced edge(s), 61 triangle(s)",
+    "[WELD] \"COMPOUND\" verts 38->38, topo 0 => naked 38, over-valenced 0, bowtie 0",
+    "[03:22:57][MANIFOLD-RAW] \"COMPOUND\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 38 naked edge(s), 0 over-valenced edge(s), 36 triangle(s)",
     "[WELD] \"COMPOUND\" verts 158->158, topo 0 => naked 60, over-valenced 0, bowtie 0",
-    "[02:19:54][MANIFOLD-RAW] \"COMPOUND\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 60 naked edge(s), 0 over-valenced edge(s), 254 triangle(s)"
+    "[03:22:57][MANIFOLD-RAW] \"COMPOUND\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 60 naked edge(s), 0 over-valenced edge(s), 254 triangle(s)"
    ]
   },
   {
@@ -418,8 +418,8 @@
    "bodies": 1,
    "verts": 162,
    "tris": 320,
-   "stepMs": 28,
-   "engineMs": 26,
+   "stepMs": 43,
+   "engineMs": 41,
    "smoothMs": 2,
    "weldMeta": {
     "bodies": 1,
@@ -478,8 +478,8 @@
    "bodies": 1,
    "verts": 1632,
    "tris": 3288,
-   "stepMs": 44,
-   "engineMs": 42,
+   "stepMs": 48,
+   "engineMs": 46,
    "smoothMs": 4,
    "weldMeta": {
     "bodies": 1,
@@ -538,9 +538,9 @@
    "bodies": 7,
    "verts": 760,
    "tris": 1520,
-   "stepMs": 44,
-   "engineMs": 42,
-   "smoothMs": 3,
+   "stepMs": 43,
+   "engineMs": 41,
+   "smoothMs": 2,
    "weldMeta": {
     "bodies": 7,
     "watertight": 7,
@@ -598,8 +598,8 @@
    "bodies": 1,
    "verts": 1046,
    "tris": 2116,
-   "stepMs": 125,
-   "engineMs": 123,
+   "stepMs": 98,
+   "engineMs": 95,
    "smoothMs": 3,
    "weldMeta": {
     "bodies": 1,
@@ -658,8 +658,8 @@
    "bodies": 7,
    "verts": 848,
    "tris": 1696,
-   "stepMs": 67,
-   "engineMs": 65,
+   "stepMs": 71,
+   "engineMs": 69,
    "smoothMs": 2,
    "weldMeta": {
     "bodies": 7,
@@ -718,8 +718,8 @@
    "bodies": 18,
    "verts": 1948,
    "tris": 3912,
-   "stepMs": 78,
-   "engineMs": 76,
+   "stepMs": 82,
+   "engineMs": 79,
    "smoothMs": 3,
    "weldMeta": {
     "bodies": 18,
@@ -778,8 +778,8 @@
    "bodies": 18,
    "verts": 2304,
    "tris": 4624,
-   "stepMs": 108,
-   "engineMs": 106,
+   "stepMs": 116,
+   "engineMs": 113,
    "smoothMs": 3,
    "weldMeta": {
     "bodies": 18,
@@ -840,7 +840,7 @@
    "tris": 1892,
    "stepMs": 86,
    "engineMs": 84,
-   "smoothMs": 3,
+   "smoothMs": 2,
    "weldMeta": {
     "bodies": 7,
     "watertight": 7,
@@ -898,8 +898,8 @@
    "bodies": 18,
    "verts": 2542,
    "tris": 5100,
-   "stepMs": 156,
-   "engineMs": 152,
+   "stepMs": 169,
+   "engineMs": 162,
    "smoothMs": 4,
    "weldMeta": {
     "bodies": 18,
@@ -958,9 +958,9 @@
    "bodies": 1,
    "verts": 27048,
    "tris": 54800,
-   "stepMs": 1783,
-   "engineMs": 1750,
-   "smoothMs": 60,
+   "stepMs": 1761,
+   "engineMs": 1733,
+   "smoothMs": 67,
    "weldMeta": {
     "bodies": 1,
     "watertight": 1,
@@ -1018,9 +1018,9 @@
    "bodies": 1,
    "verts": 9486,
    "tris": 18972,
-   "stepMs": 1082,
-   "engineMs": 1061,
-   "smoothMs": 21,
+   "stepMs": 1052,
+   "engineMs": 1034,
+   "smoothMs": 20,
    "weldMeta": {
     "bodies": 1,
     "watertight": 1,
@@ -1078,9 +1078,9 @@
    "bodies": 61,
    "verts": 65965,
    "tris": 132162,
-   "stepMs": 7216,
-   "engineMs": 7032,
-   "smoothMs": 56,
+   "stepMs": 7057,
+   "engineMs": 6893,
+   "smoothMs": 50,
    "weldMeta": {
     "bodies": 61,
     "watertight": 61,
@@ -1119,9 +1119,9 @@
    },
    "brokenBodies": [],
    "weldLog": [
-    "[02:20:05][WELD] \"Grep3AD1ka2p\" verts 7346->3658, topo 578, faces-retriangulated 2, -degen-tri 2, micro-edges-collapsed 177, micro-clusters 55, -cancelled-tri 152 => WATERTIGHT",
-    "[WELD] \"Grep3AD1ka2p\" verts 6707->3365, topo 555, degen 1, faces-retriangulated 2, -degen-tri 1, micro-edges-collapsed 160, micro-clusters 72, -cancelled-tri 152 => WATERTIGHT",
-    "[02:20:05][WELD] \"Grep3AD1ka2p\" verts 7346->3658, topo 578, faces-retriangulated 2, -degen-tri 2, micro-edges-collapsed 177, micro-clusters 55, -cancelled-tri 152 => WATERTIGHT",
+    "[03:23:08][WELD] \"Grep3AD1ka2p\" verts 6707->3365, topo 555, degen 1, faces-retriangulated 2, -degen-tri 1, micro-edges-collapsed 160, micro-clusters 72, -cancelled-tri 152 => WATERTIGHT",
+    "[WELD] \"Grep3AD1ka2p\" verts 7346->3658, topo 578, faces-retriangulated 2, -degen-tri 2, micro-edges-collapsed 177, micro-clusters 55, -cancelled-tri 152 => WATERTIGHT",
+    "[WELD] \"Grep3AD1ka2p\" verts 7346->3658, topo 578, faces-retriangulated 2, -degen-tri 2, micro-edges-collapsed 177, micro-clusters 55, -cancelled-tri 152 => WATERTIGHT",
     "[WELD] \"Grep3AD1ka2p\" verts 6707->3365, topo 555, degen 1, faces-retriangulated 2, -degen-tri 1, micro-edges-collapsed 160, micro-clusters 72, -cancelled-tri 152 => WATERTIGHT",
     "[WELD] \"Grep3AD1ka2p\" verts 2899->1483, topo 392, degen 1, faces-filled 1, faces-retriangulated 1, -degen-tri 1 => WATERTIGHT",
     "[WELD] \"Grep3AD1ka2p\" verts 3221->1674, topo 250, faces-filled 2, -degen-tri 36, micro-edges-collapsed 22, micro-clusters 18, -cancelled-tri 76 => WATERTIGHT",
@@ -1148,9 +1148,9 @@
    "bodies": 211,
    "verts": 293252,
    "tris": 586740,
-   "stepMs": 17317,
-   "engineMs": 17037,
-   "smoothMs": 508,
+   "stepMs": 17532,
+   "engineMs": 17246,
+   "smoothMs": 220,
    "weldMeta": {
     "bodies": 211,
     "watertight": 211,
@@ -1232,13 +1232,13 @@
     "[WELD] \"Szervóvédő_kar_2_1\" verts 5953->3906, topo 398, degen 4, -degen-tri 4, micro-edges-collapsed 4 => WATERTIGHT",
     "[WELD] \"Szervóvédő_kar_1_2\" verts 6570->4418, topo 418, degen 6, -degen-tri 6, micro-edges-collapsed 12 => WATERTIGHT",
     "[WELD] \"Féltengely_00\" verts 2163->1120, topo 81, micro-edges-collapsed 1 => WATERTIGHT",
-    "[02:20:23][WELD] \"Féltengely_00\" verts 2163->1120, topo 81, micro-edges-collapsed 1 => WATERTIGHT",
+    "[WELD] \"Féltengely_00\" verts 2163->1120, topo 81, micro-edges-collapsed 1 => WATERTIGHT",
     "[WELD] \"Hajtójtengely_F\" verts 2000->1236, topo 98, degen 1, -degen-tri 1, micro-edges-collapsed 5 => WATERTIGHT",
-    "[02:20:23][WELD] \"Hajtójtengely_F\" verts 2000->1236, topo 98, degen 1, -degen-tri 1, micro-edges-collapsed 5 => WATERTIGHT",
+    "[03:23:26][WELD] \"Hajtójtengely_F\" verts 2000->1236, topo 98, degen 1, -degen-tri 1, micro-edges-collapsed 5 => WATERTIGHT",
     "[WELD] \"Lengéscsillapító rugótámasztó_felső\" verts 8234->3837, topo 1466, brep-nonmanifold-paired 1 => WATERTIGHT",
-    "[02:20:23][WELD] \"Lengéscsillapító rugótámasztó_felső\" verts 8234->3837, topo 1466, brep-nonmanifold-paired 1 => WATERTIGHT",
+    "[03:23:26][WELD] \"Lengéscsillapító rugótámasztó_felső\" verts 8234->3837, topo 1466, brep-nonmanifold-paired 1 => WATERTIGHT",
     "[WELD] \"Lengéscsillapító ház_F\" verts 11108->6716, topo 110, micro-edges-collapsed 2 => WATERTIGHT",
-    "[WELD] \"Lengéscsillapító ház_F\" verts 11108->6716, topo 110, micro-edges-collapsed 2 => WATERTIGHT"
+    "[03:23:26][WELD] \"Lengéscsillapító ház_F\" verts 11108->6716, topo 110, micro-edges-collapsed 2 => WATERTIGHT"
    ]
   }
  ],

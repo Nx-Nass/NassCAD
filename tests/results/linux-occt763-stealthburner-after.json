@@ -9,12 +9,12 @@
   "stepexport": true,
   "stepload": true,
   "ramMB": 16095,
-  "availMB": 15470,
+  "availMB": 15254,
   "cores": 4,
   "runawayThreads": 0,
   "deviationPct": 0.5
  },
- "date": "2026-09-28T02:21:11.791Z",
+ "date": "2026-09-28T03:24:13.470Z",
  "results": [
   {
    "file": "Stealthburner_CW2_Assembly.step",
@@ -34,9 +34,9 @@
    "bodies": 198,
    "verts": 136688,
    "tris": 273492,
-   "stepMs": 15119,
-   "engineMs": 14802,
-   "smoothMs": 109,
+   "stepMs": 14635,
+   "engineMs": 14377,
+   "smoothMs": 106,
    "weldMeta": {
     "bodies": 198,
     "watertight": 198,
@@ -84,11 +84,12 @@
     "[WELD] \"BMG Spring\" verts 2928->2670, topo 3, opposed-tri 13, diagonal-flips 13 => WATERTIGHT",
     "[WELD] \"Drive_Gear\" verts 6779->3220, topo 867, micro-edges-collapsed 4 => WATERTIGHT",
     "[WELD] \"V7_wo_fanV7_Fitment_CAD_wo_fan_1.3\" verts 4828->2349, topo 171, micro-edges-collapsed 5 => WATERTIGHT",
-    "[WELD] \"Toolhead Revo Voron Rear\" verts 6379->2672, topo 1476, micro-edges-collapsed 5 => WATERTIGHT",
+    "[03:24:12][WELD] \"Toolhead Revo Voron Rear\" verts 6379->2672, topo 1476, micro-edges-collapsed 5 => WATERTIGHT",
     "[WELD] \"Toolhead Revo Voron Front\" verts 16645->9617, topo 2143, degen 30, faces-filled 3, faces-retriangulated 2, faces-collapsed 1, -degen-tri 30, micro-edges-collapsed 25 => WATERTIGHT"
    ]
   }
  ],
  "platform": "Ubuntu 24.04, OCCT 7.6.3 (apt), Manifold v3.5.3, g++ 13, 4 cores",
- "source": "MEDUSA_SOURCE/nasscad_medusa.cpp, this branch"
+ "source": "MEDUSA_SOURCE/nasscad_medusa.cpp, this branch",
+ "input": "Stealthburner_CW2_Assembly.step (Autodesk Translation Framework) — supplied by the user, not versioned"
 }

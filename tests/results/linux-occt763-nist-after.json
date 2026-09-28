@@ -1,0 +1,2584 @@
+{
+ "label": "after",
+ "engine": {
+  "engine": "nasscad-medusa-engine",
+  "version": "3.1",
+  "occt": "7.6.3",
+  "protocol": "NSTP1",
+  "csgtree": true,
+  "stepexport": true,
+  "stepload": true,
+  "ramMB": 16095,
+  "availMB": 15247,
+  "cores": 4,
+  "runawayThreads": 0,
+  "deviationPct": 0.5
+ },
+ "date": "2026-09-28T03:36:21.912Z",
+ "results": [
+  {
+   "file": "nist_ftc_11_asme1_rb.stp",
+   "sizeKB": 7,
+   "declared": {
+    "solids": 1,
+    "closedShells": 1,
+    "openShells": 0,
+    "faces": 6,
+    "edges": 6,
+    "edgeValence": {
+     "2": 6
+    },
+    "closedByDeclaration": true,
+    "system": null
+   },
+   "bodies": 1,
+   "verts": 2759,
+   "tris": 5518,
+   "stepMs": 49,
+   "engineMs": 45,
+   "smoothMs": 15,
+   "weldMeta": {
+    "bodies": 1,
+    "watertight": 1,
+    "stillBroken": 0,
+    "edgesTopo": 12,
+    "edgesResidual": 0,
+    "edgesMismatch": 0,
+    "trisDropped": 0,
+    "legacyFallback": 0,
+    "facesFilled": 0,
+    "diagonalFlips": 0,
+    "enabled": true
+   },
+   "raw": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 2759,
+    "closedBodies": 1,
+    "closedBroken": 0,
+    "closedNaked": 0,
+    "closedOver": 0
+   },
+   "client": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 2759,
+    "closedBodies": 1,
+    "closedBroken": 0,
+    "closedNaked": 0,
+    "closedOver": 0
+   },
+   "brep": {
+    "closed": 1
+   },
+   "brokenBodies": [],
+   "weldLog": []
+  },
+  {
+   "file": "nist_ftc_06_asme1_rd.stp",
+   "sizeKB": 218,
+   "declared": {
+    "solids": 1,
+    "closedShells": 1,
+    "openShells": 0,
+    "faces": 144,
+    "edges": 310,
+    "edgeValence": {
+     "2": 310
+    },
+    "closedByDeclaration": true,
+    "system": null
+   },
+   "bodies": 1,
+   "verts": 4306,
+   "tris": 8648,
+   "stepMs": 259,
+   "engineMs": 254,
+   "smoothMs": 10,
+   "weldMeta": {
+    "bodies": 1,
+    "watertight": 1,
+    "stillBroken": 0,
+    "edgesTopo": 373,
+    "edgesResidual": 0,
+    "edgesMismatch": 0,
+    "trisDropped": 8,
+    "legacyFallback": 1,
+    "facesFilled": 0,
+    "diagonalFlips": 0,
+    "enabled": true
+   },
+   "raw": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 4306,
+    "closedBodies": 1,
+    "closedBroken": 0,
+    "closedNaked": 0,
+    "closedOver": 0
+   },
+   "client": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 4306,
+    "closedBodies": 1,
+    "closedBroken": 0,
+    "closedNaked": 0,
+    "closedOver": 0
+   },
+   "brep": {
+    "closed": 1
+   },
+   "brokenBodies": [],
+   "weldLog": []
+  },
+  {
+   "file": "nist_ctc_01_asme1_rd.stp",
+   "sizeKB": 230,
+   "declared": {
+    "solids": 1,
+    "closedShells": 1,
+    "openShells": 0,
+    "faces": 139,
+    "edges": 370,
+    "edgeValence": {
+     "2": 370
+    },
+    "closedByDeclaration": true,
+    "system": null
+   },
+   "bodies": 1,
+   "verts": 1397,
+   "tris": 2830,
+   "stepMs": 203,
+   "engineMs": 195,
+   "smoothMs": 5,
+   "weldMeta": {
+    "bodies": 1,
+    "watertight": 1,
+    "stillBroken": 0,
+    "edgesTopo": 388,
+    "edgesResidual": 0,
+    "edgesMismatch": 0,
+    "trisDropped": 2,
+    "legacyFallback": 1,
+    "facesFilled": 0,
+    "diagonalFlips": 0,
+    "enabled": true
+   },
+   "raw": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 1397,
+    "closedBodies": 1,
+    "closedBroken": 0,
+    "closedNaked": 0,
+    "closedOver": 0
+   },
+   "client": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 1397,
+    "closedBodies": 1,
+    "closedBroken": 0,
+    "closedNaked": 0,
+    "closedOver": 0
+   },
+   "brep": {
+    "closed": 1
+   },
+   "brokenBodies": [],
+   "weldLog": []
+  },
+  {
+   "file": "nist_ctc_03_asme1_rc.stp",
+   "sizeKB": 246,
+   "declared": {
+    "solids": 1,
+    "closedShells": 1,
+    "openShells": 0,
+    "faces": 139,
+    "edges": 390,
+    "edgeValence": {
+     "2": 390
+    },
+    "closedByDeclaration": true,
+    "system": null
+   },
+   "bodies": 1,
+   "verts": 1581,
+   "tris": 3226,
+   "stepMs": 181,
+   "engineMs": 175,
+   "smoothMs": 4,
+   "weldMeta": {
+    "bodies": 1,
+    "watertight": 1,
+    "stillBroken": 0,
+    "edgesTopo": 410,
+    "edgesResidual": 0,
+    "edgesMismatch": 0,
+    "trisDropped": 0,
+    "legacyFallback": 1,
+    "facesFilled": 0,
+    "diagonalFlips": 0,
+    "enabled": true
+   },
+   "raw": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 1581,
+    "closedBodies": 1,
+    "closedBroken": 0,
+    "closedNaked": 0,
+    "closedOver": 0
+   },
+   "client": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 1581,
+    "closedBodies": 1,
+    "closedBroken": 0,
+    "closedNaked": 0,
+    "closedOver": 0
+   },
+   "brep": {
+    "closed": 1
+   },
+   "brokenBodies": [],
+   "weldLog": []
+  },
+  {
+   "file": "nist_ftc_09_asme1_rd.stp",
+   "sizeKB": 258,
+   "declared": {
+    "solids": 1,
+    "closedShells": 1,
+    "openShells": 0,
+    "faces": 158,
+    "edges": 454,
+    "edgeValence": {
+     "2": 454
+    },
+    "closedByDeclaration": true,
+    "system": null
+   },
+   "bodies": 1,
+   "verts": 2380,
+   "tris": 4892,
+   "stepMs": 248,
+   "engineMs": 242,
+   "smoothMs": 5,
+   "weldMeta": {
+    "bodies": 1,
+    "watertight": 1,
+    "stillBroken": 0,
+    "edgesTopo": 454,
+    "edgesResidual": 0,
+    "edgesMismatch": 0,
+    "trisDropped": 0,
+    "legacyFallback": 1,
+    "facesFilled": 0,
+    "diagonalFlips": 0,
+    "enabled": true
+   },
+   "raw": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 2380,
+    "closedBodies": 1,
+    "closedBroken": 0,
+    "closedNaked": 0,
+    "closedOver": 0
+   },
+   "client": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 2380,
+    "closedBodies": 1,
+    "closedBroken": 0,
+    "closedNaked": 0,
+    "closedOver": 0
+   },
+   "brep": {
+    "closed": 1
+   },
+   "brokenBodies": [],
+   "weldLog": []
+  },
+  {
+   "file": "nist_ftc_10_asme1_rb.stp",
+   "sizeKB": 316,
+   "declared": {
+    "solids": 1,
+    "closedShells": 1,
+    "openShells": 0,
+    "faces": 214,
+    "edges": 439,
+    "edgeValence": {
+     "2": 439
+    },
+    "closedByDeclaration": true,
+    "system": null
+   },
+   "bodies": 1,
+   "verts": 6362,
+   "tris": 12808,
+   "stepMs": 320,
+   "engineMs": 313,
+   "smoothMs": 13,
+   "weldMeta": {
+    "bodies": 1,
+    "watertight": 1,
+    "stillBroken": 0,
+    "edgesTopo": 495,
+    "edgesResidual": 0,
+    "edgesMismatch": 0,
+    "trisDropped": 8,
+    "legacyFallback": 0,
+    "facesFilled": 0,
+    "diagonalFlips": 0,
+    "enabled": true
+   },
+   "raw": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 6362,
+    "closedBodies": 1,
+    "closedBroken": 0,
+    "closedNaked": 0,
+    "closedOver": 0
+   },
+   "client": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 6362,
+    "closedBodies": 1,
+    "closedBroken": 0,
+    "closedNaked": 0,
+    "closedOver": 0
+   },
+   "brep": {
+    "closed": 1
+   },
+   "brokenBodies": [],
+   "weldLog": []
+  },
+  {
+   "file": "nist_ctc_05_asme1_rd.stp",
+   "sizeKB": 319,
+   "declared": {
+    "solids": 1,
+    "closedShells": 1,
+    "openShells": 2,
+    "faces": 209,
+    "edges": 514,
+    "edgeValence": {
+     "1": 4,
+     "2": 510
+    },
+    "closedByDeclaration": false,
+    "system": null
+   },
+   "bodies": 2,
+   "verts": 3769,
+   "tris": 7568,
+   "stepMs": 276,
+   "engineMs": 269,
+   "smoothMs": 11,
+   "weldMeta": {
+    "bodies": 2,
+    "watertight": 1,
+    "stillBroken": 1,
+    "edgesTopo": 510,
+    "edgesResidual": 0,
+    "edgesMismatch": 0,
+    "trisDropped": 21,
+    "legacyFallback": 1,
+    "facesFilled": 0,
+    "diagonalFlips": 0,
+    "enabled": true
+   },
+   "raw": {
+    "bodiesBroken": 1,
+    "naked": 4,
+    "over": 0,
+    "weldedVerts": 3769,
+    "closedBodies": 1,
+    "closedBroken": 0,
+    "closedNaked": 0,
+    "closedOver": 0
+   },
+   "client": {
+    "bodiesBroken": 1,
+    "naked": 4,
+    "over": 0,
+    "weldedVerts": 3769,
+    "closedBodies": 1,
+    "closedBroken": 0,
+    "closedNaked": 0,
+    "closedOver": 0
+   },
+   "brep": {
+    "closed": 1,
+    "open": 1
+   },
+   "brokenBodies": [
+    {
+     "name": "SHELL",
+     "brep": "open",
+     "verts": 4,
+     "tris": 2,
+     "raw": {
+      "naked": 4,
+      "over": 0,
+      "weldedVerts": 4,
+      "manifold": false
+     },
+     "client": {
+      "naked": 4,
+      "over": 0,
+      "weldedVerts": 4,
+      "manifold": false
+     }
+    }
+   ],
+   "weldLog": [
+    "[WELD] \"SHELL\" verts 4->4, topo 0 => naked 4, over-valenced 0, bowtie 0",
+    "[03:35:18][MANIFOLD-RAW] \"SHELL\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 4 naked edge(s), 0 over-valenced edge(s), 2 triangle(s)"
+   ]
+  },
+  {
+   "file": "nist_ctc_01_asme1_ap242-e1.stp",
+   "sizeKB": 387,
+   "declared": {
+    "solids": 1,
+    "closedShells": 1,
+    "openShells": 0,
+    "faces": 117,
+    "edges": 318,
+    "edgeValence": {
+     "2": 318
+    },
+    "closedByDeclaration": true,
+    "system": null
+   },
+   "bodies": 1,
+   "verts": 1178,
+   "tris": 2392,
+   "stepMs": 209,
+   "engineMs": 199,
+   "smoothMs": 3,
+   "weldMeta": {
+    "bodies": 1,
+    "watertight": 1,
+    "stillBroken": 0,
+    "edgesTopo": 318,
+    "edgesResidual": 0,
+    "edgesMismatch": 0,
+    "trisDropped": 4,
+    "legacyFallback": 1,
+    "facesFilled": 0,
+    "diagonalFlips": 0,
+    "enabled": true
+   },
+   "raw": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 1178,
+    "closedBodies": 1,
+    "closedBroken": 0,
+    "closedNaked": 0,
+    "closedOver": 0
+   },
+   "client": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 1178,
+    "closedBodies": 1,
+    "closedBroken": 0,
+    "closedNaked": 0,
+    "closedOver": 0
+   },
+   "brep": {
+    "closed": 1
+   },
+   "brokenBodies": [],
+   "weldLog": []
+  },
+  {
+   "file": "nist_ftc_07_asme1_rd.stp",
+   "sizeKB": 393,
+   "declared": {
+    "solids": 1,
+    "closedShells": 1,
+    "openShells": 0,
+    "faces": 269,
+    "edges": 583,
+    "edgeValence": {
+     "2": 583
+    },
+    "closedByDeclaration": true,
+    "system": null
+   },
+   "bodies": 1,
+   "verts": 4002,
+   "tris": 8060,
+   "stepMs": 347,
+   "engineMs": 339,
+   "smoothMs": 8,
+   "weldMeta": {
+    "bodies": 1,
+    "watertight": 1,
+    "stillBroken": 0,
+    "edgesTopo": 622,
+    "edgesResidual": 0,
+    "edgesMismatch": 0,
+    "trisDropped": 8,
+    "legacyFallback": 0,
+    "facesFilled": 0,
+    "diagonalFlips": 0,
+    "enabled": true
+   },
+   "raw": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 4002,
+    "closedBodies": 1,
+    "closedBroken": 0,
+    "closedNaked": 0,
+    "closedOver": 0
+   },
+   "client": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 4002,
+    "closedBodies": 1,
+    "closedBroken": 0,
+    "closedNaked": 0,
+    "closedOver": 0
+   },
+   "brep": {
+    "closed": 1
+   },
+   "brokenBodies": [],
+   "weldLog": []
+  },
+  {
+   "file": "nist_ftc_08_asme1_rc.stp",
+   "sizeKB": 440,
+   "declared": {
+    "solids": 1,
+    "closedShells": 1,
+    "openShells": 0,
+    "faces": 270,
+    "edges": 705,
+    "edgeValence": {
+     "2": 705
+    },
+    "closedByDeclaration": true,
+    "system": null
+   },
+   "bodies": 1,
+   "verts": 3497,
+   "tris": 7090,
+   "stepMs": 337,
+   "engineMs": 328,
+   "smoothMs": 7,
+   "weldMeta": {
+    "bodies": 1,
+    "watertight": 1,
+    "stillBroken": 0,
+    "edgesTopo": 705,
+    "edgesResidual": 0,
+    "edgesMismatch": 0,
+    "trisDropped": 20,
+    "legacyFallback": 0,
+    "facesFilled": 0,
+    "diagonalFlips": 0,
+    "enabled": true
+   },
+   "raw": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 3497,
+    "closedBodies": 1,
+    "closedBroken": 0,
+    "closedNaked": 0,
+    "closedOver": 0
+   },
+   "client": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 3497,
+    "closedBodies": 1,
+    "closedBroken": 0,
+    "closedNaked": 0,
+    "closedOver": 0
+   },
+   "brep": {
+    "closed": 1
+   },
+   "brokenBodies": [],
+   "weldLog": []
+  },
+  {
+   "file": "nist_ctc_03_asme1_ap242-e2.stp",
+   "sizeKB": 658,
+   "declared": {
+    "solids": 1,
+    "closedShells": 1,
+    "openShells": 0,
+    "faces": 120,
+    "edges": 354,
+    "edgeValence": {
+     "2": 354
+    },
+    "closedByDeclaration": true,
+    "system": null
+   },
+   "bodies": 1,
+   "verts": 1332,
+   "tris": 2728,
+   "stepMs": 303,
+   "engineMs": 285,
+   "smoothMs": 4,
+   "weldMeta": {
+    "bodies": 1,
+    "watertight": 1,
+    "stillBroken": 0,
+    "edgesTopo": 354,
+    "edgesResidual": 0,
+    "edgesMismatch": 0,
+    "trisDropped": 0,
+    "legacyFallback": 1,
+    "facesFilled": 0,
+    "diagonalFlips": 0,
+    "enabled": true
+   },
+   "raw": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 1332,
+    "closedBodies": 1,
+    "closedBroken": 0,
+    "closedNaked": 0,
+    "closedOver": 0
+   },
+   "client": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 1332,
+    "closedBodies": 1,
+    "closedBroken": 0,
+    "closedNaked": 0,
+    "closedOver": 0
+   },
+   "brep": {
+    "closed": 1
+   },
+   "brokenBodies": [],
+   "weldLog": []
+  },
+  {
+   "file": "nist_ctc_04_asme1_rd.stp",
+   "sizeKB": 774,
+   "declared": {
+    "solids": 1,
+    "closedShells": 1,
+    "openShells": 6,
+    "faces": 520,
+    "edges": 1214,
+    "edgeValence": {
+     "1": 10,
+     "2": 1204
+    },
+    "closedByDeclaration": false,
+    "system": null
+   },
+   "bodies": 2,
+   "verts": 7861,
+   "tris": 15812,
+   "stepMs": 706,
+   "engineMs": 687,
+   "smoothMs": 15,
+   "weldMeta": {
+    "bodies": 2,
+    "watertight": 1,
+    "stillBroken": 1,
+    "edgesTopo": 1204,
+    "edgesResidual": 0,
+    "edgesMismatch": 0,
+    "trisDropped": 66,
+    "legacyFallback": 0,
+    "facesFilled": 0,
+    "diagonalFlips": 0,
+    "enabled": true
+   },
+   "raw": {
+    "bodiesBroken": 1,
+    "naked": 40,
+    "over": 0,
+    "weldedVerts": 7861,
+    "closedBodies": 1,
+    "closedBroken": 0,
+    "closedNaked": 0,
+    "closedOver": 0
+   },
+   "client": {
+    "bodiesBroken": 1,
+    "naked": 40,
+    "over": 0,
+    "weldedVerts": 7861,
+    "closedBodies": 1,
+    "closedBroken": 0,
+    "closedNaked": 0,
+    "closedOver": 0
+   },
+   "brep": {
+    "closed": 1,
+    "open": 1
+   },
+   "brokenBodies": [
+    {
+     "name": "SHELL",
+     "brep": "open",
+     "verts": 40,
+     "tris": 38,
+     "raw": {
+      "naked": 40,
+      "over": 0,
+      "weldedVerts": 40,
+      "manifold": false
+     },
+     "client": {
+      "naked": 40,
+      "over": 0,
+      "weldedVerts": 40,
+      "manifold": false
+     }
+    }
+   ],
+   "weldLog": [
+    "[03:35:19][WELD] \"SHELL\" verts 40->40, topo 0 => naked 40, over-valenced 0, bowtie 0",
+    "[03:35:19][MANIFOLD-RAW] \"SHELL\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 40 naked edge(s), 0 over-valenced edge(s), 38 triangle(s)"
+   ]
+  },
+  {
+   "file": "nist_ctc_05_asme1_ap242-e1.stp",
+   "sizeKB": 857,
+   "declared": {
+    "solids": 1,
+    "closedShells": 1,
+    "openShells": 0,
+    "faces": 156,
+    "edges": 331,
+    "edgeValence": {
+     "2": 331
+    },
+    "closedByDeclaration": true,
+    "system": null
+   },
+   "bodies": 1,
+   "verts": 3760,
+   "tris": 7556,
+   "stepMs": 342,
+   "engineMs": 332,
+   "smoothMs": 11,
+   "weldMeta": {
+    "bodies": 1,
+    "watertight": 1,
+    "stillBroken": 0,
+    "edgesTopo": 387,
+    "edgesResidual": 0,
+    "edgesMismatch": 0,
+    "trisDropped": 10,
+    "legacyFallback": 0,
+    "facesFilled": 0,
+    "diagonalFlips": 0,
+    "enabled": true
+   },
+   "raw": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 3760,
+    "closedBodies": 1,
+    "closedBroken": 0,
+    "closedNaked": 0,
+    "closedOver": 0
+   },
+   "client": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 3760,
+    "closedBodies": 1,
+    "closedBroken": 0,
+    "closedNaked": 0,
+    "closedOver": 0
+   },
+   "brep": {
+    "closed": 1
+   },
+   "brokenBodies": [],
+   "weldLog": []
+  },
+  {
+   "file": "nist_stc_06_asme1_ap242-e3.stp",
+   "sizeKB": 983,
+   "declared": {
+    "solids": 1,
+    "closedShells": 1,
+    "openShells": 0,
+    "faces": 144,
+    "edges": 310,
+    "edgeValence": {
+     "2": 310
+    },
+    "closedByDeclaration": true,
+    "system": null
+   },
+   "bodies": 1,
+   "verts": 4256,
+   "tris": 8548,
+   "stepMs": 356,
+   "engineMs": 340,
+   "smoothMs": 9,
+   "weldMeta": {
+    "bodies": 1,
+    "watertight": 1,
+    "stillBroken": 0,
+    "edgesTopo": 363,
+    "edgesResidual": 0,
+    "edgesMismatch": 0,
+    "trisDropped": 7,
+    "legacyFallback": 0,
+    "facesFilled": 0,
+    "diagonalFlips": 0,
+    "enabled": true
+   },
+   "raw": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 4256,
+    "closedBodies": 1,
+    "closedBroken": 0,
+    "closedNaked": 0,
+    "closedOver": 0
+   },
+   "client": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 4256,
+    "closedBodies": 1,
+    "closedBroken": 0,
+    "closedNaked": 0,
+    "closedOver": 0
+   },
+   "brep": {
+    "closed": 1
+   },
+   "brokenBodies": [],
+   "weldLog": []
+  },
+  {
+   "file": "nist_ctc_05_asme1_ap203.stp",
+   "sizeKB": 1044,
+   "declared": {
+    "solids": 1,
+    "closedShells": 1,
+    "openShells": 0,
+    "faces": 156,
+    "edges": 331,
+    "edgeValence": {
+     "2": 331
+    },
+    "closedByDeclaration": true,
+    "system": null
+   },
+   "bodies": 1,
+   "verts": 3661,
+   "tris": 7358,
+   "stepMs": 321,
+   "engineMs": 310,
+   "smoothMs": 7,
+   "weldMeta": {
+    "bodies": 1,
+    "watertight": 1,
+    "stillBroken": 0,
+    "edgesTopo": 390,
+    "edgesResidual": 0,
+    "edgesMismatch": 0,
+    "trisDropped": 14,
+    "legacyFallback": 1,
+    "facesFilled": 0,
+    "diagonalFlips": 0,
+    "enabled": true
+   },
+   "raw": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 3661,
+    "closedBodies": 1,
+    "closedBroken": 0,
+    "closedNaked": 0,
+    "closedOver": 0
+   },
+   "client": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 3661,
+    "closedBodies": 1,
+    "closedBroken": 0,
+    "closedNaked": 0,
+    "closedOver": 0
+   },
+   "brep": {
+    "closed": 1
+   },
+   "brokenBodies": [],
+   "weldLog": []
+  },
+  {
+   "file": "nist_ctc_02_asme1_rc.stp",
+   "sizeKB": 1128,
+   "declared": {
+    "solids": 1,
+    "closedShells": 1,
+    "openShells": 2,
+    "faces": 664,
+    "edges": 1498,
+    "edgeValence": {
+     "1": 4,
+     "2": 1494
+    },
+    "closedByDeclaration": false,
+    "system": null
+   },
+   "bodies": 2,
+   "verts": 11885,
+   "tris": 23742,
+   "stepMs": 947,
+   "engineMs": 923,
+   "smoothMs": 34,
+   "weldMeta": {
+    "bodies": 2,
+    "watertight": 1,
+    "stillBroken": 1,
+    "edgesTopo": 1494,
+    "edgesResidual": 0,
+    "edgesMismatch": 0,
+    "trisDropped": 148,
+    "legacyFallback": 1,
+    "facesFilled": 0,
+    "diagonalFlips": 0,
+    "enabled": true
+   },
+   "raw": {
+    "bodiesBroken": 1,
+    "naked": 68,
+    "over": 0,
+    "weldedVerts": 11885,
+    "closedBodies": 1,
+    "closedBroken": 0,
+    "closedNaked": 0,
+    "closedOver": 0
+   },
+   "client": {
+    "bodiesBroken": 1,
+    "naked": 68,
+    "over": 0,
+    "weldedVerts": 11885,
+    "closedBodies": 1,
+    "closedBroken": 0,
+    "closedNaked": 0,
+    "closedOver": 0
+   },
+   "brep": {
+    "closed": 1,
+    "open": 1
+   },
+   "brokenBodies": [
+    {
+     "name": "SHELL",
+     "brep": "open",
+     "verts": 68,
+     "tris": 68,
+     "raw": {
+      "naked": 68,
+      "over": 0,
+      "weldedVerts": 68,
+      "manifold": false
+     },
+     "client": {
+      "naked": 68,
+      "over": 0,
+      "weldedVerts": 68,
+      "manifold": false
+     }
+    }
+   ],
+   "weldLog": [
+    "[WELD] \"SHELL\" verts 68->68, topo 0 => naked 68, over-valenced 0, bowtie 0",
+    "[03:35:21][MANIFOLD-RAW] \"SHELL\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 68 naked edge(s), 0 over-valenced edge(s), 68 triangle(s)"
+   ]
+  },
+  {
+   "file": "nist_ctc_01_asme1_ap203.stp",
+   "sizeKB": 1163,
+   "declared": {
+    "solids": 1,
+    "closedShells": 1,
+    "openShells": 0,
+    "faces": 139,
+    "edges": 370,
+    "edgeValence": {
+     "2": 370
+    },
+    "closedByDeclaration": true,
+    "system": null
+   },
+   "bodies": 1,
+   "verts": 1397,
+   "tris": 2830,
+   "stepMs": 346,
+   "engineMs": 332,
+   "smoothMs": 4,
+   "weldMeta": {
+    "bodies": 1,
+    "watertight": 1,
+    "stillBroken": 0,
+    "edgesTopo": 388,
+    "edgesResidual": 0,
+    "edgesMismatch": 0,
+    "trisDropped": 2,
+    "legacyFallback": 1,
+    "facesFilled": 0,
+    "diagonalFlips": 0,
+    "enabled": true
+   },
+   "raw": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 1397,
+    "closedBodies": 1,
+    "closedBroken": 0,
+    "closedNaked": 0,
+    "closedOver": 0
+   },
+   "client": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 1397,
+    "closedBodies": 1,
+    "closedBroken": 0,
+    "closedNaked": 0,
+    "closedOver": 0
+   },
+   "brep": {
+    "closed": 1
+   },
+   "brokenBodies": [],
+   "weldLog": []
+  },
+  {
+   "file": "nist_ctc_04_asme1_ap242-e1.stp",
+   "sizeKB": 1257,
+   "declared": {
+    "solids": 1,
+    "closedShells": 1,
+    "openShells": 2,
+    "faces": 484,
+    "edges": 1110,
+    "edgeValence": {
+     "1": 2,
+     "2": 1108
+    },
+    "closedByDeclaration": false,
+    "system": null
+   },
+   "bodies": 2,
+   "verts": 7812,
+   "tris": 15714,
+   "stepMs": 790,
+   "engineMs": 769,
+   "smoothMs": 15,
+   "weldMeta": {
+    "bodies": 2,
+    "watertight": 1,
+    "stillBroken": 1,
+    "edgesTopo": 1108,
+    "edgesResidual": 0,
+    "edgesMismatch": 0,
+    "trisDropped": 66,
+    "legacyFallback": 1,
+    "facesFilled": 0,
+    "diagonalFlips": 0,
+    "enabled": true
+   },
+   "raw": {
+    "bodiesBroken": 1,
+    "naked": 40,
+    "over": 0,
+    "weldedVerts": 7812,
+    "closedBodies": 1,
+    "closedBroken": 0,
+    "closedNaked": 0,
+    "closedOver": 0
+   },
+   "client": {
+    "bodiesBroken": 1,
+    "naked": 40,
+    "over": 0,
+    "weldedVerts": 7812,
+    "closedBodies": 1,
+    "closedBroken": 0,
+    "closedNaked": 0,
+    "closedOver": 0
+   },
+   "brep": {
+    "closed": 1,
+    "open": 1
+   },
+   "brokenBodies": [
+    {
+     "name": "SHELL",
+     "brep": "open",
+     "verts": 40,
+     "tris": 38,
+     "raw": {
+      "naked": 40,
+      "over": 0,
+      "weldedVerts": 40,
+      "manifold": false
+     },
+     "client": {
+      "naked": 40,
+      "over": 0,
+      "weldedVerts": 40,
+      "manifold": false
+     }
+    }
+   ],
+   "weldLog": [
+    "[WELD] \"SHELL\" verts 40->40, topo 0 => naked 40, over-valenced 0, bowtie 0",
+    "[03:35:23][MANIFOLD-RAW] \"SHELL\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 40 naked edge(s), 0 over-valenced edge(s), 38 triangle(s)"
+   ]
+  },
+  {
+   "file": "nist_ctc_04_asme1_ap203.stp",
+   "sizeKB": 1356,
+   "declared": {
+    "solids": 1,
+    "closedShells": 1,
+    "openShells": 2,
+    "faces": 406,
+    "edges": 831,
+    "edgeValence": {
+     "1": 1,
+     "2": 830
+    },
+    "closedByDeclaration": false,
+    "system": null
+   },
+   "bodies": 2,
+   "verts": 7867,
+   "tris": 15825,
+   "stepMs": 618,
+   "engineMs": 597,
+   "smoothMs": 17,
+   "weldMeta": {
+    "bodies": 2,
+    "watertight": 1,
+    "stillBroken": 1,
+    "edgesTopo": 998,
+    "edgesResidual": 0,
+    "edgesMismatch": 0,
+    "trisDropped": 44,
+    "legacyFallback": 1,
+    "facesFilled": 0,
+    "diagonalFlips": 0,
+    "enabled": true
+   },
+   "raw": {
+    "bodiesBroken": 1,
+    "naked": 39,
+    "over": 0,
+    "weldedVerts": 7867,
+    "closedBodies": 1,
+    "closedBroken": 0,
+    "closedNaked": 0,
+    "closedOver": 0
+   },
+   "client": {
+    "bodiesBroken": 1,
+    "naked": 39,
+    "over": 0,
+    "weldedVerts": 7867,
+    "closedBodies": 1,
+    "closedBroken": 0,
+    "closedNaked": 0,
+    "closedOver": 0
+   },
+   "brep": {
+    "closed": 1,
+    "open": 1
+   },
+   "brokenBodies": [
+    {
+     "name": "SHELL",
+     "brep": "open",
+     "verts": 39,
+     "tris": 37,
+     "raw": {
+      "naked": 39,
+      "over": 0,
+      "weldedVerts": 39,
+      "manifold": false
+     },
+     "client": {
+      "naked": 39,
+      "over": 0,
+      "weldedVerts": 39,
+      "manifold": false
+     }
+    }
+   ],
+   "weldLog": [
+    "[03:35:23][WELD] \"SHELL\" verts 39->39, topo 0 => naked 39, over-valenced 0, bowtie 0",
+    "[03:35:23][MANIFOLD-RAW] \"SHELL\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 39 naked edge(s), 0 over-valenced edge(s), 37 triangle(s)"
+   ]
+  },
+  {
+   "file": "nist_ftc_07_asme1_ap242-e2.stp",
+   "sizeKB": 1444,
+   "declared": {
+    "solids": 1,
+    "closedShells": 1,
+    "openShells": 4,
+    "faces": 306,
+    "edges": 871,
+    "edgeValence": {
+     "1": 6,
+     "2": 865
+    },
+    "closedByDeclaration": false,
+    "system": null
+   },
+   "bodies": 3,
+   "verts": 4625,
+   "tris": 9296,
+   "stepMs": 662,
+   "engineMs": 637,
+   "smoothMs": 11,
+   "weldMeta": {
+    "bodies": 3,
+    "watertight": 1,
+    "stillBroken": 2,
+    "edgesTopo": 865,
+    "edgesResidual": 0,
+    "edgesMismatch": 0,
+    "trisDropped": 31,
+    "legacyFallback": 1,
+    "facesFilled": 0,
+    "diagonalFlips": 0,
+    "enabled": true
+   },
+   "raw": {
+    "bodiesBroken": 2,
+    "naked": 6,
+    "over": 0,
+    "weldedVerts": 4625,
+    "closedBodies": 1,
+    "closedBroken": 0,
+    "closedNaked": 0,
+    "closedOver": 0
+   },
+   "client": {
+    "bodiesBroken": 2,
+    "naked": 6,
+    "over": 0,
+    "weldedVerts": 4625,
+    "closedBodies": 1,
+    "closedBroken": 0,
+    "closedNaked": 0,
+    "closedOver": 0
+   },
+   "brep": {
+    "closed": 1,
+    "open": 2
+   },
+   "brokenBodies": [
+    {
+     "name": "COMPOUND",
+     "brep": "open",
+     "verts": 3,
+     "tris": 1,
+     "raw": {
+      "naked": 3,
+      "over": 0,
+      "weldedVerts": 3,
+      "manifold": false
+     },
+     "client": {
+      "naked": 3,
+      "over": 0,
+      "weldedVerts": 3,
+      "manifold": false
+     }
+    },
+    {
+     "name": "COMPOUND",
+     "brep": "open",
+     "verts": 3,
+     "tris": 1,
+     "raw": {
+      "naked": 3,
+      "over": 0,
+      "weldedVerts": 3,
+      "manifold": false
+     },
+     "client": {
+      "naked": 3,
+      "over": 0,
+      "weldedVerts": 3,
+      "manifold": false
+     }
+    }
+   ],
+   "weldLog": [
+    "[WELD] \"COMPOUND\" verts 3->3, topo 0 => naked 3, over-valenced 0, bowtie 0",
+    "[03:35:24][MANIFOLD-RAW] \"COMPOUND\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 3 naked edge(s), 0 over-valenced edge(s), 1 triangle(s)",
+    "[WELD] \"COMPOUND\" verts 3->3, topo 0 => naked 3, over-valenced 0, bowtie 0",
+    "[03:35:24][MANIFOLD-RAW] \"COMPOUND\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 3 naked edge(s), 0 over-valenced edge(s), 1 triangle(s)"
+   ]
+  },
+  {
+   "file": "nist_ftc_10_asme1_ap242-e2.stp",
+   "sizeKB": 1836,
+   "declared": {
+    "solids": 1,
+    "closedShells": 1,
+    "openShells": 24,
+    "faces": 282,
+    "edges": 957,
+    "edgeValence": {
+     "1": 148,
+     "2": 809
+    },
+    "closedByDeclaration": false,
+    "system": null
+   },
+   "bodies": 13,
+   "verts": 7960,
+   "tris": 15124,
+   "stepMs": 805,
+   "engineMs": 782,
+   "smoothMs": 16,
+   "weldMeta": {
+    "bodies": 13,
+    "watertight": 1,
+    "stillBroken": 12,
+    "edgesTopo": 809,
+    "edgesResidual": 0,
+    "edgesMismatch": 0,
+    "trisDropped": 16,
+    "legacyFallback": 1,
+    "facesFilled": 0,
+    "diagonalFlips": 0,
+    "enabled": true
+   },
+   "raw": {
+    "bodiesBroken": 12,
+    "naked": 888,
+    "over": 0,
+    "weldedVerts": 7960,
+    "closedBodies": 1,
+    "closedBroken": 0,
+    "closedNaked": 0,
+    "closedOver": 0
+   },
+   "client": {
+    "bodiesBroken": 12,
+    "naked": 888,
+    "over": 0,
+    "weldedVerts": 7960,
+    "closedBodies": 1,
+    "closedBroken": 0,
+    "closedNaked": 0,
+    "closedOver": 0
+   },
+   "brep": {
+    "closed": 1,
+    "open": 12
+   },
+   "brokenBodies": [
+    {
+     "name": "COMPOUND",
+     "brep": "open",
+     "verts": 28,
+     "tris": 26,
+     "raw": {
+      "naked": 28,
+      "over": 0,
+      "weldedVerts": 28,
+      "manifold": false
+     },
+     "client": {
+      "naked": 28,
+      "over": 0,
+      "weldedVerts": 28,
+      "manifold": false
+     }
+    },
+    {
+     "name": "COMPOUND",
+     "brep": "open",
+     "verts": 136,
+     "tris": 140,
+     "raw": {
+      "naked": 136,
+      "over": 0,
+      "weldedVerts": 136,
+      "manifold": false
+     },
+     "client": {
+      "naked": 136,
+      "over": 0,
+      "weldedVerts": 136,
+      "manifold": false
+     }
+    },
+    {
+     "name": "COMPOUND",
+     "brep": "open",
+     "verts": 160,
+     "tris": 166,
+     "raw": {
+      "naked": 160,
+      "over": 0,
+      "weldedVerts": 160,
+      "manifold": false
+     },
+     "client": {
+      "naked": 160,
+      "over": 0,
+      "weldedVerts": 160,
+      "manifold": false
+     }
+    },
+    {
+     "name": "COMPOUND",
+     "brep": "open",
+     "verts": 72,
+     "tris": 72,
+     "raw": {
+      "naked": 72,
+      "over": 0,
+      "weldedVerts": 72,
+      "manifold": false
+     },
+     "client": {
+      "naked": 72,
+      "over": 0,
+      "weldedVerts": 72,
+      "manifold": false
+     }
+    },
+    {
+     "name": "COMPOUND",
+     "brep": "open",
+     "verts": 28,
+     "tris": 26,
+     "raw": {
+      "naked": 28,
+      "over": 0,
+      "weldedVerts": 28,
+      "manifold": false
+     },
+     "client": {
+      "naked": 28,
+      "over": 0,
+      "weldedVerts": 28,
+      "manifold": false
+     }
+    },
+    {
+     "name": "COMPOUND",
+     "brep": "open",
+     "verts": 136,
+     "tris": 140,
+     "raw": {
+      "naked": 136,
+      "over": 0,
+      "weldedVerts": 136,
+      "manifold": false
+     },
+     "client": {
+      "naked": 136,
+      "over": 0,
+      "weldedVerts": 136,
+      "manifold": false
+     }
+    },
+    {
+     "name": "COMPOUND",
+     "brep": "open",
+     "verts": 160,
+     "tris": 166,
+     "raw": {
+      "naked": 160,
+      "over": 0,
+      "weldedVerts": 160,
+      "manifold": false
+     },
+     "client": {
+      "naked": 160,
+      "over": 0,
+      "weldedVerts": 160,
+      "manifold": false
+     }
+    },
+    {
+     "name": "COMPOUND",
+     "brep": "open",
+     "verts": 72,
+     "tris": 72,
+     "raw": {
+      "naked": 72,
+      "over": 0,
+      "weldedVerts": 72,
+      "manifold": false
+     },
+     "client": {
+      "naked": 72,
+      "over": 0,
+      "weldedVerts": 72,
+      "manifold": false
+     }
+    },
+    {
+     "name": "COMPOUND",
+     "brep": "open",
+     "verts": 6,
+     "tris": 4,
+     "raw": {
+      "naked": 6,
+      "over": 0,
+      "weldedVerts": 6,
+      "manifold": false
+     },
+     "client": {
+      "naked": 6,
+      "over": 0,
+      "weldedVerts": 6,
+      "manifold": false
+     }
+    },
+    {
+     "name": "COMPOUND",
+     "brep": "open",
+     "verts": 6,
+     "tris": 4,
+     "raw": {
+      "naked": 6,
+      "over": 0,
+      "weldedVerts": 6,
+      "manifold": false
+     },
+     "client": {
+      "naked": 6,
+      "over": 0,
+      "weldedVerts": 6,
+      "manifold": false
+     }
+    },
+    {
+     "name": "COMPOUND",
+     "brep": "open",
+     "verts": 42,
+     "tris": 40,
+     "raw": {
+      "naked": 42,
+      "over": 0,
+      "weldedVerts": 42,
+      "manifold": false
+     },
+     "client": {
+      "naked": 42,
+      "over": 0,
+      "weldedVerts": 42,
+      "manifold": false
+     }
+    },
+    {
+     "name": "COMPOUND",
+     "brep": "open",
+     "verts": 42,
+     "tris": 40,
+     "raw": {
+      "naked": 42,
+      "over": 0,
+      "weldedVerts": 42,
+      "manifold": false
+     },
+     "client": {
+      "naked": 42,
+      "over": 0,
+      "weldedVerts": 42,
+      "manifold": false
+     }
+    }
+   ],
+   "weldLog": [
+    "[03:35:25][WELD] \"COMPOUND\" verts 28->28, topo 0 => naked 28, over-valenced 0, bowtie 0",
+    "[03:35:25][MANIFOLD-RAW] \"COMPOUND\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 28 naked edge(s), 0 over-valenced edge(s), 26 triangle(s)",
+    "[WELD] \"COMPOUND\" verts 76->72, topo 2 => naked 72, over-valenced 0, bowtie 0",
+    "[03:35:25][MANIFOLD-RAW] \"COMPOUND\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 72 naked edge(s), 0 over-valenced edge(s), 72 triangle(s)",
+    "[WELD] \"COMPOUND\" verts 136->136, topo 0 => naked 136, over-valenced 0, bowtie 0",
+    "[03:35:25][MANIFOLD-RAW] \"COMPOUND\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 136 naked edge(s), 0 over-valenced edge(s), 140 triangle(s)",
+    "[WELD] \"COMPOUND\" verts 28->28, topo 0 => naked 28, over-valenced 0, bowtie 0",
+    "[03:35:25][MANIFOLD-RAW] \"COMPOUND\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 28 naked edge(s), 0 over-valenced edge(s), 26 triangle(s)",
+    "[WELD] \"COMPOUND\" verts 164->160, topo 2 => naked 160, over-valenced 0, bowtie 0",
+    "[03:35:25][MANIFOLD-RAW] \"COMPOUND\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 160 naked edge(s), 0 over-valenced edge(s), 166 triangle(s)",
+    "[WELD] \"COMPOUND\" verts 76->72, topo 2 => naked 72, over-valenced 0, bowtie 0",
+    "[03:35:25][MANIFOLD-RAW] \"COMPOUND\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 72 naked edge(s), 0 over-valenced edge(s), 72 triangle(s)",
+    "[WELD] \"COMPOUND\" verts 8->6, topo 1 => naked 6, over-valenced 0, bowtie 0",
+    "[03:35:25][MANIFOLD-RAW] \"COMPOUND\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 6 naked edge(s), 0 over-valenced edge(s), 4 triangle(s)",
+    "[WELD] \"COMPOUND\" verts 136->136, topo 0 => naked 136, over-valenced 0, bowtie 0",
+    "[03:35:25][WELD] \"COMPOUND\" verts 8->6, topo 1 => naked 6, over-valenced 0, bowtie 0",
+    "[03:35:25][MANIFOLD-RAW] \"COMPOUND\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 6 naked edge(s), 0 over-valenced edge(s), 4 triangle(s)",
+    "[MANIFOLD-RAW] \"COMPOUND\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 136 naked edge(s), 0 over-valenced edge(s), 140 triangle(s)",
+    "[WELD] \"COMPOUND\" verts 42->42, topo 0 => naked 42, over-valenced 0, bowtie 0",
+    "[03:35:25][MANIFOLD-RAW] \"COMPOUND\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 42 naked edge(s), 0 over-valenced edge(s), 40 triangle(s)",
+    "[WELD] \"COMPOUND\" verts 42->42, topo 0 => naked 42, over-valenced 0, bowtie 0",
+    "[03:35:25][MANIFOLD-RAW] \"COMPOUND\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 42 naked edge(s), 0 over-valenced edge(s), 40 triangle(s)",
+    "[WELD] \"COMPOUND\" verts 164->160, topo 2 => naked 160, over-valenced 0, bowtie 0",
+    "[03:35:25][MANIFOLD-RAW] \"COMPOUND\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 160 naked edge(s), 0 over-valenced edge(s), 166 triangle(s)"
+   ]
+  },
+  {
+   "file": "nist_stc_07_asme1_ap242-e3.stp",
+   "sizeKB": 1900,
+   "declared": {
+    "solids": 1,
+    "closedShells": 1,
+    "openShells": 4,
+    "faces": 306,
+    "edges": 871,
+    "edgeValence": {
+     "1": 6,
+     "2": 865
+    },
+    "closedByDeclaration": false,
+    "system": null
+   },
+   "bodies": 3,
+   "verts": 4356,
+   "tris": 8758,
+   "stepMs": 739,
+   "engineMs": 695,
+   "smoothMs": 11,
+   "weldMeta": {
+    "bodies": 3,
+    "watertight": 1,
+    "stillBroken": 2,
+    "edgesTopo": 865,
+    "edgesResidual": 0,
+    "edgesMismatch": 0,
+    "trisDropped": 16,
+    "legacyFallback": 1,
+    "facesFilled": 0,
+    "diagonalFlips": 0,
+    "enabled": true
+   },
+   "raw": {
+    "bodiesBroken": 2,
+    "naked": 6,
+    "over": 0,
+    "weldedVerts": 4356,
+    "closedBodies": 1,
+    "closedBroken": 0,
+    "closedNaked": 0,
+    "closedOver": 0
+   },
+   "client": {
+    "bodiesBroken": 2,
+    "naked": 6,
+    "over": 0,
+    "weldedVerts": 4356,
+    "closedBodies": 1,
+    "closedBroken": 0,
+    "closedNaked": 0,
+    "closedOver": 0
+   },
+   "brep": {
+    "open": 2,
+    "closed": 1
+   },
+   "brokenBodies": [
+    {
+     "name": "COMPOUND",
+     "brep": "open",
+     "verts": 3,
+     "tris": 1,
+     "raw": {
+      "naked": 3,
+      "over": 0,
+      "weldedVerts": 3,
+      "manifold": false
+     },
+     "client": {
+      "naked": 3,
+      "over": 0,
+      "weldedVerts": 3,
+      "manifold": false
+     }
+    },
+    {
+     "name": "COMPOUND",
+     "brep": "open",
+     "verts": 3,
+     "tris": 1,
+     "raw": {
+      "naked": 3,
+      "over": 0,
+      "weldedVerts": 3,
+      "manifold": false
+     },
+     "client": {
+      "naked": 3,
+      "over": 0,
+      "weldedVerts": 3,
+      "manifold": false
+     }
+    }
+   ],
+   "weldLog": [
+    "[03:35:26][WELD] \"COMPOUND\" verts 3->3, topo 0 => naked 3, over-valenced 0, bowtie 0",
+    "[03:35:26][MANIFOLD-RAW] \"COMPOUND\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 3 naked edge(s), 0 over-valenced edge(s), 1 triangle(s)",
+    "[WELD] \"COMPOUND\" verts 3->3, topo 0 => naked 3, over-valenced 0, bowtie 0",
+    "[03:35:26][MANIFOLD-RAW] \"COMPOUND\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 3 naked edge(s), 0 over-valenced edge(s), 1 triangle(s)"
+   ]
+  },
+  {
+   "file": "nist_ftc_11_asme1_ap242-e2.stp",
+   "sizeKB": 1901,
+   "declared": {
+    "solids": 1,
+    "closedShells": 1,
+    "openShells": 0,
+    "faces": 42,
+    "edges": 104,
+    "edgeValence": {
+     "2": 104
+    },
+    "closedByDeclaration": true,
+    "system": null
+   },
+   "bodies": 1,
+   "verts": 3658,
+   "tris": 7316,
+   "stepMs": 8109,
+   "engineMs": 8044,
+   "smoothMs": 11,
+   "weldMeta": {
+    "bodies": 1,
+    "watertight": 1,
+    "stillBroken": 0,
+    "edgesTopo": 112,
+    "edgesResidual": 0,
+    "edgesMismatch": 0,
+    "trisDropped": 0,
+    "legacyFallback": 0,
+    "facesFilled": 0,
+    "diagonalFlips": 0,
+    "enabled": true
+   },
+   "raw": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 3658,
+    "closedBodies": 1,
+    "closedBroken": 0,
+    "closedNaked": 0,
+    "closedOver": 0
+   },
+   "client": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 3658,
+    "closedBodies": 1,
+    "closedBroken": 0,
+    "closedNaked": 0,
+    "closedOver": 0
+   },
+   "brep": {
+    "closed": 1
+   },
+   "brokenBodies": [],
+   "weldLog": []
+  },
+  {
+   "file": "nist_ftc_06_asme1_ap242-e2.stp",
+   "sizeKB": 1925,
+   "declared": {
+    "solids": 1,
+    "closedShells": 1,
+    "openShells": 0,
+    "faces": 187,
+    "edges": 476,
+    "edgeValence": {
+     "2": 476
+    },
+    "closedByDeclaration": true,
+    "system": null
+   },
+   "bodies": 1,
+   "verts": 4397,
+   "tris": 8830,
+   "stepMs": 1164,
+   "engineMs": 1122,
+   "smoothMs": 10,
+   "weldMeta": {
+    "bodies": 1,
+    "watertight": 1,
+    "stillBroken": 0,
+    "edgesTopo": 476,
+    "edgesResidual": 0,
+    "edgesMismatch": 0,
+    "trisDropped": 14,
+    "legacyFallback": 1,
+    "facesFilled": 0,
+    "diagonalFlips": 0,
+    "enabled": true
+   },
+   "raw": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 4397,
+    "closedBodies": 1,
+    "closedBroken": 0,
+    "closedNaked": 0,
+    "closedOver": 0
+   },
+   "client": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 4397,
+    "closedBodies": 1,
+    "closedBroken": 0,
+    "closedNaked": 0,
+    "closedOver": 0
+   },
+   "brep": {
+    "closed": 1
+   },
+   "brokenBodies": [],
+   "weldLog": []
+  },
+  {
+   "file": "nist_ctc_02_asme1_ap242-e2.stp",
+   "sizeKB": 1935,
+   "declared": {
+    "solids": 1,
+    "closedShells": 1,
+    "openShells": 4,
+    "faces": 637,
+    "edges": 1416,
+    "edgeValence": {
+     "1": 6,
+     "2": 1410
+    },
+    "closedByDeclaration": false,
+    "system": null
+   },
+   "bodies": 3,
+   "verts": 11830,
+   "tris": 23590,
+   "stepMs": 1347,
+   "engineMs": 1300,
+   "smoothMs": 26,
+   "weldMeta": {
+    "bodies": 3,
+    "watertight": 1,
+    "stillBroken": 2,
+    "edgesTopo": 1410,
+    "edgesResidual": 0,
+    "edgesMismatch": 0,
+    "trisDropped": 176,
+    "legacyFallback": 1,
+    "facesFilled": 0,
+    "diagonalFlips": 0,
+    "enabled": true
+   },
+   "raw": {
+    "bodiesBroken": 2,
+    "naked": 108,
+    "over": 0,
+    "weldedVerts": 11830,
+    "closedBodies": 1,
+    "closedBroken": 0,
+    "closedNaked": 0,
+    "closedOver": 0
+   },
+   "client": {
+    "bodiesBroken": 2,
+    "naked": 108,
+    "over": 0,
+    "weldedVerts": 11830,
+    "closedBodies": 1,
+    "closedBroken": 0,
+    "closedNaked": 0,
+    "closedOver": 0
+   },
+   "brep": {
+    "closed": 1,
+    "open": 2
+   },
+   "brokenBodies": [
+    {
+     "name": "SHELL",
+     "brep": "open",
+     "verts": 40,
+     "tris": 38,
+     "raw": {
+      "naked": 40,
+      "over": 0,
+      "weldedVerts": 40,
+      "manifold": false
+     },
+     "client": {
+      "naked": 40,
+      "over": 0,
+      "weldedVerts": 40,
+      "manifold": false
+     }
+    },
+    {
+     "name": "SHELL",
+     "brep": "open",
+     "verts": 68,
+     "tris": 68,
+     "raw": {
+      "naked": 68,
+      "over": 0,
+      "weldedVerts": 68,
+      "manifold": false
+     },
+     "client": {
+      "naked": 68,
+      "over": 0,
+      "weldedVerts": 68,
+      "manifold": false
+     }
+    }
+   ],
+   "weldLog": [
+    "[WELD] \"SHELL\" verts 40->40, topo 0 => naked 40, over-valenced 0, bowtie 0",
+    "[03:35:36][MANIFOLD-RAW] \"SHELL\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 40 naked edge(s), 0 over-valenced edge(s), 38 triangle(s)",
+    "[WELD] \"SHELL\" verts 68->68, topo 0 => naked 68, over-valenced 0, bowtie 0",
+    "[03:35:36][MANIFOLD-RAW] \"SHELL\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 68 naked edge(s), 0 over-valenced edge(s), 68 triangle(s)",
+    "[WELD] \"SOLID\" verts 20542->11722, topo 1410, degen 176, -degen-tri 176, micro-edges-collapsed 2 => WATERTIGHT"
+   ]
+  },
+  {
+   "file": "nist_ctc_03_asme1_ap203.stp",
+   "sizeKB": 1973,
+   "declared": {
+    "solids": 1,
+    "closedShells": 1,
+    "openShells": 0,
+    "faces": 139,
+    "edges": 390,
+    "edgeValence": {
+     "2": 390
+    },
+    "closedByDeclaration": true,
+    "system": null
+   },
+   "bodies": 1,
+   "verts": 1581,
+   "tris": 3226,
+   "stepMs": 423,
+   "engineMs": 406,
+   "smoothMs": 6,
+   "weldMeta": {
+    "bodies": 1,
+    "watertight": 1,
+    "stillBroken": 0,
+    "edgesTopo": 410,
+    "edgesResidual": 0,
+    "edgesMismatch": 0,
+    "trisDropped": 0,
+    "legacyFallback": 1,
+    "facesFilled": 0,
+    "diagonalFlips": 0,
+    "enabled": true
+   },
+   "raw": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 1581,
+    "closedBodies": 1,
+    "closedBroken": 0,
+    "closedNaked": 0,
+    "closedOver": 0
+   },
+   "client": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 1581,
+    "closedBodies": 1,
+    "closedBroken": 0,
+    "closedNaked": 0,
+    "closedOver": 0
+   },
+   "brep": {
+    "closed": 1
+   },
+   "brokenBodies": [],
+   "weldLog": []
+  },
+  {
+   "file": "nist_ftc_08_asme1_ap242-e1-tg.stp",
+   "error": "{\"success\":false,\"error\":\"STEP: no shape transferred\"}",
+   "declared": {
+    "solids": 0,
+    "closedShells": 0,
+    "openShells": 0,
+    "faces": 0,
+    "edges": 0,
+    "edgeValence": {},
+    "closedByDeclaration": false,
+    "system": null
+   }
+  },
+  {
+   "file": "nist_stc_08_asme1_ap242-e3.stp",
+   "sizeKB": 2198,
+   "declared": {
+    "solids": 1,
+    "closedShells": 1,
+    "openShells": 2,
+    "faces": 271,
+    "edges": 709,
+    "edgeValence": {
+     "1": 4,
+     "2": 705
+    },
+    "closedByDeclaration": false,
+    "system": null
+   },
+   "bodies": 2,
+   "verts": 3496,
+   "tris": 7082,
+   "stepMs": 2431,
+   "engineMs": 2380,
+   "smoothMs": 11,
+   "weldMeta": {
+    "bodies": 2,
+    "watertight": 1,
+    "stillBroken": 1,
+    "edgesTopo": 705,
+    "edgesResidual": 0,
+    "edgesMismatch": 0,
+    "trisDropped": 20,
+    "legacyFallback": 1,
+    "facesFilled": 0,
+    "diagonalFlips": 0,
+    "enabled": true
+   },
+   "raw": {
+    "bodiesBroken": 1,
+    "naked": 4,
+    "over": 0,
+    "weldedVerts": 3496,
+    "closedBodies": 1,
+    "closedBroken": 0,
+    "closedNaked": 0,
+    "closedOver": 0
+   },
+   "client": {
+    "bodiesBroken": 1,
+    "naked": 4,
+    "over": 0,
+    "weldedVerts": 3496,
+    "closedBodies": 1,
+    "closedBroken": 0,
+    "closedNaked": 0,
+    "closedOver": 0
+   },
+   "brep": {
+    "closed": 1,
+    "open": 1
+   },
+   "brokenBodies": [
+    {
+     "name": "SHELL",
+     "brep": "open",
+     "verts": 4,
+     "tris": 2,
+     "raw": {
+      "naked": 4,
+      "over": 0,
+      "weldedVerts": 4,
+      "manifold": false
+     },
+     "client": {
+      "naked": 4,
+      "over": 0,
+      "weldedVerts": 4,
+      "manifold": false
+     }
+    }
+   ],
+   "weldLog": [
+    "[03:35:40][WELD] \"SHELL\" verts 4->4, topo 0 => naked 4, over-valenced 0, bowtie 0",
+    "[03:35:40][MANIFOLD-RAW] \"SHELL\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 4 naked edge(s), 0 over-valenced edge(s), 2 triangle(s)"
+   ]
+  },
+  {
+   "file": "nist_ctc_02_asme1_ap203.stp",
+   "sizeKB": 3283,
+   "declared": {
+    "solids": 1,
+    "closedShells": 1,
+    "openShells": 0,
+    "faces": 487,
+    "edges": 942,
+    "edgeValence": {
+     "2": 942
+    },
+    "closedByDeclaration": true,
+    "system": null
+   },
+   "bodies": 1,
+   "verts": 12007,
+   "tris": 24054,
+   "stepMs": 1141,
+   "engineMs": 1098,
+   "smoothMs": 28,
+   "weldMeta": {
+    "bodies": 1,
+    "watertight": 1,
+    "stillBroken": 0,
+    "edgesTopo": 1201,
+    "edgesResidual": 0,
+    "edgesMismatch": 0,
+    "trisDropped": 86,
+    "legacyFallback": 1,
+    "facesFilled": 0,
+    "diagonalFlips": 0,
+    "enabled": true
+   },
+   "raw": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 12007,
+    "closedBodies": 1,
+    "closedBroken": 0,
+    "closedNaked": 0,
+    "closedOver": 0
+   },
+   "client": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 12007,
+    "closedBodies": 1,
+    "closedBroken": 0,
+    "closedNaked": 0,
+    "closedOver": 0
+   },
+   "brep": {
+    "closed": 1
+   },
+   "brokenBodies": [],
+   "weldLog": [
+    "[WELD] \"SOLID\" verts 20855->12007, topo 1201, degen 86, -degen-tri 86, micro-edges-collapsed 1 => WATERTIGHT"
+   ]
+  },
+  {
+   "file": "nist_ftc_08_asme1_ap242-e2.stp",
+   "sizeKB": 4612,
+   "declared": {
+    "solids": 1,
+    "closedShells": 1,
+    "openShells": 0,
+    "faces": 247,
+    "edges": 616,
+    "edgeValence": {
+     "2": 616
+    },
+    "closedByDeclaration": true,
+    "system": null
+   },
+   "bodies": 1,
+   "verts": 3484,
+   "tris": 7064,
+   "stepMs": 21467,
+   "engineMs": 21351,
+   "smoothMs": 13,
+   "weldMeta": {
+    "bodies": 1,
+    "watertight": 1,
+    "stillBroken": 0,
+    "edgesTopo": 640,
+    "edgesResidual": 0,
+    "edgesMismatch": 0,
+    "trisDropped": 20,
+    "legacyFallback": 1,
+    "facesFilled": 0,
+    "diagonalFlips": 0,
+    "enabled": true
+   },
+   "raw": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 3484,
+    "closedBodies": 1,
+    "closedBroken": 0,
+    "closedNaked": 0,
+    "closedOver": 0
+   },
+   "client": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 3484,
+    "closedBodies": 1,
+    "closedBroken": 0,
+    "closedNaked": 0,
+    "closedOver": 0
+   },
+   "brep": {
+    "closed": 1
+   },
+   "brokenBodies": [],
+   "weldLog": []
+  },
+  {
+   "file": "nist_stc_10_asme1_ap242-e2.stp",
+   "sizeKB": 4761,
+   "declared": {
+    "solids": 1,
+    "closedShells": 1,
+    "openShells": 0,
+    "faces": 256,
+    "edges": 551,
+    "edgeValence": {
+     "2": 551
+    },
+    "closedByDeclaration": true,
+    "system": null
+   },
+   "bodies": 1,
+   "verts": 7296,
+   "tris": 14676,
+   "stepMs": 14839,
+   "engineMs": 14720,
+   "smoothMs": 19,
+   "weldMeta": {
+    "bodies": 1,
+    "watertight": 1,
+    "stillBroken": 0,
+    "edgesTopo": 617,
+    "edgesResidual": 0,
+    "edgesMismatch": 0,
+    "trisDropped": 16,
+    "legacyFallback": 1,
+    "facesFilled": 0,
+    "diagonalFlips": 0,
+    "enabled": true
+   },
+   "raw": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 7296,
+    "closedBodies": 1,
+    "closedBroken": 0,
+    "closedNaked": 0,
+    "closedOver": 0
+   },
+   "client": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 7296,
+    "closedBodies": 1,
+    "closedBroken": 0,
+    "closedNaked": 0,
+    "closedOver": 0
+   },
+   "brep": {
+    "closed": 1
+   },
+   "brokenBodies": [],
+   "weldLog": []
+  },
+  {
+   "file": "nist_stc_09_asme1_ap242-e3.stp",
+   "sizeKB": 5164,
+   "declared": {
+    "solids": 1,
+    "closedShells": 1,
+    "openShells": 0,
+    "faces": 125,
+    "edges": 392,
+    "edgeValence": {
+     "2": 392
+    },
+    "closedByDeclaration": true,
+    "system": null
+   },
+   "bodies": 1,
+   "verts": 2380,
+   "tris": 4892,
+   "stepMs": 1988,
+   "engineMs": 1817,
+   "smoothMs": 9,
+   "weldMeta": {
+    "bodies": 1,
+    "watertight": 1,
+    "stillBroken": 0,
+    "edgesTopo": 392,
+    "edgesResidual": 0,
+    "edgesMismatch": 0,
+    "trisDropped": 0,
+    "legacyFallback": 1,
+    "facesFilled": 0,
+    "diagonalFlips": 0,
+    "enabled": true
+   },
+   "raw": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 2380,
+    "closedBodies": 1,
+    "closedBroken": 0,
+    "closedNaked": 0,
+    "closedOver": 0
+   },
+   "client": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 2380,
+    "closedBodies": 1,
+    "closedBroken": 0,
+    "closedNaked": 0,
+    "closedOver": 0
+   },
+   "brep": {
+    "closed": 1
+   },
+   "brokenBodies": [],
+   "weldLog": []
+  },
+  {
+   "file": "nist_ftc_09_asme1_ap242-e1.stp",
+   "sizeKB": 5967,
+   "declared": {
+    "solids": 1,
+    "closedShells": 1,
+    "openShells": 10,
+    "faces": 163,
+    "edges": 474,
+    "edgeValence": {
+     "1": 20,
+     "2": 454
+    },
+    "closedByDeclaration": false,
+    "system": null
+   },
+   "bodies": 6,
+   "verts": 2552,
+   "tris": 5054,
+   "stepMs": 1548,
+   "engineMs": 1443,
+   "smoothMs": 8,
+   "weldMeta": {
+    "bodies": 6,
+    "watertight": 1,
+    "stillBroken": 5,
+    "edgesTopo": 454,
+    "edgesResidual": 0,
+    "edgesMismatch": 0,
+    "trisDropped": 0,
+    "legacyFallback": 2,
+    "facesFilled": 0,
+    "diagonalFlips": 0,
+    "enabled": true
+   },
+   "raw": {
+    "bodiesBroken": 5,
+    "naked": 172,
+    "over": 0,
+    "weldedVerts": 2552,
+    "closedBodies": 1,
+    "closedBroken": 0,
+    "closedNaked": 0,
+    "closedOver": 0
+   },
+   "client": {
+    "bodiesBroken": 5,
+    "naked": 172,
+    "over": 0,
+    "weldedVerts": 2552,
+    "closedBodies": 1,
+    "closedBroken": 0,
+    "closedNaked": 0,
+    "closedOver": 0
+   },
+   "brep": {
+    "closed": 1,
+    "open": 5
+   },
+   "brokenBodies": [
+    {
+     "name": "Body",
+     "brep": "open",
+     "verts": 4,
+     "tris": 2,
+     "raw": {
+      "naked": 4,
+      "over": 0,
+      "weldedVerts": 4,
+      "manifold": false
+     },
+     "client": {
+      "naked": 4,
+      "over": 0,
+      "weldedVerts": 4,
+      "manifold": false
+     }
+    },
+    {
+     "name": "Body",
+     "brep": "open",
+     "verts": 42,
+     "tris": 40,
+     "raw": {
+      "naked": 42,
+      "over": 0,
+      "weldedVerts": 42,
+      "manifold": false
+     },
+     "client": {
+      "naked": 42,
+      "over": 0,
+      "weldedVerts": 42,
+      "manifold": false
+     }
+    },
+    {
+     "name": "Body",
+     "brep": "open",
+     "verts": 42,
+     "tris": 40,
+     "raw": {
+      "naked": 42,
+      "over": 0,
+      "weldedVerts": 42,
+      "manifold": false
+     },
+     "client": {
+      "naked": 42,
+      "over": 0,
+      "weldedVerts": 42,
+      "manifold": false
+     }
+    },
+    {
+     "name": "Body",
+     "brep": "open",
+     "verts": 42,
+     "tris": 40,
+     "raw": {
+      "naked": 42,
+      "over": 0,
+      "weldedVerts": 42,
+      "manifold": false
+     },
+     "client": {
+      "naked": 42,
+      "over": 0,
+      "weldedVerts": 42,
+      "manifold": false
+     }
+    },
+    {
+     "name": "Body",
+     "brep": "open",
+     "verts": 42,
+     "tris": 40,
+     "raw": {
+      "naked": 42,
+      "over": 0,
+      "weldedVerts": 42,
+      "manifold": false
+     },
+     "client": {
+      "naked": 42,
+      "over": 0,
+      "weldedVerts": 42,
+      "manifold": false
+     }
+    }
+   ],
+   "weldLog": [
+    "[WELD] \"Body\" verts 4->4, topo 0 => naked 4, over-valenced 0, bowtie 0",
+    "[03:36:21][MANIFOLD-RAW] \"Body\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 4 naked edge(s), 0 over-valenced edge(s), 2 triangle(s)",
+    "[WELD] \"Body\" verts 42->42, topo 0 => naked 42, over-valenced 0, bowtie 0",
+    "[03:36:21][MANIFOLD-RAW] \"Body\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 42 naked edge(s), 0 over-valenced edge(s), 40 triangle(s)",
+    "[WELD] \"Body\" verts 42->42, topo 0 => naked 42, over-valenced 0, bowtie 0",
+    "[03:36:21][MANIFOLD-RAW] \"Body\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 42 naked edge(s), 0 over-valenced edge(s), 40 triangle(s)",
+    "[WELD] \"Body\" verts 42->42, topo 0 => naked 42, over-valenced 0, bowtie 0",
+    "[03:36:21][MANIFOLD-RAW] \"Body\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 42 naked edge(s), 0 over-valenced edge(s), 40 triangle(s)",
+    "[WELD] \"Body\" verts 42->42, topo 0 => naked 42, over-valenced 0, bowtie 0",
+    "[03:36:21][MANIFOLD-RAW] \"Body\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 42 naked edge(s), 0 over-valenced edge(s), 40 triangle(s)"
+   ]
+  }
+ ],
+ "platform": "Ubuntu 24.04, OCCT 7.6.3 (apt), Manifold v3.5.3, g++ 13, 4 cores",
+ "source": "MEDUSA_SOURCE/nasscad_medusa.cpp, this branch",
+ "input": "NIST MBE PMI CTC/FTC/STC models, 33 STEP files (AP203 geometry only, AP203 with PMI, AP242 e1/e2/e3) — supplied by the user (NIST-PMI-STEP-Files.zip), not versioned"
+}

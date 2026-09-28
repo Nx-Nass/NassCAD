@@ -1,3 +1,3 @@
 | File | Declared (file) | Bodies | Non-manifold bodies (before → after) | …of which B-rep closed (after) | Naked edges | Over-shared edges | Vertices | /step time ms |
 |---|---|---:|---:|---:|---:|---:|---:|---:|
-| Rocky_House.stp | closed (143 solids) | 161 → 161 | 11 → 0 | 0 / 161 | 355 → 0 | 69 → 0 | 71529 → 70879 | 13560 → 12014 |
+| V0.2 Master Assembly RC2.step | closed (936 solids) | 3065 → 3065 | 33 → 1 | 1 / 3065 | 267 → 0 | 22 → 8 | 1067305 → 1045772 | 269225 → 263262 |

@@ -379,5 +379,6 @@
   }
  ],
  "platform": "Ubuntu 24.04, OCCT 7.6.3 (apt), Manifold v3.5.3, g++ 13, 4 cores",
- "source": "MEDUSA_SOURCE/nasscad_medusa.cpp @ d038996 (main)"
+ "source": "MEDUSA_SOURCE/nasscad_medusa.cpp @ d038996 (main)",
+ "input": "Stealthburner_CW2_Assembly.step (Autodesk Translation Framework) — supplied by the user, not versioned"
 }

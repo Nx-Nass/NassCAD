@@ -24,7 +24,7 @@
 //   node tests/medusa_step_harness.js [--engine <binaire>] [--port 8766]
 //        [--url http://127.0.0.1:8765] [--dir tests/step] [--only <motif>]
 //        [--label after] [--out res.json] [--md res.md] [--baseline before.json]
-//        [--no-client] [--strict] [--verbose]
+//        [--no-client] [--strict] [--no-regress] [--verbose] [--from run.json]
 //
 //   --engine   lance ce binaire sur --port (sinon : moteur deja demarre a --url)
 //   --baseline compare a un resultat precedent (JSON produit par --out) :
@@ -33,6 +33,11 @@
 //              NSTP `brep`) sort avec une arete nue ou sur-partagee (lecture
 //              client), ou si un fichier ne s'importe pas. Moteur plus ancien
 //              sans `brep` : critere du fichier entier (step-declare.js).
+//   --no-regress  avec --baseline : code de sortie 1 si un fichier recule
+//              (plus de corps casses, d'aretes nues ou sur-partagees, brut ou
+//              client ; nombre de corps different ; import en echec).
+//   --from     relit un resultat deja enregistre (JSON de --out) au lieu de
+//              lancer le moteur : tableau --md et controles seulement.
 // ═══════════════════════════════════════════════════════════════════════════
 'use strict';
 const fs = require('fs');
@@ -60,6 +65,8 @@ const MD = opt('--md', null);
 const BASELINE = opt('--baseline', null);
 const CLIENT = !flag('--no-client');
 const STRICT = flag('--strict');
+const NO_REGRESS = flag('--no-regress');
+const FROM = opt('--from', null);
 const VERBOSE = flag('--verbose');
 
 // ── Le controle de NASSCAD, extrait du .htm ───────────────────────────────
@@ -299,38 +306,52 @@ async function waitPing(ms) {
   }
 }
 
+// Passe complete : chaque fichier de --dir poste au moteur, puis controle.
+async function runAll() {
+  const ping = await waitPing(ENGINE ? 20000 : 3000);
+  console.log(`engine: ${JSON.stringify(ping)}`);
+  const files = fs.readdirSync(DIR).filter(f => /\.(stp|step)$/i.test(f))
+    .filter(f => !ONLY || f.includes(ONLY)).sort((a, b) => fs.statSync(path.join(DIR, a)).size - fs.statSync(path.join(DIR, b)).size);
+  const results = [];
+  for (const f of files) {
+    process.stdout.write(`${f} ... `);
+    let r;
+    try { r = await runFile(path.join(DIR, f)); }
+    catch (e) { r = { file: f, error: e.message, declared: brief(nasStepDeclared(fs.readFileSync(path.join(DIR, f)), { quiet: true })) }; }
+    results.push(r);
+    if (r.error) { console.log(`ERROR ${r.error}`); continue; }
+    const c = r.client || r.raw;
+    console.log(`${r.bodies} bodies, ${r.verts} verts, ${r.stepMs} ms | raw ${r.raw.bodiesBroken} broken `
+      + `(${r.raw.naked} naked, ${r.raw.over} over)` + (r.client ? ` | client ${c.bodiesBroken} broken (${c.naked} naked, ${c.over} over)` : '')
+      + (r.declared.closedByDeclaration ? ' | declared closed' : ' | NOT declared closed')
+      + (r.brep ? ` | B-rep ${Object.entries(r.brep).map(([k, v]) => `${v} ${k}`).join(', ')}` : ''));
+    if (VERBOSE) {
+      for (const b of r.brokenBodies.slice(0, 30))
+        console.log(`   ✗ ${b.name}${b.brep ? ` [${b.brep}]` : ''}: raw ${b.raw.naked}/${b.raw.over}` + (b.client ? `, client ${b.client.naked}/${b.client.over}` : '')
+          + ` (${b.verts} v, ${b.tris} t)`);
+      for (const l of r.weldLog.slice(0, 30)) console.log('   ' + l);
+    }
+  }
+  return { label: LABEL, engine: ping, date: new Date().toISOString(), results };
+}
+
 async function main() {
+  if (NO_REGRESS && !BASELINE) throw new Error('--no-regress needs --baseline <reference.json>');
   let child = null;
-  if (ENGINE) {
+  if (ENGINE && !FROM) {
     child = spawn(ENGINE, [String(PORT)], { stdio: ['ignore', 'ignore', 'ignore'] });
     child.on('exit', c => { if (c) console.error(`engine exited with code ${c}`); });
   }
   try {
-    const ping = await waitPing(ENGINE ? 20000 : 3000);
-    console.log(`engine: ${JSON.stringify(ping)}`);
-    const files = fs.readdirSync(DIR).filter(f => /\.(stp|step)$/i.test(f))
-      .filter(f => !ONLY || f.includes(ONLY)).sort((a, b) => fs.statSync(path.join(DIR, a)).size - fs.statSync(path.join(DIR, b)).size);
-    const results = [];
-    for (const f of files) {
-      process.stdout.write(`${f} ... `);
-      let r;
-      try { r = await runFile(path.join(DIR, f)); }
-      catch (e) { r = { file: f, error: e.message, declared: brief(nasStepDeclared(fs.readFileSync(path.join(DIR, f)), { quiet: true })) }; }
-      results.push(r);
-      if (r.error) { console.log(`ERROR ${r.error}`); continue; }
-      const c = r.client || r.raw;
-      console.log(`${r.bodies} bodies, ${r.verts} verts, ${r.stepMs} ms | raw ${r.raw.bodiesBroken} broken `
-        + `(${r.raw.naked} naked, ${r.raw.over} over)` + (r.client ? ` | client ${c.bodiesBroken} broken (${c.naked} naked, ${c.over} over)` : '')
-        + (r.declared.closedByDeclaration ? ' | declared closed' : ' | NOT declared closed')
-        + (r.brep ? ` | B-rep ${Object.entries(r.brep).map(([k, v]) => `${v} ${k}`).join(', ')}` : ''));
-      if (VERBOSE) {
-        for (const b of r.brokenBodies.slice(0, 30))
-          console.log(`   ✗ ${b.name}${b.brep ? ` [${b.brep}]` : ''}: raw ${b.raw.naked}/${b.raw.over}` + (b.client ? `, client ${b.client.naked}/${b.client.over}` : '')
-            + ` (${b.verts} v, ${b.tris} t)`);
-        for (const l of r.weldLog.slice(0, 30)) console.log('   ' + l);
-      }
-    }
-    const report = { label: LABEL, engine: ping, date: new Date().toISOString(), results };
+    let report;
+    if (FROM) {
+      // Resultat deja enregistre : ni moteur, ni fichiers — seulement le
+      // tableau et les controles (--strict, --no-regress) contre --baseline.
+      report = JSON.parse(fs.readFileSync(FROM, 'utf8'));
+      if (argv.includes('--label')) report.label = LABEL;
+      if (ONLY) report.results = report.results.filter(r => r.file.includes(ONLY));
+    } else report = await runAll();
+    const results = report.results;
     if (OUT) fs.writeFileSync(OUT, JSON.stringify(report, null, 1));
     const base = BASELINE ? JSON.parse(fs.readFileSync(BASELINE, 'utf8')) : null;
     const table = mdTable(results, base);
@@ -343,6 +364,30 @@ async function main() {
         return c.closedBroken !== null ? c.closedBroken > 0 : (r.declared.closedByDeclaration && c.bodiesBroken > 0);
       });
       if (bad.length) { console.log(`\nSTRICT: ${bad.length} file(s) with a body declared closed that NASSCAD flags non-manifold (or an import error)`); process.exitCode = 1; }
+    }
+    if (NO_REGRESS) {
+      // Cliquet : un fichier deja passe ne doit jamais reculer. Tout compteur
+      // qui AUGMENTE par rapport a la reference (corps casses, aretes nues,
+      // aretes sur-partagees, en lecture brute comme apres /smooth), un nombre
+      // de corps qui change, un import qui echoue : regression.
+      const byName = new Map(base.results.map(r => [r.file, r]));
+      const regress = [];
+      for (const r of results) {
+        const b = byName.get(r.file);
+        if (!b) continue;                                   // fichier nouveau : rien a comparer
+        if (r.error) { if (!b.error) regress.push(`${r.file}: import failed (${r.error.slice(0, 60)})`); continue; }
+        if (b.error) continue;
+        if (r.bodies !== b.bodies) regress.push(`${r.file}: bodies ${b.bodies} -> ${r.bodies}`);
+        for (const which of ['raw', 'client'])
+          for (const k of ['bodiesBroken', 'naked', 'over'])
+            if (r[which] && b[which] && r[which][k] > b[which][k]) regress.push(`${r.file}: ${which} ${k} ${b[which][k]} -> ${r[which][k]}`);
+      }
+      const missing = base.results.filter(b => !results.some(r => r.file === b.file)).length;
+      if (regress.length) {
+        console.log(`\nNO-REGRESS: ${regress.length} regression(s) against ${path.basename(BASELINE)}`);
+        for (const l of regress) console.log('   ' + l);
+        process.exitCode = 1;
+      } else console.log(`\nNO-REGRESS: ok against ${path.basename(BASELINE)}` + (missing ? ` (${missing} reference file(s) not run)` : ''));
     }
   } finally {
     if (child) child.kill();
