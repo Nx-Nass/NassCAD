@@ -2022,6 +2022,49 @@ static int extractIntoTopo(const TopoDS_Shape& shape, const std::string& name,
                     std::vector<LoopPt> lp;
                     if (buildLoop(W, fFwd, lp) > 0) loops.push_back(std::move(lp));
                 }
+                // [FIX 28/09] FILS QUI SE TOUCHENT. Rocky_House, corps « Body », face
+                // plane 767 : un trou relie au contour exterieur par une arete de
+                // 1,6 um que la face parcourt DEUX fois — une fois dans chaque fil,
+                // en sens opposes. C'est une fente de largeur nulle, pas un trou : la
+                // traiter comme tel fait echouer la decoupe stricte, et le mode force
+                // pose alors des diagonales qui se confondent des que la micro-arete
+                // est refermee (une arete a quatre triangles). On raccorde donc le
+                // trou au contour par cette arete commune, qui disparait de la face
+                // (ses deux cotes y sont interieurs) ; a defaut d'arete commune, par
+                // un sommet commun (pont de longueur nulle). Identite topologique
+                // (classe du DSU), jamais une distance.
+                {
+                    auto idp = [&](const LoopPt& p) { return dsu.find(p.g); };
+                    for (size_t hi = 1; hi < loops.size(); ) {
+                        std::vector<LoopPt>& X = loops[0];
+                        const std::vector<LoopPt>& Y = loops[hi];
+                        const size_t n = X.size(), m = Y.size();
+                        std::vector<LoopPt> merged;
+                        for (size_t i = 0; i < n && merged.empty(); ++i) {
+                            const uint32_t a = idp(X[i]), b = idp(X[(i + 1) % n]);
+                            for (size_t j = 0; j < m; ++j) {
+                                if (idp(Y[j]) != b || idp(Y[(j + 1) % m]) != a) continue;
+                                // X tourne pour finir sur a -> b : b, ..., a ; puis Y
+                                // apres a, jusqu'avant b — l'arete a-b disparait.
+                                for (size_t k = 1; k <= n; ++k) merged.push_back(X[(i + k) % n]);
+                                for (size_t k = 2; k < m; ++k) merged.push_back(Y[(j + k) % m]);
+                                break;
+                            }
+                        }
+                        for (size_t i = 0; i < n && merged.empty(); ++i)
+                            for (size_t j = 0; j < m; ++j) {
+                                if (idp(X[i]) != idp(Y[j])) continue;
+                                for (size_t k = 0; k < n; ++k) merged.push_back(X[(i + k) % n]);
+                                for (size_t k = 0; k < m; ++k) merged.push_back(Y[(j + k) % m]);
+                                break;
+                            }
+                        if (merged.size() >= 3) {
+                            X.swap(merged);
+                            loops.erase(loops.begin() + (std::ptrdiff_t)hi);
+                            hi = 1;   // le contour a grandi : il peut toucher un autre trou
+                        } else ++hi;
+                    }
+                }
                 // Sommets LOCAUX : un meme noeud global peut y figurer deux fois
                 // (les deux cotes d'une couture n'ont pas le meme UV).
                 std::vector<double> U, V;

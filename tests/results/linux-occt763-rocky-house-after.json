@@ -1,0 +1,82 @@
+{
+ "label": "after",
+ "engine": {
+  "engine": "nasscad-medusa-engine",
+  "version": "3.1",
+  "occt": "7.6.3",
+  "protocol": "NSTP1",
+  "csgtree": true,
+  "stepexport": true,
+  "stepload": true,
+  "ramMB": 16095,
+  "availMB": 15482,
+  "cores": 4,
+  "runawayThreads": 0,
+  "deviationPct": 0.5
+ },
+ "date": "2026-09-28T01:50:40.114Z",
+ "results": [
+  {
+   "file": "Rocky_House.stp",
+   "sizeKB": 17779,
+   "declared": {
+    "solids": 143,
+    "closedShells": 147,
+    "openShells": 0,
+    "faces": 7721,
+    "edges": 19721,
+    "edgeValence": {
+     "2": 19721
+    },
+    "closedByDeclaration": true,
+    "system": "DEX"
+   },
+   "bodies": 161,
+   "verts": 70879,
+   "tris": 141996,
+   "stepMs": 12686,
+   "engineMs": 12444,
+   "smoothMs": 62,
+   "weldMeta": {
+    "bodies": 161,
+    "watertight": 161,
+    "stillBroken": 0,
+    "edgesTopo": 21597,
+    "edgesResidual": 0,
+    "edgesMismatch": 0,
+    "trisDropped": 76,
+    "legacyFallback": 0,
+    "facesFilled": 29,
+    "diagonalFlips": 5,
+    "enabled": true
+   },
+   "raw": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 70879,
+    "closedBodies": 161,
+    "closedBroken": 0,
+    "closedNaked": 0,
+    "closedOver": 0
+   },
+   "client": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 70879,
+    "closedBodies": 161,
+    "closedBroken": 0,
+    "closedNaked": 0,
+    "closedOver": 0
+   },
+   "brep": {
+    "closed": 161
+   },
+   "brokenBodies": []
+  }
+ ],
+ "platform": "Ubuntu 24.04, OCCT 7.6.3 (apt), Manifold v3.5.3, g++ 13, 4 cores",
+ "source": "MEDUSA_SOURCE/nasscad_medusa.cpp, this branch",
+ "input": "Rocky_House.stp (18 MB, ST-Developer v16.7 / DEX, AP214) — supplied by the user, not versioned"
+}

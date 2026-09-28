@@ -20,7 +20,8 @@ itself runs.
 - `fetch_step_files.js` downloads the test sets. Each one is pinned to a commit
   and checked by SHA-256. The STEP files themselves are not versioned.
 - `results/` holds the reference runs (Ubuntu 24.04, OCCT 7.6.3 from apt), from
-  before and after the fix.
+  before and after the fix. `rocky-house` is a user-supplied file (not
+  versioned): drop `Rocky_House.stp` into a folder and pass it with `--dir`.
 
 ## Run
 
