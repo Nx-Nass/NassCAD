@@ -347,10 +347,15 @@ async function _stepCacheKey(buffer, params, hashHex){
   // [24/09, soir] NSTP7 → NSTP8 : les entrées portent désormais la référence
   // exacte de chaque corps (cf. _stepExactRef) ; une entrée sans elle ferait
   // exporter en maillage un fichier que MEDUSA sait réécrire à l'identique.
+  // [28/09] Producteur du maillage en DERNIER segment (cf. _meshRevTag) : la
+  // sonde doit donc avoir eu lieu — elle est mise en cache pour la session,
+  // et l'import l'aurait faite deux lignes plus loin de toute façon.
+  await _detectBooster();
   const salt = '|' + ((params && params.linearUnit) || 'mm')
              + '|d' + ((params && params.linearDeflection)  ?? _STEP_WASM_DEFLECTION)
              + '|a' + ((params && params.angularDeflection) ?? _STEP_WASM_ANGULAR)
-             + '|NSTP8';
+             + '|NSTP8'
+             + _meshRevTag();
   // [17/09] Le digest lui-même est calculé par _stepDigestHex (plus bas), et
   // l'appelant peut le passer déjà calculé : sur 235 Mo, hacher deux fois le
   // même buffer — une fois pour le cache de parsing, une fois pour le cache de
@@ -576,7 +581,8 @@ function _geoCacheKey(hashHex, repairApplied){
     + '|g' + (_STEP_CAP_GAPS ? 1 : 0)
     + '|r' + (repairApplied ? 1 : 0)
     + '|f' + (_STEP_LEAN_IMPORT ? 1 : 0)
-    + '|NSPG2';                               // [24/09, soir] 2 : les corps portent leur référence exacte
+    + '|NSPG2'                                // [24/09, soir] 2 : les corps portent leur référence exacte
+    + _meshRevTag();                          // [28/09] producteur du maillage — toujours en dernier
 }
 
 function _geoCacheGet(key){
@@ -755,6 +761,12 @@ function _geoCacheRestore(dec, file, groupId, groupLabel){
 const _BOOSTER_PORT = 8765;
 const _BOOSTER_URL  = `http://127.0.0.1:${_BOOSTER_PORT}`;
 let _boosterState = null; // null=pas encore testé, true/false=résultat mis en cache pour la session
+// [28/09] Révision du maillage de CE MEDUSA (/ping "meshRev" = date de sa
+// compilation). Elle entre dans les deux clés de cache (NSTP, NSPG) via
+// _meshRevTag : un moteur remplacé invalide tout seul ce que l'ancien avait
+// mis en cache. Vécu le 28/09 : Rocky_House rouvert en « STEP: 1s » depuis le
+// cache, avec les maillages de l'ancien moteur — ses correctifs, invisibles.
+let _boosterMeshRev = null;
 // [PERF 17/09] Horodatage de la dernière sonde NÉGATIVE. _repairBatch et
 // _smoothBatch remettaient _boosterState à null à CHAQUE appel (« il a pu
 // démarrer depuis »), donc re-sondaient le port à chaque lot : sur une session
@@ -768,6 +780,11 @@ function _boosterMaybeReprobe(){
     _boosterState = null;
 }
 
+// [28/09] Qui produit le maillage, dernier segment des clés de cache : la
+// révision de MEDUSA s'il répond ('v0' pour un MEDUSA qui ne la publie pas
+// encore), 'wasm' sinon — un résultat WASM ne ressert jamais à MEDUSA.
+function _meshRevTag(){ return '|m' + (_boosterState ? (_boosterMeshRev || 'v0') : 'wasm'); }
+
 async function _detectBooster(timeoutMs = 300){
   if(_boosterState !== null) return _boosterState;
   _boosterProbeTs = performance.now();
@@ -777,6 +794,10 @@ async function _detectBooster(timeoutMs = 300){
     const res = await fetch(`${_BOOSTER_URL}/ping`, { signal: ctrl.signal });
     clearTimeout(timer);
     _boosterState = res.ok;
+    if(res.ok){
+      try{ const j = await res.json(); _boosterMeshRev = (j && j.meshRev) ? String(j.meshRev) : null; }
+      catch(e){ _boosterMeshRev = null; }
+    }
   }catch(e){ _boosterState = false; }
   if(_boosterState) nasLog('OK', '⚡ NASSCAD Engine detected (native localhost companion) — native tessellation available');
   return _boosterState;
@@ -1783,7 +1804,9 @@ async function _readStepFileOffloaded(buffer, params, _perf, _hashHex){
     `, deflection ${(params && params.linearDeflection) ?? _STEP_WASM_DEFLECTION}` +
     ` (emval + structured clone included)`);
   if(_ck && _res && _res.success && _res.meshes && _res.meshes.length){
-    _stepCachePut(_ck, _res); // fire-and-forget : encode NSTP + store + LRU
+    // [28/09] Produit par le WASM, rangé comme tel — même si MEDUSA répondait
+    // quand la clé a été calculée (il a pu échouer sur ce fichier).
+    _stepCachePut(_ck.replace(/\|m[^|]*$/, '|mwasm'), _res); // fire-and-forget : encode NSTP + store + LRU
   }
   return _res;
 }
@@ -3505,6 +3528,7 @@ async function _importSTEPSingle(file, _impOpts){
     // le drapeau doit dire ce qui se PASSE, pas ce qui serait possible.
     const _repairApplied = !_STEP_LEAN_IMPORT
       && ((await _detectBooster()) || _STEP_REPAIR_CLIENT_POOL);
+    await _detectBooster();   // [28/09] _meshRevTag (dans la clé) en a besoin, mode léger compris
     const _gk = _geoCacheKey(_hashHex, _repairApplied);
     if(_gk){
       const _tG0 = performance.now();
@@ -4098,7 +4122,9 @@ async function _importSTEPSingle(file, _impOpts){
             const _ab = _nspgEncode(_cacheBodies, { gOx:_mGOx, gOy:_mGOy, gOz:_mGOz,
               nonManifoldCount:_mNm, path:_mPath, deflection:_STEP_WASM_DEFLECTION,
               styleAlpha:_mAlpha });
-            _geoCachePut(_gk, _ab, _lbl);
+            // [28/09] Producteur relu à l'écriture : si MEDUSA est tombé en
+            // cours d'import, ce maillage vient du WASM et est rangé comme tel.
+            _geoCachePut(_gk.replace(/\|m[^|]*$/, _meshRevTag()), _ab, _lbl);
             nasLog('DBG', `[cache-geo] ${_lbl} — ${(_ab.byteLength/1024/1024).toFixed(1)} MB encoded `
               + `in ${Math.round(performance.now()-_t0e)} ms — the next import of this file `
               + `will be near-instant`);

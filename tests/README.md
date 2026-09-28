@@ -63,6 +63,16 @@ The `www.steptools.com/docs/stpfiles/bigassy/` samples were not reachable from
 the environment the reference runs came from. Drop them into `tests/step/` to
 include them.
 
+## Union colours (`/csg?colors=1`)
+
+A union keeps the colour of each element, face by face (multicolour STEP
+bodies included). Two tests, each against a running engine they start:
+
+```sh
+node tests/medusa_csg_colors_test.js         --engine <binary>   # engine: keys, volume, plain /csg unchanged
+node tests/nasscad_csg_colors_client_test.js --engine <binary>   # NASSCAD's own functions, extracted from the .htm
+```
+
 ## Rule for engine changes
 
 A change to the weld is kept only if, on every set above, `--no-regress`

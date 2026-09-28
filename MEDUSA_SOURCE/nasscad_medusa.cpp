@@ -13295,6 +13295,20 @@ int main(int argc, char** argv) {
                             // [24/09, soir] GET /stepheld + POST /stepload : le
                             // client recharge un B-Rep que MEDUSA ne tient plus.
                             ",\"stepload\":true"
+                            // [FIX 28/09] POST /csg?colors=1 : chaque triangle du
+                            // resultat revient avec la couleur de l'operande (et de
+                            // la face) d'ou il vient. Meme logique de flag.
+                            ",\"csgcolors\":true"
+                            // [FIX 28/09] REVISION DU MAILLAGE PRODUIT. Le client
+                            // l'integre a ses cles de cache (NSTP, NSPG) : sans
+                            // elle, un fichier deja ouvert ressortait du cache
+                            // navigateur apres un changement de moteur, et les
+                            // correctifs du nouveau MEDUSA restaient invisibles
+                            // (Rocky_House, 28/09 : « STEP: 1s », maillages de
+                            // l'ancien moteur). La date de compilation : toute
+                            // reconstruction invalide les resultats de la
+                            // precedente — rien a penser a incrementer a la main.
+                            ",\"meshRev\":\"" __DATE__ " " __TIME__ "\""
                             ",\"ramMB\":" + std::to_string(ramMB) +
                             ",\"availMB\":" + std::to_string(availMB) +
                             ",\"cores\":" + std::to_string(cores) +
@@ -13414,6 +13428,25 @@ int main(int argc, char** argv) {
                 // deja couvertes par les checks "truncated operand" plus bas.
                 if ((size_t)operandCount > b.size() / 8) throw std::runtime_error("/csg: operandCount inconsistent with request size (corrupt header)");
 
+                // [FIX 28/09] ?colors=1 — COULEURS CONSERVEES. Nass : « quand on
+                // fait union de tous les elements d'un STEP, on garde la couleur
+                // de chaque element ». Chaque operande est alors suivi de ses
+                // plages de couleur [u32 n][n x (u32 premierTri, u32 nbTri,
+                // u32 cle)] ; la cle (indice dans la palette du client) devient
+                // la 4e propriete de chaque sommet. Manifold transporte les
+                // proprietes a travers les booleens — c'est ce pour quoi elles
+                // existent (UV, couleurs) — et chaque triangle du resultat
+                // revient avec la cle du triangle d'origine qui le porte, face
+                // par face, y compris dans un element deja multicolore. Reponse :
+                // "triKeys":true et un bloc u32 par triangle apres les indices.
+                // Sans ?colors=1, le chemin est celui d'avant, octet pour octet.
+                const bool withColors = [&]{
+                    const auto q = req.path.find('?');
+                    return q != std::string::npos && req.path.find("colors=1", q) != std::string::npos;
+                }();
+                std::vector<std::vector<float>> propBuffers;       // meme duree de vie que operandBuffers
+                std::vector<std::vector<uint32_t>> propIdxBuffers;
+
                 ManifoldArena manMem; // buffers des operandes — liberes ET detruits a la sortie du bloc
                 std::vector<ManifoldManifold*> operands;
                 // Stockage a duree de requete pour les meshes soudes (voir weldMeshForCSG) : les
@@ -13448,6 +13481,20 @@ int main(int argc, char** argv) {
                     if (off + vBytes + iBytes > b.size()) throw std::runtime_error("/csg: truncated operand");
                     const float* vp = reinterpret_cast<const float*>(b.data() + off); off += vBytes;
                     const uint32_t* ip = reinterpret_cast<const uint32_t*>(b.data() + off); off += iBytes;
+                    // [FIX 28/09] Cle de couleur de chaque triangle (?colors=1). Un
+                    // triangle qu'aucune plage ne couvre prend celle de la premiere.
+                    std::vector<uint32_t> triKey;
+                    if (withColors) {
+                        const uint32_t nR = rdU32(off);
+                        if ((size_t)nR > (b.size() - off) / 12) throw std::runtime_error("/csg: color range count inconsistent with request size");
+                        triKey.assign(nTri, 0);
+                        for (uint32_t r = 0; r < nR; ++r) {
+                            const uint32_t s = rdU32(off), c = rdU32(off), k = rdU32(off);
+                            if (r == 0) std::fill(triKey.begin(), triKey.end(), k);
+                            const uint64_t e = std::min<uint64_t>((uint64_t)s + c, nTri);
+                            for (uint64_t t = s; t < e; ++t) triKey[(size_t)t] = k;
+                        }
+                    }
 
                     // Copie modifiable pour la soudure (le buffer requete original reste const).
                     std::vector<float> wPos(vp, vp + nVert * 3);
@@ -13467,9 +13514,54 @@ int main(int argc, char** argv) {
                     auto& fPos = operandBuffers.back();
                     auto& fIdx = operandIdxBuffers.back();
 
-                    ManifoldMeshGL* mg = manMem.make(manifold_meshgl_size(), [&](void* p){
-                        return manifold_meshgl(p, fPos.data(), fPos.size()/3, 3,
-                                               fIdx.data(), fIdx.size()/3); });
+                    ManifoldMeshGL* mg;
+                    if (!withColors) {
+                        mg = manMem.make(manifold_meshgl_size(), [&](void* p){
+                            return manifold_meshgl(p, fPos.data(), fPos.size()/3, 3,
+                                                   fIdx.data(), fIdx.size()/3); });
+                    } else {
+                        // [FIX 28/09] Un sommet soude dont les triangles n'ont pas
+                        // tous la meme cle devient un sommet de PROPRIETE par cle
+                        // (memes x, y, z) ; mergeFromVert/mergeToVert disent a
+                        // Manifold que c'est le meme sommet topologique — la
+                        // variete est exactement celle de la soudure, les couleurs
+                        // n'y creent ni trou ni couture.
+                        const size_t nV = fPos.size() / 3, nT = fIdx.size() / 3;
+                        propBuffers.emplace_back();
+                        propIdxBuffers.emplace_back();
+                        std::vector<float>& props = propBuffers.back();
+                        std::vector<uint32_t>& ptri = propIdxBuffers.back();
+                        props.reserve(nV * 4);
+                        ptri.resize(nT * 3);
+                        std::unordered_map<uint64_t, uint32_t> pvOf;
+                        pvOf.reserve(nV * 2);
+                        std::vector<uint32_t> firstPv(nV, UINT32_MAX), mFrom, mTo;
+                        for (size_t t = 0; t < nT; ++t)
+                            for (int k = 0; k < 3; ++k) {
+                                const uint32_t v = fIdx[t*3+k];
+                                if (v >= nV) throw std::runtime_error("/csg: vertex index out of range");
+                                const uint64_t h = ((uint64_t)v << 32) | triKey[t];
+                                auto it = pvOf.find(h);
+                                uint32_t pv;
+                                if (it != pvOf.end()) pv = it->second;
+                                else {
+                                    pv = (uint32_t)(props.size() / 4);
+                                    props.insert(props.end(), { fPos[(size_t)v*3], fPos[(size_t)v*3+1],
+                                                                fPos[(size_t)v*3+2], (float)triKey[t] });
+                                    pvOf.emplace(h, pv);
+                                    if (firstPv[v] == UINT32_MAX) firstPv[v] = pv;
+                                    else { mFrom.push_back(pv); mTo.push_back(firstPv[v]); }
+                                }
+                                ptri[t*3+k] = pv;
+                            }
+                        ManifoldMeshGLOptions opt{};
+                        opt.merge_from_vert = mFrom.empty() ? nullptr : mFrom.data();
+                        opt.merge_to_vert = mTo.empty() ? nullptr : mTo.data();
+                        opt.merge_verts_length = mFrom.size();
+                        mg = manMem.make(manifold_meshgl_size(), [&](void* p){
+                            return manifold_meshgl_w_options(p, props.data(), props.size()/4, 4,
+                                                             ptri.data(), nT, &opt); });
+                    }
                     ManifoldManifold* m = manMem.make(manifold_manifold_size(), [&](void* p){
                         return manifold_of_meshgl(p, mg); });
                     if (manifold_status(m) != MANIFOLD_NO_ERROR) {
@@ -13632,15 +13724,34 @@ int main(int argc, char** argv) {
                 ManifoldMeshGL* outMesh = resultMem.make(manifold_meshgl_size(), [&](void* p){
                     return manifold_get_meshgl(p, result); });
                 size_t outNV = manifold_meshgl_num_vert(outMesh), outNT = manifold_meshgl_num_tri(outMesh);
+                // [FIX 28/09] Avec ?colors=1 chaque sommet porte 4 proprietes : le
+                // tampon suit le nombre REEL de proprietes (3 sinon, comme avant).
+                const size_t outNP = std::max<size_t>(3, manifold_meshgl_num_prop(outMesh));
 
-                float*    vertBuf = manifold_meshgl_vert_properties(resultMem.raw(sizeof(float) * outNV * 3), outMesh);
+                float*    vertBuf = manifold_meshgl_vert_properties(resultMem.raw(sizeof(float) * outNV * outNP), outMesh);
                 uint32_t* triBuf  = manifold_meshgl_tri_verts(resultMem.raw(sizeof(uint32_t) * outNT * 3), outMesh);
+                std::vector<uint32_t> outKey;
+                if (outNP > 3) {
+                    // Cle de chaque triangle, lue sur son premier coin (un sommet cree
+                    // par la booleenne interpole les proprietes de SON triangle
+                    // d'origine, dont les trois coins ont la meme cle), puis positions
+                    // compactees sur place au pas de 3 — la destination ne rattrape
+                    // jamais une source pas encore lue.
+                    if (withColors) {
+                        outKey.resize(outNT);
+                        for (size_t t = 0; t < outNT; ++t)
+                            outKey[t] = (uint32_t)std::lround(vertBuf[(size_t)triBuf[t*3] * outNP + 3]);
+                    }
+                    for (size_t v = 0; v < outNV; ++v)
+                        for (int k = 0; k < 3; ++k) vertBuf[v*3+k] = vertBuf[v*outNP+k];
+                }
 
                 auto t1 = Clock::now();
                 double csgMs = ms(t0, t1);
 
                 std::ostringstream json;
                 json << "{\"success\":true,\"vertCount\":" << outNV << ",\"triCount\":" << outNT
+                     << (withColors ? ",\"triKeys\":true" : "")
                      << ",\"volume\":" << volume << ",\"surfaceArea\":" << surfaceArea
                      << ",\"manifold\":" << (status == 0 ? "true" : "false")
                      << ",\"isEmpty\":" << (isEmpty ? "true" : "false") << ",\"genus\":" << genus
@@ -13690,6 +13801,7 @@ int main(int argc, char** argv) {
                     writeChunk(fd, (const uint8_t*)js.data(), jl);
                     if (vB) writeChunk(fd, (const uint8_t*)vertBuf, vB);
                     if (iB) writeChunk(fd, (const uint8_t*)triBuf, iB);
+                    if (!outKey.empty()) writeChunk(fd, (const uint8_t*)outKey.data(), outKey.size() * 4);
                     endChunks(fd);
                 }
                 std::cerr << cInfo() << "[POST /csg]" << cReset() << " " << operandCount << " operand(s), op=" << opType
