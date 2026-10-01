@@ -231,9 +231,20 @@ globalThis._stepExportConfig = globalThis._stepExportConfig || {
   apVersion:       'AP242'    // AP203 | AP214 | AP242
 };
 // Front-door : expSTEP ouvre la modale d'options ; _expSTEPRun fait l'export.
-function openStepExportModal(){
+// [V4.7.1 — 29/09] Export sélectif : la liste des corps (menu Export ▸ Include)
+// est retenue le temps que la modale reste ouverte, puis passée à _expSTEPRun.
+// null = toute la scène (appel historique sans argument).
+let _stepExportList = null;
+function _stepListNow(){
+  if(!_stepExportList) return undefined;
+  return typeof _ioExportList === 'function' ? _ioExportList(_stepExportList) : _stepExportList;
+}
+function openStepExportModal(list){
+  _stepExportList = Array.isArray(list) ? list.slice() : null;
   const m=document.getElementById('step-export-modal');
-  if(!m){ _expSTEPRun(); return; } // garde-fou si la modale est absente
+  if(!m){ const l=_stepListNow(); _stepExportList=null; _expSTEPRun(l); return; } // garde-fou si la modale est absente
+  const sc=document.getElementById('step-export-scope');
+  if(sc && typeof _expScopeText === 'function') sc.textContent=_expScopeText(_stepExportList);
   const cfg=globalThis._stepExportConfig||{};
   // Fusion mode
   const r=m.querySelector('input[name="stepFusionMode"][value="'+(cfg.fusionMode||'ROBUST')+'"]');
@@ -247,6 +258,7 @@ function openStepExportModal(){
   m.style.display='flex';
 }
 function closeStepExportModal(){ const m=document.getElementById('step-export-modal'); if(m) m.style.display='none'; }
+function cancelStepExportModal(){ _stepExportList=null; closeStepExportModal(); }
 // [FIX] doStepExport est async : showSaveFilePicker est appelé ICI, immédiatement
 // après le clic sur "Exporter" — on est encore dans la fenêtre user-gesture (~1s).
 // Le calcul B-Rep dans _expSTEPRun peut durer plusieurs secondes ; si on appelait
@@ -260,12 +272,16 @@ async function doStepExport(){
   const sEl=document.getElementById('step-show-stats');
   const apVer=avSel?avSel.value:'AP242';
   const _apInfo=STEPApVersions[apVer]||STEPApVersions.AP242;
+  // Périmètre figé AU CLIC : la liste ne peut plus changer pendant le picker.
+  const list=_stepListNow();
+  const baseName=(typeof _ioExportBaseName==='function') ? _ioExportBaseName(list) : 'model';
+  if(list && !list.length){ nasLog('WARN','STEP export: the selected bodies are no longer in the scene'); cancelStepExportModal(); return; }
   // ── Picker pendant le geste ──────────────────────────────────────────────
   let fileHandle=null;
   if(typeof showSaveFilePicker==='function'){
     try{
       fileHandle=await showSaveFilePicker({
-        suggestedName:'model_'+_apInfo.name+'.stp',
+        suggestedName:baseName+'_'+_apInfo.name+'.stp',
         types:[{
           description:'STEP File (.stp / .step)',
           accept:{'model/step':['.stp','.step'],'application/step':['.stp','.step']}
@@ -285,10 +301,11 @@ async function doStepExport(){
     logStats:        sEl?sEl.checked:true,
     apVersion:       apVer
   };
+  _stepExportList=null;
   closeStepExportModal();
-  _expSTEPRun(undefined,{fileHandle});
+  _expSTEPRun(list,{fileHandle, baseName});
 }
-function expSTEP(){ openStepExportModal(); }
+function expSTEP(list){ openStepExportModal(list); }
 
 // ── Géométrie monde d'un corps ────────────────────────────────────────────
 // Même cuisson que les exports STL/OBJ/3MF/GLB (nasscad-io.js) : matrice monde,
@@ -447,7 +464,7 @@ async function _stepMedusaProbe(){
   const ctrl = new AbortController();
   const timer = setTimeout(() => ctrl.abort(), 2000);
   try{
-    const res = await fetch(`${_STEP_MEDUSA_URL()}/ping`, { signal: ctrl.signal });
+    const res = await fetch(`${_STEP_MEDUSA_URL()}/ping`, (typeof _nasPingInit === 'function') ? _nasPingInit(ctrl.signal) : { signal: ctrl.signal });
     if(!res.ok) return {ok:false, why:'MEDUSA answered HTTP '+res.status};
     const j = await res.json();
     if(j && j.stepexport === true) return {ok:true, stepload: j.stepload === true};
@@ -768,7 +785,7 @@ async function _stepOpenSink(opts, P){
         for(const c of parts) s += dec.decode(c, {stream:true});
         return s + dec.decode();
       }
-      _nasDownload('model_'+P.apInfo.name+'.stp', new Blob(parts, {type:'application/step'}), 'application/step');
+      _nasDownload((opts.baseName||'model')+'_'+P.apInfo.name+'.stp', new Blob(parts, {type:'application/step'}), 'application/step');
       return undefined;
     },
     abort: async () => { parts.length = 0; }
@@ -1445,7 +1462,7 @@ function _expSTEPRunJS(objList, opts){
         ' — '+kb+' KB — '+Math.round(performance.now()-t0)+'ms');
     // Nom suggéré : inclut le protocole pour aider l'utilisateur à identifier
     // le fichier dans son dossier (model_AP242.stp, model_AP214.stp…).
-    const _suggestedName='model_'+_apInfo.name+'.stp';
+    const _suggestedName=(opts.baseName||'model')+'_'+_apInfo.name+'.stp';
     // opts.fileHandle : handle obtenu avant le calcul (dans doStepExport, pendant le clic).
     // null si API absente ou erreur picker → _nasStepSave replie sur _nasDownload.
     await _nasStepSave(_suggestedName, new Blob([step],{type:'application/step'}), opts.fileHandle||null);

@@ -206,6 +206,16 @@ async function _expIFCRun(objList, opts){
     let id = 0; const L = [];
     const E = () => { id++; return id; };
     const W = (s) => { L.push('#'+id+' = '+s+';'); };
+    // [FIX 28/09 — audit] Position EXPLICITE des profils paramétrés. IFC4 la
+    // déclare optionnelle, mais web-ifc (0.0.77 comme 0.0.78) attend une référence
+    // et journalise « GetRefArgument() … expected REF » sur chaque profil à '$'.
+    // Un seul IfcAxis2Placement2D à l'origine, partagé par tous les profils.
+    // pos2D() écrit des entités : l'appeler AVANT le E() de l'entité qui la cite.
+    let _iPos2D = 0;
+    const pos2D = () => {
+      if(!_iPos2D){ const ip = E(); W("IFCCARTESIANPOINT((0.,0.))"); _iPos2D = E(); W("IFCAXIS2PLACEMENT2D(#"+ip+",$)"); }
+      return _iPos2D;
+    };
     const R = a => '('+a.map(i=>'#'+i).join(',')+')';
     const G = () => "'"+_ifcGuid()+"'";
 
@@ -323,16 +333,16 @@ async function _expIFCRun(objList, opts){
         };
         let item = 0, repType = 'SweptSolid';
         if(par.kind === 'rect'){
-          const ip = E(); W("IFCRECTANGLEPROFILEDEF(.AREA.,$,$,"+f(par.W)+","+f(par.D)+")");
+          const p2 = pos2D(); const ip = E(); W("IFCRECTANGLEPROFILEDEF(.AREA.,$,#"+p2+","+f(par.W)+","+f(par.D)+")");
           item = extrude(ip);
         } else if(par.kind === 'rectHollow'){
-          const ip = E(); W("IFCRECTANGLEHOLLOWPROFILEDEF(.AREA.,$,$,"+f(par.W)+","+f(par.D)+","+f(par.wall)+",$,$)");
+          const p2 = pos2D(); const ip = E(); W("IFCRECTANGLEHOLLOWPROFILEDEF(.AREA.,$,#"+p2+","+f(par.W)+","+f(par.D)+","+f(par.wall)+",$,$)");
           item = extrude(ip);
         } else if(par.kind === 'circ'){
-          const ip = E(); W("IFCCIRCLEPROFILEDEF(.AREA.,$,$,"+f(par.r)+")");
+          const p2 = pos2D(); const ip = E(); W("IFCCIRCLEPROFILEDEF(.AREA.,$,#"+p2+","+f(par.r)+")");
           item = extrude(ip);
         } else if(par.kind === 'circHollow'){
-          const ip = E(); W("IFCCIRCLEHOLLOWPROFILEDEF(.AREA.,$,$,"+f(par.r)+","+f(par.wall)+")");
+          const p2 = pos2D(); const ip = E(); W("IFCCIRCLEHOLLOWPROFILEDEF(.AREA.,$,#"+p2+","+f(par.r)+","+f(par.wall)+")");
           item = extrude(ip);
         } else if(par.kind === 'cone'){
           // LE CONE PASSE PAR UNE REVOLUTION, PAS PAR IfcRightCircularCone.
@@ -381,6 +391,8 @@ async function _expIFCRun(objList, opts){
           // IfcBooleanResult and IfcPrimitive3D shall also be allowed for
           // compatibility with previous releases ».
           const isp = place(par.ctr);          // origine = CENTRE de la sphere
+          // [28/09 — audit] web-ifc 0.0.77 plaçait cette sphère deux fois et la retournait ;
+          // corrigé en 0.0.78 (embarquée) — la relecture NASSCAD est de nouveau exacte.
           item = E(); W("IFCSPHERE(#"+isp+","+f(par.r)+")");
           repType = 'CSG';
         }
@@ -584,7 +596,7 @@ async function _expIFCRun(objList, opts){
         (nParam?' — '+nParam+' exact':'')+' — '+nFaceSets+' face sets — '+
         nTris+' tris — '+styleCache.size+' styles'+(nClosed?' — '+nClosed+' closed':'')+(nOpen?' / '+nOpen+' open':'')+
         ' — '+kb+' KB — '+Math.round(performance.now()-t0)+'ms');
-    await _nasStepSave('model.ifc', new Blob([ifc],{type:'application/x-step'}), opts.fileHandle||null);
+    await _nasStepSave((opts.baseName||'model')+'.ifc', new Blob([ifc],{type:'application/x-step'}), opts.fileHandle||null);
   } finally {
     if(!opts.silent) hideSpinner();
   }
@@ -592,13 +604,17 @@ async function _expIFCRun(objList, opts){
 
 // Front-door. Le picker DOIT etre ouvert pendant le clic (fenetre user-gesture
 // ~1 s), donc avant le calcul — meme contrainte que doStepExport().
-async function expIFC(){
-  if(!objs.length){ nasLog('WARN','Export IFC: nothing in the scene'); return; }
+// [V4.7.1 — 29/09] list (optionnel) : corps a ecrire (export selectif, menu
+// Export > Include). Absent = toute la scene, comme avant.
+async function expIFC(list){
+  const src = Array.isArray(list) ? (typeof _ioExportList === 'function' ? _ioExportList(list) : list) : null;
+  if(!(src || objs).length){ nasLog('WARN','Export IFC: nothing to export'); return; }
+  const baseName = (src && typeof _ioExportBaseName === 'function') ? _ioExportBaseName(src) : 'model';
   let fh = null;
   if(window.showSaveFilePicker && !(window.electronAPI && window.electronAPI.isElectron)){
     try{
       fh = await window.showSaveFilePicker({
-        suggestedName: 'model.ifc',
+        suggestedName: baseName + '.ifc',
         types: [{description:'IFC (BIM)', accept:{'application/x-step':['.ifc']}}]
       });
     }catch(e){
@@ -606,6 +622,6 @@ async function expIFC(){
       fh = null;                                     // API refusee : repli download
     }
   }
-  try { return await _expIFCRun(null, {fileHandle: fh}); }
+  try { return await _expIFCRun(src, {fileHandle: fh, baseName}); }
   catch(e){ nasLog('ERROR', e && e.message ? e.message : String(e)); }
 }

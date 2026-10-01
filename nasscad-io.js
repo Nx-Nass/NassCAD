@@ -357,10 +357,24 @@ async function _watertightGate(items, label){
   // ── Réparation : auto-union Manifold, exactement le chemin déjà emprunté à
   //    l'import STEP. Serveur absent ⇒ _manifoldRepair retombe silencieusement
   //    sur la géo d'origine, et le re-contrôle ci-dessous le constatera.
-  let repaired = 0; const stillOpen = [];
+  // [01/10] Deux défauts distincts, longtemps comptés ensemble comme « open edges » :
+  //   naked = arête portée par 1 seule face → vrai trou, _capStepGaps sait le boucher ;
+  //   over  = arête portée par 4+ faces → corps FERMÉ, mais deux parties s'y touchent
+  //           sans être fusionnées (faces à quelques µm l'une de l'autre). Rien à
+  //           boucher : aucun bouche-trou ni auto-union ne peut les fusionner, et la
+  //           pièce s'imprime normalement (le slicer fusionne couche par couche).
+  // Cas réel (bouchon.json, 01/10) : 0 naked, 134 over — on annonçait 134 trous et
+  // on conseillait une Union, qui ne change rien.
+  const edgeStr = g => {
+    const n = g._nakedEdges||0, o = g._overEdges||0, p = [];
+    if(n) p.push(n + ' open edge(s)');
+    if(o) p.push(o + ' edge(s) shared by 4+ faces');
+    return p.join(' + ') || '0 defect';
+  };
+  let repaired = 0; const stillOpen = [], touching = [];
   for(let k = 0; k < bad.length; k++){
     const it = items[bad[k]];
-    const before = (it.geo._nakedEdges||0) + (it.geo._overEdges||0);
+    const before = edgeStr(it.geo);
     showSpinner(label, `Sealing ${k+1}/${bad.length} — ${it.name}…`, (k+1)/bad.length);
     // [02/09 — corrigé] C'est _capStepGaps qui répare, PAS _manifoldRepair.
     // Cette dernière passe le corps par une auto-union Manifold — or Manifold
@@ -374,32 +388,43 @@ async function _watertightGate(items, label){
     // Effet de bord appréciable : le contrôle ne dépend plus du moteur MEDUSA,
     // il répare hors ligne.
     let g2 = it.geo;
-    try { _capStepGaps(g2); } catch(e){ /* best-effort, jamais bloquant */ }
+    if(g2._nakedEdges) try { _capStepGaps(g2); } catch(e){ /* best-effort, jamais bloquant */ }
     let ok2 = false;
     try { ok2 = _weldAndCheckManifold(g2, 4); } catch(e){ ok2 = false; }
     it.geo = g2;
     if(ok2){
       repaired++;
-      nasLog('OK', `  ${it.name}: ${before} open edge(s) -> sealed`);
+      nasLog('OK', `  ${it.name}: ${before} -> sealed`);
+    } else if(!g2._nakedEdges){
+      touching.push(it.name);
+      nasLog('WARN', `  ${it.name}: closed, but ${edgeStr(g2)} — parts touching without being fused`);
     } else {
       stillOpen.push(it.name);
-      nasLog('WARN', `  ${it.name}: ${before} -> ${(g2._nakedEdges||0)+(g2._overEdges||0)} open edge(s), NOT sealed`);
+      nasLog('WARN', `  ${it.name}: ${before} -> ${edgeStr(g2)}, NOT sealed`);
     }
   }
 
-  const line = `${label} — watertight: ${items.length} checked, ${bad.length} open, ${repaired} sealed`
+  const line = `${label} — watertight: ${items.length} checked, ${bad.length} with defects, ${repaired} sealed`
+             + (touching.length ? `, ${touching.length} closed with touching parts` : '')
              + (stillOpen.length ? `, ${stillOpen.length} STILL OPEN` : '')
              + ` (${Math.round(performance.now()-t0)}ms)`;
-  nasLog(stillOpen.length ? 'WARN' : 'OK', line);
-  if(typeof _csgLog === 'function') _csgLog((stillOpen.length ? '⚠ ' : '✓ ') + line);
+  const warn = stillOpen.length || touching.length;
+  nasLog(warn ? 'WARN' : 'OK', line);
+  if(typeof _csgLog === 'function') _csgLog((warn ? '⚠ ' : '✓ ') + line);
 
   if(stillOpen.length){
     _nasAlert('⚠ ' + stillOpen.length + ' body(ies) could not be sealed and may print badly:\n  '
       + stillOpen.slice(0,6).join('\n  ') + (stillOpen.length > 6 ? '\n  …' : '')
       + '\n\nExported anyway. Most slicers close small gaps per layer, so it may still'
       + '\nprint. If it does not: run a Union on the body, which rebuilds its topology.');
+  } else if(touching.length){
+    _nasAlert('⚠ ' + touching.length + ' body(ies) are closed, but contain parts that touch without being fused:\n  '
+      + touching.slice(0,6).join('\n  ') + (touching.length > 6 ? '\n  …' : '')
+      + '\n\nExported anyway: it prints normally (slicers fuse each layer); some slicers'
+      + '\nflag these edges as non-manifold. Cause: two faces a few microns apart in the'
+      + '\nmodel. To fuse them, make the parts overlap slightly (0.01 mm) and run the Union again.');
   }
-  return {checked: items.length, open: bad.length, repaired, stillOpen};
+  return {checked: items.length, open: bad.length, repaired, stillOpen, touching};
 }
 
 // ── ZIP (OPC) — écriture ────────────────────────────────────────────────────
@@ -463,7 +488,35 @@ async function _ioZipWrite(entries){
   return new Blob([...out, ...cd, new Uint8Array(eo.buffer)], {type: 'model/3mf'});
 }
 
-async function exp3MF(){
+// ══════════════════════════════════════════════════════════════════════════
+// [V4.7.1 — 29/09] EXPORT SÉLECTIF — périmètre d'export commun à tous les formats
+// ══════════════════════════════════════════════════════════════════════════
+// Chaque exporteur reçoit désormais, en option, la LISTE des corps à écrire
+// (menu Export ▸ Include : « All design » ou « Selection »). Sans liste (appel
+// historique, NassScript, Electron), rien ne change : toute la scène.
+//   · une liste est recoupée avec objs : un corps supprimé entre-temps n'est
+//     jamais écrit, et l'ordre reste celui de la scène (ordre des fichiers
+//     stable, quel que soit l'ordre des clics de sélection) ;
+//   · un argument qui n'est pas un tableau (Event d'un onclick, booléen) est
+//     ignoré — il ne peut pas vider l'export par accident.
+function _ioExportList(list){
+  if(!Array.isArray(list)) return objs;
+  const want = new Set(list);
+  return objs.filter(o => want.has(o));
+}
+// Nom de fichier proposé : celui du corps quand UN SEUL corps est exporté en
+// mode sélection (« Gear.stl »), sinon le nom historique. Caractères interdits
+// sous Windows / macOS remplacés, longueur bornée.
+function _ioExportBaseName(list, fallback){
+  fallback = fallback || 'model';
+  if(!Array.isArray(list) || list.length !== 1) return fallback;
+  const n = String((list[0] && list[0].name) || '')
+    .replace(/[\\/:*?"<>|\u0000-\u001f]+/g, '_').replace(/\s+/g, ' ').trim()
+    .replace(/^[.\s]+|[.\s]+$/g, '').slice(0, 80);
+  return n || fallback;
+}
+
+async function exp3MF(list){
   // [NEW V4.7.2] Choix du dossier — showSaveFilePicker DOIT être appelé ICI,
   // avant tout traitement, pour rester dans la fenêtre de user-gesture
   // (même contrainte que step-export.js/doStepExport). Cancel → pas d'export.
@@ -471,7 +524,7 @@ async function exp3MF(){
   let _fh=null;
   if(typeof showSaveFilePicker==='function' && !(window.electronAPI&&window.electronAPI.isElectron)){
     try{
-      _fh=await showSaveFilePicker({suggestedName:'model.3mf',types:[{description:'3MF File',accept:{'model/3mf':['.3mf']}}]});
+      _fh=await showSaveFilePicker({suggestedName:_ioExportBaseName(list)+'.3mf',types:[{description:'3MF File',accept:{'model/3mf':['.3mf']}}]});
     }catch(e){
       if(e.name==='AbortError') return;
       nasLog('WARN','showSaveFilePicker: '+e.message+' — browser fallback');
@@ -490,7 +543,7 @@ async function exp3MF(){
     // ── Passe 1 : géométries HD en repère monde + Z mini (pose sur le plateau)
     const geoList = [];
     let bzMin = Infinity;
-    for(const so of objs){
+    for(const so of _ioExportList(list)){
       const gHD = _ioBakeGeo(so);
       const a = gHD.attributes.position.array;
       for(let i = 1; i < a.length; i += 3) if(a[i] < bzMin) bzMin = a[i];   // Y three = Z 3MF
@@ -588,7 +641,7 @@ async function exp3MF(){
       {name: '_rels/.rels',         parts: [enc.encode(rels)]},
       {name: '3D/3dmodel.model',    parts},
     ]);
-    await _nasSaveWithHandle('model.3mf', blob, 'model/3mf', _fh);
+    await _nasSaveWithHandle(_ioExportBaseName(list)+'.3mf', blob, 'model/3mf', _fh);
     nasLog('OK',`Export 3MF — ${nObj} object(s), ${nTri.toLocaleString('en-US')} triangles, ${colList.length} colour(s) — ${(blob.size/1024).toFixed(1)} KB — ${Math.round(performance.now()-t0)}ms`);
   }catch(err){
     nasLog('ERROR','Export 3MF: '+err.message);
@@ -1030,11 +1083,11 @@ function _ioPbrOf(o, hex){
   return {hex, metal, rough: +Math.sqrt(Math.sqrt(2/(n + 2))).toFixed(3), opacity: +opacity.toFixed(3)};
 }
 
-async function expGLB(useDraco){
+async function expGLB(useDraco, list){
   let _fh=null;
   if(typeof showSaveFilePicker==='function' && !(window.electronAPI&&window.electronAPI.isElectron)){
     try{
-      _fh=await showSaveFilePicker({suggestedName:'model.glb',types:[{description:'GLB File',accept:{'model/gltf-binary':['.glb']}}]});
+      _fh=await showSaveFilePicker({suggestedName:_ioExportBaseName(list)+'.glb',types:[{description:'GLB File',accept:{'model/gltf-binary':['.glb']}}]});
     }catch(e){
       if(e.name==='AbortError') return;
       nasLog('WARN','showSaveFilePicker: '+e.message+' — browser fallback');
@@ -1058,7 +1111,7 @@ async function expGLB(useDraco){
   // lissage conservé). Sinon → soupe à normales de face (comportement
   // d'origine, le seul correct sans normales fiables).
   const meshesIn = [];
-  for(const so of objs){
+  for(const so of _ioExportList(list)){
     let g = _ioBakeGeo(so);
     const P = g.attributes.position;
     if(!P || !P.count){ g.dispose(); continue; }
@@ -1221,7 +1274,7 @@ async function expGLB(useDraco){
   binHead.setUint32(0, binLen, true); binHead.setUint32(4, 0x004E4942, true);
   const blob = new Blob([head.buffer, jBuf, binHead.buffer, ...chunks], {type: 'model/gltf-binary'});
 
-  await _nasSaveWithHandle('model.glb', blob, 'model/gltf-binary', _fh);
+  await _nasSaveWithHandle(_ioExportBaseName(list)+'.glb', blob, 'model/gltf-binary', _fh);
   nasLog('OK',`Export GLB${useDraco?' (Draco)':''} — ${meshesIn.length} object(s), ${nPrim} primitive(s), ${materials.length} material(s), metres — ${(totalLen/1024).toFixed(1)} KB — ${Math.round(performance.now()-t0)}ms`);
   } catch(err){
     nasLog('ERROR','Export GLB: '+err.message);
@@ -1715,11 +1768,11 @@ async function importGLB(file, opts){
 // l'original — il suivait directement expSTLascii() sans séparation
 // visuelle. Frontière conservée par fidélité, plus significative ici
 // puisque tout est déjà regroupé dans ce même fichier.
-async function expOBJ(){
+async function expOBJ(list){
   let _fh=null;
   if(typeof showSaveFilePicker==='function' && !(window.electronAPI&&window.electronAPI.isElectron)){
     try{
-      _fh=await showSaveFilePicker({suggestedName:'model.obj',types:[{description:'OBJ File',accept:{'model/obj':['.obj']}}]});
+      _fh=await showSaveFilePicker({suggestedName:_ioExportBaseName(list)+'.obj',types:[{description:'OBJ File',accept:{'model/obj':['.obj']}}]});
     }catch(e){
       if(e.name==='AbortError') return;
       nasLog('WARN','showSaveFilePicker: '+e.message+' — browser fallback');
@@ -1742,7 +1795,8 @@ async function expOBJ(){
   // [PERF V4.7.1] Arrays + join('') at the end instead of += (O(n) instead of O(n²)).
   const vLines=[],vnLines=[],fLines=[]; let vo=0,no=0; // vo=vertex offset, no=normal offset
   scene.updateMatrixWorld(true);
-  for(const so of objs){
+  const _src=_ioExportList(list);
+  for(const so of _src){
     const g=_ioWeldExact(_ioBakeGeo(so));
     const p=g.attributes.position,ix=g.index;
     // [AUDIT 17/09] Couleur de l'objet en couleur de sommet (« v x y z r g b »,
@@ -1774,8 +1828,8 @@ async function expOBJ(){
   }
   const o='# NASSCAD V'+NASSCAD_VERSION+'\n# Units: millimetres. Axis: Z-up (compatible Cura/Blender/FreeCAD)\n# Vertex colours: v x y z r g b\n'
           +vLines.join('')+vnLines.join('')+fLines.join('');
-  await _nasSaveWithHandle('model.obj', new Blob([o],{type:'model/obj'}), 'model/obj', _fh);
-  nasLog('OK',`Export OBJ — ${objs.length} object(s), ${no.toLocaleString('en-US')} triangles — ${(o.length/1024).toFixed(1)} KB`);
+  await _nasSaveWithHandle(_ioExportBaseName(list)+'.obj', new Blob([o],{type:'model/obj'}), 'model/obj', _fh);
+  nasLog('OK',`Export OBJ — ${_src.length} object(s), ${no.toLocaleString('en-US')} triangles — ${(o.length/1024).toFixed(1)} KB`);
   }catch(err){
     nasLog('ERROR','Export OBJ: '+err.message);
     _nasAlert('⚠ Export OBJ failed:\n'+err.message);
@@ -1901,11 +1955,11 @@ async function parseOBJ(txt, opts){
 // léger, lu sans perte. Maillage indexé conservé quand il l'est (les sommets
 // n'étaient jamais partagés), couleur de l'objet en couleur de sommet, et
 // couleur par face (red/green/blue) dès qu'un corps multi-couleur est exporté.
-async function expPLY(){
+async function expPLY(list){
   let _fh=null;
   if(typeof showSaveFilePicker==='function' && !(window.electronAPI&&window.electronAPI.isElectron)){
     try{
-      _fh=await showSaveFilePicker({suggestedName:'model.ply',types:[{description:'PLY File',accept:{'application/octet-stream':['.ply']}}]});
+      _fh=await showSaveFilePicker({suggestedName:_ioExportBaseName(list)+'.ply',types:[{description:'PLY File',accept:{'application/octet-stream':['.ply']}}]});
     }catch(e){
       if(e.name==='AbortError') return;
       nasLog('WARN','showSaveFilePicker: '+e.message+' — browser fallback');
@@ -1917,7 +1971,7 @@ async function expPLY(){
     scene.updateMatrixWorld(true);
     const items = [];
     let nV = 0, nF = 0, anyPal = false;
-    for(const so of objs){
+    for(const so of _ioExportList(list)){
       let g = _ioBakeGeo(so);
       const P = g.attributes.position, N = g.attributes.normal;
       if(!P || !P.count){ g.dispose(); continue; }
@@ -1971,7 +2025,7 @@ async function expPLY(){
       g.dispose();
     }
     const blob = new Blob([hdr, body], {type:'application/octet-stream'});
-    await _nasSaveWithHandle('model.ply', blob, 'application/octet-stream', _fh);
+    await _nasSaveWithHandle(_ioExportBaseName(list)+'.ply', blob, 'application/octet-stream', _fh);
     nasLog('OK',`Export PLY — ${items.length} object(s) — ${nV.toLocaleString('en-US')} vertices, ${nF.toLocaleString('en-US')} faces — ${(blob.size/1024).toFixed(1)} KB`);
   }catch(err){
     nasLog('ERROR','Export PLY: '+err.message);
@@ -2211,12 +2265,12 @@ async function parsePLY(buf, opts){
 // ── io-stl-export.js ──────────────────────────────────────────────────────
 // ── Export STL binaire — 4-5× plus compact que l'ASCII, natif pour les slicers
 // Structure : 80B header · 4B uint32 triCount · N×50B (12B normal + 3×12B verts + 2B attr)
-async function expSTL(){
+async function expSTL(list){
   const t0=performance.now();
   let _fh=null;
   if(typeof showSaveFilePicker==='function' && !(window.electronAPI&&window.electronAPI.isElectron)){
     try{
-      _fh=await showSaveFilePicker({suggestedName:'model.stl',types:[{description:'STL File (Binary)',accept:{'model/stl':['.stl']}}]});
+      _fh=await showSaveFilePicker({suggestedName:_ioExportBaseName(list)+'.stl',types:[{description:'STL File (Binary)',accept:{'model/stl':['.stl']}}]});
     }catch(e){
       if(e.name==='AbortError') return;
       nasLog('WARN','showSaveFilePicker: '+e.message+' — browser fallback');
@@ -2229,11 +2283,12 @@ async function expSTL(){
   const cv=(x,y,z)=>({x,y:-z,z:y}); // Three Y-up → Z-up
   scene.updateMatrixWorld(true);
   // Passe 1 : construire + transformer toutes les géos HD
-  const geos=objs.map(so=>_ioBakeGeo(so));
+  const _src=_ioExportList(list);
+  const geos=_src.map(so=>_ioBakeGeo(so));
 
   // [02/09] Étanchéité — cf. _watertightGate.
   {
-    const _wt = geos.map((g,i) => ({geo: g, name: (objs[i] && objs[i].name) || ('body '+(i+1))}));
+    const _wt = geos.map((g,i) => ({geo: g, name: (_src[i] && _src[i].name) || ('body '+(i+1))}));
     await _watertightGate(_wt, 'Export STL');
     for(let i=0;i<geos.length;i++) geos[i] = _wt[i].geo;   // la réparation rend une NOUVELLE géo
     showSpinner('Export STL','Writing…');
@@ -2272,7 +2327,7 @@ async function expSTL(){
     g.dispose();
   });
   nasLog('OK',`Binary STL export — ${triCount} triangles — ${(buf.byteLength/1024).toFixed(0)} KB — ${Math.round(performance.now()-t0)}ms`);
-  await _nasSaveWithHandle('model.stl',new Blob([buf],{type:'model/stl'}),'model/stl', _fh);
+  await _nasSaveWithHandle(_ioExportBaseName(list)+'.stl',new Blob([buf],{type:'model/stl'}),'model/stl', _fh);
   }catch(err){
     nasLog('ERROR','Export STL: '+err.message);
     _nasAlert('⚠ Export STL failed:\n'+err.message);
@@ -2285,11 +2340,11 @@ async function expSTL(){
 // [AUDIT 17/09] Même contrôle d'étanchéité que le binaire (le format ne change
 // rien à l'impression), rAF attendu + try/finally, et plus de `s +=` sur une
 // chaîne de plusieurs centaines de Mo (O(n²)) : tableau + join.
-async function expSTLascii(){
+async function expSTLascii(list){
   let _fh=null;
   if(typeof showSaveFilePicker==='function' && !(window.electronAPI&&window.electronAPI.isElectron)){
     try{
-      _fh=await showSaveFilePicker({suggestedName:'model-ascii.stl',types:[{description:'STL File (ASCII)',accept:{'model/stl':['.stl']}}]});
+      _fh=await showSaveFilePicker({suggestedName:_ioExportBaseName(list)+'-ascii.stl',types:[{description:'STL File (ASCII)',accept:{'model/stl':['.stl']}}]});
     }catch(e){
       if(e.name==='AbortError') return;
       nasLog('WARN','showSaveFilePicker: '+e.message+' — browser fallback');
@@ -2301,9 +2356,10 @@ async function expSTLascii(){
   const cv=(x,y,z)=>({x:x,y:-z,z:y});
   const faceNormal=(pa,pb,pc)=>{const ax=pb.x-pa.x,ay=pb.y-pa.y,az=pb.z-pa.z,bx=pc.x-pa.x,by=pc.y-pa.y,bz=pc.z-pa.z;const nx=ay*bz-az*by,ny=az*bx-ax*bz,nz=ax*by-ay*bx;const l=Math.sqrt(nx*nx+ny*ny+nz*nz)||1;return (nx/l).toFixed(6)+' '+(ny/l).toFixed(6)+' '+(nz/l).toFixed(6);};
   scene.updateMatrixWorld(true);
-  const geos=objs.map(so=>_ioBakeGeo(so));
+  const _src=_ioExportList(list);
+  const geos=_src.map(so=>_ioBakeGeo(so));
   {
-    const _wt = geos.map((g,i) => ({geo: g, name: (objs[i] && objs[i].name) || ('body '+(i+1))}));
+    const _wt = geos.map((g,i) => ({geo: g, name: (_src[i] && _src[i].name) || ('body '+(i+1))}));
     await _watertightGate(_wt, 'Export STL (ASCII)');
     for(let i=0;i<geos.length;i++) geos[i] = _wt[i].geo;
     showSpinner('Export STL (ASCII)','Writing…');
@@ -2324,7 +2380,7 @@ async function expSTLascii(){
   }
   L.push('endsolid m\n');
   const blob=new Blob(L,{type:'model/stl'});
-  await _nasSaveWithHandle('model-ascii.stl',blob,'model/stl', _fh);
+  await _nasSaveWithHandle(_ioExportBaseName(list)+'-ascii.stl',blob,'model/stl', _fh);
   nasLog('OK',`ASCII STL export — ${nT} triangles — ${(blob.size/1024).toFixed(0)} KB`);
   }catch(err){
     nasLog('ERROR','Export STL (ASCII): '+err.message);
