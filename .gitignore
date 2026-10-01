@@ -2,17 +2,32 @@
 .DS_Store
 Thumbs.db
 desktop.ini
- 
+
+# ─── Gros binaires OCCT ───────────────────────────────────────────────────────
+# opencascade.wasm.data.js (88 Mo) et opencascade.wasm.wasm (66 Mo) sont
+# VERSIONNES depuis le 23/09/2026 : clone -> ca tourne, sans etape de release.
+
 # ─── Dossiers privés NassLab ──────────────────────────────────────────────────
 _NASSCAD_REFERENCE/
 NASSCAD_4.X.X_MEDUSA_OCCT/
- 
+
 # ─── Bundler & scripts locaux ─────────────────────────────────────────────────
 build.py
 bundle.py
 *.local.py
- 
+
 # ─── Éditeur ──────────────────────────────────────────────────────────────────
 .vscode/
 *.swp
 *.swo
+
+# ─── Notes et outils locaux (pas destinés au repo) ────────────────────────────
+_PUSH_GITHUB.md
+_RELEASE_NOTES_v4.7.0.md
+_PUBLISH_RELEASE.ps1
+NASSCAD_github_update.bat
+_BACKUPS*/
+
+# ─── Divers ───────────────────────────────────────────────────────────────────
+*.log
+node_modules/

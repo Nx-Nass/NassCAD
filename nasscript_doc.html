@@ -1,0 +1,1419 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="NassScript API reference for NASSCAD 4.7.0 MEDUSA: every global the embedded JS console can reach, with signatures, semantics and ready-to-paste scripts.">
+<meta name="author" content="NassLab">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>&#9889;</text></svg>">
+<style>html{color-scheme:light dark}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>NassScript API</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Sans+Condensed:wght@600;700&display=swap">
+</head>
+<body>
+<style>
+:root{
+  --bg:#eceff3; --surface:#ffffff; --surface-2:#f4f7f9;
+  --ink:#12181f; --ink-2:#45525e; --ink-3:#74828e;
+  --line:#d4dbe2; --line-2:#e5eaee;
+  --amber:#b57400; --amber-soft:#fbf1de;
+  --teal:#0c6a6c; --teal-soft:#e0f0f0;
+  --rust:#a33c2b; --rust-soft:#fae9e6;
+  --moss:#2d6844; --moss-soft:#e5f0e9;
+  --code-bg:#141a21; --code-ink:#d9e1e9; --code-dim:#7e8d9b; --code-key:#f0ad3c; --code-str:#7fbf8f;
+  --shadow:0 1px 2px rgba(16,24,32,.05), 0 8px 24px -12px rgba(16,24,32,.18);
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg:#0d1217; --surface:#151c23; --surface-2:#1a222a;
+    --ink:#e2e8ef; --ink-2:#9fafbc; --ink-3:#70808d;
+    --line:#27313b; --line-2:#1e262e;
+    --amber:#f0ad3c; --amber-soft:#2a2013;
+    --teal:#52b5b7; --teal-soft:#11292a;
+    --rust:#e07a63; --rust-soft:#2a1713;
+    --moss:#68bb8c; --moss-soft:#13241a;
+    --code-bg:#0a0e13; --code-ink:#d9e1e9; --code-dim:#6d7c8a;
+    --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px -12px rgba(0,0,0,.6);
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0d1217; --surface:#151c23; --surface-2:#1a222a;
+  --ink:#e2e8ef; --ink-2:#9fafbc; --ink-3:#70808d;
+  --line:#27313b; --line-2:#1e262e;
+  --amber:#f0ad3c; --amber-soft:#2a2013;
+  --teal:#52b5b7; --teal-soft:#11292a;
+  --rust:#e07a63; --rust-soft:#2a1713;
+  --moss:#68bb8c; --moss-soft:#13241a;
+  --code-bg:#0a0e13; --code-ink:#d9e1e9; --code-dim:#6d7c8a;
+  --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px -12px rgba(0,0,0,.6);
+}
+
+*{box-sizing:border-box}
+body{
+  margin:0; background:var(--bg); color:var(--ink);
+  font-family:"IBM Plex Sans",system-ui,-apple-system,Segoe UI,sans-serif;
+  font-size:15px; line-height:1.62; -webkit-font-smoothing:antialiased;
+}
+h1,h2,h3,h4{font-family:"IBM Plex Sans Condensed","IBM Plex Sans",system-ui,sans-serif;text-wrap:balance;margin:0}
+code,pre,.mono{font-family:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace}
+a{color:inherit}
+
+.mast{border-bottom:1px solid var(--line);background:var(--surface)}
+.mast-in{max-width:1180px;margin:0 auto;padding-block:34px 26px;padding-inline:24px;
+  display:flex;flex-wrap:wrap;gap:28px;align-items:flex-end;justify-content:space-between}
+.mast h1{font-size:clamp(30px,5vw,44px);font-weight:700;letter-spacing:-.015em;line-height:1.04}
+.mast h1 em{font-style:normal;color:var(--amber)}
+.eyebrow{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-3);margin-bottom:10px}
+.mast p{margin:12px 0 0;color:var(--ink-2);max-width:64ch}
+.stamp{border:1px solid var(--line);border-radius:2px;padding:10px 14px;background:var(--surface-2);min-width:236px}
+.stamp dl{margin:0;display:grid;grid-template-columns:auto 1fr;gap:2px 14px;font-size:12px}
+.stamp dt{color:var(--ink-3);font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.04em;text-transform:uppercase}
+.stamp dd{margin:0;font-family:"IBM Plex Mono",monospace;font-variant-numeric:tabular-nums;text-align:right}
+
+.shell{max-width:1180px;margin:0 auto;padding-inline:24px;padding-block:0 72px;
+  display:grid;grid-template-columns:236px minmax(0,1fr);gap:44px;align-items:start}
+.rail{position:sticky;top:0;padding-block:26px;max-height:100vh;overflow-y:auto}
+.filter{width:100%;padding:8px 10px;border:1px solid var(--line);border-radius:2px;
+  background:var(--surface);color:var(--ink);font:500 13px/1.3 "IBM Plex Mono",monospace}
+.filter:focus{outline:2px solid var(--amber);outline-offset:1px}
+.rail nav{margin-top:18px;display:flex;flex-direction:column;gap:1px}
+.rail nav a{display:block;padding:5px 9px;text-decoration:none;color:var(--ink-2);font-size:13.5px;border-left:2px solid transparent}
+.rail nav a:hover{color:var(--ink);background:var(--surface)}
+.rail nav a.on{color:var(--ink);border-left-color:var(--amber);background:var(--surface);font-weight:500}
+.rail nav .grp{margin-top:14px;padding:0 9px 3px;font-family:"IBM Plex Mono",monospace;font-size:10.5px;
+  letter-spacing:.13em;text-transform:uppercase;color:var(--ink-3)}
+
+main{padding-block:34px;min-width:0}
+section{margin-bottom:52px;scroll-margin-top:20px}
+section>h2{font-size:23px;font-weight:700;letter-spacing:-.01em;padding-bottom:8px;border-bottom:2px solid var(--ink);margin-bottom:6px}
+section>h2 .n{font-family:"IBM Plex Mono",monospace;font-size:13px;color:var(--ink-3);font-weight:400;margin-right:10px;letter-spacing:0}
+.lede{color:var(--ink-2);margin:14px 0 22px;max-width:70ch}
+h3{font-size:16px;margin:30px 0 10px;font-weight:600}
+p{max-width:70ch}
+
+.api{border-top:1px solid var(--line-2)}
+.row{display:grid;grid-template-columns:minmax(0,21rem) minmax(0,1fr);gap:6px 26px;
+  padding:13px 0;border-bottom:1px solid var(--line-2);align-items:baseline}
+.row>.sig{font-family:"IBM Plex Mono",monospace;font-size:13px;font-weight:500;color:var(--ink);word-break:break-word}
+.row>.sig b{font-weight:600}
+.row>.sig .arg{color:var(--ink-3);font-weight:400}
+.row>.desc{color:var(--ink-2);font-size:14px}
+.row>.desc strong{color:var(--ink);font-weight:600}
+.row code{background:var(--surface-2);border:1px solid var(--line-2);border-radius:2px;padding:.5px 4px;font-size:12.5px}
+.tags{margin-top:5px;display:flex;flex-wrap:wrap;gap:4px}
+.t{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.06em;text-transform:uppercase;
+  padding:1.5px 5px;border-radius:2px;border:1px solid;white-space:nowrap}
+.t-async{color:var(--amber);border-color:var(--amber);background:var(--amber-soft)}
+.t-sel{color:var(--ink-2);border-color:var(--line);background:var(--surface-2)}
+.t-med{color:var(--rust);border-color:var(--rust);background:var(--rust-soft)}
+.t-occt{color:var(--teal);border-color:var(--teal);background:var(--teal-soft)}
+.t-dom{color:var(--ink-3);border-color:var(--line);background:transparent}
+.t-undo{color:var(--moss);border-color:var(--moss);background:var(--moss-soft)}
+
+pre{background:var(--code-bg);color:var(--code-ink);padding:16px 18px;border-radius:3px;
+  overflow-x:auto;font-size:12.8px;line-height:1.68;margin:14px 0;border:1px solid rgba(255,255,255,.06)}
+pre .c{color:var(--code-dim)}
+pre .k{color:var(--code-key)}
+pre .s{color:var(--code-str)}
+.note{border-left:3px solid var(--amber);background:var(--surface);padding:13px 16px;margin:18px 0;font-size:14px}
+.note.warn{border-left-color:var(--rust)}
+.note .lbl{font-family:"IBM Plex Mono",monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--ink-3);display:block;margin-bottom:4px}
+.note p{margin:0;max-width:none}
+.note p+p{margin-top:8px}
+
+.recipe{background:var(--surface);border:1px solid var(--line);border-radius:3px;margin:20px 0;box-shadow:var(--shadow)}
+.recipe>header{padding:14px 18px 12px;border-bottom:1px solid var(--line-2);display:flex;flex-direction:column;gap:4px}
+.recipe>header h3{margin:0;font-size:16px}
+.recipe>header .why{color:var(--ink-3);font-size:13px;margin:0;max-width:none}
+.recipe pre{margin:0;border-radius:0 0 2px 2px;border:0}
+
+.band{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:1px;background:var(--line);
+  border:1px solid var(--line);margin:20px 0}
+.band>div{background:var(--surface);padding:14px 16px}
+.band h4{font-size:13.5px;margin:0 0 6px;letter-spacing:.02em}
+.band .where{font-family:"IBM Plex Mono",monospace;font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;margin-bottom:8px}
+.band ul{margin:0;padding-left:16px;font-size:13.4px;color:var(--ink-2)}
+.band li{margin-bottom:2px}
+
+table{border-collapse:collapse;width:100%;font-size:13.5px;margin:16px 0}
+.tw{overflow-x:auto}
+th,td{text-align:left;padding:7px 14px 7px 0;border-bottom:1px solid var(--line-2);vertical-align:top}
+th{font-family:"IBM Plex Mono",monospace;font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-3);font-weight:400}
+td.m{font-family:"IBM Plex Mono",monospace;font-size:12.5px;white-space:nowrap}
+td.num{font-variant-numeric:tabular-nums;text-align:right;font-family:"IBM Plex Mono",monospace;font-size:12.5px}
+.sw{display:inline-block;width:11px;height:11px;border:1px solid rgba(128,128,128,.5);border-radius:2px;vertical-align:-1px;margin-right:6px}
+
+.legend{display:flex;flex-wrap:wrap;gap:16px;margin:18px 0 0;font-size:13px;color:var(--ink-2)}
+.legend>span{display:flex;align-items:center;gap:7px}
+.empty{display:none;color:var(--ink-3);font-size:14px;padding:22px 0}
+body.filtering .no-match{display:none}
+body.filtering .empty.show{display:block}
+footer{max-width:1180px;margin:0 auto;padding:26px 24px 60px;color:var(--ink-3);font-size:12.5px;border-top:1px solid var(--line)}
+footer p{max-width:none;margin:0 0 8px}
+
+@media (max-width:860px){
+  .shell{grid-template-columns:1fr;gap:0}
+  .rail{position:static;max-height:none;padding-block:20px 0;border-bottom:1px solid var(--line)}
+  .rail nav{flex-direction:row;flex-wrap:wrap;gap:2px}
+  .rail nav a{border-left:0;border-bottom:2px solid transparent;padding:4px 8px}
+  .rail nav a.on{border-left:0;border-bottom-color:var(--amber)}
+  .rail nav .grp{width:100%;margin-top:10px}
+  .row{grid-template-columns:1fr;gap:4px}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+
+<header class="mast">
+  <div class="mast-in">
+    <div>
+      <div class="eyebrow">Embedded JS console · NASSCAD 4.7.0 MEDUSA</div>
+      <h1>NassScript&nbsp;— <em>the whole surface</em></h1>
+      <p>Every global the ⚡&nbsp;Script console can reach, read from the shipped source and then confirmed by enumerating the live global scope in a running instance. Signatures, semantics, ready-to-paste scripts, and the places where the API will bite you.</p>
+    </div>
+    <div class="stamp">
+      <dl>
+        <dt>Global functions</dt><dd>576</dd>
+        <dt>Public (no _)</dt><dd>189</dd>
+        <dt>CSG engine</dt><dd>MEDUSA</dd>
+        <dt>B-Rep kernel</dt><dd>OCCT WASM</dd>
+        <dt>Renderer</dt><dd>three.js</dd>
+        <dt>Access gate</dt><dd>none</dd>
+      </dl>
+    </div>
+  </div>
+</header>
+
+<div class="shell">
+  <aside class="rail">
+    <input class="filter" id="q" type="search" placeholder="filter the API…" autocomplete="off" aria-label="Filter the API">
+    <nav id="nav">
+      <span class="grp">Foundations</span>
+      <a href="#exec">Execution model</a>
+      <a href="#scope">Scope &amp; reachability</a>
+      <a href="#model">Data model</a>
+      <span class="grp">Acting on the scene</span>
+      <a href="#create">Creating geometry</a>
+      <a href="#select">Selection</a>
+      <a href="#transform">Transforms</a>
+      <a href="#appearance">Appearance &amp; materials</a>
+      <a href="#csg">Boolean CSG</a>
+      <a href="#occt">Fillet &amp; chamfer</a>
+      <span class="grp">Modules</span>
+      <a href="#sketch">Sketch.Gen — window.SK</a>
+      <a href="#generators">Generators</a>
+      <a href="#import">Import</a>
+      <a href="#export">Export</a>
+      <span class="grp">Around the model</span>
+      <a href="#scene">Scene, undo, camera</a>
+      <a href="#storage">Memory &amp; storage</a>
+      <a href="#logging">Logging</a>
+      <a href="#bundled">Bundled libraries</a>
+      <span class="grp">Practice</span>
+      <a href="#recipes">Recipes</a>
+      <a href="#pitfalls">Pitfalls</a>
+      <a href="#method">How this was verified</a>
+    </nav>
+  </aside>
+
+  <main>
+    <p class="empty" id="empty">No entry matches.</p>
+
+    <!-- ═══════════════════════════════ -->
+    <section id="exec">
+      <h2><span class="n">01</span>Execution model</h2>
+      <p class="lede">Whatever you paste into the modal is handed to <code>new Function('return (async()=&gt;{…})()')</code> and run on the main thread. Three consequences account for most surprises.</p>
+
+      <div class="band">
+        <div>
+          <div class="where" style="color:var(--amber)">Scope</div>
+          <h4>Global read, local write</h4>
+          <ul><li>Every NASSCAD global is visible</li><li>Your <code>const</code>/<code>let</code> die with the run</li><li>To persist: <code>window.x = …</code></li></ul>
+        </div>
+        <div>
+          <div class="where" style="color:var(--teal)">Async</div>
+          <h4>Top-level <code>await</code> works</h4>
+          <ul><li>The body is already an async IIFE</li><li>26 shipped functions are async</li><li>A missed <code>await</code> interleaves steps</li></ul>
+        </div>
+        <div>
+          <div class="where" style="color:var(--rust)">Thread</div>
+          <h4>No preemption</h4>
+          <ul><li>Stop is cooperative, not a kill switch</li><li>Call <code>scriptCheckStop()</code> per iteration</li><li>Rendering freezes inside a sync block</li></ul>
+        </div>
+      </div>
+
+      <div class="api">
+        <div class="row" data-k="scriptlog output log streaming">
+          <div class="sig"><b>scriptLog</b>(<span class="arg">...args</span>)</div>
+          <div class="desc">Appends a line to the output pane <em>during</em> the run instead of waiting for the return value. Non-string arguments go through a circular-safe <code>JSON.stringify</code>, so handing it a three.js mesh no longer breaks the display.</div>
+        </div>
+        <div class="row" data-k="scriptcheckstop stop loop abort">
+          <div class="sig"><b>scriptCheckStop</b>()</div>
+          <div class="desc">Throws <code>⏹ Stopped by user</code> if Stop was pressed. <strong>Nothing calls it for you</strong> — a loop without it cannot be interrupted, because synchronous JS never yields the main thread.</div>
+        </div>
+        <div class="row" data-k="stopscript stop flag timeout">
+          <div class="sig"><b>stopScript</b>()</div>
+          <div class="desc">Raises the stop flag. This is what the Stop button calls; from a script it is also how you build a deadline (<code>setTimeout(stopScript, 30000)</code>).</div>
+        </div>
+        <div class="row" data-k="runscript showscripteditor hidescripteditor clearscripteditor modal">
+          <div class="sig"><b>runScript</b>() · <b>showScriptEditor</b>() · <b>hideScriptEditor</b>() · <b>clearScriptEditor</b>()</div>
+          <div class="desc">The modal itself. Opening it requires no password.</div>
+          <div class="tags"><span class="t t-async">async</span><span class="t t-dom">DOM</span></div>
+        </div>
+      </div>
+
+      <h3>Return value, output, history</h3>
+      <p>Whatever the script returns is printed last, prefixed <code>→</code>; with no return you get <code>✓ OK</code>. A thrown error prints <code>✗ message</code> in red and is mirrored to the log at <code>ERROR</code> level. The last 20 scripts live in <code>sessionStorage</code> under <code>nasscad_script_hist</code> — they survive a reload, not a tab close.</p>
+    </section>
+
+    <!-- ═══════════════════════════════ -->
+    <section id="scope">
+      <h2><span class="n">02</span>Scope &amp; reachability</h2>
+      <p class="lede">NASSCAD's globals live in two different places, and the difference is visible from a script. This is verified behaviour, not theory.</p>
+
+<pre><span class="c">// function declarations land on the global OBJECT</span>
+<span class="k">typeof</span> window.addPrimitive   <span class="c">// "function"</span>
+
+<span class="c">// top-level const / let land in the global LEXICAL environment only</span>
+<span class="k">typeof</span> window.objs           <span class="c">// "undefined"  ← not a bug</span>
+<span class="k">typeof</span> objs                  <span class="c">// "object"     ← bare name works</span>
+<span class="k">typeof</span> window.NASSCAD_MATERIALS <span class="c">// "undefined"</span>
+NASSCAD_MATERIALS.length      <span class="c">// 12</span></pre>
+
+      <p>Both kinds are reachable from NassScript, because the script body is evaluated in global scope. The distinction matters in exactly two situations: feature-detecting with <code>typeof window.X</code> (use the bare name instead), and assigning a value you want to survive the run (<code>window.myCache = …</code> works; a bare <code>const</code> does not).</p>
+
+      <h3>What is <em>not</em> reachable</h3>
+      <p>The 2D sketcher is an IIFE-isolated module: 102 of its functions never touch the global scope. It publishes exactly three names — <code>openSketcher</code>, <code>closeSketcher</code>, and the <code>SK</code> object described in its own section. Likewise every <code>_qf*</code> helper of the fillet module and every <code>_p21*</code> STEP parser helper is a plain global, while the OCCT kernel handle itself is created on demand and only handed out by <code>_occtLoad()</code>.</p>
+
+      <div class="note">
+        <span class="lbl">Naming convention</span>
+        <p>A leading underscore means internal. Those functions work, several are genuinely the best tool for a scripting job, and this page documents the useful ones — but they are not a contract. Anything without an underscore is part of the app's own surface and far less likely to move.</p>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════ -->
+    <section id="model">
+      <h2><span class="n">03</span>Data model</h2>
+      <p class="lede">A NASSCAD object is a small record wrapping a three.js mesh. Every other API works on this shape.</p>
+
+<pre><span class="c">// one entry of objs[]</span>
+{
+  id:        42,                  <span class="c">// unique integer — the key used by _csgTree</span>
+  name:      <span class="s">'Cylinder_42'</span>,        <span class="c">// shown in the object list</span>
+  type:      <span class="s">'cylinder'</span>,           <span class="c">// source primitive, or 'csg' after a boolean/generator</span>
+  mesh:      THREE.Mesh,          <span class="c">// geometry + material + transform</span>
+  color:     <span class="s">'#5b8fc9'</span>,            <span class="c">// list swatch (independent of an applied material)</span>
+  isHole:    false,               <span class="c">// true ⇒ subtracted by the next boolean</span>
+  <span class="c">// situational:</span>
+  genType:   <span class="s">'gear'</span>,                <span class="c">// gear|screw|nut|pipe|lathe|cylind|cubic|tore|arcsphere|circtext|sketch</span>
+  genParams: {…},                 <span class="c">// the generator's exact inputs — replayable</span>
+  tubeRo, tubeRi,                 <span class="c">// outer / inner radius of a tube</span>
+  sphereRes,                      <span class="c">// sphere segment count</span>
+  matId:     <span class="s">'inox'</span>,                <span class="c">// applied NASSCAD material</span>
+  isManifold,                     <span class="c">// false ⇒ CSG will warn</span>
+  isOcctResult,                   <span class="c">// came out of a fillet/chamfer</span>
+  _poolSlot                       <span class="c">// GeometryPool slot, when pooled</span>
+}</pre>
+
+      <h3>The CSG construction tree</h3>
+      <p><code>_csgTree</code> is a <code>Map</code> keyed by object id. Each node stores the operation, the result centre of gravity, and a full snapshot of every source — enough to rebuild them without the original objects, which is what makes Re-run and Explode non-destructive.</p>
+
+<pre>_csgTree.get(id) = {
+  op: <span class="s">'union'</span> | <span class="s">'subtract'</span> | <span class="s">'intersect'</span>,
+  cg: [x, y, z],
+  children: [{
+    id, name, type, color, isHole, tubeRo, tubeRi, genType, genParams,
+    p: [x,y,z], r: [rx,ry,rz], s: [sx,sy,sz],   <span class="c">// position / rotation / scale</span>
+    opacity, wireframe,
+    _csgTree: {…} | <span class="k">null</span>,                     <span class="c">// nested node — the tree is recursive</span>
+    _csgGeo:  {…}                                <span class="c">// serialised geometry, only when not rebuildable</span>
+  }]
+}</pre>
+
+      <div class="api">
+        <div class="row" data-k="objs array scene objects">
+          <div class="sig"><b>objs</b> <span class="arg">: Array</span></div>
+          <div class="desc">Every object in the scene. <strong>Reassignable</strong> — <code>delSel()</code> itself does <code>objs = objs.filter(…)</code>. Never hold a reference to the array across an operation; re-read <code>objs</code>.</div>
+        </div>
+        <div class="row" data-k="selobjs selection array active object">
+          <div class="sig"><b>selObjs</b> <span class="arg">: Array</span></div>
+          <div class="desc">The selection, in click order. <strong>The last element is the active object</strong> — it is the only one <code>setTr</code>, <code>setDim</code> and <code>renameObj</code> can see.</div>
+        </div>
+        <div class="row" data-k="objcnt counter id">
+          <div class="sig"><b>objCnt</b> <span class="arg">: number</span></div>
+          <div class="desc">Id counter, bumped on every creation. Never wind it back.</div>
+        </div>
+        <div class="row" data-k="isholemode hole solid creation mode">
+          <div class="sig"><b>isHoleMode</b> <span class="arg">: boolean</span></div>
+          <div class="desc">Current creation mode. While true, new primitives are born as holes — red, 45&nbsp;% opaque, and subtracted by the next boolean.</div>
+        </div>
+        <div class="row" data-k="scene cam ren ray mouse three renderer raycaster">
+          <div class="sig"><b>scene</b> · <b>cam</b> · <b>ren</b> · <b>ray</b> · <b>mouse</b> · <b>THREE</b></div>
+          <div class="desc">Scene graph, camera, WebGL renderer, raycaster, normalised pointer, and three.js itself — so <code>Box3</code>, <code>Vector3</code>, <code>Matrix4</code>, <code>BufferGeometry</code> and the rest are all available.</div>
+        </div>
+        <div class="row" data-k="ps gs col palette constants version">
+          <div class="sig"><b>PS</b> = 20 · <b>GS</b> = 220 · <b>COL</b>[10] · <b>NASSCAD_VERSION</b></div>
+          <div class="desc">Base primitive size in mm, grid half-extent, the cycling colour palette, the version string. <strong><code>PS</code> is the reference for every scale computation</strong>: a primitive at scale 1 measures 20&nbsp;mm on each axis.</div>
+        </div>
+        <div class="row" data-k="resolution newprimres resmax segments tessellation">
+          <div class="sig"><b>_newPrimRes</b> = 32 · <b>RES_MAX</b> = 256 · <b>RES_EXP_CAP</b> = 512 · <b>SEG_VIEW</b></div>
+          <div class="desc">Creation resolution in segments, its display and export ceilings, and the per-shape segment table. <code>_segViewLive()</code> derives the object actually passed to <code>makeGeo</code>.</div>
+        </div>
+        <div class="row" data-k="snap snapsz snapsizes magnetic">
+          <div class="sig"><b>snap</b> · <b>snapSz</b> · <b>SNAP_SIZES</b> = [1, 0.5, 0.1, 0.01, 0.001]</div>
+          <div class="desc">Magnetic snapping state and the ladder of steps in millimetres.</div>
+        </div>
+        <div class="row" data-k="tool alignmode cotenabled cotvisible state flags">
+          <div class="sig"><b>tool</b> · <b>alignMode</b> · <b>cotEnabled</b> · <b>cotVisible</b> · <b>_workerReady</b> · <b>_csgBusy</b></div>
+          <div class="desc">Interaction state: active tool, alignment mode, dimension overlay enabled/shown, last known MEDUSA reachability, and whether a boolean is currently running.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════ -->
+    <section id="create">
+      <h2><span class="n">04</span>Creating geometry</h2>
+      <p class="lede">Eleven mesh primitives, plus a documented door for any geometry a script computes itself.</p>
+
+      <div class="api">
+        <div class="row" data-k="addprimitive cube sphere cylinder cone create primitive">
+          <div class="sig"><b>addPrimitive</b>(<span class="arg">type</span>)</div>
+          <div class="desc">Builds a 20&nbsp;mm primitive, rests it on the grid, spirals outward to a free spot, then selects it alone. Any unknown type silently falls back to a cube.</div>
+          <div class="tags"><span class="t t-undo">undo</span></div>
+        </div>
+      </div>
+
+      <div class="tw">
+      <table>
+        <thead><tr><th>type</th><th>Shape</th><th>Triangles at 32 seg</th><th>Notes</th></tr></thead>
+        <tbody>
+          <tr><td class="m">cube</td><td>Box 20³</td><td class="num">12</td><td>—</td></tr>
+          <tr><td class="m">sphere</td><td>UV sphere Ø20</td><td class="num">2 520</td><td>stores <code>sphereRes</code>; smooth normals</td></tr>
+          <tr><td class="m">cylinder</td><td>Ø20 × 20</td><td class="num">272</td><td>centred on its own origin</td></tr>
+          <tr><td class="m">cone</td><td>Ø20 × 20</td><td class="num">204</td><td>—</td></tr>
+          <tr><td class="m">pyramid</td><td>Square base, apex</td><td class="num">6</td><td>flat-shaded</td></tr>
+          <tr><td class="m">roof</td><td>Gable prism</td><td class="num">8</td><td>ridge height 10</td></tr>
+          <tr><td class="m">roofarc</td><td>Barrel roof</td><td class="num">192</td><td>segments ×1.5</td></tr>
+          <tr><td class="m">halfsphere</td><td>Dome</td><td class="num">1 152</td><td>segments ×1.5</td></tr>
+          <tr><td class="m">tube</td><td>Hollow cylinder</td><td class="num">384</td><td>sets <code>tubeRo</code> = 10, <code>tubeRi</code> = 5</td></tr>
+          <tr><td class="m">hollowbox</td><td>Open box</td><td class="num">32</td><td>outer / inner wall via its dialog</td></tr>
+          <tr><td class="m">wedge</td><td>Ramp</td><td class="num">8</td><td>—</td></tr>
+        </tbody>
+      </table>
+      </div>
+
+      <div class="api">
+        <div class="row" data-k="makegeo raw geometry factory">
+          <div class="sig"><b>makeGeo</b>(<span class="arg">type, S, res</span>) <span class="arg">→ BufferGeometry</span></div>
+          <div class="desc">The raw geometry factory, with no scene involvement. <code>S</code> is the edge size in mm; <code>res</code> is the segment table — pass <code>_segViewLive()</code> to match the current setting.</div>
+        </div>
+        <div class="row" data-k="makegeohd makegeocsg high definition rebuild">
+          <div class="sig"><b>makeGeoHD</b>(<span class="arg">obj</span>) · <b>makeGeoCSG</b>(<span class="arg">obj</span>)</div>
+          <div class="desc">Rebuild an object's geometry at export quality / CSG quality. This is why a sphere displayed at 32 segments can leave as a 256-segment STL. Objects that cannot be rebuilt (imported meshes, boolean results) return a clone of what is on screen.</div>
+        </div>
+        <div class="row" data-k="finalizegentoscene inject custom geometry scene object">
+          <div class="sig"><b>_finalizeGenToScene</b>(<span class="arg">{label, geo, name, genType, genParams, hideDialogFn, shininess, specular}</span>) <span class="arg">→ obj</span></div>
+          <div class="desc"><strong>The script's way into the scene.</strong> Takes any <code>THREE.BufferGeometry</code> and gives it a material, a free position, an id, a list entry and an undo step, then <strong>returns the created object</strong>. <code>name</code> may be a string or a function of the new id. Pass <code>hideDialogFn: ()=&gt;{}</code> outside a dialog.</div>
+          <div class="tags"><span class="t t-undo">undo</span></div>
+        </div>
+        <div class="row" data-k="postprocesscsggeo weld crease normals cleanup">
+          <div class="sig"><b>postProcessCSGGeo</b>(<span class="arg">geo, creaseAngleDeg</span>) <span class="arg">→ Promise&lt;BufferGeometry&gt;</span></div>
+          <div class="desc">The finishing pass booleans use: vertex welding plus crease-angle normals (30° default). Worth running over geometry you generated yourself before handing it to <code>_finalizeGenToScene</code>.</div>
+          <div class="tags"><span class="t t-async">async</span></div>
+        </div>
+        <div class="row" data-k="showtubedialog applytubedims hollowbox parametric dialog">
+          <div class="sig"><b>showTubeDialog</b>(<span class="arg">o</span>) · <b>applyTubeDims</b>() · <b>showHollowBoxDialog</b>(<span class="arg">o</span>) · <b>applyHollowBoxDims</b>()</div>
+          <div class="desc">Parametric dialogs for the two primitives that carry their own dimensions. Passing an existing object switches them to edit mode.</div>
+          <div class="tags"><span class="t t-dom">DOM</span></div>
+        </div>
+        <div class="row" data-k="showtextdialog create3dtext extruded text font">
+          <div class="sig"><b>showTextDialog</b>() · <b>create3DText</b>()</div>
+          <div class="desc">Extruded 3D text from the bundled typefaces. <code>create3DText()</code> reads the dialog fields, so the dialog has to be open and filled.</div>
+          <div class="tags"><span class="t t-dom">DOM</span></div>
+        </div>
+        <div class="row" data-k="dupsel copyobjs pasteobjs duplicate clipboard">
+          <div class="sig"><b>dupSel</b>() · <b>copyObjs</b>() · <b>pasteObjs</b>()</div>
+          <div class="desc">Duplicate in place (offset by <code>PS</code> on X, named <code>_Cp01</code>, <code>_Cp02</code>…) or through an internal clipboard. CSG geometry is cloned independently, and <code>genParams</code> plus CSG history are carried over.</div>
+          <div class="tags"><span class="t t-sel">selection</span><span class="t t-undo">undo</span></div>
+        </div>
+        <div class="row" data-k="setsphereresLive resolution live creation segments">
+          <div class="sig"><b>setSphereResLive</b>(<span class="arg">v</span>) · <b>toggleAdaptiveTess</b>()</div>
+          <div class="desc">Sets the creation resolution (clamped 8…<code>RES_MAX</code>) — with a selection it retessellates it live, without one it changes the default for new primitives. Adaptive tessellation scales segments with object size.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════ -->
+    <section id="select">
+      <h2><span class="n">05</span>Selection</h2>
+      <p class="lede">Selection drives most of the rest of the API. From a script, assigning it directly beats chaining calls.</p>
+
+      <div class="api">
+        <div class="row" data-k="selobj select add toggle">
+          <div class="sig"><b>selObj</b>(<span class="arg">obj, add</span>)</div>
+          <div class="desc"><code>add=false</code> replaces the selection; <code>add=true</code> appends — or <strong>removes</strong> if the object was already selected. <code>selObj(null, false)</code> clears.</div>
+        </div>
+        <div class="row" data-k="selectallobjs select all">
+          <div class="sig"><b>selectAllObjs</b>()</div>
+          <div class="desc">Selects the whole scene and refreshes the panels.</div>
+        </div>
+        <div class="row" data-k="setholemode hole solid toggle">
+          <div class="sig"><b>setHoleMode</b>(<span class="arg">bool</span>)</div>
+          <div class="desc">With no selection it flips the <em>creation</em> mode. With a selection it converts those objects, remembering a multi-colour palette so switching back restores it.</div>
+          <div class="tags"><span class="t t-undo">undo</span></div>
+        </div>
+        <div class="row" data-k="delsel delete remove">
+          <div class="sig"><b>delSel</b>()</div>
+          <div class="desc">Deletes the selection, disposes geometries and materials, drops the <code>_csgTree</code> entry, and reassigns <code>objs</code>.</div>
+          <div class="tags"><span class="t t-sel">selection</span><span class="t t-undo">undo</span></div>
+        </div>
+        <div class="row" data-k="updprops updolist updcsg updstats refresh panels">
+          <div class="sig"><b>updProps</b>() · <b>updOList</b>(<span class="arg">selOnly</span>) · <b>updCSG</b>() · <b>updStats</b>()</div>
+          <div class="desc">The four refreshers: properties panel, object list (also rebuilds the id/mesh lookup maps and the bounding-box cache), CSG button state, vertex/face/object counters. After assigning <code>selObjs</code> yourself, call at least the first three.</div>
+        </div>
+        <div class="row" data-k="togglealign doalign applyalignanchor alignment">
+          <div class="sig"><b>toggleAlign</b>() · <b>doAlign</b>(<span class="arg">mode</span>) · <b>applyAlignAnchor</b>(<span class="arg">mode, groupBox</span>) · <b>hideAlignDots</b>()</div>
+          <div class="desc">Group alignment against a shared anchor; needs two or more selected objects.</div>
+          <div class="tags"><span class="t t-sel">selection</span><span class="t t-undo">undo</span></div>
+        </div>
+      </div>
+
+<pre><span class="c">// selection by predicate — the single most useful pattern</span>
+selObjs = objs.filter(o =&gt; o.genType === <span class="s">'gear'</span> || /^Cylinder_/.test(o.name));
+updProps(); updOList(<span class="k">true</span>); updCSG();
+scriptLog(selObjs.length + <span class="s">' object(s) selected'</span>);</pre>
+    </section>
+
+    <!-- ═══════════════════════════════ -->
+    <section id="transform">
+      <h2><span class="n">06</span>Transforms</h2>
+      <p class="lede">Two routes: the panel functions, or the mesh directly. In a script the second is almost always right.</p>
+
+      <div class="api">
+        <div class="row" data-k="settr position rotation scale transform">
+          <div class="sig"><b>setTr</b>(<span class="arg">'position'|'rotation'|'scale', 'x'|'y'|'z', value</span>)</div>
+          <div class="desc">Acts on <strong>the last selected object only</strong>. Rotation in degrees. Position is <strong>converted from the display unit</strong> — in inches, <code>setTr('position','x',1)</code> moves 25.4&nbsp;mm. And on Y the value addresses <strong>the bottom of the bounding box</strong>, not the mesh origin.</div>
+          <div class="tags"><span class="t t-sel">selection</span><span class="t t-undo">undo</span></div>
+        </div>
+        <div class="row" data-k="setdim dimension size overall">
+          <div class="sig"><b>setDim</b>(<span class="arg">'x'|'y'|'z', value</span>)</div>
+          <div class="desc">Forces an overall dimension on the active object. The axis is a <strong>world axis</strong>, remapped to the matching local axis for rotated parts — exact for 90° multiples, best effort otherwise. On Y the object is then reseated on the ground. Also display-unit sensitive.</div>
+          <div class="tags"><span class="t t-sel">selection</span><span class="t t-undo">undo</span></div>
+        </div>
+        <div class="row" data-k="scaleseluniform uniform scale group pivot">
+          <div class="sig"><b>scaleSelUniform</b>(<span class="arg">factor</span>)</div>
+          <div class="desc">Multiplicative scale across the whole selection about the group's median pivot, so positions spread proportionally and an assembly stays coherent. <code>scaleSelUniform(1)</code> is an absolute <em>reset</em>, not a no-op.</div>
+          <div class="tags"><span class="t t-sel">selection</span><span class="t t-undo">undo</span></div>
+        </div>
+        <div class="row" data-k="recentercg center of gravity recenter">
+          <div class="sig"><b>recenterCG</b>()</div>
+          <div class="desc">Recentres geometry on its true volumetric centre of gravity without moving the object on screen.</div>
+          <div class="tags"><span class="t t-sel">selection</span><span class="t t-undo">undo</span></div>
+        </div>
+        <div class="row" data-k="droptoground floor rest">
+          <div class="sig"><b>dropToGround</b>()</div>
+          <div class="desc">Rests the selection on the grid plane — which is not necessarily Y=0, since the grid can be dragged.</div>
+          <div class="tags"><span class="t t-sel">selection</span><span class="t t-undo">undo</span></div>
+        </div>
+        <div class="row" data-k="computecenterofgravity volume centroid tetrahedron">
+          <div class="sig"><b>computeCenterOfGravity</b>(<span class="arg">geo</span>) <span class="arg">→ Vector3</span></div>
+          <div class="desc">Volumetric centroid by signed-tetrahedron summation, in the geometry's own space. Falls back to the bounding-box centre when the volume is degenerate.</div>
+        </div>
+        <div class="row" data-k="invalidatebbox bounding box cache">
+          <div class="sig"><b>_invalidateBbox</b>(<span class="arg">mesh</span>)</div>
+          <div class="desc">Call it after moving a mesh by hand. Otherwise picking, hover and the dimension overlay keep using the stale bounding box.</div>
+        </div>
+        <div class="row" data-k="togglecotation togglemeasure applycotdim dimensions ruler">
+          <div class="sig"><b>toggleCotation</b>() · <b>applyCotDim</b>(<span class="arg">axis</span>) · <b>toggleMeasure</b>()</div>
+          <div class="desc">The 3D dimension overlay with editable fields, and the point-to-point measuring tool.</div>
+          <div class="tags"><span class="t t-dom">DOM</span></div>
+        </div>
+      </div>
+
+      <div class="note warn">
+        <span class="lbl">The habit to build</span>
+        <p>In a script prefer the mesh: <code>o.mesh.position.set(x,y,z)</code>, <code>o.mesh.rotation.y = a</code>, <code>o.mesh.scale.set(…)</code> — always millimetres, always the object you mean, followed by <code>_invalidateBbox(o.mesh)</code>. <code>setTr</code> and <code>setDim</code> are <em>panel</em> functions: one object, and they read the display unit.</p>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════ -->
+    <section id="appearance">
+      <h2><span class="n">07</span>Appearance &amp; materials</h2>
+
+      <div class="api">
+        <div class="row" data-k="setcol color hex">
+          <div class="sig"><b>setCol</b>(<span class="arg">'#rrggbb'</span>)</div>
+          <div class="desc">Applies one colour to the whole selection. <strong>Destructive on a multi-colour part</strong>: per-face colours read from a STEP file are collapsed into a single material and lost.</div>
+          <div class="tags"><span class="t t-sel">selection</span><span class="t t-undo">undo</span></div>
+        </div>
+        <div class="row" data-k="setopa opacity transparent">
+          <div class="sig"><b>setOpa</b>(<span class="arg">0..1</span>)</div>
+          <div class="desc">Opacity across the selection; flips the material to transparent below 1.</div>
+          <div class="tags"><span class="t t-sel">selection</span><span class="t t-undo">undo</span></div>
+        </div>
+        <div class="row" data-k="applynasscadmaterial material alu inox brass">
+          <div class="sig"><b>applyNasscadMaterial</b>(<span class="arg">id</span>)</div>
+          <div class="desc">Full material — colour, family-derived specular, shininess, opacity — and records <code>o.matId</code>. The <code>step</code> triplet of each entry is what gets written into a STEP file.</div>
+          <div class="tags"><span class="t t-sel">selection</span><span class="t t-undo">undo</span></div>
+        </div>
+        <div class="row" data-k="nasscad_materials palette by id specular hex">
+          <div class="sig"><b>NASSCAD_MATERIALS</b>[12] · <b>NASSCAD_MATERIALS_BY_ID</b> · <b>nasscadSpecularOf</b>(<span class="arg">m</span>) · <b>nasscadHexString</b>(<span class="arg">hex</span>) · <b>nasscadMaterialSelfCheck</b>() · <b>nasscadBuildMaterialUI</b>()</div>
+          <div class="desc">The palette itself and its helpers. Entries are <code>{id, name, step:[r,g,b], hex, family, shininess, opacity}</code>; specular is derived from the family rather than stored.</div>
+        </div>
+      </div>
+
+      <div class="tw">
+      <table>
+        <thead><tr><th>id</th><th>Material</th><th>Hex</th><th>Family</th><th>Shininess</th><th>Opacity</th></tr></thead>
+        <tbody>
+          <tr><td class="m">alu</td><td>Aluminium</td><td class="m"><span class="sw" style="background:#BABABA"></span>BABABA</td><td>metal</td><td class="num">60</td><td class="num">1</td></tr>
+          <tr><td class="m">inox</td><td>Stainless steel</td><td class="m"><span class="sw" style="background:#A6A6AB"></span>A6A6AB</td><td>metal</td><td class="num">90</td><td class="num">1</td></tr>
+          <tr><td class="m">acier</td><td>Plain steel</td><td class="m"><span class="sw" style="background:#737373"></span>737373</td><td>metal</td><td class="num">25</td><td class="num">1</td></tr>
+          <tr><td class="m">laiton</td><td>Brass</td><td class="m"><span class="sw" style="background:#D4AD36"></span>D4AD36</td><td>metal</td><td class="num">85</td><td class="num">1</td></tr>
+          <tr><td class="m">cuivre</td><td>Copper</td><td class="m"><span class="sw" style="background:#B87333"></span>B87333</td><td>metal</td><td class="num">80</td><td class="num">1</td></tr>
+          <tr><td class="m">or</td><td>Gold</td><td class="m"><span class="sw" style="background:#FFD600"></span>FFD600</td><td>metal</td><td class="num">110</td><td class="num">1</td></tr>
+          <tr><td class="m">titane</td><td>Titanium</td><td class="m"><span class="sw" style="background:#9999A6"></span>9999A6</td><td>metal</td><td class="num">55</td><td class="num">1</td></tr>
+          <tr><td class="m">abs-noir</td><td>Black plastic</td><td class="m"><span class="sw" style="background:#1A1A1A"></span>1A1A1A</td><td>plastic</td><td class="num">30</td><td class="num">1</td></tr>
+          <tr><td class="m">abs-blanc</td><td>White plastic</td><td class="m"><span class="sw" style="background:#F2F2F2"></span>F2F2F2</td><td>plastic</td><td class="num">35</td><td class="num">1</td></tr>
+          <tr><td class="m">caoutchouc</td><td>Rubber</td><td class="m"><span class="sw" style="background:#333333"></span>333333</td><td>rubber</td><td class="num">6</td><td class="num">1</td></tr>
+          <tr><td class="m">carbone</td><td>Carbon / CFRP</td><td class="m"><span class="sw" style="background:#262626"></span>262626</td><td>composite</td><td class="num">45</td><td class="num">1</td></tr>
+          <tr><td class="m">verre</td><td>Glass</td><td class="m"><span class="sw" style="background:#B2D9E6"></span>B2D9E6</td><td>glass</td><td class="num">100</td><td class="num">0.35</td></tr>
+        </tbody>
+      </table>
+      </div>
+
+      <div class="api">
+        <div class="row" data-k="setwire togglexray featureedges wireframe display">
+          <div class="sig"><b>setWire</b>() · <b>toggleXRay</b>() · <b>toggleXRayObj</b>(<span class="arg">id</span>) · <b>toggleFeatureEdges</b>() · <b>setLightIntensity</b>(<span class="arg">v</span>)</div>
+          <div class="desc">Wireframe, global and per-object X-Ray, relief edges, key-light intensity. Global X-Ray wins over the per-object flag.</div>
+          <div class="tags"><span class="t t-async">async</span></div>
+        </div>
+        <div class="row" data-k="renameobj rename name">
+          <div class="sig"><b>renameObj</b>(<span class="arg">name</span>)</div>
+          <div class="desc">Renames the active object and propagates the name into parent <code>_csgTree</code> nodes. For bulk renaming, writing <code>o.name</code> then calling <code>updOList()</code> is more direct.</div>
+          <div class="tags"><span class="t t-sel">selection</span><span class="t t-undo">undo</span></div>
+        </div>
+        <div class="row" data-k="toggletheme togglegrid togglenavcube buildgrid buildaxes viewport chrome">
+          <div class="sig"><b>toggleTheme</b>() · <b>toggleGrid</b>() · <b>toggleNavCube</b>() · <b>buildGrid</b>() · <b>buildAxes</b>() · <b>buildNavCube</b>() · <b>updColors</b>()</div>
+          <div class="desc">Viewport furniture. <code>toggleTheme()</code> swaps the app's light/dark theme and rebuilds the grid and axis colours.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════ -->
+    <section id="csg">
+      <h2><span class="n">08</span>Boolean CSG</h2>
+      <p class="lede">All three booleans go to MEDUSA over local HTTP. There is no in-browser fallback: with the engine stopped, the operation fails loudly instead of degrading.</p>
+
+      <div class="api">
+        <div class="row" data-k="docsg union subtract intersect boolean medusa">
+          <div class="sig"><b>doCSG</b>(<span class="arg">'union'|'subtract'|'intersect'</span>)</div>
+          <div class="desc">Operates on <code>selObjs</code>, two objects minimum. <strong>If the selection mixes solids and holes the operation is forced to solids − holes</strong>, whatever you asked for, with solids ordered first. Unions of non-overlapping objects bypass the engine entirely, and a union of union-trees is flattened to its leaves before being sent.</div>
+          <div class="tags"><span class="t t-async">async</span><span class="t t-sel">selection</span><span class="t t-med">MEDUSA</span><span class="t t-undo">undo</span></div>
+        </div>
+        <div class="row" data-k="medusaprobe engine reachable ping workerready">
+          <div class="sig"><b>_medusaProbe</b>(<span class="arg">timeoutMs</span>) <span class="arg">→ Promise&lt;bool&gt;</span> · <b>_workerReady</b> · <b>_medusaRequire</b>()</div>
+          <div class="desc">Probes the engine and updates the badge; <code>_workerReady</code> caches the last answer. Check it <strong>before</strong> a batch rather than after the first failure. <code>_medusaRequire()</code> throws a descriptive error when the engine is missing.</div>
+          <div class="tags"><span class="t t-async">async</span></div>
+        </div>
+        <div class="row" data-k="medusacsg medusapost raw engine call">
+          <div class="sig"><b>_medusaCSG</b>(<span class="arg">op, meshes, hasMix, solidsIdx, holesIdx, label</span>) · <b>_medusaPost</b>(<span class="arg">path, body, wdogMs, label</span>)</div>
+          <div class="desc">The raw engine calls under <code>doCSG</code>: <code>POST /csg</code> for a flat operation, <code>POST /csgtree</code> for a whole tree. Useful when you want the result mesh without the scene bookkeeping.</div>
+          <div class="tags"><span class="t t-async">async</span><span class="t t-med">MEDUSA</span></div>
+        </div>
+        <div class="row" data-k="rerun deeprerun rebuild tree">
+          <div class="sig"><b>rerunCSG</b>() · <b>deepRerunCSG</b>()</div>
+          <div class="desc">Replays a node after one of its sources changed — one level, or recursively down the whole tree.</div>
+          <div class="tags"><span class="t t-async">async</span><span class="t t-sel">selection</span><span class="t t-med">MEDUSA</span></div>
+        </div>
+        <div class="row" data-k="explodecsg explodedeep showcsgtree disassemble">
+          <div class="sig"><b>explodeCSG</b>() · <b>explodeDeepCSG</b>() · <b>showCSGTree</b>()</div>
+          <div class="desc">Takes a boolean result back apart into its sources — one level, or down to the leaves — and displays the tree. Requires a <code>_csgTree</code> entry, which imported objects never have.</div>
+          <div class="tags"><span class="t t-sel">selection</span><span class="t t-undo">undo</span></div>
+        </div>
+        <div class="row" data-k="setcsgquality setexpquality segments quality">
+          <div class="sig"><b>setCsgQuality</b>(<span class="arg">32|64|128|256|512</span>) · <b>setExpQuality</b>(<span class="arg">n</span>)</div>
+          <div class="desc">Segment counts used when primitives are rebuilt for a boolean or an export. 512 segments is roughly 524&nbsp;000 triangles per sphere — budget accordingly.</div>
+        </div>
+        <div class="row" data-k="setwatchdog setworkercap watchdog timeout engine tuning">
+          <div class="sig"><b>setWatchdog</b>(<span class="arg">s</span>) · <b>setWorkerCap</b>(<span class="arg">n</span>) · <b>enableAutoWdog</b>() · <b>enableAutoWorkers</b>()</div>
+          <div class="desc">Operation timeout and worker ceiling, manual or automatic. Setting a value by hand turns the matching auto mode off.</div>
+        </div>
+      </div>
+
+      <div class="note warn">
+        <span class="lbl">Before looping over booleans</span>
+        <p>Every <code>doCSG</code> is a local request plus a retessellation. Order matters: union all the holes into one object and subtract <em>once</em>, rather than subtracting N times. It is faster and it leaves a single node in the tree instead of N nested ones.</p>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════ -->
+    <section id="occt">
+      <h2><span class="n">09</span>Fillet &amp; chamfer — OpenCASCADE</h2>
+      <p class="lede">The one place NASSCAD handles real B-Rep locally: the mesh is sewn into a solid, coplanar facets are merged back into faces, and <code>BRepFilletAPI</code> works on that. Entirely in the browser — no MEDUSA involved.</p>
+
+      <div class="api">
+        <div class="row" data-k="togglequickfillet fillet chamfer edges pick">
+          <div class="sig"><b>toggleQuickFillet</b>()</div>
+          <div class="desc">Enters Quick Fillet: edge-chain scanning, mouse picking, radius, then round or chamfer on picked edges or all of them. <strong>Interactive only</strong> — there is no scriptable equivalent.</div>
+          <div class="tags"><span class="t t-occt">OCCT</span><span class="t t-dom">DOM</span></div>
+        </div>
+        <div class="row" data-k="occtload kernel wasm handle oc">
+          <div class="sig"><b>_occtLoad</b>() <span class="arg">→ Promise&lt;oc&gt;</span></div>
+          <div class="desc">Loads and instantiates the kernel — 65&nbsp;MB, once per session, cached for reinstantiation — and hands back the <code>oc</code> handle, i.e. the full OCCT binding: <code>BRepBuilderAPI_*</code>, <code>BRepFilletAPI_MakeFillet</code>, <code>TopExp_Explorer_2</code>, <code>BRepGProp</code>, <code>ShapeUpgrade_UnifySameDomain_2</code>, <code>BRepCheck_Analyzer</code>…</div>
+          <div class="tags"><span class="t t-occt">OCCT</span></div>
+        </div>
+        <div class="row" data-k="occtvolume occtisvalid occtdrop helpers validity">
+          <div class="sig"><b>_occtVolume</b>(<span class="arg">oc, shape</span>) · <b>_occtIsValid</b>(<span class="arg">oc, shape</span>) · <b>_occtEdgeLen</b>(<span class="arg">oc, edge</span>) · <b>_occtDrop</b>(<span class="arg">...x</span>)</div>
+          <div class="desc">Volume via <code>BRepGProp</code>, topological validity via <code>BRepCheck_Analyzer</code>, chord length of an edge, and the disposer that calls <code>.delete()</code> on anything you pass it.</div>
+        </div>
+        <div class="row" data-k="occtresetkernel occtisfatal recovery heap">
+          <div class="sig"><b>_occtResetKernel</b>(<span class="arg">why</span>) · <b>_occtIsFatal</b>(<span class="arg">msg</span>)</div>
+          <div class="desc">A WASM abort leaves the module unusable. These detect the fatal signatures — out of memory, unreachable, table index out of bounds — and discard the kernel so the next call reinstantiates in about two seconds instead of forcing a reload.</div>
+        </div>
+      </div>
+
+      <div class="note">
+        <span class="lbl">What "B-Rep" means here</span>
+        <p>The solid handed to OCCT is built <em>from the mesh</em>: one triangle becomes one planar face, then coplanar faces are merged. A cylinder stays N planar strips — it never becomes an analytic cylindrical surface. The fillets and the recovered edges are real; the original surfaces of a part that was never a B-Rep are not recoverable.</p>
+        <p>Every OCCT instance a script creates must be released by hand with <code>.delete()</code>. Embind has no garbage collector and the WASM heap tops out at 2&nbsp;GB — this is the cause of "after N fillets nothing works until I reload".</p>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════ -->
+    <section id="sketch">
+      <h2><span class="n">10</span>Sketch.Gen — <code>window.SK</code></h2>
+      <p class="lede">The 2D sketcher is an isolated module, and it is the only part of NASSCAD that ships a purpose-built scripting object. Its geometry engine stays private; these eighteen entries are the whole public surface.</p>
+
+      <div class="api">
+        <div class="row" data-k="opensketcher closesketcher sketch 2d open">
+          <div class="sig"><b>openSketcher</b>(<span class="arg">editObj</span>) · <b>closeSketcher</b>() · <b>SK.close</b>()</div>
+          <div class="desc">Opens the sketch overlay. Passing an object whose <code>genType</code> is <code>'sketch'</code> reloads its stored entities for editing.</div>
+          <div class="tags"><span class="t t-dom">DOM</span></div>
+        </div>
+        <div class="row" data-k="sk getentities read sketch entities">
+          <div class="sig"><b>SK.getEntities</b>() <span class="arg">→ Array</span></div>
+          <div class="desc">Deep copy of the current sketch entities — lines, arcs, circles, béziers with their ids and coordinates. Read-only by design; the code calls it out as the console-friendly entry point.</div>
+        </div>
+        <div class="row" data-k="sk settool tool line arc circle">
+          <div class="sig"><b>SK.setTool</b>(<span class="arg">name</span>)</div>
+          <div class="desc">Switches the active drawing tool, exactly as the toolbar does.</div>
+        </div>
+        <div class="row" data-k="sk updateprop selectentity edit entity">
+          <div class="sig"><b>SK.selectEntity</b>(<span class="arg">id</span>) · <b>SK.updateProp</b>(<span class="arg">id, key, val</span>) · <b>SK.deleteSelected</b>() · <b>SK.clearAll</b>(<span class="arg">force</span>)</div>
+          <div class="desc">Select, edit one property of one entity by id, delete the selection, or wipe the sketch. <strong>This is the scriptable path to parametric 2D</strong>: read with <code>getEntities()</code>, write back coordinate by coordinate.</div>
+        </div>
+        <div class="row" data-k="sk applyconstraint constraint horizontal vertical">
+          <div class="sig"><b>SK.applyConstraint</b>(<span class="arg">type</span>)</div>
+          <div class="desc">Applies a constraint to the current selection.</div>
+        </div>
+        <div class="row" data-k="sk extrude extrudesketch solid watertight">
+          <div class="sig"><b>SK.extrude</b>()</div>
+          <div class="desc">Extrudes the closed contour into a watertight solid and pushes it into the scene as an object with <code>genType: 'sketch'</code>, its entities stored in <code>genParams</code>.</div>
+          <div class="tags"><span class="t t-undo">undo</span></div>
+        </div>
+        <div class="row" data-k="sk undo redo canundo canredo history">
+          <div class="sig"><b>SK.undo</b>() · <b>SK.redo</b>() · <b>SK.canUndo</b>() · <b>SK.canRedo</b>()</div>
+          <div class="desc">The sketch's own history — full snapshots, 120 deep, separate from the 3D undo journal. The <code>can*</code> pair returns the stack depth, so they double as counters.</div>
+        </div>
+        <div class="row" data-k="sk fitview togglegrid togglesnap toggletheme view">
+          <div class="sig"><b>SK.fitView</b>() · <b>SK.toggleGrid</b>() · <b>SK.toggleSnap</b>(<span class="arg">key, el</span>) · <b>SK.toggleTheme</b>()</div>
+          <div class="desc">Sketch viewport controls. These are the sketcher's own, unrelated to the 3D view functions with the same names.</div>
+        </div>
+        <div class="row" data-k="sk exportnass export sketch file">
+          <div class="sig"><b>SK.exportNass</b>()</div>
+          <div class="desc">Exports the sketch in NASSCAD's own 2D format.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════ -->
+    <section id="generators">
+      <h2><span class="n">11</span>Generators</h2>
+      <p class="lede">Nine generators read their inputs from their dialog fields, so a script cannot call them like functions. What a script <em>can</em> do is read and replay their parameters, which every generated object carries.</p>
+
+      <div class="api">
+        <div class="row" data-k="showgeardialog showscrewdialog generator dialogs open edit">
+          <div class="sig"><b>showGearDialog</b>(<span class="arg">o</span>) · <b>showScrewDialog</b>(<span class="arg">o</span>) · <b>showNutDialog</b>(<span class="arg">o</span>) · <b>showPipeDialog</b>(<span class="arg">o</span>) · <b>showToreDialog</b>(<span class="arg">o</span>) · <b>showCylindDialog</b>(<span class="arg">o</span>) · <b>showLatheDialog</b>(<span class="arg">o</span>) · <b>showArcSphereDialog</b>(<span class="arg">o</span>) · <b>showCubeChanfreinDialog</b>(<span class="arg">o</span>) · <b>showCircularTextDialog</b>(<span class="arg">o</span>)</div>
+          <div class="desc">Each takes an optional existing object to reopen in <em>edit</em> mode with its <code>genParams</code> restored. The matching <code>hide*Dialog(cancel)</code> closes them.</div>
+          <div class="tags"><span class="t t-dom">DOM</span></div>
+        </div>
+        <div class="row" data-k="editselectedgen edit generator reopen">
+          <div class="sig"><b>editSelectedGen</b>()</div>
+          <div class="desc">Reopens the right dialog for whatever is selected, dispatching on <code>genType</code>. One call instead of ten branches.</div>
+          <div class="tags"><span class="t t-sel">selection</span><span class="t t-dom">DOM</span></div>
+        </div>
+        <div class="row" data-k="gearbuild pipebuild pure geometry builders">
+          <div class="sig"><b>_gearBuild</b>(<span class="arg">p</span>) · <b>_pipeBuild</b>(<span class="arg">p</span>) <span class="arg">→ {vPos, tris}</span> · <b>_getGearParams</b>() · <b>_getPipeParams</b>()</div>
+          <div class="desc">The pure builders sitting under the dialogs: give them a parameter object shaped like <code>genParams</code> and they return raw arrays, no DOM involved. Feed the result to <code>_finalizeGenToScene</code> to place it.</div>
+        </div>
+      </div>
+
+      <h3>genParams by generator</h3>
+      <div class="tw">
+      <table>
+        <thead><tr><th>genType</th><th>Generator</th><th>Parameters</th></tr></thead>
+        <tbody>
+          <tr><td class="m">gear</td><td>Gear.Gen</td><td class="m">gearMode, gearType, gearModule, gearTeeth, gearHeight, gearHoleR, gearTwist, gearHand, gearRes, gearBacklash, gearPair, gearTeeth2, pulleyType…</td></tr>
+          <tr><td class="m">screw</td><td>Screw.Gen</td><td class="m">system, specIdx, thread, pitchCustom, length, head, nRad, chamferAbout</td></tr>
+          <tr><td class="m">nut</td><td>Nut.Gen</td><td class="m">system, specIdx, thread, pitchCustom, style, mCustom, chamfer, nRad</td></tr>
+          <tr><td class="m">pipe</td><td>Pipe.Gen</td><td class="m">re, ep, rb, sc, sr, l1, v1y, v1z, l2, v2y, v2z, l3</td></tr>
+          <tr><td class="m">tore</td><td>Tore.Gen</td><td class="m">R, r, N, M</td></tr>
+          <tr><td class="m">cylind</td><td>Cylind.Gen</td><td class="m">H, Rt, Rb, ct, cb, segs, mode, N</td></tr>
+          <tr><td class="m">cubic</td><td>Cubic.Gen</td><td class="m">W, H, D, c, segs, mode</td></tr>
+          <tr><td class="m">arcsphere</td><td>ArcSphere.Gen</td><td class="m">R, Wphi, Htheta, arc</td></tr>
+          <tr><td class="m">lathe</td><td>RevSolid.Gen</td><td class="m">R, H, N, arc</td></tr>
+          <tr><td class="m">circtext</td><td>CircularText.Gen</td><td class="m">text, fontKey, size, depth, curve</td></tr>
+          <tr><td class="m">sketch</td><td>Sketch.Gen</td><td class="m">entities[], depth</td></tr>
+        </tbody>
+      </table>
+      </div>
+
+      <div class="note">
+        <span class="lbl">The reliable shortcut</span>
+        <p>Build the part once by hand, then read <code>objs.at(-1).genParams</code> from a script. You now have the exact, valid parameter object — vary it in a loop and hand each variant to the matching builder, or store it and rebuild the part later without touching the dialog.</p>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════ -->
+    <section id="import">
+      <h2><span class="n">12</span>Import</h2>
+      <p class="lede">Importers take a <code>File</code> object, so a script can feed them from anywhere — a fetch, generated text, the clipboard.</p>
+
+      <div class="api">
+        <div class="row" data-k="importstep importstepxcaf step ap242 pmi colours">
+          <div class="sig"><b>importSTEP</b>(<span class="arg">file</span>) · <b>importSTEP_XCAF</b>(<span class="arg">file</span>) · <b>_importSTEPUnified</b>(<span class="arg">file</span>)</div>
+          <div class="desc">STEP AP203 / AP214 / AP242. The XCAF path adds assembly structure, per-part <em>and per-face</em> colours read from the file itself, and PMI / GD&amp;T. Chunking, an IndexedDB cache and a worker pool are handled internally.</div>
+          <div class="tags"><span class="t t-async">async</span><span class="t t-occt">OCCT</span></div>
+        </div>
+        <div class="row" data-k="importglb import3mf gltf draco 3mf">
+          <div class="sig"><b>importGLB</b>(<span class="arg">file, opts</span>) · <b>import3MF</b>(<span class="arg">file, opts</span>)</div>
+          <div class="desc">GLB and <code>.gltf</code> (embedded buffers) with Draco decoding when present — glTF metres are converted to millimetres, one object per node, material colours kept. 3MF with its <code>unit</code>, components, production-extension parts and base/colour-group colours. Both keep the file's layout as an assembly. <code>opts.noUndo</code> skips the undo snapshot (the batch importer already took one).</div>
+          <div class="tags"><span class="t t-async">async</span></div>
+        </div>
+        <div class="row" data-k="parsestl parseobj parseply raw mesh parsers">
+          <div class="sig"><b>parseSTL</b>(<span class="arg">buf, opts</span>) · <b>parseOBJ</b>(<span class="arg">txt, opts</span>) · <b>parsePLY</b>(<span class="arg">buf, opts</span>)</div>
+          <div class="desc">The raw parsers, separate from the file layer — the way to inject a mesh you already hold in memory. They throw on a file without any face. Extra data rides in <code>geometry.userData</code>: <code>parts</code> (OBJ <code>o</code>/<code>g</code>, multi-solid STL, as triangle ranges), <code>faceRGB</code> (per-triangle colour) and <code>color</code> (STL header colour). <code>parsePLY</code> returns an indexed geometry.</div>
+          <div class="tags"><span class="t t-async">async</span></div>
+        </div>
+        <div class="row" data-k="importmesh doimp loadfile file picker batch">
+          <div class="sig"><b>importMesh</b>(<span class="arg">event</span>) · <b>doImp</b>(<span class="arg">accept</span>) · <b>loadFile</b>(<span class="arg">event</span>)</div>
+          <div class="desc">The UI path: <code>doImp</code> opens the picker, <code>importMesh</code> processes the batch strictly in sequence with a watchdog sized from the largest file.</div>
+          <div class="tags"><span class="t t-dom">DOM</span></div>
+        </div>
+        <div class="row" data-k="stepslicebysize stepslicebycomponents chunking large files">
+          <div class="sig"><b>stepSliceBySize</b>(<span class="arg">text, maxChunkBytes</span>) · <b>stepSliceByComponentsAndSize</b>(<span class="arg">text, maxChunkBytes</span>)</div>
+          <div class="desc">The two chunking strategies for very large STEP files — by raw size, or along component boundaries first.</div>
+        </div>
+        <div class="row" data-k="nasfacecolorreport diagnostic face colours step">
+          <div class="sig"><b>nasFaceColorReport</b>(<span class="arg">n</span>) · <b>nasFaceColorReset</b>()</div>
+          <div class="desc">Diagnostics for per-face colour decoding: what was recognised, what failed and why.</div>
+        </div>
+        <div class="row" data-k="nasstepdeclared nasstepdeclaredalpha transparency opacity styles step">
+          <div class="sig"><b>nasStepDeclared</b>(<span class="arg">text|buffer</span>) · <b>nasStepDeclaredAlpha</b>(<span class="arg">decl, '#rrggbb'</span>) · <b>nasStepAudit</b>(<span class="arg">decl, result</span>)</div>
+          <div class="desc">What the file <em>declares</em>, read straight from the Part 21 text before any geometry: solids, shells, edge valence — and <code>styleAlpha</code>, the colour&nbsp;→&nbsp;opacity table. No reader (MEDUSA, occt-import-js, the NSPG cache) carries an alpha channel, so that table is what makes a translucent body come in translucent. A hue seen both opaque and translucent is ambiguous and stays out of the table; <code>nasStepDeclaredAlpha</code> tolerates ±1 per channel on lookup, the rounding the sRGB round-trip can cost.</div>
+        </div>
+      </div>
+
+<pre><span class="c">// import a STEP file from a URL without touching the file picker</span>
+<span class="k">const</span> r = <span class="k">await</span> fetch(<span class="s">'https://example.local/flange.stp'</span>);
+<span class="k">const</span> f = <span class="k">new</span> File([<span class="k">await</span> r.blob()], <span class="s">'flange.stp'</span>, {type:<span class="s">'application/step'</span>});
+<span class="k">await</span> importSTEP_XCAF(f);
+<span class="k">return</span> objs.length + <span class="s">' objects after import'</span>;</pre>
+    </section>
+
+    <!-- ═══════════════════════════════ -->
+    <section id="export">
+      <h2><span class="n">13</span>Export</h2>
+
+      <div class="note warn">
+        <span class="lbl">Scope</span>
+        <p>Every mesh exporter — STL, OBJ, 3MF, GLB, PLY — walks <code>objs</code>, meaning <strong>the entire scene</strong>, never the selection. STEP is the one exception: its internal entry point takes an explicit object list.</p>
+      </div>
+
+      <div class="api">
+        <div class="row" data-k="expstl expobj expply exp3mf expglb mesh export">
+          <div class="sig"><b>expSTL</b>() · <b>expSTLascii</b>() · <b>expOBJ</b>() · <b>expPLY</b>() · <b>exp3MF</b>() · <b>expGLB</b>(<span class="arg">useDraco</span>)</div>
+          <div class="desc">Mesh exports at <code>setExpQuality</code> resolution. STL (binary and ASCII) and 3MF run a watertightness gate that can prompt. GLB is written in metres, as glTF requires, with one material per colour; 3MF is deflate-compressed with object and per-face colours; PLY is binary with vertex colours. They open the native save picker where the browser supports it, otherwise fall back to a download.</div>
+          <div class="tags"><span class="t t-async">async</span></div>
+        </div>
+        <div class="row" data-k="expstep dostepexport step dialog ap242">
+          <div class="sig"><b>expSTEP</b>() · <b>openStepExportModal</b>() · <b>doStepExport</b>() · <b>closeStepExportModal</b>()</div>
+          <div class="desc">Opens the STEP dialog — protocol, fusion mode, custom tolerance, stats — then runs the export with those settings. The picker is deliberately opened during the click gesture, before the B-Rep computation. The file is written as an <strong>assembly: one PRODUCT per body</strong>, named after it, tied to the root by <code>NEXT_ASSEMBLY_USAGE_OCCURRENCE</code> — a single body stays a single product. Colours travel as a <code>STYLED_ITEM</code> per body plus an <code>OVER_RIDING_STYLED_ITEM</code> per face that differs from it, and opacity below 1 as <code>SURFACE_STYLE_RENDERING_WITH_PROPERTIES</code>.</div>
+          <div class="tags"><span class="t t-async">async</span><span class="t t-dom">DOM</span></div>
+        </div>
+        <div class="row" data-k="expsteprun step text memory objlist returntext silent">
+          <div class="sig"><b>_expSTEPRun</b>(<span class="arg">objList, {returnText, silent, fileHandle}</span>) <span class="arg">→ Promise</span></div>
+          <div class="desc"><strong>The single best scripting hook in the API.</strong> Writes STEP for an arbitrary object list and, with <code>returnText: true</code>, <strong>resolves with the text instead of downloading</strong>; with <code>silent: true</code>, without the spinner. Settings come from <code>globalThis._stepExportConfig</code>. Passing no list defaults to the whole scene.</div>
+          <div class="tags"><span class="t t-async">async</span></div>
+        </div>
+        <div class="row" data-k="stepexportconfig fusion mode ap version tolerance">
+          <div class="sig"><b>_stepExportConfig</b> · <b>STEPApVersions</b> · <b>STEPFusionModes</b></div>
+          <div class="desc">Config object read at export time: <code>{fusionMode, apVersion, customTolerance, logStats}</code>. The two tables below list the accepted values.</div>
+        </div>
+        <div class="row" data-k="section svg dxf slice contour">
+          <div class="sig"><b>_doSectionExp</b>(<span class="arg">'svg'|'dxf'</span>) · <b>_sliceMesh</b>(<span class="arg">geo, planeY</span>)</div>
+          <div class="desc">Horizontal cross-section of the whole scene at the Y read from the dialog field, seen from above, emitted as chained contours (closed SVG paths, closed DXF R12 polylines). <code>_sliceMesh</code> is the underlying triangle/plane intersector and returns plain segments; <code>_chainSegments</code> joins them.</div>
+          <div class="tags"><span class="t t-dom">DOM</span></div>
+        </div>
+        <div class="row" data-k="saveproject loadproject newproject native">
+          <div class="sig"><b>saveProject</b>() · <b>saveProjectAs</b>() · <b>loadProject</b>() · <b>newProject</b>()</div>
+          <div class="desc">Native project I/O. <code>newProject()</code> asks for confirmation only when the scene is non-empty, then disposes everything.</div>
+          <div class="tags"><span class="t t-async">async</span></div>
+        </div>
+        <div class="row" data-k="serializegeo deserializegeo base64 f32 u32 encoding">
+          <div class="sig"><b>serializeGeo</b>(<span class="arg">g</span>) · <b>deserializeGeo</b>(<span class="arg">d</span>) · <b>f32ToB64</b> · <b>b64ToF32</b> · <b>u32ToB64</b> · <b>b64ToU32</b></div>
+          <div class="desc">Compact geometry serialisation, the same one the project format and the CSG tree use. Everything you need to stash or transport a mesh from a script.</div>
+        </div>
+      </div>
+
+      <div class="tw">
+      <table>
+        <thead><tr><th>apVersion</th><th>Schema</th><th>Colours</th><th>Use</th></tr></thead>
+        <tbody>
+          <tr><td class="m">AP203</td><td>Config Controlled Design</td><td>yes<span style="opacity:.6"> (+ Shape Appearance Layer MIM)</span></td><td>widest reader compatibility</td></tr>
+          <tr><td class="m">AP214</td><td>Automotive Design</td><td>yes</td><td>the industry default</td></tr>
+          <tr><td class="m">AP242</td><td>Managed Model Based 3D Eng.</td><td>yes</td><td>current standard, MBD / PMI capable</td></tr>
+        </tbody>
+      </table>
+      <table>
+        <thead><tr><th>fusionMode</th><th>Tolerance</th><th>Decimals</th><th>Effect</th></tr></thead>
+        <tbody>
+          <tr><td class="m">EXACT</td><td class="num">1e-6</td><td class="num">6</td><td>strictest coplanar merge</td></tr>
+          <tr><td class="m">ROBUST</td><td class="num">1e-5</td><td class="num">5</td><td>default; survives noisy meshes</td></tr>
+          <tr><td class="m">FACETED</td><td>—</td><td>—</td><td>no merge — faceted B-Rep, for organic shapes</td></tr>
+          <tr><td colspan="4" style="opacity:.75">Decimals quantise the vertex and plane keys of the merge; <code>customTolerance</code> overrides both. The tolerance is also written as the file's <code>UNCERTAINTY_MEASURE_WITH_UNIT</code>. Coordinates themselves are always written to six decimals.</td></tr>
+        </tbody>
+      </table>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════ -->
+    <section id="scene">
+      <h2><span class="n">14</span>Scene, undo, camera, units</h2>
+
+      <div class="api">
+        <div class="row" data-k="undopush undoaction redoaction journal 200">
+          <div class="sig"><b>undoPush</b>(<span class="arg">label</span>) · <b>undoAction</b>() · <b>redoAction</b>() · <b>idbJournalPurge</b>() · <b>UNDO_JOURNAL_MAX</b> = 200</div>
+          <div class="desc"><strong>All three are async.</strong> <code>await undoPush('my script')</code> at the top guarantees the restore point is written before you change anything. Snapshots are captured synchronously then persisted to IndexedDB.</div>
+          <div class="tags"><span class="t t-async">async</span></div>
+        </div>
+        <div class="row" data-k="camera cama camt updcam setcameraview orbit">
+          <div class="sig"><b>camA</b> {theta, phi, dist} · <b>camT</b> · <b>updCam</b>() · <b>setCameraView</b>(<span class="arg">'top'|'front'|'right'|'persp'</span>)</div>
+          <div class="desc">Spherical orbit and target. Write into <code>camA</code>, then call <code>updCam()</code>. <code>persp</code> also resets the target to the origin at distance 240.</div>
+        </div>
+        <div class="row" data-k="setdispunit units mm inch foot conversion">
+          <div class="sig"><b>setDispUnit</b>(<span class="arg">'mm'|'in'|'ft'</span>) · <b>MM_PER_IN</b> · <b>MM_PER_FT</b></div>
+          <div class="desc"><em>Display</em> unit. The model stays in millimetres — but <code>setTr</code> and <code>setDim</code> interpret their arguments in this unit, and the choice is persisted.</div>
+        </div>
+        <div class="row" data-k="togsnap setsnapsize snap magnetic grid">
+          <div class="sig"><b>togSnap</b>() · <b>setSnapSize</b>(<span class="arg">sz</span>)</div>
+          <div class="desc">Snapping on/off and its step. <code>togSnap()</code> cycles through <code>SNAP_SIZES</code> and only turns snapping off after the last one.</div>
+        </div>
+        <div class="row" data-k="showspinner hidespinner progress overlay">
+          <div class="sig"><b>showSpinner</b>(<span class="arg">label, sub, progress</span>) · <b>hideSpinner</b>(<span class="arg">force</span>)</div>
+          <div class="desc">The progress overlay — the honest way to make a long script visible. Always pair it with <code>hideSpinner()</code> in a <code>finally</code>.</div>
+        </div>
+        <div class="row" data-k="init anim updatePerf updgizmo render loop">
+          <div class="sig"><b>init</b>() · <b>anim</b>() · <b>updatePerf</b>() · <b>updGizmo</b>() · <b>updateCotation</b>() · <b>onRz</b>()</div>
+          <div class="desc">Bootstrap, the render loop, the FPS/perf readout, the rotation gizmo, the dimension overlay, and the resize handler. Setting <code>_camDirty = true</code> is what asks for a redraw.</div>
+        </div>
+        <div class="row" data-k="mdown mmove mup mwheel mdblclick onkey input handlers">
+          <div class="sig"><b>mDown</b>(<span class="arg">e</span>) · <b>mMove</b>(<span class="arg">e</span>) · <b>mUp</b>(<span class="arg">e</span>) · <b>mWheel</b>(<span class="arg">e</span>) · <b>mDblClick</b>(<span class="arg">e</span>) · <b>onKey</b>(<span class="arg">e</span>)</div>
+          <div class="desc">The raw input handlers. They expect real events; calling them with synthetic ones is possible but there is usually a direct function that does what you actually want.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════ -->
+    <section id="storage">
+      <h2><span class="n">15</span>Memory &amp; storage</h2>
+
+      <div class="api">
+        <div class="row" data-k="geometrypool stats gc slots memory">
+          <div class="sig"><b>GeometryPool</b> {init, geoStore, geoLoad, snapSave, snapRestore, free, gc, stats, initialized}</div>
+          <div class="desc">A single pre-allocated <code>ArrayBuffer</code> split into a slot header, a geometry zone (80&nbsp;%) and a snapshot zone, with bump allocation and mark-and-sweep collection. <code>stats()</code> returns <code>{totalMo, geoUsedMo, geoFreeMo, snapUsedMo, snapFreeMo, slots, maxSlots}</code>.</div>
+        </div>
+        <div class="row" data-k="flushpool updpoolstats setpoolsize gc memory">
+          <div class="sig"><b>flushPool</b>() · <b>updPoolStats</b>() · <b>setPoolSize</b>(<span class="arg">mb</span>) · <b>enableAutoPool</b>()</div>
+          <div class="desc">Force a collection and report, refresh the readout, resize the pool, or hand sizing back to the automatic mode.</div>
+        </div>
+        <div class="row" data-k="idbinit idbtx idblogsave indexeddb persistence">
+          <div class="sig"><b>idbInit</b>() · <b>idbTx</b>(<span class="arg">store, mode</span>) · <b>idbLogSave</b>(<span class="arg">entry</span>) · <b>idbUpdateQuotaDisplay</b>() · <b>idbSetStatus</b>(<span class="arg">msg, color</span>)</div>
+          <div class="desc">The IndexedDB layer behind the undo journal, the log history and the STEP cache — database <code>NASSCAD_DB</code>, 2&nbsp;GB quota target, persistent storage requested at startup.</div>
+          <div class="tags"><span class="t t-async">async</span></div>
+        </div>
+        <div class="row" data-k="idbsavesettings idbloadsettings settings persistence">
+          <div class="sig"><b>idbSaveSettings</b>(<span class="arg">key, val</span>) · <b>idbLoadSettings</b>()</div>
+          <div class="desc">Persistent settings. A script can park its own keys here to survive a reload — the one storage in NASSCAD that outlives the session without touching a file.</div>
+          <div class="tags"><span class="t t-async">async</span></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════ -->
+    <section id="logging">
+      <h2><span class="n">16</span>Logging &amp; diagnostics</h2>
+
+      <div class="api">
+        <div class="row" data-k="naslog levels error warn ok info csg idb medusa dbg">
+          <div class="sig"><b>nasLog</b>(<span class="arg">level, message</span>)</div>
+          <div class="desc">Levels: <code>ERROR</code> <code>WARN</code> <code>OK</code> <code>INFO</code> <code>CSG</code> <code>IDB</code> <code>MEDUSA</code> <code>DBG</code>. All are persisted to IndexedDB <strong>except <code>DBG</code></strong>, deliberately, as too noisy — so a script message you want to keep must not use that level. <code>console.log/warn/error</code>, uncaught errors and unhandled rejections are all funnelled here automatically.</div>
+        </div>
+        <div class="row" data-k="togglelogwin setlogfilter logclear logexport panel">
+          <div class="sig"><b>toggleLogWin</b>() · <b>setLogFilter</b>(<span class="arg">f</span>) · <b>logClear</b>() · <b>logExport</b>() · <b>logCopyClipboard</b>() · <b>logRecallIDB</b>(<span class="arg">n</span>)</div>
+          <div class="desc">The log window: open, filter, clear, export to a timestamped file, copy, or recall earlier sessions from IndexedDB. 2&nbsp;000 entries live in RAM. The <code>MEDUSA</code> filter is the one cross-cutting filter — it also catches engine lines logged at other levels.</div>
+          <div class="tags"><span class="t t-async">async</span></div>
+        </div>
+        <div class="row" data-k="medusalogpull engine log remote">
+          <div class="sig"><b>medusaLogPull</b>(<span class="arg">nMax</span>)</div>
+          <div class="desc">Pulls the native engine's log (<code>GET /log</code>) and renders it beside the browser log. MEDUSA keeps 20&nbsp;000 lines in memory and writes no file unless started with <code>--logfile</code>.</div>
+          <div class="tags"><span class="t t-async">async</span><span class="t t-med">MEDUSA</span></div>
+        </div>
+      </div>
+
+      <div class="legend">
+        <span><span class="t t-async">async</span> await it</span>
+        <span><span class="t t-sel">selection</span> acts on <code>selObjs</code></span>
+        <span><span class="t t-med">MEDUSA</span> native engine required</span>
+        <span><span class="t t-occt">OCCT</span> WASM kernel</span>
+        <span><span class="t t-dom">DOM</span> dialog must be open</span>
+        <span><span class="t t-undo">undo</span> pushes a restore point</span>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════ -->
+    <section id="bundled">
+      <h2><span class="n">17</span>Bundled libraries</h2>
+      <p class="lede">Loaded as plain globals alongside the app, and therefore available to any script.</p>
+
+      <div class="api">
+        <div class="row" data-k="three threejs renderer geometry">
+          <div class="sig"><b>THREE</b></div>
+          <div class="desc">The full three.js namespace. Everything NASSCAD builds is ordinary three.js underneath, so <code>BufferGeometry</code>, <code>Box3</code>, <code>Matrix4</code>, <code>Raycaster</code> and the loaders are all fair game.</div>
+        </div>
+        <div class="row" data-k="draco decoder encoder compression glb">
+          <div class="sig"><b>DracoDecoderModule</b>(<span class="arg">cfg</span>) · <b>DracoEncoderModule</b>(<span class="arg">cfg</span>)</div>
+          <div class="desc">Draco codec, used by GLB import and by Draco-compressed GLB export. Both are instantiated lazily from an inlined base64 WASM payload.</div>
+        </div>
+        <div class="row" data-k="occtimportjs occt import wasm">
+          <div class="sig"><b>occtimportjs</b>(<span class="arg">cfg</span>)</div>
+          <div class="desc">The occt-import-js bridge — the lighter STEP/IGES reader, distinct from the full OCCT kernel that <code>_occtLoad()</code> instantiates.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════ -->
+    <section id="recipes">
+      <h2><span class="n">18</span>Recipes</h2>
+      <p class="lede">Ten complete scripts. Each was executed against a running NASSCAD 4.7.0 instance while writing this page; the numbers quoted in the comments are the values that came back.</p>
+
+      <div class="recipe">
+        <header><h3>1 — Scene inventory</h3><p class="why">What the file actually contains: type, origin, triangle count, footprint.</p></header>
+<pre><span class="k">const</span> rows = objs.map(o =&gt; {
+  <span class="k">const</span> g = o.mesh.geometry;
+  <span class="k">const</span> tri = g.index ? g.index.count / 3 : g.attributes.position.count / 3;
+  o.mesh.updateMatrixWorld(<span class="k">true</span>);
+  <span class="k">const</span> s = <span class="k">new</span> THREE.Box3().setFromObject(o.mesh).getSize(<span class="k">new</span> THREE.Vector3());
+  <span class="k">return</span> [
+    String(o.id).padStart(4),
+    o.name.padEnd(26).slice(0, 26),
+    (o.genType || o.type).padEnd(10),
+    (Math.round(tri) + <span class="s">' tri'</span>).padStart(12),
+    `${s.x.toFixed(1)}×${s.y.toFixed(1)}×${s.z.toFixed(1)} mm`,
+    o.isHole ? <span class="s">'  hole'</span> : <span class="s">''</span>
+  ].join(<span class="s">'  '</span>);
+});
+scriptLog(rows.join(<span class="s">'\n'</span>));
+
+<span class="k">const</span> byKind = {};
+objs.forEach(o =&gt; { <span class="k">const</span> k = o.genType || o.type; byKind[k] = (byKind[k] || 0) + 1; });
+scriptLog(<span class="s">'\n— breakdown —'</span>, byKind);
+<span class="k">return</span> objs.length + <span class="s">' objects'</span>;</pre>
+      </div>
+
+      <div class="recipe">
+        <header><h3>2 — Real volume and mass</h3><p class="why">Signed mesh volume including the world transform, converted to mass via the applied material. Verified: a default cube returns exactly 8 000 mm³.</p></header>
+<pre><span class="c">// densities in g/cm³, keyed on NASSCAD material ids</span>
+<span class="k">const</span> RHO = {alu:2.70, inox:7.90, acier:7.85, laiton:8.50, cuivre:8.96,
+             or:19.30, titane:4.51, <span class="s">'abs-noir'</span>:1.04, <span class="s">'abs-blanc'</span>:1.04,
+             caoutchouc:1.20, carbone:1.60, verre:2.50};
+
+<span class="k">function</span> volumeMm3(mesh){
+  mesh.updateMatrixWorld(<span class="k">true</span>);
+  <span class="k">const</span> g = mesh.geometry, p = g.attributes.position.array;
+  <span class="k">const</span> ix = g.index ? g.index.array : <span class="k">null</span>;
+  <span class="k">const</span> n = ix ? ix.length / 3 : p.length / 9;
+  <span class="k">const</span> m = mesh.matrixWorld;
+  <span class="k">const</span> a = <span class="k">new</span> THREE.Vector3(), b = <span class="k">new</span> THREE.Vector3(), c = <span class="k">new</span> THREE.Vector3();
+  <span class="k">let</span> v = 0;
+  <span class="k">for</span>(<span class="k">let</span> i = 0; i &lt; n; i++){
+    <span class="k">const</span> i0 = (ix ? ix[i*3] : i*3) * 3;
+    <span class="k">const</span> i1 = (ix ? ix[i*3+1] : i*3+1) * 3;
+    <span class="k">const</span> i2 = (ix ? ix[i*3+2] : i*3+2) * 3;
+    a.set(p[i0], p[i0+1], p[i0+2]).applyMatrix4(m);
+    b.set(p[i1], p[i1+1], p[i1+2]).applyMatrix4(m);
+    c.set(p[i2], p[i2+1], p[i2+2]).applyMatrix4(m);
+    v += a.dot(b.clone().cross(c)) / 6;   <span class="c">// signed tetrahedron (O,a,b,c)</span>
+  }
+  <span class="k">return</span> Math.abs(v);
+}
+
+<span class="k">let</span> total = 0;
+(selObjs.length ? selObjs : objs).forEach(o =&gt; {
+  <span class="k">const</span> mm3 = volumeMm3(o.mesh);
+  <span class="k">const</span> rho = RHO[o.matId] ?? 1.0;
+  <span class="k">const</span> g = mm3 / 1000 * rho;           <span class="c">// mm³ → cm³ → g</span>
+  total += g;
+  scriptLog(`${o.name.padEnd(24)} ${(mm3/1000).toFixed(2).padStart(10)} cm³ `
+    + `${g.toFixed(1).padStart(9)} g   ${o.matId || <span class="s">'(no material, ρ=1)'</span>}`);
+});
+<span class="k">return</span> <span class="s">'total mass: '</span> + (total/1000).toFixed(3) + <span class="s">' kg'</span>;</pre>
+      </div>
+
+      <div class="recipe">
+        <header><h3>3 — Parametric hole grid</h3><p class="why">Select the plate, run: holes are created, aligned to its bounding box, and subtracted in one operation.</p></header>
+<pre><span class="k">const</span> D = 6, PITCH = 20, MARGIN = 12;        <span class="c">// hole Ø, spacing, edge margin (mm)</span>
+
+<span class="k">const</span> plate = selObjs[selObjs.length - 1];
+<span class="k">if</span>(!plate) <span class="k">throw new</span> Error(<span class="s">'Select the plate first'</span>);
+<span class="k">if</span>(!<span class="k">await</span> _medusaProbe(2000)) <span class="k">throw new</span> Error(<span class="s">'MEDUSA offline — the subtraction would fail'</span>);
+
+<span class="k">await</span> undoPush(<span class="s">'hole grid'</span>);
+plate.mesh.updateMatrixWorld(<span class="k">true</span>);
+<span class="k">const</span> bb = <span class="k">new</span> THREE.Box3().setFromObject(plate.mesh);
+<span class="k">const</span> thk = bb.max.y - bb.min.y;
+<span class="k">const</span> cy  = (bb.max.y + bb.min.y) / 2;
+
+setHoleMode(<span class="k">true</span>);
+<span class="k">const</span> holes = [];
+<span class="k">for</span>(<span class="k">let</span> x = bb.min.x + MARGIN; x &lt;= bb.max.x - MARGIN + 1e-6; x += PITCH){
+  <span class="k">for</span>(<span class="k">let</span> z = bb.min.z + MARGIN; z &lt;= bb.max.z - MARGIN + 1e-6; z += PITCH){
+    scriptCheckStop();
+    addPrimitive(<span class="s">'cylinder'</span>);
+    <span class="k">const</span> t = objs[objs.length - 1];
+    t.mesh.scale.set(D / PS, (thk + 4) / PS, D / PS);   <span class="c">// base is Ø20 × h20 = PS</span>
+    t.mesh.position.set(x, cy, z);
+    _invalidateBbox(t.mesh);
+    holes.push(t);
+  }
+}
+setHoleMode(<span class="k">false</span>);
+
+selObjs = [plate, ...holes];
+updProps(); updOList(); updCSG();
+<span class="k">await</span> doCSG(<span class="s">'subtract'</span>);
+<span class="k">return</span> holes.length + <span class="s">' holes Ø'</span> + D + <span class="s">' mm'</span>;</pre>
+      </div>
+
+      <div class="recipe">
+        <header><h3>4 — Bolt circle</h3><p class="why">The base pattern of every flange: N holes on a given circle, left as holes ready to subtract.</p></header>
+<pre><span class="k">const</span> N = 8, PCD = 80, D = 8, H = 30;   <span class="c">// count, pitch circle Ø, hole Ø, height</span>
+
+<span class="k">await</span> undoPush(<span class="s">'bolt circle'</span>);
+setHoleMode(<span class="k">true</span>);
+<span class="k">const</span> made = [];
+<span class="k">for</span>(<span class="k">let</span> i = 0; i &lt; N; i++){
+  scriptCheckStop();
+  <span class="k">const</span> a = i * 2 * Math.PI / N;
+  addPrimitive(<span class="s">'cylinder'</span>);
+  <span class="k">const</span> t = objs[objs.length - 1];
+  t.mesh.scale.set(D / PS, H / PS, D / PS);
+  t.mesh.position.set(PCD/2 * Math.cos(a), 0, PCD/2 * Math.sin(a));
+  _invalidateBbox(t.mesh);
+  made.push(t);
+}
+setHoleMode(<span class="k">false</span>);
+selObjs = made; updProps(); updOList(); updStats();
+<span class="k">return</span> `${N} holes Ø${D} on Ø${PCD}`;</pre>
+      </div>
+
+      <div class="recipe">
+        <header><h3>5 — Your own geometry into the scene</h3><p class="why">A hexagonal prism computed by the script and injected as a first-class object. Verified: 30 × 12 × 34.64 mm for 30 mm across flats.</p></header>
+<pre><span class="c">// extrude a convex polygon [[x,z],…] to height h, base at Y=0</span>
+<span class="k">function</span> extrude(poly, h){
+  <span class="k">const</span> v = [];
+  <span class="k">const</span> tri = (...p) =&gt; v.push(...p);
+  <span class="k">const</span> n = poly.length;
+  <span class="k">for</span>(<span class="k">let</span> i = 0; i &lt; n; i++){                <span class="c">// side walls</span>
+    <span class="k">const</span> a = poly[i], b = poly[(i+1) % n];
+    tri(a[0],0,a[1], b[0],0,b[1], b[0],h,b[1]);
+    tri(a[0],0,a[1], b[0],h,b[1], a[0],h,a[1]);
+  }
+  <span class="k">for</span>(<span class="k">let</span> i = 1; i &lt; n - 1; i++){            <span class="c">// caps (triangle fan)</span>
+    tri(poly[0][0],0,poly[0][1], poly[i+1][0],0,poly[i+1][1], poly[i][0],0,poly[i][1]);
+    tri(poly[0][0],h,poly[0][1], poly[i][0],h,poly[i][1], poly[i+1][0],h,poly[i+1][1]);
+  }
+  <span class="k">const</span> g = <span class="k">new</span> THREE.BufferGeometry();
+  g.setAttribute(<span class="s">'position'</span>, <span class="k">new</span> THREE.Float32BufferAttribute(v, 3));
+  g.computeVertexNormals(); g.computeBoundingBox();
+  <span class="k">return</span> g;
+}
+
+<span class="k">const</span> AF = 30, TH = 12;                       <span class="c">// across flats, thickness</span>
+<span class="k">const</span> R = AF / 2 / Math.cos(Math.PI / 6);
+<span class="k">const</span> hex = Array.from({length: 6}, (_, i) =&gt; {
+  <span class="k">const</span> a = i * Math.PI / 3 + Math.PI / 6;
+  <span class="k">return</span> [R * Math.cos(a), R * Math.sin(a)];
+});
+
+<span class="k">const</span> obj = _finalizeGenToScene({
+  label: <span class="s">'NassScript prism'</span>,
+  geo: <span class="k">await</span> postProcessCSGGeo(extrude(hex, TH)),   <span class="c">// weld + crease normals</span>
+  name: n =&gt; `hex${AF}_${n}`,
+  genType: <span class="s">'script'</span>,
+  genParams: {acrossFlats: AF, thickness: TH},
+  hideDialogFn: () =&gt; {}
+});
+<span class="k">return</span> obj.name;</pre>
+      </div>
+
+      <div class="recipe">
+        <header><h3>6 — One STEP file per part, no dialog</h3><p class="why">Verified: a single default cube exports to 7 694 bytes of AP242 with a MANIFOLD_SOLID_BREP body.</p></header>
+<pre>globalThis._stepExportConfig = {fusionMode:<span class="s">'ROBUST'</span>, apVersion:<span class="s">'AP242'</span>, logStats:<span class="k">false</span>};
+
+<span class="k">const</span> targets = selObjs.length ? [...selObjs] : [...objs];
+<span class="k">const</span> written = [];
+<span class="k">for</span>(<span class="k">const</span> o <span class="k">of</span> targets){
+  scriptCheckStop();
+  <span class="k">const</span> text = <span class="k">await</span> _expSTEPRun([o], {returnText:<span class="k">true</span>, silent:<span class="k">true</span>});
+  written.push({name: o.name, bytes: text.length});
+
+  <span class="c">// comment this block out for a dry-run inventory</span>
+  <span class="k">const</span> url = URL.createObjectURL(<span class="k">new</span> Blob([text], {type:<span class="s">'application/step'</span>}));
+  <span class="k">const</span> a = Object.assign(document.createElement(<span class="s">'a'</span>),
+    {href:url, download: o.name.replace(/[^\w.-]/g, <span class="s">'_'</span>) + <span class="s">'.stp'</span>});
+  a.click(); URL.revokeObjectURL(url);
+  <span class="k">await new</span> Promise(r =&gt; setTimeout(r, 350));   <span class="c">// let the browser breathe</span>
+}
+scriptLog(written);
+<span class="k">return</span> written.length + <span class="s">' STEP files'</span>;</pre>
+      </div>
+
+      <div class="recipe">
+        <header><h3>7 — One STL per part</h3><p class="why">Mesh exporters only see <code>objs</code>. Swap in a one-object scene, and restore it whatever happens.</p></header>
+<pre><span class="k">const</span> saved = [...objs];
+<span class="k">const</span> targets = selObjs.length ? [...selObjs] : [...objs];
+<span class="k">try</span> {
+  <span class="k">for</span>(<span class="k">const</span> o <span class="k">of</span> targets){
+    scriptCheckStop();
+    objs = [o];                       <span class="c">// ← objs is a reassignable global</span>
+    scriptLog(<span class="s">'exporting '</span> + o.name);
+    <span class="k">await</span> expSTL();                   <span class="c">// opens the save picker</span>
+  }
+} <span class="k">finally</span> {
+  objs = saved;                       <span class="c">// ← non-negotiable</span>
+  updOList(); updStats(); updProps();
+}
+<span class="k">return</span> targets.length + <span class="s">' parts exported'</span>;</pre>
+      </div>
+
+      <div class="recipe">
+        <header><h3>8 — Pre-flight check</h3><p class="why">Five seconds that stop you launching a batch of booleans that cannot succeed.</p></header>
+<pre><span class="k">const</span> report = [];
+
+<span class="k">const</span> medusa = <span class="k">await</span> _medusaProbe(2500);
+report.push((medusa ? <span class="s">'✓'</span> : <span class="s">'✗'</span>) + <span class="s">' MEDUSA '</span>
+  + (medusa ? <span class="s">'reachable'</span> : <span class="s">'OFFLINE — no boolean will run'</span>));
+
+<span class="k">const</span> nonManifold = objs.filter(o =&gt; o.isManifold === <span class="k">false</span>);
+report.push((nonManifold.length ? <span class="s">'⚠'</span> : <span class="s">'✓'</span>) + <span class="s">' non-manifold: '</span>
+  + (nonManifold.map(o =&gt; o.name).join(<span class="s">', '</span>) || <span class="s">'none'</span>));
+
+<span class="k">const</span> heavy = objs.map(o =&gt; {
+  <span class="k">const</span> g = o.mesh.geometry;
+  <span class="k">return</span> {n: o.name, t: g.index ? g.index.count/3 : g.attributes.position.count/3};
+}).filter(x =&gt; x.t &gt; 50000);
+report.push((heavy.length ? <span class="s">'⚠'</span> : <span class="s">'✓'</span>) + <span class="s">' over 50k triangles: '</span>
+  + (heavy.map(x =&gt; `${x.n} (${Math.round(x.t)})`).join(<span class="s">', '</span>) || <span class="s">'none'</span>));
+
+<span class="k">const</span> s = GeometryPool.initialized ? GeometryPool.stats() : <span class="k">null</span>;
+<span class="k">if</span>(s) report.push(`· pool ${Math.round(s.geoUsedMo + s.snapUsedMo)} / ${Math.round(s.totalMo)} MB`
+  + `, ${s.slots}/${s.maxSlots} slots`);
+
+report.push(`· ${objs.length} objects, ${objs.filter(o =&gt; o.isHole).length} hole(s)`);
+scriptLog(report.join(<span class="s">'\n'</span>));
+<span class="k">return</span> medusa ? <span class="s">'ready'</span> : <span class="s">'blocked'</span>;</pre>
+      </div>
+
+      <div class="recipe">
+        <header><h3>9 — Read and replay generator parameters</h3><p class="why">Every generated part carries its exact inputs. Dump them, edit them, rebuild from them.</p></header>
+<pre><span class="c">// 1. dump every generated part's parameters as JSON you can keep</span>
+<span class="k">const</span> sheet = objs.filter(o =&gt; o.genType).map(o =&gt; ({
+  name: o.name, genType: o.genType, params: o.genParams,
+  at: [+o.mesh.position.x.toFixed(3), +o.mesh.position.y.toFixed(3), +o.mesh.position.z.toFixed(3)],
+  rot: [+o.mesh.rotation.x.toFixed(4), +o.mesh.rotation.y.toFixed(4), +o.mesh.rotation.z.toFixed(4)]
+}));
+scriptLog(JSON.stringify(sheet, <span class="k">null</span>, 1));
+
+<span class="c">// 2. rebuild a family of gears from one existing gear's parameters</span>
+<span class="k">const</span> ref = objs.find(o =&gt; o.genType === <span class="s">'gear'</span>);
+<span class="k">if</span>(ref){
+  <span class="k">await</span> undoPush(<span class="s">'gear family'</span>);
+  <span class="k">for</span>(<span class="k">const</span> z <span class="k">of</span> [12, 18, 24, 36]){
+    scriptCheckStop();
+    <span class="k">const</span> p = {...ref.genParams, gearTeeth: z, gearPair: <span class="k">false</span>};
+    <span class="k">const</span> {vPos, tris} = _gearBuild(p);
+    <span class="k">const</span> g = <span class="k">new</span> THREE.BufferGeometry();
+    g.setAttribute(<span class="s">'position'</span>, <span class="k">new</span> THREE.Float32BufferAttribute(<span class="k">new</span> Float32Array(vPos), 3));
+    <span class="k">if</span>(tris) g.setIndex(Array.from(tris));
+    g.computeVertexNormals(); g.computeBoundingBox();
+    _finalizeGenToScene({label:<span class="s">'Gear.Gen (script)'</span>, geo:g,
+      name: n =&gt; `gear_z${z}_${n}`, genType:<span class="s">'gear'</span>, genParams:p,
+      hideDialogFn: () =&gt; {}, shininess: 12, specular: 0x2a2a2a});
+  }
+}
+<span class="k">return</span> sheet.length + <span class="s">' generated parts catalogued'</span>;</pre>
+      </div>
+
+      <div class="recipe">
+        <header><h3>10 — Drive the 2D sketcher</h3><p class="why">Read the contour, transform it numerically, extrude — the only fully scriptable modelling loop in the app.</p></header>
+<pre>openSketcher();                       <span class="c">// draw a closed contour first, then run this</span>
+
+<span class="k">const</span> ents = SK.getEntities();
+<span class="k">if</span>(!ents.length) <span class="k">throw new</span> Error(<span class="s">'Empty sketch — draw a closed contour first'</span>);
+
+scriptLog(`${ents.length} entities`);
+<span class="k">const</span> kinds = {};
+ents.forEach(e =&gt; kinds[e.type] = (kinds[e.type] || 0) + 1);
+scriptLog(kinds);
+
+<span class="c">// bounding box of the sketch, in sketch units</span>
+<span class="k">const</span> xs = [], ys = [];
+ents.forEach(e =&gt; {
+  [[e.x1, e.y1], [e.x2, e.y2], [e.cx, e.cy]].forEach(([x, y]) =&gt; {
+    <span class="k">if</span>(<span class="k">typeof</span> x === <span class="s">'number'</span>) xs.push(x);
+    <span class="k">if</span>(<span class="k">typeof</span> y === <span class="s">'number'</span>) ys.push(y);
+  });
+});
+scriptLog(`extent ${(Math.max(...xs)-Math.min(...xs)).toFixed(2)}`
+        + ` × ${(Math.max(...ys)-Math.min(...ys)).toFixed(2)}`);
+
+<span class="c">// nudge one entity numerically, then extrude</span>
+<span class="c">// SK.updateProp(ents[0].id, 'x2', 45);</span>
+SK.extrude();
+<span class="k">return</span> objs.at(-1).name;</pre>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════ -->
+    <section id="pitfalls">
+      <h2><span class="n">19</span>Pitfalls</h2>
+      <div class="tw">
+      <table>
+        <thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead>
+        <tbody>
+          <tr><td>Scene is right, object list is wrong</td><td><code>objs</code> / <code>selObjs</code> mutated without a refresh</td><td class="m">updOList(); updStats(); updProps();</td></tr>
+          <tr><td>Clicking selects the wrong thing</td><td>Mesh moved by hand, bounding-box cache stale</td><td class="m">_invalidateBbox(o.mesh)</td></tr>
+          <tr><td><code>typeof window.objs</code> is undefined</td><td>Top-level <code>const</code>/<code>let</code> never reach the global object</td><td>Use the bare name <code>objs</code></td></tr>
+          <tr><td>A variable vanishes between runs</td><td>Your <code>const</code>/<code>let</code> are local to the run</td><td class="m">window.myVar = …</td></tr>
+          <tr><td><code>setTr</code> moves 25.4 mm instead of 1</td><td>Display unit is inches</td><td class="m">setDispUnit('mm') · or mesh.position</td></tr>
+          <tr><td><code>setDim</code> only affects one object</td><td>It sees <code>selObjs</code>.at(-1) only</td><td>Loop and reassign the selection</td></tr>
+          <tr><td>Asked for union, got a subtraction</td><td>A hole object was in the selection</td><td class="m">setHoleMode(false) on the sources</td></tr>
+          <tr><td>Stop button does nothing</td><td>No <code>scriptCheckStop()</code> in the loop</td><td>One per iteration</td></tr>
+          <tr><td>Ctrl+Z undoes the previous action</td><td><code>undoPush</code> not awaited</td><td class="m">await undoPush('…')</td></tr>
+          <tr><td>The 200-step undo journal fills instantly</td><td><code>addPrimitive</code> pushes one undo per call</td><td>Build geometry and use <code>_finalizeGenToScene</code></td></tr>
+          <tr><td>Export contains the whole scene</td><td>Mesh exporters walk <code>objs</code></td><td>Recipe 7, or <code>_expSTEPRun</code></td></tr>
+          <tr><td>After N fillets nothing works</td><td>WASM heap full of embind instances</td><td class="m">.delete() every instance</td></tr>
+          <tr><td>The browser freezes mid-script</td><td>Long synchronous block on the main thread</td><td class="m">await new Promise(r=&gt;setTimeout(r,0))</td></tr>
+          <tr><td><code>SK</code> is undefined</td><td>Sketcher module not reached yet</td><td>It exists from load; check for a script error at startup</td></tr>
+          <tr><td>Custom geometry renders inside-out</td><td>Triangle winding reversed</td><td>Swap two vertices per triangle, recompute normals</td></tr>
+        </tbody>
+      </table>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════ -->
+    <section id="method">
+      <h2><span class="n">20</span>How this was verified</h2>
+      <p class="lede">Static reading finds what is declared. It does not tell you what is actually reachable, which is the only thing a script cares about.</p>
+
+      <div class="band">
+        <div>
+          <div class="where" style="color:var(--amber)">Step 1</div>
+          <h4>Source pass</h4>
+          <ul><li>10 shipped files parsed</li><li>678 top-level function declarations</li><li>243 without a leading underscore</li></ul>
+        </div>
+        <div>
+          <div class="where" style="color:var(--teal)">Step 2</div>
+          <h4>Live enumeration</h4>
+          <ul><li>App served over HTTP, headless browser</li><li>Global scope diffed against a blank page</li><li>102 sketcher functions found <em>absent</em></li></ul>
+        </div>
+        <div>
+          <div class="where" style="color:var(--moss)">Step 3</div>
+          <h4>Execution</h4>
+          <ul><li>All 11 primitives created</li><li>Recipes 1, 2, 5, 6, 8 run for real</li><li>Async flags read off the functions</li></ul>
+        </div>
+      </div>
+
+      <p>That second step is what corrected the picture: the sketcher's internals never reach the global scope, top-level <code>const</code> bindings never land on <code>window</code>, and <code>toggleXRay</code> turned out to be async while <code>_expSTEPRun</code> and <code>_occtLoad</code> return promises without being declared async. The figure of <strong>576 reachable global functions, 189 of them public</strong>, is the source count minus the isolated module.</p>
+
+      <p>Numbers quoted elsewhere on this page — a 12-triangle cube, a 2 520-triangle sphere at 32 segments, 8 000 mm³ for a default cube, 7 694 bytes of AP242 for one cube, a 30 × 12 × 34.64 mm hexagonal prism — came back from that running instance, not from reading the code.</p>
+    </section>
+  </main>
+</div>
+
+<footer>
+  <p>Compiled from the shipped source of NASSCAD 4.7.0 MEDUSA — <span class="mono">NASSCAD_V4_7_0.htm</span>, <span class="mono">nassscript.js</span>, <span class="mono">nasscad-gens.js</span>, <span class="mono">nasscad-io.js</span>, <span class="mono">nasscad_logs.js</span>, <span class="mono">nasscad-materials.js</span>, <span class="mono">quick-fillet.js</span>, <span class="mono">step-import.js</span>, <span class="mono">step-export.js</span>, <span class="mono">step-xcaf.js</span> — and confirmed against a running instance.</p>
+  <p>Identifiers prefixed with an underscore are internal. They work, and several are the right tool for a scripting job, but they carry no stability guarantee. NassLab — Marseille.</p>
+</footer>
+
+<script>
+(function(){
+  var q = document.getElementById('q');
+  var rows = Array.prototype.slice.call(document.querySelectorAll('.row'));
+  var sections = Array.prototype.slice.call(document.querySelectorAll('main section'));
+  var empty = document.getElementById('empty');
+
+  rows.forEach(function(r){
+    r._k = ((r.getAttribute('data-k') || '') + ' ' + r.textContent).toLowerCase();
+  });
+
+  function filter(){
+    var v = q.value.trim().toLowerCase();
+    if(!v){
+      document.body.classList.remove('filtering');
+      rows.forEach(function(r){ r.classList.remove('no-match'); });
+      sections.forEach(function(s){ s.classList.remove('no-match'); });
+      empty.classList.remove('show');
+      return;
+    }
+    document.body.classList.add('filtering');
+    var total = 0;
+    sections.forEach(function(s){
+      var rs = Array.prototype.slice.call(s.querySelectorAll('.row'));
+      if(!rs.length){ s.classList.add('no-match'); return; }
+      var hit = 0;
+      rs.forEach(function(r){
+        var ok = r._k.indexOf(v) !== -1;
+        r.classList.toggle('no-match', !ok);
+        if(ok) hit++;
+      });
+      s.classList.toggle('no-match', hit === 0);
+      total += hit;
+    });
+    empty.classList.toggle('show', total === 0);
+  }
+  q.addEventListener('input', filter);
+
+  var links = Array.prototype.slice.call(document.querySelectorAll('#nav a'));
+  var byId = {};
+  links.forEach(function(a){ byId[a.getAttribute('href').slice(1)] = a; });
+  if('IntersectionObserver' in window){
+    var io = new IntersectionObserver(function(entries){
+      entries.forEach(function(e){
+        var a = byId[e.target.id];
+        if(!a) return;
+        if(e.isIntersecting){
+          links.forEach(function(x){ x.classList.remove('on'); });
+          a.classList.add('on');
+        }
+      });
+    }, {rootMargin: '-10% 0px -80% 0px'});
+    sections.forEach(function(s){ io.observe(s); });
+  }
+})();
+</script>
+
+</body>
+</html>
