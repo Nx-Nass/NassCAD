@@ -10,6 +10,7 @@
 *.zip  binary
 *.wasm binary
 *.png  binary
+*.gif  binary
 *.ico  binary
 
 # Bibliothèques tierces : exclues des statistiques de langage GitHub
@@ -21,7 +22,13 @@ occt-loader-b64.js  linguist-vendored
 nasscad_occt_wasm.js linguist-vendored
 web-ifc-api-iife.js  linguist-vendored
 nasscad-ifc-wasm.js  linguist-vendored
+nasscad-manifold-wasm.js linguist-vendored
 opencascade.wasm.data.js linguist-vendored
+opencascade.wasm.wasm    linguist-vendored
+
+# Documentation et visuels : hors statistiques de langage
+nasscript_doc.html linguist-documentation
+docs/**            linguist-documentation
 
 # L'application principale porte le langage du repo
 NASSCAD_V4_7_0.htm linguist-detectable

@@ -3,18 +3,38 @@
 //
 // MODE D'EMPLOI
 //   1. Sauvegarde ton travail, puis Nouveau projet (la scène doit être VIDE).
-//   2. Lance MEDUSA (Nasscad_Medusa_Engine_3.1.exe).
+//   2. Moteur des booléens : MEDUSA lancé → natif ; MEDUSA fermé → Manifold
+//      WASM dans le navigateur. Pour comparer : un passage avec, un sans.
 //   3. ⚡ Script → colle TOUT ce fichier → Ctrl+Entrée.
 //   4. Ne touche plus à la souris jusqu'au résultat final (3 à 10 min).
 //   5. Copie le bloc « RÉSULTATS » affiché à la fin et renvoie-le à Claude.
 //
+// v3 (30/09) : marche aussi sans MEDUSA (repli Manifold WASM). Chaque ligne
+// CSG dit quel moteur a calculé et donne le temps de calcul pur du moteur
+// (« moteur ») à côté du temps total vu par l'utilisateur.
+// SKIP_VUE = true saute les paliers d'affichage (déjà mesurés, indépendants
+// du moteur CSG) : le bench ne fait plus que les booléens.
+//
+// v5 (30/09) : une ligne « refaite » — la même union de sphères à 512, une seconde
+// fois, comme après une annulation. Avec le MEDUSA du 30/09 (lot 2), les opérandes
+// déjà construits sont repris de son cache : c'est ce que cette ligne mesure.
+// v4 (30/09) : colonne « lissage » — le lissage du résultat, qu'il parte dans un
+// second aller-retour /smooth (MEDUSA d'avant : durée de l'aller-retour) ou dans
+// la même requête que le booléen (/csg?smooth=, MEDUSA du 30/09 : temps moteur).
+// « moteur » reste le temps du booléen seul (csgMs), même définition qu'avant.
+// La comparaison qui compte d'une version à l'autre : le temps total.
 // v2 : les lignes « BENCH | … » sont aussi écrites dans le journal (Copy logs suffit).
 // Les sphères des tests CSG sont décalées de 3 mm hors des plans X=0 / Z=0
 // (contourne un défaut de soudure MEDUSA sur les coordonnées ≈ 0, cf. Claude 23/09).
 // Le bouton Stop arrête proprement. Aucune donnée ne quitte ta machine.
 // ═══════════════════════════════════════════════════════════════════════════
 if (objs.length) throw new Error('Scène non vide — sauvegarde ton travail, fais Nouveau projet, puis relance.');
-if (!(await _medusaProbe(3000))) throw new Error('MEDUSA ne répond pas — lance le moteur puis relance.');
+const SKIP_VUE = true;
+let ENGINE;
+if (typeof _csgRequire === 'function') ENGINE = await _csgRequire();        // 'medusa' | 'wasm' — lève si aucun moteur
+else if (await _medusaProbe(3000)) ENGINE = 'medusa';
+else throw new Error('MEDUSA ne répond pas et cette version de NASSCAD n\'a pas de moteur WASM — lance le moteur puis relance.');
+const ENG = ENGINE === 'wasm' ? 'WASM' : 'MEDUSA';
 
 const OUT = [];
 const log = s => { scriptLog(s); OUT.push(s); try { (window._benchNl || nasLog)('OK', 'BENCH | ' + s); } catch (e) {} };
@@ -25,7 +45,7 @@ const S0 = { csg: _csgQuality, res: _newPrimRes, th: camA.theta, ph: camA.phi, d
 const gl = ren.getContext();
 const _nl = window.nasLog;
 window._benchNl = _nl;
-let lastPass1 = null;
+let lastPass1 = null, lastCsgMs = null, lastSmooth = null;
 
 // Objet posé directement (sans undo ni recherche de place en spirale).
 function mk(t, x, y, z) {
@@ -93,7 +113,7 @@ async function csg(label, build, op, q) {
   scriptCheckStop();
   clearAll();
   setCsgQuality(q);
-  lastPass1 = null;
+  lastPass1 = null; lastCsgMs = null; lastSmooth = null;
   const sel = build();
   selObjs = sel; updProps(); updOList(true); updCSG();
   const inTris = sel.reduce((s, o) => { const g = makeGeoCSG(o); const n = g.index ? g.index.count / 3 : g.attributes.position.count / 3; g.dispose(); return s + n; }, 0);
@@ -103,8 +123,10 @@ async function csg(label, build, op, q) {
   const dt = performance.now() - t0;
   const ok = !err && !sel.some(o => objs.includes(o));
   const res = objs.at(-1);
-  log(`CSG | ${label} | CSG⚡${q} | ~${Math.round(inTris / 1000)}k tri en entrée | `
+  log(`CSG ${ENG} | ${label} | CSG⚡${q} | ~${Math.round(inTris / 1000)}k tri en entrée | `
     + (ok ? fmt(dt) : 'ÉCHEC ' + (err ? err.message : '(voir log)'))
+    + (ok && lastCsgMs != null ? ` | moteur ${fmt(lastCsgMs)}` : '')
+    + (ok && lastSmooth != null ? ` | lissage ${fmt(lastSmooth)}` : '')
     + (lastPass1 != null ? ` | aperçu ${fmt(lastPass1)}` : '')
     + (ok && res ? ` | résultat ${res.mesh.geometry.attributes.position.count} sommets` : ''));
   await pause(400);
@@ -115,20 +137,26 @@ try {
   let gpu = '?';
   try { const e = gl.getExtension('WEBGL_debug_renderer_info'); if (e) gpu = gl.getParameter(e.UNMASKED_RENDERER_WEBGL); } catch (e) {}
   let ping = {};
-  try { ping = await (await fetch(_BOOSTER_URL + '/ping')).json(); } catch (e) {}
+  if (ENGINE === 'medusa') { try { ping = await (await fetch(_BOOSTER_URL + '/ping')).json(); } catch (e) {} }
   log('=== RÉSULTATS BENCH NASSCAD ' + new Date().toISOString().slice(0, 16) + ' ===');
   log(`MACHINE | ${navigator.hardwareConcurrency} threads | RAM ${_machineInfo && _machineInfo.ramMB ? Math.round(_machineInfo.ramMB / 1024) + ' GB' : '?'} | GPU ${gpu} | écran ${screen.width}×${screen.height}@${devicePixelRatio}`);
   log(`NAV | ${(navigator.userAgent.match(/(Edg|Chrome|Firefox)\/[\d.]+/g) || [navigator.userAgent]).join(' ')}`);
-  log(`MEDUSA | ${JSON.stringify(ping).slice(0, 200)}`);
+  log(ENGINE === 'medusa' ? `MOTEUR CSG | MEDUSA ${JSON.stringify(ping).slice(0, 200)}`
+                          : `MOTEUR CSG | Manifold WASM ${(typeof _wasmCsg !== 'undefined' && _wasmCsg && _wasmCsg.version) || ''} — navigateur, 1 cœur (MEDUSA fermé)`);
 
   // Capte la durée de l'aperçu (passe 1 du CSG progressif) dans le log.
   window.nasLog = function (lvl, msg, ...rest) {
-    try { const k = String(msg).match(/Pass 1 OK: (\d+)ms/); if (k) lastPass1 = +k[1]; } catch (e) {}
+    try {
+      const k = String(msg).match(/Pass 1 OK: (\d+)ms/); if (k) lastPass1 = +k[1];
+      const sm = String(msg).match(/smoothMs=([\d.]+)/); if (sm) lastSmooth = +sm[1];                        // lissage dans /csg
+      const sb = String(msg).match(/smoothed natively in ([\d.]+)s/); if (sb) lastSmooth = +sb[1] * 1000;   // aller-retour /smooth
+      const c = String(msg).match(/csgMs=([\d.]+)/); if (c) lastCsgMs = +c[1];   // dernier calcul = passe finale
+    } catch (e) {}
     return _nl.call(this, lvl, msg, ...rest);
   };
 
   // ── 1. Affichage ─────────────────────────────────────────────────────────
-  const TIERS = [[500, 32], [1000, 32], [2000, 32], [1000, 64], [500, 128], [1000, 128], [2000, 128]];
+  const TIERS = SKIP_VUE ? [] : [[500, 32], [1000, 32], [2000, 32], [1000, 64], [500, 128], [1000, 128], [2000, 128]];
   for (const [n, res] of TIERS) {
     scriptCheckStop();
     clearAll();
@@ -145,7 +173,7 @@ try {
   clearAll();
   setSphereResLive(32);
 
-  // ── 2. Booléens (MEDUSA) ─────────────────────────────────────────────────
+  // ── 2. Booléens (MEDUSA ou Manifold WASM) ────────────────────────────────
   await csg('cube − cylindre', () => {
     const a = mk('cube', 0, null, 0), b = mk('cylinder', 4, null, 0);
     b.mesh.scale.set(0.4, 1.2, 0.4); b.mesh.updateMatrixWorld(true); b.isHole = true;
@@ -156,6 +184,7 @@ try {
   await csg('sphère ∪ sphère', twoSpheres, 'union', 128);
   await csg('sphère ∪ sphère', twoSpheres, 'union', 256);
   await csg('sphère ∪ sphère', twoSpheres, 'union', 512);
+  await csg('sphère ∪ sphère (refaite)', twoSpheres, 'union', 512);
   await csg('plaque 200 mm − 100 trous ø5', () => {
     const p = mk('cube', 0, 5, 0); p.mesh.scale.set(10, 0.5, 10); p.mesh.updateMatrixWorld(true);
     const r = [p];
