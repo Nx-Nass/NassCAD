@@ -1,0 +1,125 @@
+name: Bug report
+description: Something in NASSCAD does not work as it should
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to report this.
+
+        If the problem involves importing or exporting a file, **please attach the
+        file**. A STEP or IFC problem without the file is almost never actionable.
+        Only attach files you are allowed to share — never anything under NDA or
+        belonging to a client or employer.
+
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened?
+      description: What went wrong, and what you expected instead.
+      placeholder: |
+        I expected ...
+        Instead, ...
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      description: In order, starting from a freshly loaded page.
+      placeholder: |
+        1. Open NASSCAD_V4_7_0.htm
+        2. Import → the attached file
+        3. Select the part named ...
+        4. Click Subtract
+    validations:
+      required: true
+
+  - type: dropdown
+    id: area
+    attributes:
+      label: Which part of NASSCAD?
+      options:
+        - STEP import
+        - STEP export
+        - IFC import / export
+        - Mesh import / export (STL, OBJ, 3MF, GLB, PLY)
+        - Boolean operations (Union / Subtract / Intersect)
+        - Fillet / chamfer
+        - Primitives or generators (Gear, Screw, Nut, Pipe, Tore...)
+        - 2D sketcher
+        - Display, camera, selection
+        - Build volume / world grid
+        - NassScript
+        - MEDUSA engine
+        - Something else / not sure
+    validations:
+      required: true
+
+  - type: dropdown
+    id: engine
+    attributes:
+      label: Which boolean engine was active?
+      description: The CSG panel shows it — `ENGINE: MANIFOLD WASM`, or a green `· MEDUSA`.
+      options:
+        - Manifold WASM (in the browser, the default)
+        - MEDUSA (native engine running)
+        - Not applicable / did not involve a boolean
+    validations:
+      required: true
+
+  - type: input
+    id: browser
+    attributes:
+      label: Browser and version
+      placeholder: Chrome 141, Firefox 152, Safari 18...
+    validations:
+      required: true
+
+  - type: input
+    id: os
+    attributes:
+      label: Operating system
+      placeholder: Windows 11, Ubuntu 24.04, macOS 15...
+    validations:
+      required: true
+
+  - type: dropdown
+    id: how-served
+    attributes:
+      label: How was NASSCAD served?
+      options:
+        - www.nasscad.com
+        - Local HTTP server (python -m http.server, Live Server...)
+        - Opened the .htm directly from disk (file://)
+    validations:
+      required: true
+
+  - type: textarea
+    id: file
+    attributes:
+      label: The file that triggers it
+      description: |
+        Drag the file into this box to attach it. Zip it if GitHub refuses the
+        extension. Say which program wrote it (SolidWorks, Fusion, CATIA, FreeCAD...)
+        and which schema if you know — AP203, AP214, AP242, IFC2X3, IFC4.
+
+        If it is confidential, trim the assembly down to the offending part, or
+        reproduce the problem on a file you can share.
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs
+      description: |
+        Open the `Logs` panel in the top bar and paste its contents. If MEDUSA was
+        running, press the jellyfish button first to pull in the engine log. Add
+        anything in red from the browser console (F12 → Console).
+      render: text
+
+  - type: textarea
+    id: extra
+    attributes:
+      label: Anything else
+      description: Screenshots help a lot, especially one from the program the file came out of.
