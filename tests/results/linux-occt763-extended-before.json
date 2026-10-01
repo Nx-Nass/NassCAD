@@ -1,0 +1,4015 @@
+{
+ "label": "before",
+ "engine": {
+  "engine": "nasscad-medusa-engine",
+  "version": "3.1",
+  "occt": "7.6.3",
+  "protocol": "NSTP1",
+  "csgtree": true,
+  "stepexport": true,
+  "stepload": true,
+  "ramMB": 16095,
+  "availMB": 15320,
+  "cores": 4,
+  "runawayThreads": 0,
+  "deviationPct": 0.5
+ },
+ "date": "2026-09-27T15:38:54.134Z",
+ "results": [
+  {
+   "file": "Electronics_Parts_Motors_DC_motor_Motors_Motor-CC-12V-MITSUMI.step",
+   "sizeKB": 31,
+   "declared": {
+    "solids": 1,
+    "closedShells": 1,
+    "openShells": 0,
+    "faces": 16,
+    "edges": 23,
+    "edgeValence": {
+     "2": 23
+    },
+    "closedByDeclaration": true,
+    "system": "FreeCAD"
+   },
+   "bodies": 1,
+   "verts": 1235,
+   "tris": 2452,
+   "stepMs": 40,
+   "engineMs": 36,
+   "smoothMs": 4,
+   "weldMeta": {
+    "bodies": 1,
+    "watertight": 0,
+    "stillBroken": 1,
+    "edgesTopo": 15,
+    "edgesResidual": 0,
+    "edgesMismatch": 0,
+    "trisDropped": 0,
+    "legacyFallback": 0,
+    "enabled": true
+   },
+   "raw": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 1228,
+    "closedBodies": null,
+    "closedBroken": null,
+    "closedNaked": null,
+    "closedOver": null
+   },
+   "client": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 1228,
+    "closedBodies": null,
+    "closedBroken": null,
+    "closedNaked": null,
+    "closedOver": null
+   },
+   "brep": null,
+   "brokenBodies": []
+  },
+  {
+   "file": "Electronics_Parts_Inductors_Inductive_sensor_Inductive-Proximity-Sensor.step",
+   "sizeKB": 34,
+   "declared": {
+    "solids": 1,
+    "closedShells": 1,
+    "openShells": 0,
+    "faces": 12,
+    "edges": 17,
+    "edgeValence": {
+     "2": 17
+    },
+    "closedByDeclaration": true,
+    "system": "FreeCAD"
+   },
+   "bodies": 1,
+   "verts": 523,
+   "tris": 1030,
+   "stepMs": 22,
+   "engineMs": 20,
+   "smoothMs": 2,
+   "weldMeta": {
+    "bodies": 1,
+    "watertight": 0,
+    "stillBroken": 1,
+    "edgesTopo": 11,
+    "edgesResidual": 0,
+    "edgesMismatch": 0,
+    "trisDropped": 1,
+    "legacyFallback": 0,
+    "enabled": true
+   },
+   "raw": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 517,
+    "closedBodies": null,
+    "closedBroken": null,
+    "closedNaked": null,
+    "closedOver": null
+   },
+   "client": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 517,
+    "closedBodies": null,
+    "closedBroken": null,
+    "closedNaked": null,
+    "closedOver": null
+   },
+   "brep": null,
+   "brokenBodies": []
+  },
+  {
+   "file": "Electro-pneumatic_Fixings_PM-25-AB-FM.STEP",
+   "sizeKB": 44,
+   "declared": {
+    "solids": 1,
+    "closedShells": 1,
+    "openShells": 0,
+    "faces": 20,
+    "edges": 46,
+    "edgeValence": {
+     "2": 46
+    },
+    "closedByDeclaration": true,
+    "system": "SolidWorks 2010"
+   },
+   "bodies": 1,
+   "verts": 326,
+   "tris": 660,
+   "stepMs": 32,
+   "engineMs": 29,
+   "smoothMs": 3,
+   "weldMeta": {
+    "bodies": 1,
+    "watertight": 1,
+    "stillBroken": 0,
+    "edgesTopo": 46,
+    "edgesResidual": 0,
+    "edgesMismatch": 0,
+    "trisDropped": 0,
+    "legacyFallback": 0,
+    "enabled": true
+   },
+   "raw": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 326,
+    "closedBodies": null,
+    "closedBroken": null,
+    "closedNaked": null,
+    "closedOver": null
+   },
+   "client": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 326,
+    "closedBodies": null,
+    "closedBroken": null,
+    "closedNaked": null,
+    "closedOver": null
+   },
+   "brep": null,
+   "brokenBodies": []
+  },
+  {
+   "file": "Electro-pneumatic_Fixings_PM-16-AB.STEP",
+   "sizeKB": 44,
+   "declared": {
+    "solids": 1,
+    "closedShells": 1,
+    "openShells": 0,
+    "faces": 20,
+    "edges": 46,
+    "edgeValence": {
+     "2": 46
+    },
+    "closedByDeclaration": true,
+    "system": "SolidWorks 2010"
+   },
+   "bodies": 1,
+   "verts": 316,
+   "tris": 640,
+   "stepMs": 29,
+   "engineMs": 27,
+   "smoothMs": 2,
+   "weldMeta": {
+    "bodies": 1,
+    "watertight": 1,
+    "stillBroken": 0,
+    "edgesTopo": 46,
+    "edgesResidual": 0,
+    "edgesMismatch": 0,
+    "trisDropped": 0,
+    "legacyFallback": 0,
+    "enabled": true
+   },
+   "raw": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 316,
+    "closedBodies": null,
+    "closedBroken": null,
+    "closedNaked": null,
+    "closedOver": null
+   },
+   "client": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 316,
+    "closedBodies": null,
+    "closedBroken": null,
+    "closedNaked": null,
+    "closedOver": null
+   },
+   "brep": null,
+   "brokenBodies": []
+  },
+  {
+   "file": "Electrical_Parts_Batteries_battery-AAA.step",
+   "sizeKB": 44,
+   "declared": {
+    "solids": 1,
+    "closedShells": 1,
+    "openShells": 0,
+    "faces": 17,
+    "edges": 27,
+    "edgeValence": {
+     "2": 27
+    },
+    "closedByDeclaration": true,
+    "system": "FreeCAD"
+   },
+   "bodies": 1,
+   "verts": 1899,
+   "tris": 3732,
+   "stepMs": 41,
+   "engineMs": 39,
+   "smoothMs": 6,
+   "weldMeta": {
+    "bodies": 1,
+    "watertight": 0,
+    "stillBroken": 1,
+    "edgesTopo": 16,
+    "edgesResidual": 0,
+    "edgesMismatch": 0,
+    "trisDropped": 0,
+    "legacyFallback": 0,
+    "enabled": true
+   },
+   "raw": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 1868,
+    "closedBodies": null,
+    "closedBroken": null,
+    "closedNaked": null,
+    "closedOver": null
+   },
+   "client": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 1868,
+    "closedBodies": null,
+    "closedBroken": null,
+    "closedNaked": null,
+    "closedOver": null
+   },
+   "brep": null,
+   "brokenBodies": []
+  },
+  {
+   "file": "Architectural_Parts_Construction_blocks_Concrete_block_14x19x19.step",
+   "sizeKB": 44,
+   "declared": {
+    "solids": 1,
+    "closedShells": 1,
+    "openShells": 0,
+    "faces": 14,
+    "edges": 36,
+    "edgeValence": {
+     "2": 36
+    },
+    "closedByDeclaration": true,
+    "system": "FreeCAD"
+   },
+   "bodies": 1,
+   "verts": 80,
+   "tris": 160,
+   "stepMs": 26,
+   "engineMs": 24,
+   "smoothMs": 2,
+   "weldMeta": {
+    "bodies": 1,
+    "watertight": 1,
+    "stillBroken": 0,
+    "edgesTopo": 36,
+    "edgesResidual": 0,
+    "edgesMismatch": 0,
+    "trisDropped": 0,
+    "legacyFallback": 0,
+    "enabled": true
+   },
+   "raw": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 80,
+    "closedBodies": null,
+    "closedBroken": null,
+    "closedNaked": null,
+    "closedOver": null
+   },
+   "client": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 80,
+    "closedBodies": null,
+    "closedBroken": null,
+    "closedNaked": null,
+    "closedOver": null
+   },
+   "brep": null,
+   "brokenBodies": []
+  },
+  {
+   "file": "Architectural_Parts_Hydro_equipment_ShowerPad1x1m.step",
+   "sizeKB": 67,
+   "declared": {
+    "solids": 1,
+    "closedShells": 1,
+    "openShells": 0,
+    "faces": 23,
+    "edges": 47,
+    "edgeValence": {
+     "2": 47
+    },
+    "closedByDeclaration": true,
+    "system": "FreeCAD"
+   },
+   "bodies": 1,
+   "verts": 1115,
+   "tris": 2198,
+   "stepMs": 58,
+   "engineMs": 55,
+   "smoothMs": 3,
+   "weldMeta": {
+    "bodies": 1,
+    "watertight": 0,
+    "stillBroken": 1,
+    "edgesTopo": 44,
+    "edgesResidual": 0,
+    "edgesMismatch": 0,
+    "trisDropped": 0,
+    "legacyFallback": 0,
+    "enabled": true
+   },
+   "raw": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 1101,
+    "closedBodies": null,
+    "closedBroken": null,
+    "closedNaked": null,
+    "closedOver": null
+   },
+   "client": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 1101,
+    "closedBodies": null,
+    "closedBroken": null,
+    "closedNaked": null,
+    "closedOver": null
+   },
+   "brep": null,
+   "brokenBodies": []
+  },
+  {
+   "file": "Architectural_Parts_Construction_blocks_Concrete_block_14x39x19.step",
+   "sizeKB": 73,
+   "declared": {
+    "solids": 1,
+    "closedShells": 1,
+    "openShells": 0,
+    "faces": 22,
+    "edges": 60,
+    "edgeValence": {
+     "2": 60
+    },
+    "closedByDeclaration": true,
+    "system": "FreeCAD"
+   },
+   "bodies": 1,
+   "verts": 136,
+   "tris": 276,
+   "stepMs": 38,
+   "engineMs": 35,
+   "smoothMs": 2,
+   "weldMeta": {
+    "bodies": 1,
+    "watertight": 1,
+    "stillBroken": 0,
+    "edgesTopo": 60,
+    "edgesResidual": 0,
+    "edgesMismatch": 0,
+    "trisDropped": 0,
+    "legacyFallback": 0,
+    "enabled": true
+   },
+   "raw": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 136,
+    "closedBodies": null,
+    "closedBroken": null,
+    "closedNaked": null,
+    "closedOver": null
+   },
+   "client": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 136,
+    "closedBodies": null,
+    "closedBroken": null,
+    "closedNaked": null,
+    "closedOver": null
+   },
+   "brep": null,
+   "brokenBodies": []
+  },
+  {
+   "file": "Electrical_Parts_Servos_Emax-ES08A_servo-rounded-horn.step",
+   "sizeKB": 74,
+   "declared": {
+    "solids": 1,
+    "closedShells": 1,
+    "openShells": 0,
+    "faces": 22,
+    "edges": 46,
+    "edgeValence": {
+     "2": 46
+    },
+    "closedByDeclaration": true,
+    "system": "FreeCAD"
+   },
+   "bodies": 1,
+   "verts": 1784,
+   "tris": 3572,
+   "stepMs": 56,
+   "engineMs": 54,
+   "smoothMs": 7,
+   "weldMeta": {
+    "bodies": 1,
+    "watertight": 0,
+    "stillBroken": 1,
+    "edgesTopo": 30,
+    "edgesResidual": 0,
+    "edgesMismatch": 0,
+    "trisDropped": 0,
+    "legacyFallback": 0,
+    "enabled": true
+   },
+   "raw": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 1770,
+    "closedBodies": null,
+    "closedBroken": null,
+    "closedNaked": null,
+    "closedOver": null
+   },
+   "client": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 1770,
+    "closedBodies": null,
+    "closedBroken": null,
+    "closedNaked": null,
+    "closedOver": null
+   },
+   "brep": null,
+   "brokenBodies": []
+  },
+  {
+   "file": "Electronics_Parts_Heatsinks_heat-sink-8x6x5.step",
+   "sizeKB": 78,
+   "declared": {
+    "solids": 1,
+    "closedShells": 1,
+    "openShells": 0,
+    "faces": 22,
+    "edges": 60,
+    "edgeValence": {
+     "2": 60
+    },
+    "closedByDeclaration": true,
+    "system": "FreeCAD"
+   },
+   "bodies": 1,
+   "verts": 190,
+   "tris": 376,
+   "stepMs": 50,
+   "engineMs": 48,
+   "smoothMs": 2,
+   "weldMeta": {
+    "bodies": 1,
+    "watertight": 1,
+    "stillBroken": 0,
+    "edgesTopo": 60,
+    "edgesResidual": 0,
+    "edgesMismatch": 0,
+    "trisDropped": 0,
+    "legacyFallback": 0,
+    "enabled": true
+   },
+   "raw": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 190,
+    "closedBodies": null,
+    "closedBroken": null,
+    "closedNaked": null,
+    "closedOver": null
+   },
+   "client": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 190,
+    "closedBodies": null,
+    "closedBroken": null,
+    "closedNaked": null,
+    "closedOver": null
+   },
+   "brep": null,
+   "brokenBodies": []
+  },
+  {
+   "file": "Architectural_Parts_Hydro_equipment_ShowerPad2x1.2m.step",
+   "sizeKB": 79,
+   "declared": {
+    "solids": 1,
+    "closedShells": 1,
+    "openShells": 0,
+    "faces": 26,
+    "edges": 53,
+    "edgeValence": {
+     "2": 53
+    },
+    "closedByDeclaration": true,
+    "system": "FreeCAD"
+   },
+   "bodies": 1,
+   "verts": 508,
+   "tris": 998,
+   "stepMs": 43,
+   "engineMs": 40,
+   "smoothMs": 2,
+   "weldMeta": {
+    "bodies": 1,
+    "watertight": 0,
+    "stillBroken": 1,
+    "edgesTopo": 51,
+    "edgesResidual": 0,
+    "edgesMismatch": 0,
+    "trisDropped": 0,
+    "legacyFallback": 0,
+    "enabled": true
+   },
+   "raw": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 501,
+    "closedBodies": null,
+    "closedBroken": null,
+    "closedNaked": null,
+    "closedOver": null
+   },
+   "client": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 501,
+    "closedBodies": null,
+    "closedBroken": null,
+    "closedNaked": null,
+    "closedOver": null
+   },
+   "brep": null,
+   "brokenBodies": []
+  },
+  {
+   "file": "Architectural_Parts_Windows_Casement_Simple_2-panes_window.step",
+   "sizeKB": 100,
+   "declared": {
+    "solids": 4,
+    "closedShells": 4,
+    "openShells": 0,
+    "faces": 36,
+    "edges": 84,
+    "edgeValence": {
+     "2": 84
+    },
+    "closedByDeclaration": true,
+    "system": "FreeCAD"
+   },
+   "bodies": 4,
+   "verts": 56,
+   "tris": 108,
+   "stepMs": 53,
+   "engineMs": 46,
+   "smoothMs": 1,
+   "weldMeta": {
+    "bodies": 4,
+    "watertight": 4,
+    "stillBroken": 0,
+    "edgesTopo": 84,
+    "edgesResidual": 0,
+    "edgesMismatch": 0,
+    "trisDropped": 0,
+    "legacyFallback": 0,
+    "enabled": true
+   },
+   "raw": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 56,
+    "closedBodies": null,
+    "closedBroken": null,
+    "closedNaked": null,
+    "closedOver": null
+   },
+   "client": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 56,
+    "closedBodies": null,
+    "closedBroken": null,
+    "closedNaked": null,
+    "closedOver": null
+   },
+   "brep": null,
+   "brokenBodies": []
+  },
+  {
+   "file": "Electronics_Parts_Connectors_Audio-connectors_3-5mm-audio-jack.step",
+   "sizeKB": 102,
+   "declared": {
+    "solids": 1,
+    "closedShells": 1,
+    "openShells": 0,
+    "faces": 35,
+    "edges": 86,
+    "edgeValence": {
+     "2": 86
+    },
+    "closedByDeclaration": true,
+    "system": "FreeCAD"
+   },
+   "bodies": 1,
+   "verts": 1418,
+   "tris": 2762,
+   "stepMs": 70,
+   "engineMs": 67,
+   "smoothMs": 7,
+   "weldMeta": {
+    "bodies": 1,
+    "watertight": 0,
+    "stillBroken": 1,
+    "edgesTopo": 84,
+    "edgesResidual": 0,
+    "edgesMismatch": 0,
+    "trisDropped": 0,
+    "legacyFallback": 0,
+    "enabled": true
+   },
+   "raw": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 1381,
+    "closedBodies": null,
+    "closedBroken": null,
+    "closedNaked": null,
+    "closedOver": null
+   },
+   "client": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 1381,
+    "closedBodies": null,
+    "closedBroken": null,
+    "closedNaked": null,
+    "closedOver": null
+   },
+   "brep": null,
+   "brokenBodies": []
+  },
+  {
+   "file": "Architectural_Parts_Doors_Generic_Simple_door.step",
+   "sizeKB": 109,
+   "declared": {
+    "solids": 4,
+    "closedShells": 4,
+    "openShells": 0,
+    "faces": 36,
+    "edges": 84,
+    "edgeValence": {
+     "2": 84
+    },
+    "closedByDeclaration": true,
+    "system": "FreeCAD"
+   },
+   "bodies": 4,
+   "verts": 56,
+   "tris": 96,
+   "stepMs": 56,
+   "engineMs": 53,
+   "smoothMs": 2,
+   "weldMeta": {
+    "bodies": 4,
+    "watertight": 4,
+    "stillBroken": 0,
+    "edgesTopo": 84,
+    "edgesResidual": 0,
+    "edgesMismatch": 0,
+    "trisDropped": 0,
+    "legacyFallback": 0,
+    "enabled": true
+   },
+   "raw": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 56,
+    "closedBodies": null,
+    "closedBroken": null,
+    "closedNaked": null,
+    "closedOver": null
+   },
+   "client": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 56,
+    "closedBodies": null,
+    "closedBroken": null,
+    "closedNaked": null,
+    "closedOver": null
+   },
+   "brep": null,
+   "brokenBodies": []
+  },
+  {
+   "file": "Architectural_Parts_Windows_Casement_2PaneTopOpen.stp",
+   "sizeKB": 110,
+   "declared": {
+    "solids": 4,
+    "closedShells": 4,
+    "openShells": 0,
+    "faces": 36,
+    "edges": 84,
+    "edgeValence": {
+     "2": 84
+    },
+    "closedByDeclaration": true,
+    "system": "FreeCAD"
+   },
+   "bodies": 4,
+   "verts": 56,
+   "tris": 108,
+   "stepMs": 51,
+   "engineMs": 49,
+   "smoothMs": 2,
+   "weldMeta": {
+    "bodies": 4,
+    "watertight": 4,
+    "stillBroken": 0,
+    "edgesTopo": 84,
+    "edgesResidual": 0,
+    "edgesMismatch": 0,
+    "trisDropped": 0,
+    "legacyFallback": 0,
+    "enabled": true
+   },
+   "raw": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 56,
+    "closedBodies": null,
+    "closedBroken": null,
+    "closedNaked": null,
+    "closedOver": null
+   },
+   "client": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 56,
+    "closedBodies": null,
+    "closedBroken": null,
+    "closedNaked": null,
+    "closedOver": null
+   },
+   "brep": null,
+   "brokenBodies": []
+  },
+  {
+   "file": "Computing_Storage_HDD_3-5inch-Disk-Drive-SATA.step",
+   "sizeKB": 115,
+   "declared": {
+    "solids": 1,
+    "closedShells": 1,
+    "openShells": 0,
+    "faces": 39,
+    "edges": 87,
+    "edgeValence": {
+     "2": 87
+    },
+    "closedByDeclaration": true,
+    "system": "FreeCAD"
+   },
+   "bodies": 1,
+   "verts": 508,
+   "tris": 1024,
+   "stepMs": 59,
+   "engineMs": 56,
+   "smoothMs": 3,
+   "weldMeta": {
+    "bodies": 1,
+    "watertight": 1,
+    "stillBroken": 0,
+    "edgesTopo": 78,
+    "edgesResidual": 0,
+    "edgesMismatch": 0,
+    "trisDropped": 0,
+    "legacyFallback": 0,
+    "enabled": true
+   },
+   "raw": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 508,
+    "closedBodies": null,
+    "closedBroken": null,
+    "closedNaked": null,
+    "closedOver": null
+   },
+   "client": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 508,
+    "closedBodies": null,
+    "closedBroken": null,
+    "closedNaked": null,
+    "closedOver": null
+   },
+   "brep": null,
+   "brokenBodies": []
+  },
+  {
+   "file": "Electronics_Parts_IC_SMD_DFN-2523-6.step",
+   "sizeKB": 121,
+   "declared": {
+    "solids": 5,
+    "closedShells": 5,
+    "openShells": 0,
+    "faces": 40,
+    "edges": 87,
+    "edgeValence": {
+     "2": 87
+    },
+    "closedByDeclaration": true,
+    "system": "FreeCAD"
+   },
+   "bodies": 5,
+   "verts": 108,
+   "tris": 196,
+   "stepMs": 69,
+   "engineMs": 65,
+   "smoothMs": 7,
+   "weldMeta": {
+    "bodies": 5,
+    "watertight": 5,
+    "stillBroken": 0,
+    "edgesTopo": 86,
+    "edgesResidual": 0,
+    "edgesMismatch": 0,
+    "trisDropped": 0,
+    "legacyFallback": 0,
+    "enabled": true
+   },
+   "raw": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 108,
+    "closedBodies": null,
+    "closedBroken": null,
+    "closedNaked": null,
+    "closedOver": null
+   },
+   "client": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 108,
+    "closedBodies": null,
+    "closedBroken": null,
+    "closedNaked": null,
+    "closedOver": null
+   },
+   "brep": null,
+   "brokenBodies": []
+  },
+  {
+   "file": "Architectural_Parts_Electric_equipment_Air_conditionning.stp",
+   "sizeKB": 136,
+   "declared": {
+    "solids": 1,
+    "closedShells": 1,
+    "openShells": 0,
+    "faces": 41,
+    "edges": 104,
+    "edgeValence": {
+     "2": 104
+    },
+    "closedByDeclaration": true,
+    "system": "FreeCAD"
+   },
+   "bodies": 1,
+   "verts": 88,
+   "tris": 176,
+   "stepMs": 68,
+   "engineMs": 65,
+   "smoothMs": 2,
+   "weldMeta": {
+    "bodies": 1,
+    "watertight": 1,
+    "stillBroken": 0,
+    "edgesTopo": 104,
+    "edgesResidual": 0,
+    "edgesMismatch": 0,
+    "trisDropped": 0,
+    "legacyFallback": 0,
+    "enabled": true
+   },
+   "raw": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 88,
+    "closedBodies": null,
+    "closedBroken": null,
+    "closedNaked": null,
+    "closedOver": null
+   },
+   "client": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 88,
+    "closedBodies": null,
+    "closedBroken": null,
+    "closedNaked": null,
+    "closedOver": null
+   },
+   "brep": null,
+   "brokenBodies": []
+  },
+  {
+   "file": "Electronics_Parts_Capacitors_SMD_C_0402.step",
+   "sizeKB": 144,
+   "declared": {
+    "solids": 3,
+    "closedShells": 3,
+    "openShells": 0,
+    "faces": 46,
+    "edges": 96,
+    "edgeValence": {
+     "2": 96
+    },
+    "closedByDeclaration": true,
+    "system": "FreeCAD"
+   },
+   "bodies": 3,
+   "verts": 440,
+   "tris": 868,
+   "stepMs": 75,
+   "engineMs": 71,
+   "smoothMs": 2,
+   "weldMeta": {
+    "bodies": 3,
+    "watertight": 3,
+    "stillBroken": 0,
+    "edgesTopo": 96,
+    "edgesResidual": 0,
+    "edgesMismatch": 0,
+    "trisDropped": 8,
+    "legacyFallback": 0,
+    "enabled": true
+   },
+   "raw": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 440,
+    "closedBodies": null,
+    "closedBroken": null,
+    "closedNaked": null,
+    "closedOver": null
+   },
+   "client": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 440,
+    "closedBodies": null,
+    "closedBroken": null,
+    "closedNaked": null,
+    "closedOver": null
+   },
+   "brep": null,
+   "brokenBodies": []
+  },
+  {
+   "file": "Electronics_Parts_Inductors_SMD_L_0603.step",
+   "sizeKB": 144,
+   "declared": {
+    "solids": 3,
+    "closedShells": 3,
+    "openShells": 0,
+    "faces": 46,
+    "edges": 96,
+    "edgeValence": {
+     "2": 96
+    },
+    "closedByDeclaration": true,
+    "system": "FreeCAD"
+   },
+   "bodies": 3,
+   "verts": 440,
+   "tris": 868,
+   "stepMs": 74,
+   "engineMs": 71,
+   "smoothMs": 2,
+   "weldMeta": {
+    "bodies": 3,
+    "watertight": 3,
+    "stillBroken": 0,
+    "edgesTopo": 96,
+    "edgesResidual": 0,
+    "edgesMismatch": 0,
+    "trisDropped": 8,
+    "legacyFallback": 0,
+    "enabled": true
+   },
+   "raw": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 440,
+    "closedBodies": null,
+    "closedBroken": null,
+    "closedNaked": null,
+    "closedOver": null
+   },
+   "client": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 440,
+    "closedBodies": null,
+    "closedBroken": null,
+    "closedNaked": null,
+    "closedOver": null
+   },
+   "brep": null,
+   "brokenBodies": []
+  },
+  {
+   "file": "Electronics_Parts_Capacitors_SMD_C_0603.step",
+   "sizeKB": 144,
+   "declared": {
+    "solids": 3,
+    "closedShells": 3,
+    "openShells": 0,
+    "faces": 46,
+    "edges": 96,
+    "edgeValence": {
+     "2": 96
+    },
+    "closedByDeclaration": true,
+    "system": "FreeCAD"
+   },
+   "bodies": 3,
+   "verts": 440,
+   "tris": 868,
+   "stepMs": 66,
+   "engineMs": 62,
+   "smoothMs": 2,
+   "weldMeta": {
+    "bodies": 3,
+    "watertight": 3,
+    "stillBroken": 0,
+    "edgesTopo": 96,
+    "edgesResidual": 0,
+    "edgesMismatch": 0,
+    "trisDropped": 8,
+    "legacyFallback": 0,
+    "enabled": true
+   },
+   "raw": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 440,
+    "closedBodies": null,
+    "closedBroken": null,
+    "closedNaked": null,
+    "closedOver": null
+   },
+   "client": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 440,
+    "closedBodies": null,
+    "closedBroken": null,
+    "closedNaked": null,
+    "closedOver": null
+   },
+   "brep": null,
+   "brokenBodies": []
+  },
+  {
+   "file": "Electronics_Parts_Diodes_SMD_SOD-323.step",
+   "sizeKB": 147,
+   "declared": {
+    "solids": 3,
+    "closedShells": 3,
+    "openShells": 0,
+    "faces": 40,
+    "edges": 93,
+    "edgeValence": {
+     "2": 93
+    },
+    "closedByDeclaration": true,
+    "system": "FreeCAD"
+   },
+   "bodies": 3,
+   "verts": 173,
+   "tris": 334,
+   "stepMs": 64,
+   "engineMs": 59,
+   "smoothMs": 2,
+   "weldMeta": {
+    "bodies": 3,
+    "watertight": 3,
+    "stillBroken": 0,
+    "edgesTopo": 93,
+    "edgesResidual": 0,
+    "edgesMismatch": 0,
+    "trisDropped": 0,
+    "legacyFallback": 0,
+    "enabled": true
+   },
+   "raw": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 172,
+    "closedBodies": null,
+    "closedBroken": null,
+    "closedNaked": null,
+    "closedOver": null
+   },
+   "client": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 172,
+    "closedBodies": null,
+    "closedBroken": null,
+    "closedNaked": null,
+    "closedOver": null
+   },
+   "brep": null,
+   "brokenBodies": []
+  },
+  {
+   "file": "Architectural_Parts_Wikihouse_Mallet.step",
+   "sizeKB": 157,
+   "declared": {
+    "solids": 4,
+    "closedShells": 4,
+    "openShells": 0,
+    "faces": 48,
+    "edges": 120,
+    "edgeValence": {
+     "2": 120
+    },
+    "closedByDeclaration": true,
+    "system": "FreeCAD"
+   },
+   "bodies": 4,
+   "verts": 80,
+   "tris": 144,
+   "stepMs": 68,
+   "engineMs": 64,
+   "smoothMs": 2,
+   "weldMeta": {
+    "bodies": 4,
+    "watertight": 4,
+    "stillBroken": 0,
+    "edgesTopo": 120,
+    "edgesResidual": 0,
+    "edgesMismatch": 0,
+    "trisDropped": 0,
+    "legacyFallback": 0,
+    "enabled": true
+   },
+   "raw": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 80,
+    "closedBodies": null,
+    "closedBroken": null,
+    "closedNaked": null,
+    "closedOver": null
+   },
+   "client": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 80,
+    "closedBodies": null,
+    "closedBroken": null,
+    "closedNaked": null,
+    "closedOver": null
+   },
+   "brep": null,
+   "brokenBodies": []
+  },
+  {
+   "file": "Electronics_Parts_Buzzers_Buzzer.step",
+   "sizeKB": 169,
+   "declared": {
+    "solids": 1,
+    "closedShells": 1,
+    "openShells": 0,
+    "faces": 50,
+    "edges": 115,
+    "edgeValence": {
+     "2": 115
+    },
+    "closedByDeclaration": true,
+    "system": "FreeCAD"
+   },
+   "bodies": 1,
+   "verts": 1717,
+   "tris": 3416,
+   "stepMs": 85,
+   "engineMs": 82,
+   "smoothMs": 4,
+   "weldMeta": {
+    "bodies": 1,
+    "watertight": 0,
+    "stillBroken": 1,
+    "edgesTopo": 106,
+    "edgesResidual": 0,
+    "edgesMismatch": 0,
+    "trisDropped": 0,
+    "legacyFallback": 0,
+    "enabled": true
+   },
+   "raw": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 1710,
+    "closedBodies": null,
+    "closedBroken": null,
+    "closedNaked": null,
+    "closedOver": null
+   },
+   "client": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 1710,
+    "closedBodies": null,
+    "closedBroken": null,
+    "closedNaked": null,
+    "closedOver": null
+   },
+   "brep": null,
+   "brokenBodies": []
+  },
+  {
+   "file": "Electronics_Parts_LEDs_LED_0603.step",
+   "sizeKB": 177,
+   "declared": {
+    "solids": 5,
+    "closedShells": 5,
+    "openShells": 0,
+    "faces": 50,
+    "edges": 120,
+    "edgeValence": {
+     "2": 120
+    },
+    "closedByDeclaration": true,
+    "system": "FreeCAD"
+   },
+   "bodies": 5,
+   "verts": 216,
+   "tris": 412,
+   "stepMs": 76,
+   "engineMs": 72,
+   "smoothMs": 2,
+   "weldMeta": {
+    "bodies": 5,
+    "watertight": 5,
+    "stillBroken": 0,
+    "edgesTopo": 120,
+    "edgesResidual": 0,
+    "edgesMismatch": 0,
+    "trisDropped": 0,
+    "legacyFallback": 0,
+    "enabled": true
+   },
+   "raw": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 216,
+    "closedBodies": null,
+    "closedBroken": null,
+    "closedNaked": null,
+    "closedOver": null
+   },
+   "client": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 216,
+    "closedBodies": null,
+    "closedBroken": null,
+    "closedNaked": null,
+    "closedOver": null
+   },
+   "brep": null,
+   "brokenBodies": []
+  },
+  {
+   "file": "Electronics_Parts_Fuses_THT_fuse-MF-R1100.step",
+   "sizeKB": 180,
+   "declared": {
+    "solids": 1,
+    "closedShells": 1,
+    "openShells": 0,
+    "faces": 54,
+    "edges": 114,
+    "edgeValence": {
+     "2": 114
+    },
+    "closedByDeclaration": true,
+    "system": "FreeCAD"
+   },
+   "bodies": 1,
+   "verts": 1322,
+   "tris": 2612,
+   "stepMs": 93,
+   "engineMs": 89,
+   "smoothMs": 5,
+   "weldMeta": {
+    "bodies": 1,
+    "watertight": 0,
+    "stillBroken": 1,
+    "edgesTopo": 108,
+    "edgesResidual": 0,
+    "edgesMismatch": 0,
+    "trisDropped": 4,
+    "legacyFallback": 0,
+    "enabled": true
+   },
+   "raw": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 1308,
+    "closedBodies": null,
+    "closedBroken": null,
+    "closedNaked": null,
+    "closedOver": null
+   },
+   "client": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 1308,
+    "closedBodies": null,
+    "closedBroken": null,
+    "closedNaked": null,
+    "closedOver": null
+   },
+   "brep": null,
+   "brokenBodies": []
+  },
+  {
+   "file": "Electronics_Parts_Crystals_xtal-through-hole.step",
+   "sizeKB": 180,
+   "declared": {
+    "solids": 1,
+    "closedShells": 1,
+    "openShells": 0,
+    "faces": 26,
+    "edges": 66,
+    "edgeValence": {
+     "2": 66
+    },
+    "closedByDeclaration": true,
+    "system": "FreeCAD"
+   },
+   "bodies": 1,
+   "verts": 1658,
+   "tris": 3312,
+   "stepMs": 82,
+   "engineMs": 79,
+   "smoothMs": 5,
+   "weldMeta": {
+    "bodies": 1,
+    "watertight": 1,
+    "stillBroken": 0,
+    "edgesTopo": 64,
+    "edgesResidual": 0,
+    "edgesMismatch": 0,
+    "trisDropped": 0,
+    "legacyFallback": 0,
+    "enabled": true
+   },
+   "raw": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 1658,
+    "closedBodies": null,
+    "closedBroken": null,
+    "closedNaked": null,
+    "closedOver": null
+   },
+   "client": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 1658,
+    "closedBodies": null,
+    "closedBroken": null,
+    "closedNaked": null,
+    "closedOver": null
+   },
+   "brep": null,
+   "brokenBodies": []
+  },
+  {
+   "file": "Architectural_Parts_Building_Construction_Slab_adjustable_scaffolder.step",
+   "sizeKB": 208,
+   "declared": {
+    "solids": 1,
+    "closedShells": 1,
+    "openShells": 0,
+    "faces": 31,
+    "edges": 67,
+    "edgeValence": {
+     "2": 67
+    },
+    "closedByDeclaration": true,
+    "system": "FreeCAD"
+   },
+   "bodies": 1,
+   "verts": 1298,
+   "tris": 2536,
+   "stepMs": 79,
+   "engineMs": 75,
+   "smoothMs": 3,
+   "weldMeta": {
+    "bodies": 1,
+    "watertight": 0,
+    "stillBroken": 1,
+    "edgesTopo": 50,
+    "edgesResidual": 0,
+    "edgesMismatch": 0,
+    "trisDropped": 0,
+    "legacyFallback": 0,
+    "enabled": true
+   },
+   "raw": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 1266,
+    "closedBodies": null,
+    "closedBroken": null,
+    "closedNaked": null,
+    "closedOver": null
+   },
+   "client": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 1266,
+    "closedBodies": null,
+    "closedBroken": null,
+    "closedNaked": null,
+    "closedOver": null
+   },
+   "brep": null,
+   "brokenBodies": []
+  },
+  {
+   "file": "Electronics_Parts_Connectors_Ethernet-connectors_rj45-ethernet-PCB-with-leds.step",
+   "sizeKB": 214,
+   "declared": {
+    "solids": 1,
+    "closedShells": 1,
+    "openShells": 0,
+    "faces": 75,
+    "edges": 156,
+    "edgeValence": {
+     "2": 156
+    },
+    "closedByDeclaration": true,
+    "system": "FreeCAD"
+   },
+   "bodies": 1,
+   "verts": 1522,
+   "tris": 2976,
+   "stepMs": 109,
+   "engineMs": 105,
+   "smoothMs": 4,
+   "weldMeta": {
+    "bodies": 1,
+    "watertight": 0,
+    "stillBroken": 1,
+    "edgesTopo": 128,
+    "edgesResidual": 0,
+    "edgesMismatch": 0,
+    "trisDropped": 0,
+    "legacyFallback": 0,
+    "enabled": true
+   },
+   "raw": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 1490,
+    "closedBodies": null,
+    "closedBroken": null,
+    "closedNaked": null,
+    "closedOver": null
+   },
+   "client": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 1490,
+    "closedBodies": null,
+    "closedBroken": null,
+    "closedNaked": null,
+    "closedOver": null
+   },
+   "brep": null,
+   "brokenBodies": []
+  },
+  {
+   "file": "Electrical_Parts_Endstop_endstop.stp",
+   "sizeKB": 216,
+   "declared": {
+    "solids": 3,
+    "closedShells": 3,
+    "openShells": 0,
+    "faces": 66,
+    "edges": 159,
+    "edgeValence": {
+     "2": 159
+    },
+    "closedByDeclaration": true,
+    "system": "FreeCAD"
+   },
+   "bodies": 3,
+   "verts": 554,
+   "tris": 1108,
+   "stepMs": 97,
+   "engineMs": 92,
+   "smoothMs": 2,
+   "weldMeta": {
+    "bodies": 3,
+    "watertight": 3,
+    "stillBroken": 0,
+    "edgesTopo": 152,
+    "edgesResidual": 0,
+    "edgesMismatch": 0,
+    "trisDropped": 0,
+    "legacyFallback": 0,
+    "enabled": true
+   },
+   "raw": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 554,
+    "closedBodies": null,
+    "closedBroken": null,
+    "closedNaked": null,
+    "closedOver": null
+   },
+   "client": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 554,
+    "closedBodies": null,
+    "closedBroken": null,
+    "closedNaked": null,
+    "closedOver": null
+   },
+   "brep": null,
+   "brokenBodies": []
+  },
+  {
+   "file": "Architectural_Parts_Roof_steel-sheets-3000mm.step",
+   "sizeKB": 236,
+   "declared": {
+    "solids": 1,
+    "closedShells": 1,
+    "openShells": 0,
+    "faces": 62,
+    "edges": 180,
+    "edgeValence": {
+     "2": 180
+    },
+    "closedByDeclaration": true,
+    "system": "FreeCAD"
+   },
+   "bodies": 1,
+   "verts": 392,
+   "tris": 780,
+   "stepMs": 102,
+   "engineMs": 97,
+   "smoothMs": 2,
+   "weldMeta": {
+    "bodies": 1,
+    "watertight": 1,
+    "stillBroken": 0,
+    "edgesTopo": 180,
+    "edgesResidual": 0,
+    "edgesMismatch": 0,
+    "trisDropped": 0,
+    "legacyFallback": 0,
+    "enabled": true
+   },
+   "raw": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 392,
+    "closedBodies": null,
+    "closedBroken": null,
+    "closedNaked": null,
+    "closedOver": null
+   },
+   "client": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 392,
+    "closedBodies": null,
+    "closedBroken": null,
+    "closedNaked": null,
+    "closedOver": null
+   },
+   "brep": null,
+   "brokenBodies": []
+  },
+  {
+   "file": "Electronics_Parts_LEDs_RGB-LED-5mm.step",
+   "sizeKB": 250,
+   "declared": {
+    "solids": 5,
+    "closedShells": 5,
+    "openShells": 0,
+    "faces": 95,
+    "edges": 191,
+    "edgeValence": {
+     "2": 191
+    },
+    "closedByDeclaration": true,
+    "system": "FreeCAD"
+   },
+   "bodies": 5,
+   "verts": 623,
+   "tris": 1206,
+   "stepMs": 117,
+   "engineMs": 111,
+   "smoothMs": 2,
+   "weldMeta": {
+    "bodies": 5,
+    "watertight": 4,
+    "stillBroken": 1,
+    "edgesTopo": 191,
+    "edgesResidual": 0,
+    "edgesMismatch": 0,
+    "trisDropped": 1,
+    "legacyFallback": 0,
+    "enabled": true
+   },
+   "raw": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 613,
+    "closedBodies": null,
+    "closedBroken": null,
+    "closedNaked": null,
+    "closedOver": null
+   },
+   "client": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 613,
+    "closedBodies": null,
+    "closedBroken": null,
+    "closedNaked": null,
+    "closedOver": null
+   },
+   "brep": null,
+   "brokenBodies": []
+  },
+  {
+   "file": "Architectural_Parts_Roof_steel-sheets-2000mm.step",
+   "sizeKB": 254,
+   "declared": {
+    "solids": 1,
+    "closedShells": 1,
+    "openShells": 0,
+    "faces": 62,
+    "edges": 180,
+    "edgeValence": {
+     "2": 180
+    },
+    "closedByDeclaration": true,
+    "system": "FreeCAD"
+   },
+   "bodies": 1,
+   "verts": 392,
+   "tris": 780,
+   "stepMs": 115,
+   "engineMs": 110,
+   "smoothMs": 2,
+   "weldMeta": {
+    "bodies": 1,
+    "watertight": 1,
+    "stillBroken": 0,
+    "edgesTopo": 180,
+    "edgesResidual": 0,
+    "edgesMismatch": 0,
+    "trisDropped": 0,
+    "legacyFallback": 0,
+    "enabled": true
+   },
+   "raw": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 392,
+    "closedBodies": null,
+    "closedBroken": null,
+    "closedNaked": null,
+    "closedOver": null
+   },
+   "client": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 392,
+    "closedBodies": null,
+    "closedBroken": null,
+    "closedNaked": null,
+    "closedOver": null
+   },
+   "brep": null,
+   "brokenBodies": []
+  },
+  {
+   "file": "Electronics_Parts_Crystals_xtal-smd-10x4x3mm.step",
+   "sizeKB": 257,
+   "declared": {
+    "solids": 4,
+    "closedShells": 4,
+    "openShells": 0,
+    "faces": 48,
+    "edges": 120,
+    "edgeValence": {
+     "2": 120
+    },
+    "closedByDeclaration": true,
+    "system": "FreeCAD"
+   },
+   "bodies": 4,
+   "verts": 1638,
+   "tris": 3260,
+   "stepMs": 126,
+   "engineMs": 120,
+   "smoothMs": 5,
+   "weldMeta": {
+    "bodies": 4,
+    "watertight": 4,
+    "stillBroken": 0,
+    "edgesTopo": 120,
+    "edgesResidual": 0,
+    "edgesMismatch": 0,
+    "trisDropped": 0,
+    "legacyFallback": 0,
+    "enabled": true
+   },
+   "raw": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 1638,
+    "closedBodies": null,
+    "closedBroken": null,
+    "closedNaked": null,
+    "closedOver": null
+   },
+   "client": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 1638,
+    "closedBodies": null,
+    "closedBroken": null,
+    "closedNaked": null,
+    "closedOver": null
+   },
+   "brep": null,
+   "brokenBodies": []
+  },
+  {
+   "file": "Computing_Storage_HDD_2-5inch-Disk-Drive-7mm-SATA.step",
+   "sizeKB": 262,
+   "declared": {
+    "solids": 1,
+    "closedShells": 1,
+    "openShells": 0,
+    "faces": 72,
+    "edges": 168,
+    "edgeValence": {
+     "2": 168
+    },
+    "closedByDeclaration": true,
+    "system": "FreeCAD"
+   },
+   "bodies": 1,
+   "verts": 556,
+   "tris": 1120,
+   "stepMs": 124,
+   "engineMs": 117,
+   "smoothMs": 2,
+   "weldMeta": {
+    "bodies": 1,
+    "watertight": 0,
+    "stillBroken": 1,
+    "edgesTopo": 160,
+    "edgesResidual": 0,
+    "edgesMismatch": 0,
+    "trisDropped": 0,
+    "legacyFallback": 0,
+    "enabled": true
+   },
+   "raw": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 554,
+    "closedBodies": null,
+    "closedBroken": null,
+    "closedNaked": null,
+    "closedOver": null
+   },
+   "client": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 554,
+    "closedBodies": null,
+    "closedBroken": null,
+    "closedNaked": null,
+    "closedOver": null
+   },
+   "brep": null,
+   "brokenBodies": []
+  },
+  {
+   "file": "Electro-pneumatic_Cylinders_PM-16-125-CYLINDER.STEP",
+   "sizeKB": 286,
+   "declared": {
+    "solids": 4,
+    "closedShells": 4,
+    "openShells": 0,
+    "faces": 113,
+    "edges": 264,
+    "edgeValence": {
+     "2": 264
+    },
+    "closedByDeclaration": true,
+    "system": "SolidWorks 2010"
+   },
+   "bodies": 4,
+   "verts": 1587,
+   "tris": 3174,
+   "stepMs": 164,
+   "engineMs": 158,
+   "smoothMs": 4,
+   "weldMeta": {
+    "bodies": 4,
+    "watertight": 4,
+    "stillBroken": 0,
+    "edgesTopo": 264,
+    "edgesResidual": 0,
+    "edgesMismatch": 0,
+    "trisDropped": 0,
+    "legacyFallback": 0,
+    "enabled": true
+   },
+   "raw": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 1587,
+    "closedBodies": null,
+    "closedBroken": null,
+    "closedNaked": null,
+    "closedOver": null
+   },
+   "client": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 1587,
+    "closedBodies": null,
+    "closedBroken": null,
+    "closedNaked": null,
+    "closedOver": null
+   },
+   "brep": null,
+   "brokenBodies": []
+  },
+  {
+   "file": "Electro-pneumatic_Cylinders_PM-16-100-CYLINDER.STEP",
+   "sizeKB": 286,
+   "declared": {
+    "solids": 4,
+    "closedShells": 4,
+    "openShells": 0,
+    "faces": 113,
+    "edges": 264,
+    "edgeValence": {
+     "2": 264
+    },
+    "closedByDeclaration": true,
+    "system": "SolidWorks 2010"
+   },
+   "bodies": 4,
+   "verts": 1642,
+   "tris": 3284,
+   "stepMs": 174,
+   "engineMs": 169,
+   "smoothMs": 3,
+   "weldMeta": {
+    "bodies": 4,
+    "watertight": 4,
+    "stillBroken": 0,
+    "edgesTopo": 264,
+    "edgesResidual": 0,
+    "edgesMismatch": 0,
+    "trisDropped": 0,
+    "legacyFallback": 0,
+    "enabled": true
+   },
+   "raw": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 1642,
+    "closedBodies": null,
+    "closedBroken": null,
+    "closedNaked": null,
+    "closedOver": null
+   },
+   "client": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 1642,
+    "closedBodies": null,
+    "closedBroken": null,
+    "closedNaked": null,
+    "closedOver": null
+   },
+   "brep": null,
+   "brokenBodies": []
+  },
+  {
+   "file": "Electronics_Parts_Buttons_SMD_SW_SPST_FSMSM.step",
+   "sizeKB": 321,
+   "declared": {
+    "solids": 1,
+    "closedShells": 1,
+    "openShells": 0,
+    "faces": 78,
+    "edges": 175,
+    "edgeValence": {
+     "2": 175
+    },
+    "closedByDeclaration": true,
+    "system": "FreeCAD"
+   },
+   "bodies": 1,
+   "verts": 816,
+   "tris": 1628,
+   "stepMs": 127,
+   "engineMs": 121,
+   "smoothMs": 3,
+   "weldMeta": {
+    "bodies": 1,
+    "watertight": 1,
+    "stillBroken": 0,
+    "edgesTopo": 175,
+    "edgesResidual": 0,
+    "edgesMismatch": 0,
+    "trisDropped": 12,
+    "legacyFallback": 0,
+    "enabled": true
+   },
+   "raw": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 816,
+    "closedBodies": null,
+    "closedBroken": null,
+    "closedNaked": null,
+    "closedOver": null
+   },
+   "client": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 816,
+    "closedBodies": null,
+    "closedBroken": null,
+    "closedNaked": null,
+    "closedOver": null
+   },
+   "brep": null,
+   "brokenBodies": []
+  },
+  {
+   "file": "Architectural_Parts_Doors_Glass_Double_glass_doors_with_handles_and_transom.step",
+   "sizeKB": 333,
+   "declared": {
+    "solids": 21,
+    "closedShells": 21,
+    "openShells": 0,
+    "faces": 112,
+    "edges": 210,
+    "edgeValence": {
+     "2": 210
+    },
+    "closedByDeclaration": true,
+    "system": "FreeCAD"
+   },
+   "bodies": 21,
+   "verts": 440,
+   "tris": 800,
+   "stepMs": 137,
+   "engineMs": 131,
+   "smoothMs": 2,
+   "weldMeta": {
+    "bodies": 21,
+    "watertight": 21,
+    "stillBroken": 0,
+    "edgesTopo": 204,
+    "edgesResidual": 0,
+    "edgesMismatch": 0,
+    "trisDropped": 0,
+    "legacyFallback": 2,
+    "enabled": true
+   },
+   "raw": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 440,
+    "closedBodies": null,
+    "closedBroken": null,
+    "closedNaked": null,
+    "closedOver": null
+   },
+   "client": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 440,
+    "closedBodies": null,
+    "closedBroken": null,
+    "closedNaked": null,
+    "closedOver": null
+   },
+   "brep": null,
+   "brokenBodies": []
+  },
+  {
+   "file": "Electronics_Parts_Headers_2.54mm-pitch_female_1x6-female-pin-header.step",
+   "sizeKB": 358,
+   "declared": {
+    "solids": 7,
+    "closedShells": 7,
+    "openShells": 0,
+    "faces": 120,
+    "edges": 252,
+    "edgeValence": {
+     "2": 252
+    },
+    "closedByDeclaration": true,
+    "system": "FreeCAD"
+   },
+   "bodies": 7,
+   "verts": 732,
+   "tris": 1436,
+   "stepMs": 167,
+   "engineMs": 159,
+   "smoothMs": 2,
+   "weldMeta": {
+    "bodies": 7,
+    "watertight": 7,
+    "stillBroken": 0,
+    "edgesTopo": 252,
+    "edgesResidual": 0,
+    "edgesMismatch": 0,
+    "trisDropped": 0,
+    "legacyFallback": 0,
+    "enabled": true
+   },
+   "raw": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 732,
+    "closedBodies": null,
+    "closedBroken": null,
+    "closedNaked": null,
+    "closedOver": null
+   },
+   "client": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 732,
+    "closedBodies": null,
+    "closedBroken": null,
+    "closedNaked": null,
+    "closedOver": null
+   },
+   "brep": null,
+   "brokenBodies": []
+  },
+  {
+   "file": "Electrical_Parts_Endstop_endstop-v1-2-makerbot.step",
+   "sizeKB": 361,
+   "declared": {
+    "solids": 1,
+    "closedShells": 1,
+    "openShells": 0,
+    "faces": 100,
+    "edges": 273,
+    "edgeValence": {
+     "2": 273
+    },
+    "closedByDeclaration": true,
+    "system": "FreeCAD"
+   },
+   "bodies": 1,
+   "verts": 516,
+   "tris": 1044,
+   "stepMs": 159,
+   "engineMs": 153,
+   "smoothMs": 2,
+   "weldMeta": {
+    "bodies": 1,
+    "watertight": 1,
+    "stillBroken": 0,
+    "edgesTopo": 267,
+    "edgesResidual": 0,
+    "edgesMismatch": 0,
+    "trisDropped": 0,
+    "legacyFallback": 0,
+    "enabled": true
+   },
+   "raw": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 516,
+    "closedBodies": null,
+    "closedBroken": null,
+    "closedNaked": null,
+    "closedOver": null
+   },
+   "client": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 516,
+    "closedBodies": null,
+    "closedBroken": null,
+    "closedNaked": null,
+    "closedOver": null
+   },
+   "brep": null,
+   "brokenBodies": []
+  },
+  {
+   "file": "Electronics_Parts_Buttons_SMD_sw_smd_6.0x3.8.step",
+   "sizeKB": 399,
+   "declared": {
+    "solids": 5,
+    "closedShells": 5,
+    "openShells": 0,
+    "faces": 92,
+    "edges": 242,
+    "edgeValence": {
+     "2": 242
+    },
+    "closedByDeclaration": true,
+    "system": "FreeCAD"
+   },
+   "bodies": 5,
+   "verts": 932,
+   "tris": 1842,
+   "stepMs": 193,
+   "engineMs": 186,
+   "smoothMs": 2,
+   "weldMeta": {
+    "bodies": 5,
+    "watertight": 4,
+    "stillBroken": 1,
+    "edgesTopo": 239,
+    "edgesResidual": 0,
+    "edgesMismatch": 0,
+    "trisDropped": 0,
+    "legacyFallback": 0,
+    "enabled": true
+   },
+   "raw": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 925,
+    "closedBodies": null,
+    "closedBroken": null,
+    "closedNaked": null,
+    "closedOver": null
+   },
+   "client": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 925,
+    "closedBodies": null,
+    "closedBroken": null,
+    "closedNaked": null,
+    "closedOver": null
+   },
+   "brep": null,
+   "brokenBodies": []
+  },
+  {
+   "file": "Electrical_Parts_Push_buttons_Blue_Push-button_-_22_mm.step",
+   "sizeKB": 408,
+   "declared": {
+    "solids": 1,
+    "closedShells": 1,
+    "openShells": 0,
+    "faces": 287,
+    "edges": 769,
+    "edgeValence": {
+     "2": 769
+    },
+    "closedByDeclaration": true,
+    "system": "FreeCAD"
+   },
+   "bodies": 1,
+   "verts": 3960,
+   "tris": 7924,
+   "stepMs": 374,
+   "engineMs": 362,
+   "smoothMs": 11,
+   "weldMeta": {
+    "bodies": 1,
+    "watertight": 1,
+    "stillBroken": 0,
+    "edgesTopo": 769,
+    "edgesResidual": 0,
+    "edgesMismatch": 0,
+    "trisDropped": 0,
+    "legacyFallback": 0,
+    "enabled": true
+   },
+   "raw": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 3960,
+    "closedBodies": null,
+    "closedBroken": null,
+    "closedNaked": null,
+    "closedOver": null
+   },
+   "client": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 3960,
+    "closedBodies": null,
+    "closedBroken": null,
+    "closedNaked": null,
+    "closedOver": null
+   },
+   "brep": null,
+   "brokenBodies": []
+  },
+  {
+   "file": "Electrical_Parts_Push_buttons_Black_mushroom_head_push_button_-_22_mm.step",
+   "sizeKB": 418,
+   "declared": {
+    "solids": 1,
+    "closedShells": 1,
+    "openShells": 0,
+    "faces": 293,
+    "edges": 783,
+    "edgeValence": {
+     "2": 783
+    },
+    "closedByDeclaration": true,
+    "system": "FreeCAD"
+   },
+   "bodies": 1,
+   "verts": 3950,
+   "tris": 7904,
+   "stepMs": 373,
+   "engineMs": 363,
+   "smoothMs": 8,
+   "weldMeta": {
+    "bodies": 1,
+    "watertight": 1,
+    "stillBroken": 0,
+    "edgesTopo": 783,
+    "edgesResidual": 0,
+    "edgesMismatch": 0,
+    "trisDropped": 0,
+    "legacyFallback": 0,
+    "enabled": true
+   },
+   "raw": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 3950,
+    "closedBodies": null,
+    "closedBroken": null,
+    "closedNaked": null,
+    "closedOver": null
+   },
+   "client": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 3950,
+    "closedBodies": null,
+    "closedBroken": null,
+    "closedNaked": null,
+    "closedOver": null
+   },
+   "brep": null,
+   "brokenBodies": []
+  },
+  {
+   "file": "Electronics_Parts_Fuses_SMD_F1812-505k.step",
+   "sizeKB": 429,
+   "declared": {
+    "solids": 8,
+    "closedShells": 8,
+    "openShells": 0,
+    "faces": 99,
+    "edges": 249,
+    "edgeValence": {
+     "2": 249
+    },
+    "closedByDeclaration": true,
+    "system": "FreeCAD"
+   },
+   "bodies": 8,
+   "verts": 588,
+   "tris": 1148,
+   "stepMs": 207,
+   "engineMs": 199,
+   "smoothMs": 2,
+   "weldMeta": {
+    "bodies": 8,
+    "watertight": 8,
+    "stillBroken": 0,
+    "edgesTopo": 248,
+    "edgesResidual": 0,
+    "edgesMismatch": 0,
+    "trisDropped": 0,
+    "legacyFallback": 0,
+    "enabled": true
+   },
+   "raw": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 588,
+    "closedBodies": null,
+    "closedBroken": null,
+    "closedNaked": null,
+    "closedOver": null
+   },
+   "client": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 588,
+    "closedBodies": null,
+    "closedBroken": null,
+    "closedNaked": null,
+    "closedOver": null
+   },
+   "brep": null,
+   "brokenBodies": []
+  },
+  {
+   "file": "Electronics_Parts_Displays_Display_7_segmentos_Archivos_Display_7_segmentos.step",
+   "sizeKB": 441,
+   "declared": {
+    "solids": 1,
+    "closedShells": 1,
+    "openShells": 0,
+    "faces": 127,
+    "edges": 321,
+    "edgeValence": {
+     "2": 321
+    },
+    "closedByDeclaration": true,
+    "system": "FreeCAD"
+   },
+   "bodies": 1,
+   "verts": 264,
+   "tris": 524,
+   "stepMs": 181,
+   "engineMs": 172,
+   "smoothMs": 2,
+   "weldMeta": {
+    "bodies": 1,
+    "watertight": 1,
+    "stillBroken": 0,
+    "edgesTopo": 320,
+    "edgesResidual": 0,
+    "edgesMismatch": 0,
+    "trisDropped": 0,
+    "legacyFallback": 0,
+    "enabled": true
+   },
+   "raw": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 264,
+    "closedBodies": null,
+    "closedBroken": null,
+    "closedNaked": null,
+    "closedOver": null
+   },
+   "client": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 264,
+    "closedBodies": null,
+    "closedBroken": null,
+    "closedNaked": null,
+    "closedOver": null
+   },
+   "brep": null,
+   "brokenBodies": []
+  },
+  {
+   "file": "Electronics_Parts_Jumpers_jumper-cap-2.54mm.step",
+   "sizeKB": 449,
+   "declared": {
+    "solids": 3,
+    "closedShells": 3,
+    "openShells": 0,
+    "faces": 109,
+    "edges": 308,
+    "edgeValence": {
+     "2": 308
+    },
+    "closedByDeclaration": true,
+    "system": "FreeCAD"
+   },
+   "bodies": 3,
+   "verts": 670,
+   "tris": 1332,
+   "stepMs": 190,
+   "engineMs": 181,
+   "smoothMs": 2,
+   "weldMeta": {
+    "bodies": 3,
+    "watertight": 3,
+    "stillBroken": 0,
+    "edgesTopo": 308,
+    "edgesResidual": 0,
+    "edgesMismatch": 0,
+    "trisDropped": 0,
+    "legacyFallback": 0,
+    "enabled": true
+   },
+   "raw": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 670,
+    "closedBodies": null,
+    "closedBroken": null,
+    "closedNaked": null,
+    "closedOver": null
+   },
+   "client": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 670,
+    "closedBodies": null,
+    "closedBroken": null,
+    "closedNaked": null,
+    "closedOver": null
+   },
+   "brep": null,
+   "brokenBodies": []
+  },
+  {
+   "file": "Electrical_Parts_Hotend_CatNozzle.step",
+   "sizeKB": 549,
+   "declared": {
+    "solids": 8,
+    "closedShells": 8,
+    "openShells": 0,
+    "faces": 149,
+    "edges": 366,
+    "edgeValence": {
+     "2": 365,
+     "4": 1
+    },
+    "closedByDeclaration": false,
+    "system": "FreeCAD"
+   },
+   "bodies": 8,
+   "verts": 2995,
+   "tris": 5956,
+   "stepMs": 278,
+   "engineMs": 267,
+   "smoothMs": 3,
+   "weldMeta": {
+    "bodies": 8,
+    "watertight": 2,
+    "stillBroken": 6,
+    "edgesTopo": 339,
+    "edgesResidual": 9,
+    "edgesMismatch": 0,
+    "trisDropped": 0,
+    "legacyFallback": 0,
+    "enabled": true
+   },
+   "raw": {
+    "bodiesBroken": 2,
+    "naked": 0,
+    "over": 2,
+    "weldedVerts": 2970,
+    "closedBodies": null,
+    "closedBroken": null,
+    "closedNaked": null,
+    "closedOver": null
+   },
+   "client": {
+    "bodiesBroken": 2,
+    "naked": 0,
+    "over": 2,
+    "weldedVerts": 2970,
+    "closedBodies": null,
+    "closedBroken": null,
+    "closedNaked": null,
+    "closedOver": null
+   },
+   "brep": null,
+   "brokenBodies": [
+    {
+     "name": "Resistencia",
+     "verts": 288,
+     "tris": 566,
+     "raw": {
+      "naked": 0,
+      "over": 1,
+      "weldedVerts": 283,
+      "manifold": false
+     },
+     "client": {
+      "naked": 0,
+      "over": 1,
+      "weldedVerts": 283,
+      "manifold": false
+     }
+    },
+    {
+     "name": "TornilloM3-4mm001",
+     "verts": 311,
+     "tris": 620,
+     "raw": {
+      "naked": 0,
+      "over": 1,
+      "weldedVerts": 309,
+      "manifold": false
+     },
+     "client": {
+      "naked": 0,
+      "over": 1,
+      "weldedVerts": 309,
+      "manifold": false
+     }
+    }
+   ]
+  },
+  {
+   "file": "Electronics_Parts_Headers_2.54mm-pitch_female_1x10-female-pin-header.step",
+   "sizeKB": 572,
+   "declared": {
+    "solids": 11,
+    "closedShells": 11,
+    "openShells": 0,
+    "faces": 196,
+    "edges": 412,
+    "edgeValence": {
+     "2": 412
+    },
+    "closedByDeclaration": true,
+    "system": "FreeCAD"
+   },
+   "bodies": 11,
+   "verts": 528,
+   "tris": 1012,
+   "stepMs": 255,
+   "engineMs": 244,
+   "smoothMs": 2,
+   "weldMeta": {
+    "bodies": 11,
+    "watertight": 11,
+    "stillBroken": 0,
+    "edgesTopo": 412,
+    "edgesResidual": 0,
+    "edgesMismatch": 0,
+    "trisDropped": 0,
+    "legacyFallback": 0,
+    "enabled": true
+   },
+   "raw": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 528,
+    "closedBodies": null,
+    "closedBroken": null,
+    "closedNaked": null,
+    "closedOver": null
+   },
+   "client": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 528,
+    "closedBodies": null,
+    "closedBroken": null,
+    "closedNaked": null,
+    "closedOver": null
+   },
+   "brep": null,
+   "brokenBodies": []
+  },
+  {
+   "file": "Electronics_Parts_Displays_LCD_lcd-4x20-backlight.step",
+   "sizeKB": 616,
+   "declared": {
+    "solids": 14,
+    "closedShells": 14,
+    "openShells": 0,
+    "faces": 176,
+    "edges": 438,
+    "edgeValence": {
+     "2": 438
+    },
+    "closedByDeclaration": true,
+    "system": "FreeCAD"
+   },
+   "bodies": 14,
+   "verts": 1436,
+   "tris": 2900,
+   "stepMs": 272,
+   "engineMs": 260,
+   "smoothMs": 3,
+   "weldMeta": {
+    "bodies": 14,
+    "watertight": 14,
+    "stillBroken": 0,
+    "edgesTopo": 418,
+    "edgesResidual": 0,
+    "edgesMismatch": 0,
+    "trisDropped": 0,
+    "legacyFallback": 0,
+    "enabled": true
+   },
+   "raw": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 1436,
+    "closedBodies": null,
+    "closedBroken": null,
+    "closedNaked": null,
+    "closedOver": null
+   },
+   "client": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 1436,
+    "closedBodies": null,
+    "closedBroken": null,
+    "closedNaked": null,
+    "closedOver": null
+   },
+   "brep": null,
+   "brokenBodies": []
+  },
+  {
+   "file": "Electrical_Parts_fans_blower-50x50mm.step",
+   "sizeKB": 697,
+   "declared": {
+    "solids": 2,
+    "closedShells": 2,
+    "openShells": 0,
+    "faces": 186,
+    "edges": 439,
+    "edgeValence": {
+     "2": 439
+    },
+    "closedByDeclaration": true,
+    "system": "FreeCAD"
+   },
+   "bodies": 2,
+   "verts": 1971,
+   "tris": 3956,
+   "stepMs": 286,
+   "engineMs": 273,
+   "smoothMs": 4,
+   "weldMeta": {
+    "bodies": 2,
+    "watertight": 1,
+    "stillBroken": 1,
+    "edgesTopo": 433,
+    "edgesResidual": 0,
+    "edgesMismatch": 0,
+    "trisDropped": 0,
+    "legacyFallback": 0,
+    "enabled": true
+   },
+   "raw": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 1964,
+    "closedBodies": null,
+    "closedBroken": null,
+    "closedNaked": null,
+    "closedOver": null
+   },
+   "client": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 1964,
+    "closedBodies": null,
+    "closedBroken": null,
+    "closedNaked": null,
+    "closedOver": null
+   },
+   "brep": null,
+   "brokenBodies": []
+  },
+  {
+   "file": "Electronics_Parts_IC_SMD_14SOIC-N.step",
+   "sizeKB": 806,
+   "declared": {
+    "solids": 1,
+    "closedShells": 1,
+    "openShells": 0,
+    "faces": 194,
+    "edges": 531,
+    "edgeValence": {
+     "2": 531
+    },
+    "closedByDeclaration": true,
+    "system": "FreeCAD"
+   },
+   "bodies": 1,
+   "verts": 964,
+   "tris": 1924,
+   "stepMs": 313,
+   "engineMs": 297,
+   "smoothMs": 3,
+   "weldMeta": {
+    "bodies": 1,
+    "watertight": 1,
+    "stillBroken": 0,
+    "edgesTopo": 530,
+    "edgesResidual": 0,
+    "edgesMismatch": 0,
+    "trisDropped": 0,
+    "legacyFallback": 0,
+    "enabled": true
+   },
+   "raw": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 964,
+    "closedBodies": null,
+    "closedBroken": null,
+    "closedNaked": null,
+    "closedOver": null
+   },
+   "client": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 964,
+    "closedBodies": null,
+    "closedBroken": null,
+    "closedNaked": null,
+    "closedOver": null
+   },
+   "brep": null,
+   "brokenBodies": []
+  },
+  {
+   "file": "Electronics_Parts_Heatsinks_heat-sink-19x19x5mm.step",
+   "sizeKB": 809,
+   "declared": {
+    "solids": 1,
+    "closedShells": 1,
+    "openShells": 0,
+    "faces": 212,
+    "edges": 630,
+    "edgeValence": {
+     "2": 630
+    },
+    "closedByDeclaration": true,
+    "system": "FreeCAD"
+   },
+   "bodies": 1,
+   "verts": 1260,
+   "tris": 2516,
+   "stepMs": 344,
+   "engineMs": 328,
+   "smoothMs": 5,
+   "weldMeta": {
+    "bodies": 1,
+    "watertight": 1,
+    "stillBroken": 0,
+    "edgesTopo": 630,
+    "edgesResidual": 0,
+    "edgesMismatch": 0,
+    "trisDropped": 0,
+    "legacyFallback": 0,
+    "enabled": true
+   },
+   "raw": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 1260,
+    "closedBodies": null,
+    "closedBroken": null,
+    "closedNaked": null,
+    "closedOver": null
+   },
+   "client": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 1260,
+    "closedBodies": null,
+    "closedBroken": null,
+    "closedNaked": null,
+    "closedOver": null
+   },
+   "brep": null,
+   "brokenBodies": []
+  },
+  {
+   "file": "Electrical_Parts_Servos_Emax-ES08A_Emax-es08A.step",
+   "sizeKB": 855,
+   "declared": {
+    "solids": 6,
+    "closedShells": 6,
+    "openShells": 0,
+    "faces": 217,
+    "edges": 551,
+    "edgeValence": {
+     "2": 551
+    },
+    "closedByDeclaration": true,
+    "system": "FreeCAD"
+   },
+   "bodies": 6,
+   "verts": 2892,
+   "tris": 5718,
+   "stepMs": 363,
+   "engineMs": 345,
+   "smoothMs": 5,
+   "weldMeta": {
+    "bodies": 6,
+    "watertight": 1,
+    "stillBroken": 5,
+    "edgesTopo": 533,
+    "edgesResidual": 0,
+    "edgesMismatch": 0,
+    "trisDropped": 10,
+    "legacyFallback": 0,
+    "enabled": true
+   },
+   "raw": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 2867,
+    "closedBodies": null,
+    "closedBroken": null,
+    "closedNaked": null,
+    "closedOver": null
+   },
+   "client": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 2867,
+    "closedBodies": null,
+    "closedBroken": null,
+    "closedNaked": null,
+    "closedOver": null
+   },
+   "brep": null,
+   "brokenBodies": []
+  },
+  {
+   "file": "Electronics_Parts_Diodes_SMD_DO-214AC.step",
+   "sizeKB": 860,
+   "declared": {
+    "solids": 3,
+    "closedShells": 3,
+    "openShells": 0,
+    "faces": 71,
+    "edges": 163,
+    "edgeValence": {
+     "2": 163
+    },
+    "closedByDeclaration": true,
+    "system": "FreeCAD"
+   },
+   "bodies": 3,
+   "verts": 580,
+   "tris": 1148,
+   "stepMs": 247,
+   "engineMs": 239,
+   "smoothMs": 2,
+   "weldMeta": {
+    "bodies": 3,
+    "watertight": 3,
+    "stillBroken": 0,
+    "edgesTopo": 163,
+    "edgesResidual": 0,
+    "edgesMismatch": 0,
+    "trisDropped": 4,
+    "legacyFallback": 0,
+    "enabled": true
+   },
+   "raw": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 578,
+    "closedBodies": null,
+    "closedBroken": null,
+    "closedNaked": null,
+    "closedOver": null
+   },
+   "client": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 578,
+    "closedBodies": null,
+    "closedBroken": null,
+    "closedNaked": null,
+    "closedOver": null
+   },
+   "brep": null,
+   "brokenBodies": []
+  },
+  {
+   "file": "Electronics_Parts_Cameras_Wide-170-Angle-Raspi-Camera.step",
+   "sizeKB": 1071,
+   "declared": {
+    "solids": 30,
+    "closedShells": 30,
+    "openShells": 0,
+    "faces": 315,
+    "edges": 681,
+    "edgeValence": {
+     "2": 681
+    },
+    "closedByDeclaration": true,
+    "system": "FreeCAD"
+   },
+   "bodies": 30,
+   "verts": 11866,
+   "tris": 23448,
+   "stepMs": 536,
+   "engineMs": 514,
+   "smoothMs": 11,
+   "weldMeta": {
+    "bodies": 30,
+    "watertight": 20,
+    "stillBroken": 10,
+    "edgesTopo": 611,
+    "edgesResidual": 82,
+    "edgesMismatch": 0,
+    "trisDropped": 5,
+    "legacyFallback": 0,
+    "enabled": true
+   },
+   "raw": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 11750,
+    "closedBodies": null,
+    "closedBroken": null,
+    "closedNaked": null,
+    "closedOver": null
+   },
+   "client": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 11749,
+    "closedBodies": null,
+    "closedBroken": null,
+    "closedNaked": null,
+    "closedOver": null
+   },
+   "brep": null,
+   "brokenBodies": []
+  },
+  {
+   "file": "Electrical_Parts_Power_Supplies_IRM-60_ST_series_power_supply_IRM-60_ST_power_supply.step",
+   "sizeKB": 1221,
+   "declared": {
+    "solids": 1,
+    "closedShells": 1,
+    "openShells": 0,
+    "faces": 92,
+    "edges": 218,
+    "edgeValence": {
+     "2": 218
+    },
+    "closedByDeclaration": true,
+    "system": "FreeCAD"
+   },
+   "bodies": 1,
+   "verts": 928,
+   "tris": 1868,
+   "stepMs": 300,
+   "engineMs": 286,
+   "smoothMs": 3,
+   "weldMeta": {
+    "bodies": 1,
+    "watertight": 1,
+    "stillBroken": 0,
+    "edgesTopo": 208,
+    "edgesResidual": 0,
+    "edgesMismatch": 0,
+    "trisDropped": 0,
+    "legacyFallback": 0,
+    "enabled": true
+   },
+   "raw": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 928,
+    "closedBodies": null,
+    "closedBroken": null,
+    "closedNaked": null,
+    "closedOver": null
+   },
+   "client": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 928,
+    "closedBodies": null,
+    "closedBroken": null,
+    "closedNaked": null,
+    "closedOver": null
+   },
+   "brep": null,
+   "brokenBodies": []
+  },
+  {
+   "file": "Electrical_Parts_fans_fan-40x40mm.step",
+   "sizeKB": 1351,
+   "declared": {
+    "solids": 1,
+    "closedShells": 1,
+    "openShells": 0,
+    "faces": 172,
+    "edges": 460,
+    "edgeValence": {
+     "2": 460
+    },
+    "closedByDeclaration": true,
+    "system": "FreeCAD"
+   },
+   "bodies": 1,
+   "verts": 1965,
+   "tris": 3954,
+   "stepMs": 433,
+   "engineMs": 395,
+   "smoothMs": 5,
+   "weldMeta": {
+    "bodies": 1,
+    "watertight": 1,
+    "stillBroken": 0,
+    "edgesTopo": 454,
+    "edgesResidual": 0,
+    "edgesMismatch": 0,
+    "trisDropped": 0,
+    "legacyFallback": 0,
+    "enabled": true
+   },
+   "raw": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 1965,
+    "closedBodies": null,
+    "closedBroken": null,
+    "closedNaked": null,
+    "closedOver": null
+   },
+   "client": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 1965,
+    "closedBodies": null,
+    "closedBroken": null,
+    "closedNaked": null,
+    "closedOver": null
+   },
+   "brep": null,
+   "brokenBodies": []
+  },
+  {
+   "file": "Electronics_Parts_Antennas_Antenna-GNSS-STA-901A.step",
+   "sizeKB": 1416,
+   "declared": {
+    "solids": 1,
+    "closedShells": 1,
+    "openShells": 0,
+    "faces": 179,
+    "edges": 437,
+    "edgeValence": {
+     "2": 437
+    },
+    "closedByDeclaration": true,
+    "system": "FreeCAD"
+   },
+   "bodies": 1,
+   "verts": 6397,
+   "tris": 12768,
+   "stepMs": 747,
+   "engineMs": 732,
+   "smoothMs": 15,
+   "weldMeta": {
+    "bodies": 1,
+    "watertight": 0,
+    "stillBroken": 1,
+    "edgesTopo": 427,
+    "edgesResidual": 0,
+    "edgesMismatch": 0,
+    "trisDropped": 0,
+    "legacyFallback": 0,
+    "enabled": true
+   },
+   "raw": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 6386,
+    "closedBodies": null,
+    "closedBroken": null,
+    "closedNaked": null,
+    "closedOver": null
+   },
+   "client": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 6386,
+    "closedBodies": null,
+    "closedBroken": null,
+    "closedNaked": null,
+    "closedOver": null
+   },
+   "brep": null,
+   "brokenBodies": []
+  },
+  {
+   "file": "Electronics_Parts_Motors_DC_motor_Mabuchi-Encoder_DCMotorEncoder.step",
+   "sizeKB": 1560,
+   "declared": {
+    "solids": 13,
+    "closedShells": 13,
+    "openShells": 0,
+    "faces": 241,
+    "edges": 592,
+    "edgeValence": {
+     "2": 590,
+     "4": 1,
+     "64": 1
+    },
+    "closedByDeclaration": false,
+    "system": "FreeCAD"
+   },
+   "bodies": 13,
+   "verts": 10774,
+   "tris": 21632,
+   "stepMs": 687,
+   "engineMs": 664,
+   "smoothMs": 19,
+   "weldMeta": {
+    "bodies": 13,
+    "watertight": 12,
+    "stillBroken": 1,
+    "edgesTopo": 579,
+    "edgesResidual": 0,
+    "edgesMismatch": 0,
+    "trisDropped": 0,
+    "legacyFallback": 0,
+    "enabled": true
+   },
+   "raw": {
+    "bodiesBroken": 2,
+    "naked": 0,
+    "over": 17,
+    "weldedVerts": 10750,
+    "closedBodies": null,
+    "closedBroken": null,
+    "closedNaked": null,
+    "closedOver": null
+   },
+   "client": {
+    "bodiesBroken": 2,
+    "naked": 0,
+    "over": 7,
+    "weldedVerts": 10755,
+    "closedBodies": null,
+    "closedBroken": null,
+    "closedNaked": null,
+    "closedOver": null
+   },
+   "brep": null,
+   "brokenBodies": [
+    {
+     "name": "DCMotorEncoder",
+     "verts": 352,
+     "tris": 828,
+     "raw": {
+      "naked": 0,
+      "over": 1,
+      "weldedVerts": 352,
+      "manifold": false
+     },
+     "client": {
+      "naked": 0,
+      "over": 1,
+      "weldedVerts": 352,
+      "manifold": false
+     }
+    },
+    {
+     "name": "DCMotorEncoder",
+     "verts": 9520,
+     "tris": 19040,
+     "raw": {
+      "naked": 0,
+      "over": 16,
+      "weldedVerts": 9496,
+      "manifold": false
+     },
+     "client": {
+      "naked": 0,
+      "over": 6,
+      "weldedVerts": 9501,
+      "manifold": false
+     }
+    }
+   ]
+  },
+  {
+   "file": "Electronics_Parts_Boards_Raspberry_Raspberry_Pi_Pico_Pico-R3.step",
+   "sizeKB": 1681,
+   "declared": {
+    "solids": 16,
+    "closedShells": 16,
+    "openShells": 0,
+    "faces": 598,
+    "edges": 1876,
+    "edgeValence": {
+     "2": 1876
+    },
+    "closedByDeclaration": true,
+    "system": "SolidWorks 2021"
+   },
+   "bodies": 17,
+   "verts": 6844,
+   "tris": 13808,
+   "stepMs": 1108,
+   "engineMs": 1065,
+   "smoothMs": 15,
+   "weldMeta": {
+    "bodies": 17,
+    "watertight": 17,
+    "stillBroken": 0,
+    "edgesTopo": 1888,
+    "edgesResidual": 0,
+    "edgesMismatch": 0,
+    "trisDropped": 0,
+    "legacyFallback": 0,
+    "enabled": true
+   },
+   "raw": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 6812,
+    "closedBodies": null,
+    "closedBroken": null,
+    "closedNaked": null,
+    "closedOver": null
+   },
+   "client": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 6812,
+    "closedBodies": null,
+    "closedBroken": null,
+    "closedNaked": null,
+    "closedOver": null
+   },
+   "brep": null,
+   "brokenBodies": []
+  },
+  {
+   "file": "Electronics_Parts_Boards_Arduino_Nano-Rev3_0.step",
+   "sizeKB": 2226,
+   "declared": {
+    "solids": 1,
+    "closedShells": 1,
+    "openShells": 0,
+    "faces": 701,
+    "edges": 1773,
+    "edgeValence": {
+     "2": 1773
+    },
+    "closedByDeclaration": true,
+    "system": "FreeCAD"
+   },
+   "bodies": 1,
+   "verts": 1172,
+   "tris": 2340,
+   "stepMs": 1041,
+   "engineMs": 993,
+   "smoothMs": 6,
+   "weldMeta": {
+    "bodies": 1,
+    "watertight": 1,
+    "stillBroken": 0,
+    "edgesTopo": 1772,
+    "edgesResidual": 0,
+    "edgesMismatch": 0,
+    "trisDropped": 0,
+    "legacyFallback": 0,
+    "enabled": true
+   },
+   "raw": {
+    "bodiesBroken": 1,
+    "naked": 0,
+    "over": 118,
+    "weldedVerts": 1112,
+    "closedBodies": null,
+    "closedBroken": null,
+    "closedNaked": null,
+    "closedOver": null
+   },
+   "client": {
+    "bodiesBroken": 1,
+    "naked": 0,
+    "over": 118,
+    "weldedVerts": 1112,
+    "closedBodies": null,
+    "closedBroken": null,
+    "closedNaked": null,
+    "closedOver": null
+   },
+   "brep": null,
+   "brokenBodies": [
+    {
+     "name": "Fusion015",
+     "verts": 1172,
+     "tris": 2340,
+     "raw": {
+      "naked": 0,
+      "over": 118,
+      "weldedVerts": 1112,
+      "manifold": false
+     },
+     "client": {
+      "naked": 0,
+      "over": 118,
+      "weldedVerts": 1112,
+      "manifold": false
+     }
+    }
+   ]
+  },
+  {
+   "file": "Electrical_Parts_Hotend_Lerge_V5_heatblock-PartLerge_V5_Heatblock.step",
+   "sizeKB": 2407,
+   "declared": {
+    "solids": 1,
+    "closedShells": 1,
+    "openShells": 0,
+    "faces": 156,
+    "edges": 350,
+    "edgeValence": {
+     "2": 350
+    },
+    "closedByDeclaration": true,
+    "system": "FreeCAD"
+   },
+   "bodies": 1,
+   "verts": 4954,
+   "tris": 9924,
+   "stepMs": 695,
+   "engineMs": 665,
+   "smoothMs": 13,
+   "weldMeta": {
+    "bodies": 1,
+    "watertight": 1,
+    "stillBroken": 0,
+    "edgesTopo": 344,
+    "edgesResidual": 0,
+    "edgesMismatch": 0,
+    "trisDropped": 0,
+    "legacyFallback": 0,
+    "enabled": true
+   },
+   "raw": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 4954,
+    "closedBodies": null,
+    "closedBroken": null,
+    "closedNaked": null,
+    "closedOver": null
+   },
+   "client": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 4954,
+    "closedBodies": null,
+    "closedBroken": null,
+    "closedNaked": null,
+    "closedOver": null
+   },
+   "brep": null,
+   "brokenBodies": []
+  },
+  {
+   "file": "Electrical_Parts_Power_Supplies_Switching_power_supply_Switching_power_supply.step",
+   "sizeKB": 2489,
+   "declared": {
+    "solids": 9,
+    "closedShells": 9,
+    "openShells": 10,
+    "faces": 1573,
+    "edges": 4405,
+    "edgeValence": {
+     "1": 22,
+     "2": 4383
+    },
+    "closedByDeclaration": false,
+    "system": "FreeCAD"
+   },
+   "bodies": 14,
+   "verts": 22989,
+   "tris": 46078,
+   "stepMs": 2596,
+   "engineMs": 2530,
+   "smoothMs": 37,
+   "weldMeta": {
+    "bodies": 14,
+    "watertight": 7,
+    "stillBroken": 7,
+    "edgesTopo": 4280,
+    "edgesResidual": 0,
+    "edgesMismatch": 0,
+    "trisDropped": 4,
+    "legacyFallback": 0,
+    "enabled": true
+   },
+   "raw": {
+    "bodiesBroken": 5,
+    "naked": 84,
+    "over": 0,
+    "weldedVerts": 22837,
+    "closedBodies": null,
+    "closedBroken": null,
+    "closedNaked": null,
+    "closedOver": null
+   },
+   "client": {
+    "bodiesBroken": 5,
+    "naked": 84,
+    "over": 0,
+    "weldedVerts": 22837,
+    "closedBodies": null,
+    "closedBroken": null,
+    "closedNaked": null,
+    "closedOver": null
+   },
+   "brep": null,
+   "brokenBodies": [
+    {
+     "name": "COMPOUND",
+     "verts": 102,
+     "tris": 182,
+     "raw": {
+      "naked": 20,
+      "over": 0,
+      "weldedVerts": 102,
+      "manifold": false
+     },
+     "client": {
+      "naked": 20,
+      "over": 0,
+      "weldedVerts": 102,
+      "manifold": false
+     }
+    },
+    {
+     "name": "COMPOUND001",
+     "verts": 101,
+     "tris": 180,
+     "raw": {
+      "naked": 20,
+      "over": 0,
+      "weldedVerts": 101,
+      "manifold": false
+     },
+     "client": {
+      "naked": 20,
+      "over": 0,
+      "weldedVerts": 101,
+      "manifold": false
+     }
+    },
+    {
+     "name": "COMPOUND002",
+     "verts": 102,
+     "tris": 182,
+     "raw": {
+      "naked": 20,
+      "over": 0,
+      "weldedVerts": 102,
+      "manifold": false
+     },
+     "client": {
+      "naked": 20,
+      "over": 0,
+      "weldedVerts": 102,
+      "manifold": false
+     }
+    },
+    {
+     "name": "COMPOUND003",
+     "verts": 102,
+     "tris": 182,
+     "raw": {
+      "naked": 20,
+      "over": 0,
+      "weldedVerts": 102,
+      "manifold": false
+     },
+     "client": {
+      "naked": 20,
+      "over": 0,
+      "weldedVerts": 102,
+      "manifold": false
+     }
+    },
+    {
+     "name": "COMPOUND009",
+     "verts": 150,
+     "tris": 290,
+     "raw": {
+      "naked": 4,
+      "over": 0,
+      "weldedVerts": 149,
+      "manifold": false
+     },
+     "client": {
+      "naked": 4,
+      "over": 0,
+      "weldedVerts": 149,
+      "manifold": false
+     }
+    }
+   ]
+  },
+  {
+   "file": "Electrical_Parts_Batteries_battery-holder-4-AAA.step",
+   "sizeKB": 2604,
+   "declared": {
+    "solids": 24,
+    "closedShells": 32,
+    "openShells": 0,
+    "faces": 296,
+    "edges": 719,
+    "edgeValence": {
+     "1": 16,
+     "2": 703
+    },
+    "closedByDeclaration": false,
+    "system": "FreeCAD"
+   },
+   "bodies": 32,
+   "verts": 42797,
+   "tris": 82974,
+   "stepMs": 1985,
+   "engineMs": 1944,
+   "smoothMs": 53,
+   "weldMeta": {
+    "bodies": 32,
+    "watertight": 0,
+    "stillBroken": 32,
+    "edgesTopo": 624,
+    "edgesResidual": 100,
+    "edgesMismatch": 0,
+    "trisDropped": 0,
+    "legacyFallback": 0,
+    "enabled": true
+   },
+   "raw": {
+    "bodiesBroken": 14,
+    "naked": 468,
+    "over": 565,
+    "weldedVerts": 40050,
+    "closedBodies": null,
+    "closedBroken": null,
+    "closedNaked": null,
+    "closedOver": null
+   },
+   "client": {
+    "bodiesBroken": 14,
+    "naked": 468,
+    "over": 486,
+    "weldedVerts": 40069,
+    "closedBodies": null,
+    "closedBroken": null,
+    "closedNaked": null,
+    "closedOver": null
+   },
+   "brep": null,
+   "brokenBodies": [
+    {
+     "name": "Compound003",
+     "verts": 1398,
+     "tris": 2778,
+     "raw": {
+      "naked": 0,
+      "over": 295,
+      "weldedVerts": 498,
+      "manifold": false
+     },
+     "client": {
+      "naked": 0,
+      "over": 254,
+      "weldedVerts": 512,
+      "manifold": false
+     }
+    },
+    {
+     "name": "Compound003",
+     "verts": 1258,
+     "tris": 2498,
+     "raw": {
+      "naked": 0,
+      "over": 259,
+      "weldedVerts": 479,
+      "manifold": false
+     },
+     "client": {
+      "naked": 0,
+      "over": 221,
+      "weldedVerts": 484,
+      "manifold": false
+     }
+    },
+    {
+     "name": "Compound003",
+     "verts": 1376,
+     "tris": 2675,
+     "raw": {
+      "naked": 27,
+      "over": 0,
+      "weldedVerts": 1352,
+      "manifold": false
+     },
+     "client": {
+      "naked": 27,
+      "over": 0,
+      "weldedVerts": 1352,
+      "manifold": false
+     }
+    },
+    {
+     "name": "Compound003",
+     "verts": 624,
+     "tris": 1216,
+     "raw": {
+      "naked": 34,
+      "over": 0,
+      "weldedVerts": 624,
+      "manifold": false
+     },
+     "client": {
+      "naked": 34,
+      "over": 0,
+      "weldedVerts": 624,
+      "manifold": false
+     }
+    },
+    {
+     "name": "Compound003",
+     "verts": 5466,
+     "tris": 10478,
+     "raw": {
+      "naked": 56,
+      "over": 3,
+      "weldedVerts": 5267,
+      "manifold": false
+     },
+     "client": {
+      "naked": 56,
+      "over": 3,
+      "weldedVerts": 5267,
+      "manifold": false
+     }
+    },
+    {
+     "name": "Compound003",
+     "verts": 1376,
+     "tris": 2675,
+     "raw": {
+      "naked": 27,
+      "over": 0,
+      "weldedVerts": 1352,
+      "manifold": false
+     },
+     "client": {
+      "naked": 27,
+      "over": 0,
+      "weldedVerts": 1352,
+      "manifold": false
+     }
+    },
+    {
+     "name": "Compound003",
+     "verts": 624,
+     "tris": 1216,
+     "raw": {
+      "naked": 34,
+      "over": 0,
+      "weldedVerts": 624,
+      "manifold": false
+     },
+     "client": {
+      "naked": 34,
+      "over": 0,
+      "weldedVerts": 624,
+      "manifold": false
+     }
+    },
+    {
+     "name": "Compound003",
+     "verts": 5447,
+     "tris": 10440,
+     "raw": {
+      "naked": 56,
+      "over": 3,
+      "weldedVerts": 5248,
+      "manifold": false
+     },
+     "client": {
+      "naked": 56,
+      "over": 3,
+      "weldedVerts": 5248,
+      "manifold": false
+     }
+    },
+    {
+     "name": "Compound003",
+     "verts": 1448,
+     "tris": 2817,
+     "raw": {
+      "naked": 31,
+      "over": 0,
+      "weldedVerts": 1425,
+      "manifold": false
+     },
+     "client": {
+      "naked": 31,
+      "over": 0,
+      "weldedVerts": 1425,
+      "manifold": false
+     }
+    },
+    {
+     "name": "Compound003",
+     "verts": 630,
+     "tris": 1228,
+     "raw": {
+      "naked": 34,
+      "over": 0,
+      "weldedVerts": 630,
+      "manifold": false
+     },
+     "client": {
+      "naked": 34,
+      "over": 0,
+      "weldedVerts": 630,
+      "manifold": false
+     }
+    },
+    {
+     "name": "Compound003",
+     "verts": 3937,
+     "tris": 7454,
+     "raw": {
+      "naked": 52,
+      "over": 2,
+      "weldedVerts": 3753,
+      "manifold": false
+     },
+     "client": {
+      "naked": 52,
+      "over": 2,
+      "weldedVerts": 3753,
+      "manifold": false
+     }
+    },
+    {
+     "name": "Compound003",
+     "verts": 1376,
+     "tris": 2675,
+     "raw": {
+      "naked": 27,
+      "over": 0,
+      "weldedVerts": 1352,
+      "manifold": false
+     },
+     "client": {
+      "naked": 27,
+      "over": 0,
+      "weldedVerts": 1352,
+      "manifold": false
+     }
+    },
+    {
+     "name": "Compound003",
+     "verts": 624,
+     "tris": 1216,
+     "raw": {
+      "naked": 34,
+      "over": 0,
+      "weldedVerts": 624,
+      "manifold": false
+     },
+     "client": {
+      "naked": 34,
+      "over": 0,
+      "weldedVerts": 624,
+      "manifold": false
+     }
+    },
+    {
+     "name": "Compound003",
+     "verts": 5465,
+     "tris": 10476,
+     "raw": {
+      "naked": 56,
+      "over": 3,
+      "weldedVerts": 5266,
+      "manifold": false
+     },
+     "client": {
+      "naked": 56,
+      "over": 3,
+      "weldedVerts": 5266,
+      "manifold": false
+     }
+    }
+   ]
+  }
+ ],
+ "platform": "Ubuntu 24.04, OCCT 7.6.3 (apt), Manifold v3.5.3, g++ 13, 4 cores",
+ "source": "MEDUSA_SOURCE/nasscad_medusa.cpp @ d038996 (main)"
+}

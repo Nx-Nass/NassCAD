@@ -7106,6 +7106,9 @@ let _workerReady = false; // compat : « moteur CSG disponible » (= MEDUSA joig
 // Capacité /csgtree du binaire en face — un MEDUSA antérieur au 27/08 sert
 // /csg mais pas /csgtree. null = pas encore su.
 let _medusaHasCsgTree = null;
+// [28/09] Capacité /csg?colors=1 : l'union rend la couleur d'origine de chaque
+// triangle. false = MEDUSA antérieur, l'union garde alors une seule couleur.
+let _medusaHasCsgColors = false;
 
 // [28/08 AUDIT] Une sonde /ping a déjà réussi au moins une fois dans la session.
 // Sert à distinguer « serveur absent » de « serveur occupé » — voir _medusaProbe.
@@ -7134,8 +7137,13 @@ async function _medusaProbe(timeoutMs = 2000){
     if(!res.ok) return false;
     const j = await res.json();
     _medusaHasCsgTree = (j && j.csgtree === true);
+    _medusaHasCsgColors = (j && j.csgcolors === true);
     _medusaSeenAlive = true;
     _boosterState = true; // partagé avec step-import.js (_detectBooster)
+    // [28/09] Et la révision du maillage, que _detectBooster ne relira pas s'il
+    // trouve _boosterState déjà posé ici : sans elle, les clés de cache STEP
+    // perdraient le moteur qui les a produites (cf. _meshRevTag).
+    _boosterMeshRev = (j && j.meshRev) ? String(j.meshRev) : null;
     return true;
   }catch(e){ return false; }
 }
@@ -7221,7 +7229,11 @@ async function _medusaDecodeMeshResponse(res){
   const vc = meta.vertCount, tc = meta.triCount;
   const verts = new Float32Array(buf.slice(4 + jl, 4 + jl + vc * 12));
   const idx   = new Uint32Array(buf.slice(4 + jl + vc * 12, 4 + jl + vc * 12 + tc * 12));
-  return { verts, idx, meta };
+  // [28/09] /csg?colors=1 : une clé de couleur par triangle, après les indices.
+  const keys  = meta.triKeys
+    ? new Uint32Array(buf.slice(4 + jl + vc * 12 + tc * 12, 4 + jl + vc * 12 + tc * 12 + tc * 4))
+    : null;
+  return { verts, idx, meta, keys };
 }
 
 // ── POST avec watchdog — remplace le timer qui armait/désarmait les callbacks
@@ -7249,9 +7261,54 @@ async function _medusaPost(path, body, wdogMs, label){
 // Le protocole /csg encode donc juste leur COMPTE (solidsCount) ; on vérifie
 // cette hypothèse au lieu de la supposer — un jour où l'ordre changerait en
 // amont, mieux vaut une erreur nette qu'un trou soustrait au mauvais solide.
-async function _medusaCSG(op, meshes, hasMix, solidsIdx, holesIdx, label){
+// ── [28/09 — Nass] L'UNION GARDE LA COULEUR DE CHAQUE ÉLÉMENT ─────────────
+// « Quand on fait union de tous les éléments d'un STEP, on garde la couleur
+// de chaque élément. » Jusqu'ici le résultat prenait la teinte adoucie du
+// premier solide, pour tout le monde. Désormais chaque opérande envoie ses
+// plages de couleur (/csg?colors=1, cf. nasscad_medusa.cpp) et MEDUSA rend,
+// pour chaque triangle du résultat, la clé de la teinte d'où il vient — face
+// par face, y compris dans un corps STEP déjà multicolore.
+//
+// _csgColorRanges(o, keyOf) -> [[premierTri, nbTri, clé], ...] d'un opérande,
+//   lues sur ses geometry.groups (corps multicolore) ou sa couleur unique ;
+//   keyOf(hex) range la teinte dans la palette de l'opération.
+// _csgKeyGroups(idx, keys)  -> triangles regroupés par clé (tri stable par
+//   comptage) et une plage par clé : c'est la forme exacte des corps STEP
+//   multicolores (tableau de matériaux + geometry.groups), donc sauvegarde,
+//   undo, X-Ray et recoloration les traitent déjà.
+function _csgColorRanges(o, keyOf){
+  const g = o.mesh.geometry;
+  const nTri = ((g.index ? g.index.count : g.attributes.position.count) / 3) | 0;
+  const L = _matAll(o.mesh.material);
+  const hexAt = i => {
+    const m = L[i] || L[0];
+    return (m && m.color) ? m.color.getHex() : new THREE.Color(o.color || '#888888').getHex();
+  };
+  if(L.length < 2 || !g.groups || !g.groups.length) return [[0, nTri, keyOf(hexAt(0))]];
+  return g.groups.map(gr => [(gr.start / 3) | 0, (gr.count / 3) | 0, keyOf(hexAt(gr.materialIndex || 0))]);
+}
+function _csgKeyGroups(idx, keys){
+  const nT = keys.length;
+  let maxK = 0;
+  for(let t = 0; t < nT; t++) if(keys[t] > maxK) maxK = keys[t];
+  const cnt = new Uint32Array(maxK + 2);
+  for(let t = 0; t < nT; t++) cnt[keys[t] + 1]++;
+  for(let k = 1; k < cnt.length; k++) cnt[k] += cnt[k - 1];
+  const groups = [];
+  for(let k = 0; k <= maxK; k++) if(cnt[k + 1] > cnt[k]) groups.push({ key: k, start: cnt[k] * 3, count: (cnt[k + 1] - cnt[k]) * 3 });
+  const out = new Uint32Array(nT * 3), at = cnt.slice(0, maxK + 1);
+  for(let t = 0; t < nT; t++){
+    const d = at[keys[t]]++ * 3;
+    out[d] = idx[t * 3]; out[d + 1] = idx[t * 3 + 1]; out[d + 2] = idx[t * 3 + 2];
+  }
+  return { idx: out, groups };
+}
+
+async function _medusaCSG(op, meshes, hasMix, solidsIdx, holesIdx, label, colorRanges){
   await _medusaRequire();
   if(meshes.length < 2) throw new Error('MEDUSA /csg: at least 2 operands required');
+  // [28/09] Couleurs seulement si ce MEDUSA sait les rendre (flag /ping).
+  const _colors = !!(colorRanges && _medusaHasCsgColors && colorRanges.length === meshes.length);
   const opCode = op === 'union' ? 0 : op === 'subtract' ? 1 : 2;
   let solidsCount = 1;
   if(hasMix && solidsIdx && solidsIdx.length){
@@ -7262,22 +7319,29 @@ async function _medusaCSG(op, meshes, hasMix, solidsIdx, holesIdx, label){
   }
   const parts = meshes.map(_medusaMeshParts);
   let total = 12;
-  for(const p of parts) total += 8 + p.pos.byteLength + p.idx.byteLength;
+  parts.forEach((p, i) => { total += 8 + p.pos.byteLength + p.idx.byteLength + (_colors ? 4 + colorRanges[i].length * 12 : 0); });
   const buf = new ArrayBuffer(total);
   const dv  = new DataView(buf);
   let off = 0;
   dv.setUint32(off, opCode, true);      off += 4;
   dv.setUint32(off, parts.length, true); off += 4;
   dv.setUint32(off, solidsCount, true);  off += 4;
-  for(const p of parts){
+  parts.forEach((p, i) => {
     dv.setUint32(off, p.pos.length / 3, true); off += 4;
     dv.setUint32(off, p.idx.length / 3, true); off += 4;
     new Uint8Array(buf, off, p.pos.byteLength).set(new Uint8Array(p.pos.buffer, p.pos.byteOffset, p.pos.byteLength)); off += p.pos.byteLength;
     new Uint8Array(buf, off, p.idx.byteLength).set(new Uint8Array(p.idx.buffer, p.idx.byteOffset, p.idx.byteLength)); off += p.idx.byteLength;
-  }
+    if(_colors){
+      const R = colorRanges[i];
+      dv.setUint32(off, R.length, true); off += 4;
+      for(const [s, n, k] of R){
+        dv.setUint32(off, s, true); dv.setUint32(off + 4, n, true); dv.setUint32(off + 8, k, true); off += 12;
+      }
+    }
+  });
   const wdog = Math.min(600000, Math.max(_wdogBaseSec*1000, _wdogBaseSec*1000 + meshes.length*1000));
-  const r = await _medusaPost('/csg', buf, wdog, label || 'MEDUSA /csg');
-  return { verts: r.verts, idx: r.idx, meta: r.meta };
+  const r = await _medusaPost(_colors ? '/csg?colors=1' : '/csg', buf, wdog, label || 'MEDUSA /csg');
+  return { verts: r.verts, idx: r.idx, meta: r.meta, keys: r.keys };
 }
 
 function _initWorker(){                      // rétrocompat : appelé au démarrage
@@ -10735,7 +10799,18 @@ async function doCSG(op) {
           // l'inverse. solidsIdx/holesIdx portent le découpage solides/trous que
           // _medusaCSG traduit en solidsCount, après avoir vérifié que les
           // solides sont bien les opérandes de tête.
-          const _r = await _medusaCSG(_effectiveOp, _meshesToSend, _hasMix, solidsIdx, holesIdx, 'MEDUSA CSG (native)');
+          // [28/09] Union : chaque élément garde sa couleur (cf. _csgColorRanges).
+          // Une seule teinte en tout, ou un MEDUSA qui ne sait pas faire : le
+          // chemin d'avant, à l'identique.
+          let _csgPal = null, _csgRanges = null;
+          if(_effectiveOp === 'union' && !_hasMix && _medusaHasCsgColors){
+            const _palIdx = new Map();
+            _csgPal = [];
+            const _keyOf = h => { let k = _palIdx.get(h); if(k === undefined){ k = _csgPal.length; _csgPal.push(h); _palIdx.set(h, k); } return k; };
+            _csgRanges = _orderedObjs.map(o => _csgColorRanges(o, _keyOf));
+            if(_csgPal.length < 2){ _csgPal = null; _csgRanges = null; }
+          }
+          const _r = await _medusaCSG(_effectiveOp, _meshesToSend, _hasMix, solidsIdx, holesIdx, 'MEDUSA CSG (native)', _csgRanges);
           const _meta = _r.meta;
           // [MANIFOLD-CALC] isEmpty (nouveau champ /csg, cf. nasscad_medusa.cpp) :
           // un Subtract qui consomme entièrement la cible renvoyait jusqu'ici
@@ -10750,7 +10825,14 @@ async function doCSG(op) {
           }
           const _vc = _meta.vertCount;
           const _positions = _r.verts;
-          const _indices = _r.idx;
+          let _indices = _r.idx;
+          // [28/09] Triangles regroupés par teinte AVANT le lissage : /smooth
+          // rend chaque triangle à son rang, les plages restent donc justes.
+          let _keyed = null;
+          if(_csgPal && _r.keys && _r.keys.length === _indices.length / 3){
+            _keyed = _csgKeyGroups(_indices, _r.keys);
+            _indices = _keyed.idx;
+          }
 
           // MEME pipeline de normales que le chemin WASM (_rawToGeo → Worker PP,
           // crease angle + pondération par angle au coin) — parité de rendu totale,
@@ -10760,10 +10842,35 @@ async function doCSG(op) {
 
           objCnt++;
           const mesh = _buildResultMesh(resultGeo);
+          // [28/09] Une plage et un matériau par teinte — la forme d'un corps STEP
+          // multicolore. Couleur « de l'objet » (panneau, outliner) : la teinte
+          // qui couvre le plus de triangles.
+          let _keyedHex = null;
+          if(_keyed){
+            const _nTriGeo = (resultGeo.index ? resultGeo.index.count : resultGeo.attributes.position.count) / 3;
+            if(_nTriGeo !== _r.keys.length){
+              nasLog('WARN', `Union colours dropped: smoothing changed the triangle count (${_nTriGeo} vs ${_r.keys.length})`);
+            } else {
+              let _best = _keyed.groups[0];
+              for(const _gp of _keyed.groups) if(_gp.count > _best.count) _best = _gp;
+              _keyedHex = '#' + _csgPal[_best.key].toString(16).padStart(6, '0');
+              const _base = mesh.material;
+              if(_keyed.groups.length > 1){
+                const _L = _keyed.groups.map(_gp => { const _m = _base.clone(); _m.color.setHex(_csgPal[_gp.key]); return _m; });
+                resultGeo.clearGroups();
+                _keyed.groups.forEach((_gp, _i) => resultGeo.addGroup(_gp.start, _gp.count, _i));
+                mesh.material = _L;
+                _base.dispose();
+              } else {
+                _base.color.setHex(_csgPal[_best.key]);
+              }
+              nasLog('CSG', `Union colours kept: ${_keyed.groups.length} colour(s) from ${_orderedObjs.length} element(s)`);
+            }
+          }
           scene.add(mesh);
 
           const _firstSolidN = selObjs.find(o => !o.isHole);
-          const _colN = _effectiveOp === 'intersect' ? '#c4a04a' : _softenColor(_firstSolidN ? _firstSolidN.color : '#6a8a6a');
+          const _colN = _keyedHex || (_effectiveOp === 'intersect' ? '#c4a04a' : _softenColor(_firstSolidN ? _firstSolidN.color : '#6a8a6a'));
           const ro = {
             id: objCnt, name: 'CSG_' + names[_effectiveOp] + '_' + objCnt,
             type: 'csg', mesh, isHole: false, color: _colN

@@ -1,0 +1,2019 @@
+{
+ "label": "before",
+ "engine": {
+  "engine": "nasscad-medusa-engine",
+  "version": "3.1",
+  "occt": "7.6.3",
+  "protocol": "NSTP1",
+  "csgtree": true,
+  "stepexport": true,
+  "stepload": true,
+  "ramMB": 16095,
+  "availMB": 15392,
+  "cores": 4,
+  "runawayThreads": 0,
+  "deviationPct": 0.5
+ },
+ "date": "2026-09-28T02:53:27.019Z",
+ "results": [
+  {
+   "file": "Hotend_Mount_Dragonfly_BMS_7_FINS.step",
+   "sizeKB": 84,
+   "declared": {
+    "solids": 1,
+    "closedShells": 1,
+    "openShells": 0,
+    "faces": 49,
+    "edges": 122,
+    "edgeValence": {
+     "2": 122
+    },
+    "closedByDeclaration": true,
+    "system": "Autodesk Translation Framework v11.17.0.187"
+   },
+   "bodies": 1,
+   "verts": 630,
+   "tris": 1258,
+   "stepMs": 81,
+   "engineMs": 77,
+   "smoothMs": 4,
+   "weldMeta": {
+    "bodies": 1,
+    "watertight": 0,
+    "stillBroken": 1,
+    "edgesTopo": 112,
+    "edgesResidual": 0,
+    "edgesMismatch": 0,
+    "trisDropped": 0,
+    "legacyFallback": 0,
+    "enabled": true
+   },
+   "raw": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 625,
+    "closedBodies": null,
+    "closedBroken": null,
+    "closedNaked": null,
+    "closedOver": null
+   },
+   "client": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 625,
+    "closedBodies": null,
+    "closedBroken": null,
+    "closedNaked": null,
+    "closedOver": null
+   },
+   "brep": null,
+   "brokenBodies": [],
+   "weldLog": [
+    "[02:52:55][WELD] \"Fusion-Komponente\" verts 1344->630, topo 112 => naked 16, over-valenced 0, bowtie 0",
+    "[02:52:55][MANIFOLD-RAW] \"Fusion-Komponente\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 16 naked edge(s), 0 over-valenced edge(s), 1258 triangle(s)"
+   ]
+  },
+  {
+   "file": "FS_Hotend_Mount_Dragonfly_BMS_7_Fins.step",
+   "sizeKB": 161,
+   "declared": {
+    "solids": 1,
+    "closedShells": 1,
+    "openShells": 0,
+    "faces": 102,
+    "edges": 252,
+    "edgeValence": {
+     "2": 252
+    },
+    "closedByDeclaration": true,
+    "system": "Autodesk Translation Framework v11.17.0.187"
+   },
+   "bodies": 1,
+   "verts": 737,
+   "tris": 1476,
+   "stepMs": 143,
+   "engineMs": 140,
+   "smoothMs": 4,
+   "weldMeta": {
+    "bodies": 1,
+    "watertight": 0,
+    "stillBroken": 1,
+    "edgesTopo": 242,
+    "edgesResidual": 0,
+    "edgesMismatch": 0,
+    "trisDropped": 0,
+    "legacyFallback": 0,
+    "enabled": true
+   },
+   "raw": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 732,
+    "closedBodies": null,
+    "closedBroken": null,
+    "closedNaked": null,
+    "closedOver": null
+   },
+   "client": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 732,
+    "closedBodies": null,
+    "closedBroken": null,
+    "closedNaked": null,
+    "closedOver": null
+   },
+   "brep": null,
+   "brokenBodies": [],
+   "weldLog": [
+    "[02:52:55][WELD] \"Fusion-Komponente\" verts 1662->737, topo 242 => naked 16, over-valenced 0, bowtie 0",
+    "[02:52:55][MANIFOLD-RAW] \"Fusion-Komponente\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 16 naked edge(s), 0 over-valenced edge(s), 1476 triangle(s)"
+   ]
+  },
+  {
+   "file": "Hotend_Mount_Drop_Effect_XG.step",
+   "sizeKB": 223,
+   "declared": {
+    "solids": 1,
+    "closedShells": 1,
+    "openShells": 0,
+    "faces": 125,
+    "edges": 321,
+    "edgeValence": {
+     "2": 321
+    },
+    "closedByDeclaration": true,
+    "system": "Autodesk Translation Framework v11.17.0.187"
+   },
+   "bodies": 1,
+   "verts": 1344,
+   "tris": 2698,
+   "stepMs": 173,
+   "engineMs": 168,
+   "smoothMs": 5,
+   "weldMeta": {
+    "bodies": 1,
+    "watertight": 0,
+    "stillBroken": 1,
+    "edgesTopo": 301,
+    "edgesResidual": 0,
+    "edgesMismatch": 0,
+    "trisDropped": 0,
+    "legacyFallback": 0,
+    "enabled": true
+   },
+   "raw": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 1337,
+    "closedBodies": null,
+    "closedBroken": null,
+    "closedNaked": null,
+    "closedOver": null
+   },
+   "client": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 1337,
+    "closedBodies": null,
+    "closedBroken": null,
+    "closedNaked": null,
+    "closedOver": null
+   },
+   "brep": null,
+   "brokenBodies": [],
+   "weldLog": [
+    "[02:52:55][WELD] \"Hotend_Mount_Drop_Effect_XG\" verts 2884->1344, topo 301 => naked 28, over-valenced 0, bowtie 0",
+    "[02:52:55][MANIFOLD-RAW] \"Hotend_Mount_Drop_Effect_XG\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 28 naked edge(s), 0 over-valenced edge(s), 2698 triangle(s)"
+   ]
+  },
+  {
+   "file": "Hotend_Mount_MicroSwiss_All_Metal.step",
+   "sizeKB": 242,
+   "declared": {
+    "solids": 1,
+    "closedShells": 1,
+    "openShells": 0,
+    "faces": 136,
+    "edges": 362,
+    "edgeValence": {
+     "2": 362
+    },
+    "closedByDeclaration": true,
+    "system": "Autodesk Translation Framework v11.17.0.187"
+   },
+   "bodies": 1,
+   "verts": 1424,
+   "tris": 2860,
+   "stepMs": 195,
+   "engineMs": 190,
+   "smoothMs": 4,
+   "weldMeta": {
+    "bodies": 1,
+    "watertight": 0,
+    "stillBroken": 1,
+    "edgesTopo": 344,
+    "edgesResidual": 0,
+    "edgesMismatch": 0,
+    "trisDropped": 0,
+    "legacyFallback": 0,
+    "enabled": true
+   },
+   "raw": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 1418,
+    "closedBodies": null,
+    "closedBroken": null,
+    "closedNaked": null,
+    "closedOver": null
+   },
+   "client": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 1418,
+    "closedBodies": null,
+    "closedBroken": null,
+    "closedNaked": null,
+    "closedOver": null
+   },
+   "brep": null,
+   "brokenBodies": [],
+   "weldLog": [
+    "[02:52:56][WELD] \"Hotend_Mount_MicroSwiss_All_Metal (1)\" verts 3092->1424, topo 344 => naked 20, over-valenced 0, bowtie 0",
+    "[02:52:56][MANIFOLD-RAW] \"Hotend_Mount_MicroSwiss_All_Metal (1)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 20 naked edge(s), 0 over-valenced edge(s), 2860 triangle(s)"
+   ]
+  },
+  {
+   "file": "Hotend_Mount_Revo_Voron.step",
+   "sizeKB": 245,
+   "declared": {
+    "solids": 1,
+    "closedShells": 1,
+    "openShells": 0,
+    "faces": 109,
+    "edges": 268,
+    "edgeValence": {
+     "2": 268
+    },
+    "closedByDeclaration": true,
+    "system": "Autodesk Translation Framework v11.17.0.187"
+   },
+   "bodies": 1,
+   "verts": 1414,
+   "tris": 2852,
+   "stepMs": 158,
+   "engineMs": 153,
+   "smoothMs": 4,
+   "weldMeta": {
+    "bodies": 1,
+    "watertight": 0,
+    "stillBroken": 1,
+    "edgesTopo": 248,
+    "edgesResidual": 14,
+    "edgesMismatch": 0,
+    "trisDropped": 0,
+    "legacyFallback": 0,
+    "enabled": true
+   },
+   "raw": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 1407,
+    "closedBodies": null,
+    "closedBroken": null,
+    "closedNaked": null,
+    "closedOver": null
+   },
+   "client": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 1407,
+    "closedBodies": null,
+    "closedBroken": null,
+    "closedNaked": null,
+    "closedOver": null
+   },
+   "brep": null,
+   "brokenBodies": [],
+   "weldLog": [
+    "[02:52:56][WELD] \"Hotend_Mount_Revo_Voron:1 (1)\" verts 3006->1414, topo 248, residual 14 @tol 4.07246e-08 => naked 28, over-valenced 0, bowtie 0",
+    "[02:52:56][MANIFOLD-RAW] \"Hotend_Mount_Revo_Voron:1 (1)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 28 naked edge(s), 0 over-valenced edge(s), 2852 triangle(s)"
+   ]
+  },
+  {
+   "file": "Hotend_Mount_Dragonfly_BMO.step",
+   "sizeKB": 277,
+   "declared": {
+    "solids": 1,
+    "closedShells": 1,
+    "openShells": 0,
+    "faces": 155,
+    "edges": 395,
+    "edgeValence": {
+     "2": 395
+    },
+    "closedByDeclaration": true,
+    "system": "Autodesk Translation Framework v11.17.0.187"
+   },
+   "bodies": 1,
+   "verts": 1431,
+   "tris": 2876,
+   "stepMs": 214,
+   "engineMs": 209,
+   "smoothMs": 5,
+   "weldMeta": {
+    "bodies": 1,
+    "watertight": 0,
+    "stillBroken": 1,
+    "edgesTopo": 375,
+    "edgesResidual": 0,
+    "edgesMismatch": 0,
+    "trisDropped": 0,
+    "legacyFallback": 0,
+    "enabled": true
+   },
+   "raw": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 1426,
+    "closedBodies": null,
+    "closedBroken": null,
+    "closedNaked": null,
+    "closedOver": null
+   },
+   "client": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 1426,
+    "closedBodies": null,
+    "closedBroken": null,
+    "closedNaked": null,
+    "closedOver": null
+   },
+   "brep": null,
+   "brokenBodies": [],
+   "weldLog": [
+    "[02:52:56][WELD] \"Hotend_Mount_Dragonfly_BMO\" verts 3132->1431, topo 375 => naked 16, over-valenced 0, bowtie 0",
+    "[02:52:56][MANIFOLD-RAW] \"Hotend_Mount_Dragonfly_BMO\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 16 naked edge(s), 0 over-valenced edge(s), 2876 triangle(s)"
+   ]
+  },
+  {
+   "file": "Hotend_Mount_Dragon.step",
+   "sizeKB": 285,
+   "declared": {
+    "solids": 1,
+    "closedShells": 1,
+    "openShells": 0,
+    "faces": 154,
+    "edges": 395,
+    "edgeValence": {
+     "2": 395
+    },
+    "closedByDeclaration": true,
+    "system": "Autodesk Translation Framework v11.17.0.187"
+   },
+   "bodies": 1,
+   "verts": 1385,
+   "tris": 2784,
+   "stepMs": 223,
+   "engineMs": 218,
+   "smoothMs": 5,
+   "weldMeta": {
+    "bodies": 1,
+    "watertight": 0,
+    "stillBroken": 1,
+    "edgesTopo": 375,
+    "edgesResidual": 0,
+    "edgesMismatch": 0,
+    "trisDropped": 0,
+    "legacyFallback": 0,
+    "enabled": true
+   },
+   "raw": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 1380,
+    "closedBodies": null,
+    "closedBroken": null,
+    "closedNaked": null,
+    "closedOver": null
+   },
+   "client": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 1380,
+    "closedBodies": null,
+    "closedBroken": null,
+    "closedNaked": null,
+    "closedOver": null
+   },
+   "brep": null,
+   "brokenBodies": [],
+   "weldLog": [
+    "[02:52:56][WELD] \"Hotend_Mount_Dragon\" verts 3040->1385, topo 375 => naked 16, over-valenced 0, bowtie 0",
+    "[02:52:56][MANIFOLD-RAW] \"Hotend_Mount_Dragon\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 16 naked edge(s), 0 over-valenced edge(s), 2784 triangle(s)"
+   ]
+  },
+  {
+   "file": "FS_Hotend_Mount_Revo_Voron.step",
+   "sizeKB": 419,
+   "declared": {
+    "solids": 1,
+    "closedShells": 1,
+    "openShells": 0,
+    "faces": 178,
+    "edges": 459,
+    "edgeValence": {
+     "2": 459
+    },
+    "closedByDeclaration": true,
+    "system": "Autodesk Translation Framework v11.17.0.187"
+   },
+   "bodies": 1,
+   "verts": 1879,
+   "tris": 3776,
+   "stepMs": 328,
+   "engineMs": 319,
+   "smoothMs": 5,
+   "weldMeta": {
+    "bodies": 1,
+    "watertight": 0,
+    "stillBroken": 1,
+    "edgesTopo": 439,
+    "edgesResidual": 0,
+    "edgesMismatch": 0,
+    "trisDropped": 0,
+    "legacyFallback": 0,
+    "enabled": true
+   },
+   "raw": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 1874,
+    "closedBodies": null,
+    "closedBroken": null,
+    "closedNaked": null,
+    "closedOver": null
+   },
+   "client": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 1874,
+    "closedBodies": null,
+    "closedBroken": null,
+    "closedNaked": null,
+    "closedOver": null
+   },
+   "brep": null,
+   "brokenBodies": [],
+   "weldLog": [
+    "[02:52:57][WELD] \"FS_Hotend_Mount_Revo_Voron\" verts 3856->1879, topo 439 => naked 20, over-valenced 0, bowtie 0",
+    "[02:52:57][MANIFOLD-RAW] \"FS_Hotend_Mount_Revo_Voron\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 20 naked edge(s), 0 over-valenced edge(s), 3776 triangle(s)"
+   ]
+  },
+  {
+   "file": "FS_Hotend_Mount_Dragonfly_BMO.step",
+   "sizeKB": 432,
+   "declared": {
+    "solids": 1,
+    "closedShells": 1,
+    "openShells": 0,
+    "faces": 205,
+    "edges": 530,
+    "edgeValence": {
+     "2": 530
+    },
+    "closedByDeclaration": true,
+    "system": "Autodesk Translation Framework v11.17.0.187"
+   },
+   "bodies": 1,
+   "verts": 1765,
+   "tris": 3540,
+   "stepMs": 331,
+   "engineMs": 321,
+   "smoothMs": 5,
+   "weldMeta": {
+    "bodies": 1,
+    "watertight": 0,
+    "stillBroken": 1,
+    "edgesTopo": 506,
+    "edgesResidual": 0,
+    "edgesMismatch": 0,
+    "trisDropped": 0,
+    "legacyFallback": 0,
+    "enabled": true
+   },
+   "raw": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 1756,
+    "closedBodies": null,
+    "closedBroken": null,
+    "closedNaked": null,
+    "closedOver": null
+   },
+   "client": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 1756,
+    "closedBodies": null,
+    "closedBroken": null,
+    "closedNaked": null,
+    "closedOver": null
+   },
+   "brep": null,
+   "brokenBodies": [],
+   "weldLog": [
+    "[02:52:57][WELD] \"FS_Hotend_Mount_Dragonfly_BMO (1)\" verts 3839->1765, topo 506 => naked 36, over-valenced 0, bowtie 0",
+    "[02:52:57][MANIFOLD-RAW] \"FS_Hotend_Mount_Dragonfly_BMO (1)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 36 naked edge(s), 0 over-valenced edge(s), 3540 triangle(s)"
+   ]
+  },
+  {
+   "file": "FS_Hotend_Mount_Dragon.step",
+   "sizeKB": 453,
+   "declared": {
+    "solids": 1,
+    "closedShells": 1,
+    "openShells": 0,
+    "faces": 209,
+    "edges": 544,
+    "edgeValence": {
+     "2": 544
+    },
+    "closedByDeclaration": true,
+    "system": "Autodesk Translation Framework v11.17.0.187"
+   },
+   "bodies": 1,
+   "verts": 1805,
+   "tris": 3616,
+   "stepMs": 405,
+   "engineMs": 394,
+   "smoothMs": 5,
+   "weldMeta": {
+    "bodies": 1,
+    "watertight": 0,
+    "stillBroken": 1,
+    "edgesTopo": 520,
+    "edgesResidual": 0,
+    "edgesMismatch": 0,
+    "trisDropped": 0,
+    "legacyFallback": 0,
+    "enabled": true
+   },
+   "raw": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 1796,
+    "closedBodies": null,
+    "closedBroken": null,
+    "closedNaked": null,
+    "closedOver": null
+   },
+   "client": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 1796,
+    "closedBodies": null,
+    "closedBroken": null,
+    "closedNaked": null,
+    "closedOver": null
+   },
+   "brep": null,
+   "brokenBodies": [],
+   "weldLog": [
+    "[02:52:57][WELD] \"FS_Hotend_Mount_Dragon \" verts 3926->1805, topo 520 => naked 36, over-valenced 0, bowtie 0",
+    "[02:52:57][MANIFOLD-RAW] \"FS_Hotend_Mount_Dragon \" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 36 naked edge(s), 0 over-valenced edge(s), 3616 triangle(s)"
+   ]
+  },
+  {
+   "file": "Hotend_Mount_Creality_Spider_Pro.step",
+   "sizeKB": 468,
+   "declared": {
+    "solids": 1,
+    "closedShells": 1,
+    "openShells": 0,
+    "faces": 214,
+    "edges": 555,
+    "edgeValence": {
+     "2": 555
+    },
+    "closedByDeclaration": true,
+    "system": "Autodesk Translation Framework v11.17.0.187"
+   },
+   "bodies": 1,
+   "verts": 1926,
+   "tris": 3852,
+   "stepMs": 448,
+   "engineMs": 436,
+   "smoothMs": 8,
+   "weldMeta": {
+    "bodies": 1,
+    "watertight": 0,
+    "stillBroken": 1,
+    "edgesTopo": 527,
+    "edgesResidual": 0,
+    "edgesMismatch": 0,
+    "trisDropped": 0,
+    "legacyFallback": 0,
+    "enabled": true
+   },
+   "raw": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 1914,
+    "closedBodies": null,
+    "closedBroken": null,
+    "closedNaked": null,
+    "closedOver": null
+   },
+   "client": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 1914,
+    "closedBodies": null,
+    "closedBroken": null,
+    "closedNaked": null,
+    "closedOver": null
+   },
+   "brep": null,
+   "brokenBodies": [],
+   "weldLog": [
+    "[02:52:58][WELD] \"Hotend_Mount_Drop_Effect_XG:1\" verts 4222->1926, topo 527 => naked 48, over-valenced 0, bowtie 0",
+    "[02:52:58][MANIFOLD-RAW] \"Hotend_Mount_Drop_Effect_XG:1\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 48 naked edge(s), 0 over-valenced edge(s), 3852 triangle(s)"
+   ]
+  },
+  {
+   "file": "FS_Creality_Spider_Hotend_Mount.step",
+   "sizeKB": 483,
+   "declared": {
+    "solids": 1,
+    "closedShells": 1,
+    "openShells": 0,
+    "faces": 221,
+    "edges": 584,
+    "edgeValence": {
+     "2": 584
+    },
+    "closedByDeclaration": true,
+    "system": "Autodesk Translation Framework v11.17.0.187"
+   },
+   "bodies": 1,
+   "verts": 1881,
+   "tris": 3772,
+   "stepMs": 430,
+   "engineMs": 411,
+   "smoothMs": 6,
+   "weldMeta": {
+    "bodies": 1,
+    "watertight": 0,
+    "stillBroken": 1,
+    "edgesTopo": 560,
+    "edgesResidual": 0,
+    "edgesMismatch": 0,
+    "trisDropped": 0,
+    "legacyFallback": 0,
+    "enabled": true
+   },
+   "raw": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 1872,
+    "closedBodies": null,
+    "closedBroken": null,
+    "closedNaked": null,
+    "closedOver": null
+   },
+   "client": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 1872,
+    "closedBodies": null,
+    "closedBroken": null,
+    "closedNaked": null,
+    "closedOver": null
+   },
+   "brep": null,
+   "brokenBodies": [],
+   "weldLog": [
+    "[02:52:58][WELD] \"Creality Spider Hotend Mount.step (1)\" verts 4107->1881, topo 560 => naked 36, over-valenced 0, bowtie 0",
+    "[02:52:58][MANIFOLD-RAW] \"Creality Spider Hotend Mount.step (1)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 36 naked edge(s), 0 over-valenced edge(s), 3772 triangle(s)"
+   ]
+  },
+  {
+   "file": "Manta_M4P_Din_Mount_2pc.step",
+   "sizeKB": 578,
+   "declared": {
+    "solids": 2,
+    "closedShells": 2,
+    "openShells": 0,
+    "faces": 388,
+    "edges": 964,
+    "edgeValence": {
+     "2": 964
+    },
+    "closedByDeclaration": true,
+    "system": "Autodesk Translation Framework v11.17.0.187"
+   },
+   "bodies": 2,
+   "verts": 4847,
+   "tris": 9630,
+   "stepMs": 610,
+   "engineMs": 593,
+   "smoothMs": 8,
+   "weldMeta": {
+    "bodies": 2,
+    "watertight": 0,
+    "stillBroken": 2,
+    "edgesTopo": 932,
+    "edgesResidual": 0,
+    "edgesMismatch": 0,
+    "trisDropped": 8,
+    "legacyFallback": 0,
+    "enabled": true
+   },
+   "raw": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 4803,
+    "closedBodies": null,
+    "closedBroken": null,
+    "closedNaked": null,
+    "closedOver": null
+   },
+   "client": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 4803,
+    "closedBodies": null,
+    "closedBroken": null,
+    "closedNaked": null,
+    "closedOver": null
+   },
+   "brep": null,
+   "brokenBodies": [],
+   "weldLog": [
+    "[02:52:59][WELD] \"BTT_Manta_M4P_2pc v2\" verts 4238->2477, topo 473, degen 4, -degen-tri 4 => naked 56, over-valenced 0, bowtie 0",
+    "[02:52:59][MANIFOLD-RAW] \"BTT_Manta_M4P_2pc v2\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 56 naked edge(s), 0 over-valenced edge(s), 4922 triangle(s)",
+    "[WELD] \"BTT_Manta_M4P_2pc v2\" verts 4082->2370, topo 459, degen 4, -degen-tri 4 => naked 56, over-valenced 0, bowtie 0",
+    "[02:52:59][MANIFOLD-RAW] \"BTT_Manta_M4P_2pc v2\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 56 naked edge(s), 0 over-valenced edge(s), 4708 triangle(s)"
+   ]
+  },
+  {
+   "file": "FS_Hotend_Mount_Drop_Effect_XG.step",
+   "sizeKB": 705,
+   "declared": {
+    "solids": 1,
+    "closedShells": 1,
+    "openShells": 0,
+    "faces": 240,
+    "edges": 628,
+    "edgeValence": {
+     "2": 628
+    },
+    "closedByDeclaration": true,
+    "system": "Autodesk Translation Framework v11.17.0.187"
+   },
+   "bodies": 1,
+   "verts": 2624,
+   "tris": 5258,
+   "stepMs": 541,
+   "engineMs": 528,
+   "smoothMs": 6,
+   "weldMeta": {
+    "bodies": 1,
+    "watertight": 0,
+    "stillBroken": 1,
+    "edgesTopo": 604,
+    "edgesResidual": 0,
+    "edgesMismatch": 0,
+    "trisDropped": 2,
+    "legacyFallback": 0,
+    "enabled": true
+   },
+   "raw": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 2615,
+    "closedBodies": null,
+    "closedBroken": null,
+    "closedNaked": null,
+    "closedOver": null
+   },
+   "client": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 2615,
+    "closedBodies": null,
+    "closedBroken": null,
+    "closedNaked": null,
+    "closedOver": null
+   },
+   "brep": null,
+   "brokenBodies": [],
+   "weldLog": [
+    "[02:52:59][WELD] \"FS_Hotend_Mount_Drop_Effect_XG\" verts 5119->2624, topo 604, degen 2, -degen-tri 2 => naked 36, over-valenced 0, bowtie 0",
+    "[02:52:59][MANIFOLD-RAW] \"FS_Hotend_Mount_Drop_Effect_XG\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 36 naked edge(s), 0 over-valenced edge(s), 5258 triangle(s)"
+   ]
+  },
+  {
+   "file": "VHB_Din_Mount.step",
+   "sizeKB": 1023,
+   "declared": {
+    "solids": 4,
+    "closedShells": 4,
+    "openShells": 0,
+    "faces": 416,
+    "edges": 999,
+    "edgeValence": {
+     "2": 999
+    },
+    "closedByDeclaration": true,
+    "system": "Autodesk Translation Framework v11.17.0.187"
+   },
+   "bodies": 9,
+   "verts": 16201,
+   "tris": 32254,
+   "stepMs": 726,
+   "engineMs": 703,
+   "smoothMs": 17,
+   "weldMeta": {
+    "bodies": 9,
+    "watertight": 2,
+    "stillBroken": 7,
+    "edgesTopo": 1898,
+    "edgesResidual": 0,
+    "edgesMismatch": 0,
+    "trisDropped": 8,
+    "legacyFallback": 0,
+    "enabled": true
+   },
+   "raw": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 16121,
+    "closedBodies": null,
+    "closedBroken": null,
+    "closedNaked": null,
+    "closedOver": null
+   },
+   "client": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 16121,
+    "closedBodies": null,
+    "closedBroken": null,
+    "closedNaked": null,
+    "closedOver": null
+   },
+   "brep": null,
+   "brokenBodies": [],
+   "weldLog": [
+    "[WELD] \"M2x10 self tapping screw for plastic (1)\" verts 3940->2036, topo 186 => naked 18, over-valenced 0, bowtie 0",
+    "[02:53:00][MANIFOLD-RAW] \"M2x10 self tapping screw for plastic (1)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 18 naked edge(s), 0 over-valenced edge(s), 4054 triangle(s)",
+    "[WELD] \"M2x10 self tapping screw for plastic (1)\" verts 3940->2036, topo 186 => naked 18, over-valenced 0, bowtie 0",
+    "[02:53:00][MANIFOLD-RAW] \"M2x10 self tapping screw for plastic (1)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 18 naked edge(s), 0 over-valenced edge(s), 4054 triangle(s)",
+    "[WELD] \"M2x10 self tapping screw for plastic (1)\" verts 3940->2036, topo 186 => naked 18, over-valenced 0, bowtie 0",
+    "[02:53:00][MANIFOLD-RAW] \"M2x10 self tapping screw for plastic (1)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 18 naked edge(s), 0 over-valenced edge(s), 4054 triangle(s)",
+    "[WELD] \"Raspberry_SKRPico_Bracket\" verts 5725->3617, topo 314, degen 8, -degen-tri 8 => naked 96, over-valenced 0, bowtie 0",
+    "[02:53:00][MANIFOLD-RAW] \"Raspberry_SKRPico_Bracket\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 96 naked edge(s), 0 over-valenced edge(s), 7186 triangle(s)",
+    "[WELD] \"M2x10 self tapping screw for plastic (1)\" verts 3940->2036, topo 186 => naked 18, over-valenced 0, bowtie 0",
+    "[02:53:00][MANIFOLD-RAW] \"M2x10 self tapping screw for plastic (1)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 18 naked edge(s), 0 over-valenced edge(s), 4054 triangle(s)",
+    "[02:53:00][WELD] \"M2x10 self tapping screw for plastic (1)\" verts 3940->2036, topo 186 => naked 18, over-valenced 0, bowtie 0",
+    "[MANIFOLD-RAW] \"M2x10 self tapping screw for plastic (1)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 18 naked edge(s), 0 over-valenced edge(s), 4054 triangle(s)",
+    "[WELD] \"M2x10 self tapping screw for plastic (1)\" verts 3940->2036, topo 186 => naked 18, over-valenced 0, bowtie 0",
+    "[02:53:00][MANIFOLD-RAW] \"M2x10 self tapping screw for plastic (1)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 18 naked edge(s), 0 over-valenced edge(s), 4054 triangle(s)"
+   ]
+  },
+  {
+   "file": "SKR_3_Din_Mount.step",
+   "sizeKB": 1106,
+   "declared": {
+    "solids": 4,
+    "closedShells": 4,
+    "openShells": 0,
+    "faces": 696,
+    "edges": 1658,
+    "edgeValence": {
+     "2": 1658
+    },
+    "closedByDeclaration": true,
+    "system": "Autodesk Translation Framework v11.17.0.187"
+   },
+   "bodies": 4,
+   "verts": 5792,
+   "tris": 11552,
+   "stepMs": 807,
+   "engineMs": 778,
+   "smoothMs": 8,
+   "weldMeta": {
+    "bodies": 4,
+    "watertight": 0,
+    "stillBroken": 4,
+    "edgesTopo": 1618,
+    "edgesResidual": 0,
+    "edgesMismatch": 0,
+    "trisDropped": 8,
+    "legacyFallback": 0,
+    "enabled": true
+   },
+   "raw": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 5744,
+    "closedBodies": null,
+    "closedBroken": null,
+    "closedNaked": null,
+    "closedOver": null
+   },
+   "client": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 5744,
+    "closedBodies": null,
+    "closedBroken": null,
+    "closedNaked": null,
+    "closedOver": null
+   },
+   "brep": null,
+   "brokenBodies": [],
+   "weldLog": [
+    "[02:53:01][WELD] \"DIN Clips (3)\" verts 1164->400, topo 428 => naked 8, over-valenced 0, bowtie 0",
+    "[02:53:01][MANIFOLD-RAW] \"DIN Clips (3)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 8 naked edge(s), 0 over-valenced edge(s), 808 triangle(s)",
+    "[WELD] \"DIN Clips (3)\" verts 1164->400, topo 428 => naked 8, over-valenced 0, bowtie 0",
+    "[02:53:01][MANIFOLD-RAW] \"DIN Clips (3)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 8 naked edge(s), 0 over-valenced edge(s), 808 triangle(s)",
+    "[WELD] \"SKR Bracket\" verts 4299->2498, topo 381, degen 4, -degen-tri 4 => naked 56, over-valenced 0, bowtie 0",
+    "[02:53:01][MANIFOLD-RAW] \"SKR Bracket\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 56 naked edge(s), 0 over-valenced edge(s), 4972 triangle(s)",
+    "[WELD] \"SKR Bracket\" verts 4295->2494, topo 381, degen 4, -degen-tri 4 => naked 56, over-valenced 0, bowtie 0",
+    "[02:53:01][MANIFOLD-RAW] \"SKR Bracket\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 56 naked edge(s), 0 over-valenced edge(s), 4964 triangle(s)"
+   ]
+  },
+  {
+   "file": "MiniSB_adxl_mount_ldo_15mm_c_c.step",
+   "sizeKB": 1204,
+   "declared": {
+    "solids": 12,
+    "closedShells": 12,
+    "openShells": 0,
+    "faces": 689,
+    "edges": 1743,
+    "edgeValence": {
+     "2": 1743
+    },
+    "closedByDeclaration": true,
+    "system": "Autodesk Translation Framework v11.17.0.187"
+   },
+   "bodies": 12,
+   "verts": 6207,
+   "tris": 12320,
+   "stepMs": 1153,
+   "engineMs": 1124,
+   "smoothMs": 12,
+   "weldMeta": {
+    "bodies": 12,
+    "watertight": 6,
+    "stillBroken": 6,
+    "edgesTopo": 1673,
+    "edgesResidual": 0,
+    "edgesMismatch": 0,
+    "trisDropped": 12,
+    "legacyFallback": 0,
+    "enabled": true
+   },
+   "raw": {
+    "bodiesBroken": 2,
+    "naked": 104,
+    "over": 0,
+    "weldedVerts": 6190,
+    "closedBodies": null,
+    "closedBroken": null,
+    "closedNaked": null,
+    "closedOver": null
+   },
+   "client": {
+    "bodiesBroken": 2,
+    "naked": 104,
+    "over": 0,
+    "weldedVerts": 6190,
+    "closedBodies": null,
+    "closedBroken": null,
+    "closedNaked": null,
+    "closedOver": null
+   },
+   "brep": null,
+   "brokenBodies": [
+    {
+     "name": "M2x6 SHCS:2",
+     "verts": 249,
+     "tris": 438,
+     "raw": {
+      "naked": 52,
+      "over": 0,
+      "weldedVerts": 247,
+      "manifold": false
+     },
+     "client": {
+      "naked": 52,
+      "over": 0,
+      "weldedVerts": 247,
+      "manifold": false
+     }
+    },
+    {
+     "name": "M2x6 SHCS:3",
+     "verts": 250,
+     "tris": 440,
+     "raw": {
+      "naked": 52,
+      "over": 0,
+      "weldedVerts": 248,
+      "manifold": false
+     },
+     "client": {
+      "naked": 52,
+      "over": 0,
+      "weldedVerts": 248,
+      "manifold": false
+     }
+    }
+   ],
+   "weldLog": [
+    "[WELD] \"DIN EN ISO 7049 - ST2.2 x 6.5 - F - Z:1 (2) (1)\" verts 382->210, topo 24 => naked 8, over-valenced 0, bowtie 0",
+    "[02:53:02][MANIFOLD-RAW] \"DIN EN ISO 7049 - ST2.2 x 6.5 - F - Z:1 \" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 8 naked edge(s), 0 over-valenced edge(s), 412 triangle(s)",
+    "[WELD] \"DIN EN ISO 7049 - ST2.2 x 6.5 - F - Z:2 (2) (1)\" verts 382->210, topo 24 => naked 8, over-valenced 0, bowtie 0",
+    "[02:53:02][MANIFOLD-RAW] \"DIN EN ISO 7049 - ST2.2 x 6.5 - F - Z:2 \" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 8 naked edge(s), 0 over-valenced edge(s), 412 triangle(s)",
+    "[WELD] \"M2x6 SHCS:2\" verts 474->249, topo 30 => naked 58, over-valenced 0, bowtie 0",
+    "[02:53:02][MANIFOLD-RAW] \"M2x6 SHCS:2\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 58 naked edge(s), 0 over-valenced edge(s), 438 triangle(s)",
+    "[WELD] \"MiniSB_adxl_mount_ldo_15mm_c_c (1)\" verts 2132->1047, topo 302, degen 8, -degen-tri 8 => naked 16, over-valenced 0, bowtie 0",
+    "[02:53:02][MANIFOLD-RAW] \"MiniSB_adxl_mount_ldo_15mm_c_c (1)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 16 naked edge(s), 0 over-valenced edge(s), 2090 triangle(s)",
+    "[WELD] \"M2x6 SHCS:3\" verts 476->250, topo 30 => naked 58, over-valenced 0, bowtie 0",
+    "[02:53:02][MANIFOLD-RAW] \"M2x6 SHCS:3\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 58 naked edge(s), 0 over-valenced edge(s), 440 triangle(s)",
+    "[WELD] \"X Carriage:1\" verts 5422->2635, topo 788, degen 4, -degen-tri 4 => naked 20, over-valenced 0, bowtie 0",
+    "[02:53:02][MANIFOLD-RAW] \"X Carriage:1\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 20 naked edge(s), 0 over-valenced edge(s), 5308 triangle(s)"
+   ]
+  },
+  {
+   "file": "MiniSB_adxl_mount_adafruit_LIS3DH.step",
+   "sizeKB": 1225,
+   "declared": {
+    "solids": 12,
+    "closedShells": 12,
+    "openShells": 0,
+    "faces": 702,
+    "edges": 1784,
+    "edgeValence": {
+     "2": 1784
+    },
+    "closedByDeclaration": true,
+    "system": "Autodesk Translation Framework v11.17.0.187"
+   },
+   "bodies": 12,
+   "verts": 6336,
+   "tris": 12594,
+   "stepMs": 1043,
+   "engineMs": 1008,
+   "smoothMs": 10,
+   "weldMeta": {
+    "bodies": 12,
+    "watertight": 6,
+    "stillBroken": 6,
+    "edgesTopo": 1712,
+    "edgesResidual": 0,
+    "edgesMismatch": 0,
+    "trisDropped": 12,
+    "legacyFallback": 0,
+    "enabled": true
+   },
+   "raw": {
+    "bodiesBroken": 2,
+    "naked": 104,
+    "over": 0,
+    "weldedVerts": 6319,
+    "closedBodies": null,
+    "closedBroken": null,
+    "closedNaked": null,
+    "closedOver": null
+   },
+   "client": {
+    "bodiesBroken": 2,
+    "naked": 104,
+    "over": 0,
+    "weldedVerts": 6319,
+    "closedBodies": null,
+    "closedBroken": null,
+    "closedNaked": null,
+    "closedOver": null
+   },
+   "brep": null,
+   "brokenBodies": [
+    {
+     "name": "M2x6 SHCS:2",
+     "verts": 249,
+     "tris": 438,
+     "raw": {
+      "naked": 52,
+      "over": 0,
+      "weldedVerts": 247,
+      "manifold": false
+     },
+     "client": {
+      "naked": 52,
+      "over": 0,
+      "weldedVerts": 247,
+      "manifold": false
+     }
+    },
+    {
+     "name": "M2x6 SHCS:3",
+     "verts": 250,
+     "tris": 440,
+     "raw": {
+      "naked": 52,
+      "over": 0,
+      "weldedVerts": 248,
+      "manifold": false
+     },
+     "client": {
+      "naked": 52,
+      "over": 0,
+      "weldedVerts": 248,
+      "manifold": false
+     }
+    }
+   ],
+   "weldLog": [
+    "[WELD] \"DIN EN ISO 7049 - ST2.2 x 6.5 - F - Z:1 (3)\" verts 382->210, topo 24 => naked 8, over-valenced 0, bowtie 0",
+    "[02:53:03][MANIFOLD-RAW] \"DIN EN ISO 7049 - ST2.2 x 6.5 - F - Z:1 \" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 8 naked edge(s), 0 over-valenced edge(s), 412 triangle(s)",
+    "[WELD] \"DIN EN ISO 7049 - ST2.2 x 6.5 - F - Z:2 (3)\" verts 382->210, topo 24 => naked 8, over-valenced 0, bowtie 0",
+    "[02:53:03][MANIFOLD-RAW] \"DIN EN ISO 7049 - ST2.2 x 6.5 - F - Z:2 \" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 8 naked edge(s), 0 over-valenced edge(s), 412 triangle(s)",
+    "[WELD] \"M2x6 SHCS:2\" verts 474->249, topo 30 => naked 58, over-valenced 0, bowtie 0",
+    "[02:53:03][MANIFOLD-RAW] \"M2x6 SHCS:2\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 58 naked edge(s), 0 over-valenced edge(s), 438 triangle(s)",
+    "[WELD] \"MiniSB_adxl_mount_adafruit_LIS3DH (1)\" verts 2159->1058, topo 313, degen 8, -degen-tri 8 => naked 16, over-valenced 0, bowtie 0",
+    "[02:53:03][MANIFOLD-RAW] \"MiniSB_adxl_mount_adafruit_LIS3DH (1)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 16 naked edge(s), 0 over-valenced edge(s), 2112 triangle(s)",
+    "[WELD] \"M2x6 SHCS:3\" verts 476->250, topo 30 => naked 58, over-valenced 0, bowtie 0",
+    "[02:53:03][MANIFOLD-RAW] \"M2x6 SHCS:3\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 58 naked edge(s), 0 over-valenced edge(s), 440 triangle(s)",
+    "[WELD] \"X Carriage:1\" verts 5420->2634, topo 788, degen 4, -degen-tri 4 => naked 20, over-valenced 0, bowtie 0",
+    "[02:53:03][MANIFOLD-RAW] \"X Carriage:1\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 20 naked edge(s), 0 over-valenced edge(s), 5306 triangle(s)"
+   ]
+  },
+  {
+   "file": "MiniSB_adxl_mount_generic_15.5mm_c_c.step",
+   "sizeKB": 1275,
+   "declared": {
+    "solids": 12,
+    "closedShells": 12,
+    "openShells": 0,
+    "faces": 747,
+    "edges": 1869,
+    "edgeValence": {
+     "2": 1869
+    },
+    "closedByDeclaration": true,
+    "system": "Autodesk Translation Framework v11.17.0.187"
+   },
+   "bodies": 12,
+   "verts": 6692,
+   "tris": 13290,
+   "stepMs": 1157,
+   "engineMs": 1109,
+   "smoothMs": 14,
+   "weldMeta": {
+    "bodies": 12,
+    "watertight": 6,
+    "stillBroken": 6,
+    "edgesTopo": 1791,
+    "edgesResidual": 0,
+    "edgesMismatch": 0,
+    "trisDropped": 12,
+    "legacyFallback": 0,
+    "enabled": true
+   },
+   "raw": {
+    "bodiesBroken": 2,
+    "naked": 104,
+    "over": 0,
+    "weldedVerts": 6675,
+    "closedBodies": null,
+    "closedBroken": null,
+    "closedNaked": null,
+    "closedOver": null
+   },
+   "client": {
+    "bodiesBroken": 2,
+    "naked": 104,
+    "over": 0,
+    "weldedVerts": 6675,
+    "closedBodies": null,
+    "closedBroken": null,
+    "closedNaked": null,
+    "closedOver": null
+   },
+   "brep": null,
+   "brokenBodies": [
+    {
+     "name": "M2x6 SHCS:2",
+     "verts": 249,
+     "tris": 438,
+     "raw": {
+      "naked": 52,
+      "over": 0,
+      "weldedVerts": 247,
+      "manifold": false
+     },
+     "client": {
+      "naked": 52,
+      "over": 0,
+      "weldedVerts": 247,
+      "manifold": false
+     }
+    },
+    {
+     "name": "M2x6 SHCS:3",
+     "verts": 250,
+     "tris": 440,
+     "raw": {
+      "naked": 52,
+      "over": 0,
+      "weldedVerts": 248,
+      "manifold": false
+     },
+     "client": {
+      "naked": 52,
+      "over": 0,
+      "weldedVerts": 248,
+      "manifold": false
+     }
+    }
+   ],
+   "weldLog": [
+    "[02:53:04][WELD] \"DIN EN ISO 7049 - ST2.2 x 6.5 - F - Z:2 (1)\" verts 382->210, topo 24 => naked 8, over-valenced 0, bowtie 0",
+    "[02:53:04][WELD] \"DIN EN ISO 7049 - ST2.2 x 6.5 - F - Z:1 (1)\" verts 382->210, topo 24 => naked 8, over-valenced 0, bowtie 0",
+    "[02:53:04][MANIFOLD-RAW] \"DIN EN ISO 7049 - ST2.2 x 6.5 - F - Z:2 \" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 8 naked edge(s), 0 over-valenced edge(s), 412 triangle(s)",
+    "[02:53:04][MANIFOLD-RAW] \"DIN EN ISO 7049 - ST2.2 x 6.5 - F - Z:1 \" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 8 naked edge(s), 0 over-valenced edge(s), 412 triangle(s)",
+    "[WELD] \"MiniSB_adxl_mount_generic_15.5mm_c_c (1)\" verts 2137->1050, topo 302, degen 8, -degen-tri 8 => naked 16, over-valenced 0, bowtie 0",
+    "[02:53:04][MANIFOLD-RAW] \"MiniSB_adxl_mount_generic_15.5mm_c_c (1)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 16 naked edge(s), 0 over-valenced edge(s), 2096 triangle(s)",
+    "[02:53:04][WELD] \"M2x6 SHCS:2\" verts 474->249, topo 30 => naked 58, over-valenced 0, bowtie 0",
+    "[MANIFOLD-RAW] \"M2x6 SHCS:2\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 58 naked edge(s), 0 over-valenced edge(s), 438 triangle(s)",
+    "[WELD] \"M2x6 SHCS:3\" verts 476->250, topo 30 => naked 58, over-valenced 0, bowtie 0",
+    "[02:53:04][MANIFOLD-RAW] \"M2x6 SHCS:3\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 58 naked edge(s), 0 over-valenced edge(s), 440 triangle(s)",
+    "[WELD] \"X Carriage:1\" verts 5419->2633, topo 788, degen 4, -degen-tri 4 => naked 20, over-valenced 0, bowtie 0",
+    "[02:53:04][MANIFOLD-RAW] \"X Carriage:1\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 20 naked edge(s), 0 over-valenced edge(s), 5304 triangle(s)"
+   ]
+  },
+  {
+   "file": "SKR_3_EZ_Din_Mount.step",
+   "sizeKB": 1415,
+   "declared": {
+    "solids": 4,
+    "closedShells": 4,
+    "openShells": 0,
+    "faces": 805,
+    "edges": 1968,
+    "edgeValence": {
+     "2": 1968
+    },
+    "closedByDeclaration": true,
+    "system": "Autodesk Translation Framework v11.17.0.187"
+   },
+   "bodies": 4,
+   "verts": 5934,
+   "tris": 11828,
+   "stepMs": 1045,
+   "engineMs": 1009,
+   "smoothMs": 9,
+   "weldMeta": {
+    "bodies": 4,
+    "watertight": 0,
+    "stillBroken": 4,
+    "edgesTopo": 1928,
+    "edgesResidual": 0,
+    "edgesMismatch": 0,
+    "trisDropped": 8,
+    "legacyFallback": 0,
+    "enabled": true
+   },
+   "raw": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 5890,
+    "closedBodies": null,
+    "closedBroken": null,
+    "closedNaked": null,
+    "closedOver": null
+   },
+   "client": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 5890,
+    "closedBodies": null,
+    "closedBroken": null,
+    "closedNaked": null,
+    "closedOver": null
+   },
+   "brep": null,
+   "brokenBodies": [],
+   "weldLog": [
+    "[02:53:06][WELD] \"DIN Clips (3)\" verts 1164->400, topo 428 => naked 8, over-valenced 0, bowtie 0",
+    "[02:53:06][MANIFOLD-RAW] \"DIN Clips (3)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 8 naked edge(s), 0 over-valenced edge(s), 808 triangle(s)",
+    "[WELD] \"DIN Clips (3)\" verts 1164->400, topo 428 => naked 8, over-valenced 0, bowtie 0",
+    "[02:53:06][MANIFOLD-RAW] \"DIN Clips (3)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 8 naked edge(s), 0 over-valenced edge(s), 808 triangle(s)",
+    "[WELD] \"SKR_3_EZ_Din_Mount\" verts 4402->2438, topo 524, degen 4, -degen-tri 4 => naked 52, over-valenced 0, bowtie 0",
+    "[02:53:06][MANIFOLD-RAW] \"SKR_3_EZ_Din_Mount\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 52 naked edge(s), 0 over-valenced edge(s), 4848 triangle(s)",
+    "[WELD] \"SKR_3_EZ_Din_Mount\" verts 4788->2696, topo 548, degen 4, -degen-tri 4 => naked 52, over-valenced 0, bowtie 0",
+    "[02:53:06][MANIFOLD-RAW] \"SKR_3_EZ_Din_Mount\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 52 naked edge(s), 0 over-valenced edge(s), 5364 triangle(s)"
+   ]
+  },
+  {
+   "file": "SKR_E3_V3_Din_Mount.step",
+   "sizeKB": 1793,
+   "declared": {
+    "solids": 5,
+    "closedShells": 5,
+    "openShells": 0,
+    "faces": 535,
+    "edges": 1326,
+    "edgeValence": {
+     "2": 1326
+    },
+    "closedByDeclaration": true,
+    "system": "Autodesk Translation Framework v11.17.0.187"
+   },
+   "bodies": 8,
+   "verts": 9706,
+   "tris": 19349,
+   "stepMs": 1076,
+   "engineMs": 1044,
+   "smoothMs": 12,
+   "weldMeta": {
+    "bodies": 8,
+    "watertight": 5,
+    "stillBroken": 3,
+    "edgesTopo": 1352,
+    "edgesResidual": 0,
+    "edgesMismatch": 0,
+    "trisDropped": 8,
+    "legacyFallback": 0,
+    "enabled": true
+   },
+   "raw": {
+    "bodiesBroken": 2,
+    "naked": 12,
+    "over": 2,
+    "weldedVerts": 9654,
+    "closedBodies": null,
+    "closedBroken": null,
+    "closedNaked": null,
+    "closedOver": null
+   },
+   "client": {
+    "bodiesBroken": 2,
+    "naked": 12,
+    "over": 2,
+    "weldedVerts": 9653,
+    "closedBodies": null,
+    "closedBroken": null,
+    "closedNaked": null,
+    "closedOver": null
+   },
+   "brep": null,
+   "brokenBodies": [
+    {
+     "name": "M2x10 self tapping screw for plastic:11",
+     "verts": 1981,
+     "tris": 3939,
+     "raw": {
+      "naked": 6,
+      "over": 1,
+      "weldedVerts": 1973,
+      "manifold": false
+     },
+     "client": {
+      "naked": 6,
+      "over": 1,
+      "weldedVerts": 1972,
+      "manifold": false
+     }
+    },
+    {
+     "name": "M2x10 self tapping screw for plastic:13",
+     "verts": 1973,
+     "tris": 3924,
+     "raw": {
+      "naked": 6,
+      "over": 1,
+      "weldedVerts": 1966,
+      "manifold": false
+     },
+     "client": {
+      "naked": 6,
+      "over": 1,
+      "weldedVerts": 1966,
+      "manifold": false
+     }
+    }
+   ],
+   "weldLog": [
+    "[WELD] \"M2x10 self tapping screw for plastic:11\" verts 3829->1981, topo 193, opposed-tri 1 => naked 27, over-valenced 1, bowtie 0",
+    "[02:53:07][MANIFOLD-RAW] \"M2x10 self tapping screw for plastic:11\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 27 naked edge(s), 1 over-valenced edge(s), 3939 triangle(s)",
+    "[WELD] \"M2x10 self tapping screw for plastic:13\" verts 3811->1973, topo 191, opposed-tri 1 => naked 24, over-valenced 1, bowtie 0",
+    "[02:53:07][MANIFOLD-RAW] \"M2x10 self tapping screw for plastic:13\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 24 naked edge(s), 1 over-valenced edge(s), 3924 triangle(s)",
+    "[WELD] \"SKR_E3_Bracket\" verts 6672->3778, topo 393, degen 8, -degen-tri 8 => naked 106, over-valenced 0, bowtie 0",
+    "[02:53:07][MANIFOLD-RAW] \"SKR_E3_Bracket\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 106 naked edge(s), 0 over-valenced edge(s), 7526 triangle(s)"
+   ]
+  },
+  {
+   "file": "Fly_Gemini_V2_Din_Mount_2pc.step",
+   "sizeKB": 2279,
+   "declared": {
+    "solids": 7,
+    "closedShells": 7,
+    "openShells": 0,
+    "faces": 943,
+    "edges": 2335,
+    "edgeValence": {
+     "2": 2335
+    },
+    "closedByDeclaration": true,
+    "system": "Autodesk Translation Framework v11.17.0.187"
+   },
+   "bodies": 12,
+   "verts": 16252,
+   "tris": 32392,
+   "stepMs": 1438,
+   "engineMs": 1397,
+   "smoothMs": 20,
+   "weldMeta": {
+    "bodies": 12,
+    "watertight": 6,
+    "stillBroken": 6,
+    "edgesTopo": 2748,
+    "edgesResidual": 0,
+    "edgesMismatch": 0,
+    "trisDropped": 8,
+    "legacyFallback": 0,
+    "enabled": true
+   },
+   "raw": {
+    "bodiesBroken": 4,
+    "naked": 24,
+    "over": 0,
+    "weldedVerts": 16171,
+    "closedBodies": null,
+    "closedBroken": null,
+    "closedNaked": null,
+    "closedOver": null
+   },
+   "client": {
+    "bodiesBroken": 4,
+    "naked": 24,
+    "over": 4,
+    "weldedVerts": 16177,
+    "closedBodies": null,
+    "closedBroken": null,
+    "closedNaked": null,
+    "closedOver": null
+   },
+   "brep": null,
+   "brokenBodies": [
+    {
+     "name": "M2x10 self tapping screw for plastic:11",
+     "verts": 1981,
+     "tris": 3939,
+     "raw": {
+      "naked": 6,
+      "over": 0,
+      "weldedVerts": 1970,
+      "manifold": false
+     },
+     "client": {
+      "naked": 6,
+      "over": 1,
+      "weldedVerts": 1972,
+      "manifold": false
+     }
+    },
+    {
+     "name": "M2x10 self tapping screw for plastic:13",
+     "verts": 1973,
+     "tris": 3924,
+     "raw": {
+      "naked": 6,
+      "over": 0,
+      "weldedVerts": 1965,
+      "manifold": false
+     },
+     "client": {
+      "naked": 6,
+      "over": 1,
+      "weldedVerts": 1966,
+      "manifold": false
+     }
+    },
+    {
+     "name": "M2x10 self tapping screw for plastic:13",
+     "verts": 1973,
+     "tris": 3924,
+     "raw": {
+      "naked": 6,
+      "over": 0,
+      "weldedVerts": 1965,
+      "manifold": false
+     },
+     "client": {
+      "naked": 6,
+      "over": 1,
+      "weldedVerts": 1966,
+      "manifold": false
+     }
+    },
+    {
+     "name": "M2x10 self tapping screw for plastic:11",
+     "verts": 1981,
+     "tris": 3939,
+     "raw": {
+      "naked": 6,
+      "over": 0,
+      "weldedVerts": 1970,
+      "manifold": false
+     },
+     "client": {
+      "naked": 6,
+      "over": 1,
+      "weldedVerts": 1972,
+      "manifold": false
+     }
+    }
+   ],
+   "weldLog": [
+    "[WELD] \"M2x10 self tapping screw for plastic:11\" verts 3829->1981, topo 193, opposed-tri 1 => naked 27, over-valenced 1, bowtie 0",
+    "[02:53:08][MANIFOLD-RAW] \"M2x10 self tapping screw for plastic:11\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 27 naked edge(s), 1 over-valenced edge(s), 3939 triangle(s)",
+    "[WELD] \"M2x10 self tapping screw for plastic:13\" verts 3811->1973, topo 191, opposed-tri 1 => naked 24, over-valenced 1, bowtie 0",
+    "[02:53:08][MANIFOLD-RAW] \"M2x10 self tapping screw for plastic:13\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 24 naked edge(s), 1 over-valenced edge(s), 3924 triangle(s)",
+    "[WELD] \"M2x10 self tapping screw for plastic:13\" verts 3811->1973, topo 191, opposed-tri 1 => naked 24, over-valenced 1, bowtie 0",
+    "[02:53:08][MANIFOLD-RAW] \"M2x10 self tapping screw for plastic:13\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 24 naked edge(s), 1 over-valenced edge(s), 3924 triangle(s)",
+    "[WELD] \"M2x10 self tapping screw for plastic:11\" verts 3829->1981, topo 193, opposed-tri 1 => naked 27, over-valenced 1, bowtie 0",
+    "[MANIFOLD-RAW] \"M2x10 self tapping screw for plastic:11\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 27 naked edge(s), 1 over-valenced edge(s), 3939 triangle(s)",
+    "[WELD] \"Fly_Gemini_V2_Bracket\" verts 4733->2855, topo 480, degen 4, -degen-tri 4 => naked 54, over-valenced 0, bowtie 0",
+    "[02:53:08][MANIFOLD-RAW] \"Fly_Gemini_V2_Bracket\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 54 naked edge(s), 0 over-valenced edge(s), 5680 triangle(s)",
+    "[WELD] \"SOLID\" verts 4665->2797, topo 474, degen 4, -degen-tri 4 => naked 56, over-valenced 0, bowtie 0",
+    "[02:53:08][MANIFOLD-RAW] \"SOLID\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 56 naked edge(s), 0 over-valenced edge(s), 5562 triangle(s)"
+   ]
+  },
+  {
+   "file": "RPi_or_BTT-Pico_Din_Mount.STEP",
+   "sizeKB": 2283,
+   "declared": {
+    "solids": 3,
+    "closedShells": 3,
+    "openShells": 0,
+    "faces": 599,
+    "edges": 1490,
+    "edgeValence": {
+     "2": 1490
+    },
+    "closedByDeclaration": true,
+    "system": "SolidWorks 2019"
+   },
+   "bodies": 8,
+   "verts": 17775,
+   "tris": 35582,
+   "stepMs": 2212,
+   "engineMs": 2177,
+   "smoothMs": 20,
+   "weldMeta": {
+    "bodies": 8,
+    "watertight": 8,
+    "stillBroken": 0,
+    "edgesTopo": 2955,
+    "edgesResidual": 0,
+    "edgesMismatch": 0,
+    "trisDropped": 8,
+    "legacyFallback": 0,
+    "enabled": true
+   },
+   "raw": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 17769,
+    "closedBodies": null,
+    "closedBroken": null,
+    "closedNaked": null,
+    "closedOver": null
+   },
+   "client": {
+    "bodiesBroken": 0,
+    "naked": 0,
+    "over": 0,
+    "weldedVerts": 17769,
+    "closedBodies": null,
+    "closedBroken": null,
+    "closedNaked": null,
+    "closedOver": null
+   },
+   "brep": null,
+   "brokenBodies": [],
+   "weldLog": []
+  },
+  {
+   "file": "MiniSB_adxl_mount_adafruit_19mm_c_c.step",
+   "sizeKB": 7971,
+   "declared": {
+    "solids": 12,
+    "closedShells": 12,
+    "openShells": 0,
+    "faces": 3672,
+    "edges": 9988,
+    "edgeValence": {
+     "2": 9988
+    },
+    "closedByDeclaration": true,
+    "system": "Autodesk Translation Framework v11.17.0.187"
+   },
+   "bodies": 12,
+   "verts": 22790,
+   "tris": 45486,
+   "stepMs": 6686,
+   "engineMs": 6504,
+   "smoothMs": 46,
+   "weldMeta": {
+    "bodies": 12,
+    "watertight": 6,
+    "stillBroken": 6,
+    "edgesTopo": 9874,
+    "edgesResidual": 0,
+    "edgesMismatch": 0,
+    "trisDropped": 81,
+    "legacyFallback": 0,
+    "enabled": true
+   },
+   "raw": {
+    "bodiesBroken": 2,
+    "naked": 104,
+    "over": 0,
+    "weldedVerts": 22772,
+    "closedBodies": null,
+    "closedBroken": null,
+    "closedNaked": null,
+    "closedOver": null
+   },
+   "client": {
+    "bodiesBroken": 2,
+    "naked": 104,
+    "over": 0,
+    "weldedVerts": 22771,
+    "closedBodies": null,
+    "closedBroken": null,
+    "closedNaked": null,
+    "closedOver": null
+   },
+   "brep": null,
+   "brokenBodies": [
+    {
+     "name": "M2x6 SHCS:2",
+     "verts": 249,
+     "tris": 438,
+     "raw": {
+      "naked": 52,
+      "over": 0,
+      "weldedVerts": 247,
+      "manifold": false
+     },
+     "client": {
+      "naked": 52,
+      "over": 0,
+      "weldedVerts": 247,
+      "manifold": false
+     }
+    },
+    {
+     "name": "M2x6 SHCS:3",
+     "verts": 250,
+     "tris": 440,
+     "raw": {
+      "naked": 52,
+      "over": 0,
+      "weldedVerts": 248,
+      "manifold": false
+     },
+     "client": {
+      "naked": 52,
+      "over": 0,
+      "weldedVerts": 248,
+      "manifold": false
+     }
+    }
+   ],
+   "weldLog": [
+    "[02:53:16][WELD] \"DIN EN ISO 7049 - ST2.2 x 6.5 - F - Z:2 (2)\" verts 382->210, topo 24 => naked 8, over-valenced 0, bowtie 0",
+    "[02:53:16][MANIFOLD-RAW] \"DIN EN ISO 7049 - ST2.2 x 6.5 - F - Z:2 \" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 8 naked edge(s), 0 over-valenced edge(s), 412 triangle(s)",
+    "[WELD] \"DIN EN ISO 7049 - ST2.2 x 6.5 - F - Z:1 (2)\" verts 382->210, topo 24 => naked 8, over-valenced 0, bowtie 0",
+    "[02:53:16][MANIFOLD-RAW] \"DIN EN ISO 7049 - ST2.2 x 6.5 - F - Z:1 \" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 8 naked edge(s), 0 over-valenced edge(s), 412 triangle(s)",
+    "[WELD] \"MiniSB_adxl_mount_adafruit_19mm_c_c (1)\" verts 2175->1066, topo 310, degen 8, -degen-tri 8 => naked 16, over-valenced 0, bowtie 0",
+    "[02:53:17][MANIFOLD-RAW] \"MiniSB_adxl_mount_adafruit_19mm_c_c (1)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 16 naked edge(s), 0 over-valenced edge(s), 2128 triangle(s)",
+    "[WELD] \"M2x6 SHCS:2\" verts 474->249, topo 30 => naked 58, over-valenced 0, bowtie 0",
+    "[02:53:17][MANIFOLD-RAW] \"M2x6 SHCS:2\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 58 naked edge(s), 0 over-valenced edge(s), 438 triangle(s)",
+    "[WELD] \"M2x6 SHCS:3\" verts 476->250, topo 30 => naked 58, over-valenced 0, bowtie 0",
+    "[02:53:17][MANIFOLD-RAW] \"M2x6 SHCS:3\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 58 naked edge(s), 0 over-valenced edge(s), 440 triangle(s)",
+    "[WELD] \"X Carriage:1\" verts 5416->2631, topo 788, degen 4, -degen-tri 4 => naked 20, over-valenced 0, bowtie 0",
+    "[02:53:17][MANIFOLD-RAW] \"X Carriage:1\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 20 naked edge(s), 0 over-valenced edge(s), 5300 triangle(s)"
+   ]
+  },
+  {
+   "file": "MiniSB_Bowden.step",
+   "sizeKB": 10118,
+   "declared": {
+    "solids": 49,
+    "closedShells": 49,
+    "openShells": 0,
+    "faces": 3595,
+    "edges": 9895,
+    "edgeValence": {
+     "2": 9895
+    },
+    "closedByDeclaration": true,
+    "system": "Shapr3D"
+   },
+   "bodies": 49,
+   "verts": 39746,
+   "tris": 79568,
+   "stepMs": 8800,
+   "engineMs": 8620,
+   "smoothMs": 53,
+   "weldMeta": {
+    "bodies": 49,
+    "watertight": 25,
+    "stillBroken": 24,
+    "edgesTopo": 9675,
+    "edgesResidual": 39,
+    "edgesMismatch": 0,
+    "trisDropped": 19,
+    "legacyFallback": 5,
+    "enabled": true
+   },
+   "raw": {
+    "bodiesBroken": 9,
+    "naked": 46,
+    "over": 0,
+    "weldedVerts": 39685,
+    "closedBodies": null,
+    "closedBroken": null,
+    "closedNaked": null,
+    "closedOver": null
+   },
+   "client": {
+    "bodiesBroken": 9,
+    "naked": 46,
+    "over": 0,
+    "weldedVerts": 39685,
+    "closedBodies": null,
+    "closedBroken": null,
+    "closedNaked": null,
+    "closedOver": null
+   },
+   "brep": null,
+   "brokenBodies": [
+    {
+     "name": "SOLID",
+     "verts": 6645,
+     "tris": 13352,
+     "raw": {
+      "naked": 6,
+      "over": 0,
+      "weldedVerts": 6642,
+      "manifold": false
+     },
+     "client": {
+      "naked": 6,
+      "over": 0,
+      "weldedVerts": 6642,
+      "manifold": false
+     }
+    },
+    {
+     "name": "SOLID",
+     "verts": 6108,
+     "tris": 12276,
+     "raw": {
+      "naked": 6,
+      "over": 0,
+      "weldedVerts": 6104,
+      "manifold": false
+     },
+     "client": {
+      "naked": 6,
+      "over": 0,
+      "weldedVerts": 6104,
+      "manifold": false
+     }
+    },
+    {
+     "name": "3010 Blower Fan (1)",
+     "verts": 2954,
+     "tris": 5901,
+     "raw": {
+      "naked": 7,
+      "over": 0,
+      "weldedVerts": 2954,
+      "manifold": false
+     },
+     "client": {
+      "naked": 7,
+      "over": 0,
+      "weldedVerts": 2954,
+      "manifold": false
+     }
+    },
+    {
+     "name": "3010 Blower Fan (1)",
+     "verts": 2954,
+     "tris": 5901,
+     "raw": {
+      "naked": 7,
+      "over": 0,
+      "weldedVerts": 2954,
+      "manifold": false
+     },
+     "client": {
+      "naked": 7,
+      "over": 0,
+      "weldedVerts": 2954,
+      "manifold": false
+     }
+    },
+    {
+     "name": "MGN7-H",
+     "verts": 314,
+     "tris": 624,
+     "raw": {
+      "naked": 4,
+      "over": 0,
+      "weldedVerts": 314,
+      "manifold": false
+     },
+     "client": {
+      "naked": 4,
+      "over": 0,
+      "weldedVerts": 314,
+      "manifold": false
+     }
+    },
+    {
+     "name": "M2x6 SHCS:51 (1)",
+     "verts": 269,
+     "tris": 536,
+     "raw": {
+      "naked": 4,
+      "over": 0,
+      "weldedVerts": 268,
+      "manifold": false
+     },
+     "client": {
+      "naked": 4,
+      "over": 0,
+      "weldedVerts": 268,
+      "manifold": false
+     }
+    },
+    {
+     "name": "M2x6 SHCS:52 (1)",
+     "verts": 266,
+     "tris": 530,
+     "raw": {
+      "naked": 4,
+      "over": 0,
+      "weldedVerts": 265,
+      "manifold": false
+     },
+     "client": {
+      "naked": 4,
+      "over": 0,
+      "weldedVerts": 265,
+      "manifold": false
+     }
+    },
+    {
+     "name": "M2x6 SHCS:53 (1)",
+     "verts": 268,
+     "tris": 534,
+     "raw": {
+      "naked": 4,
+      "over": 0,
+      "weldedVerts": 267,
+      "manifold": false
+     },
+     "client": {
+      "naked": 4,
+      "over": 0,
+      "weldedVerts": 267,
+      "manifold": false
+     }
+    },
+    {
+     "name": "M2x6 SHCS:54 (1)",
+     "verts": 266,
+     "tris": 530,
+     "raw": {
+      "naked": 4,
+      "over": 0,
+      "weldedVerts": 265,
+      "manifold": false
+     },
+     "client": {
+      "naked": 4,
+      "over": 0,
+      "weldedVerts": 265,
+      "manifold": false
+     }
+    }
+   ],
+   "weldLog": [
+    "[02:53:26][WELD] \"PC4-M10 pneumatic coupling.step\" verts 481->301, topo 8 => naked 4, over-valenced 0, bowtie 0",
+    "[02:53:26][MANIFOLD-RAW] \"PC4-M10 pneumatic coupling.step\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 4 naked edge(s), 0 over-valenced edge(s), 600 triangle(s)",
+    "[WELD] \"PC4-M10 pneumatic coupling.step\" verts 2600->1410, topo 83 => naked 22, over-valenced 0, bowtie 0",
+    "[02:53:26][MANIFOLD-RAW] \"PC4-M10 pneumatic coupling.step\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 22 naked edge(s), 0 over-valenced edge(s), 2804 triangle(s)",
+    "[WELD] \"Component30:1\" verts 3387->1577, topo 442, degen 3, -degen-tri 3 => naked 20, over-valenced 0, bowtie 0",
+    "[02:53:26][MANIFOLD-RAW] \"Component30:1\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 20 naked edge(s), 0 over-valenced edge(s), 3172 triangle(s)",
+    "[WELD] \"SOLID\" verts 11301->6645, topo 1286, degen 4, -degen-tri 4 => naked 18, over-valenced 0, bowtie 0",
+    "[02:53:26][MANIFOLD-RAW] \"SOLID\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 18 naked edge(s), 0 over-valenced edge(s), 13352 triangle(s)",
+    "[WELD] \"SOLID\" verts 10201->6108, topo 1247, degen 4, -degen-tri 4 => naked 22, over-valenced 0, bowtie 0",
+    "[02:53:26][MANIFOLD-RAW] \"SOLID\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 22 naked edge(s), 0 over-valenced edge(s), 12276 triangle(s)",
+    "[WELD] \"M3 Hexnut:4 (2)\" verts 602->276, topo 59, residual 2 @tol 8.80644e-09 => naked 4, over-valenced 0, bowtie 0",
+    "[02:53:26][MANIFOLD-RAW] \"M3 Hexnut:4 (2)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 4 naked edge(s), 0 over-valenced edge(s), 552 triangle(s)",
+    "[WELD] \"3010 Blower Fan (1)\" verts 6341->2954, topo 876 => naked 7, over-valenced 0, bowtie 0",
+    "[02:53:26][MANIFOLD-RAW] \"3010 Blower Fan (1)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 7 naked edge(s), 0 over-valenced edge(s), 5901 triangle(s)",
+    "[WELD] \"MGN7-H\" verts 878->412, topo 93 => naked 16, over-valenced 0, bowtie 0",
+    "[02:53:26][MANIFOLD-RAW] \"MGN7-H\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 16 naked edge(s), 0 over-valenced edge(s), 812 triangle(s)",
+    "[WELD] \"MGN7-H\" verts 438->321, topo 38 => naked 14, over-valenced 0, bowtie 0",
+    "[02:53:26][MANIFOLD-RAW] \"MGN7-H\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 14 naked edge(s), 0 over-valenced edge(s), 626 triangle(s)",
+    "[WELD] \"MGN7-H\" verts 437->314, topo 38, residual 7 @tol 3.97557e-09 => naked 4, over-valenced 0, bowtie 0",
+    "[02:53:26][MANIFOLD-RAW] \"MGN7-H\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 4 naked edge(s), 0 over-valenced edge(s), 624 triangle(s)",
+    "[WELD] \"3010 Blower Fan (1)\" verts 6341->2954, topo 876 => naked 7, over-valenced 0, bowtie 0",
+    "[MANIFOLD-RAW] \"3010 Blower Fan (1)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 7 naked edge(s), 0 over-valenced edge(s), 5901 triangle(s)",
+    "[WELD] \"MGN7-H\" verts 437->320, topo 38 => naked 14, over-valenced 0, bowtie 0",
+    "[02:53:26][MANIFOLD-RAW] \"MGN7-H\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 14 naked edge(s), 0 over-valenced edge(s), 624 triangle(s)",
+    "[WELD] \"M3x8 FHCS_91294A128:1 (1)\" verts 490->250, topo 43 => naked 6, over-valenced 0, bowtie 0",
+    "[02:53:26][MANIFOLD-RAW] \"M3x8 FHCS_91294A128:1 (1)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 6 naked edge(s), 0 over-valenced edge(s), 492 triangle(s)",
+    "[WELD] \"MGN7-H\" verts 438->321, topo 38 => naked 14, over-valenced 0, bowtie 0",
+    "[02:53:26][MANIFOLD-RAW] \"MGN7-H\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 14 naked edge(s), 0 over-valenced edge(s), 626 triangle(s)",
+    "[WELD] \"M3x8 FHCS_91294A128:2 (1)\" verts 494->252, topo 43 => naked 6, over-valenced 0, bowtie 0",
+    "[02:53:26][MANIFOLD-RAW] \"M3x8 FHCS_91294A128:2 (1)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 6 naked edge(s), 0 over-valenced edge(s), 496 triangle(s)",
+    "[WELD] \"M2x6 SHCS:51 (1)\" verts 565->269, topo 46, residual 6 @tol 9.63742e-07 => naked 8, over-valenced 0, bowtie 0",
+    "[02:53:26][MANIFOLD-RAW] \"M2x6 SHCS:51 (1)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 8 naked edge(s), 0 over-valenced edge(s), 536 triangle(s)",
+    "[WELD] \"M3 Hexnut:4 (1)\" verts 598->274, topo 59, residual 2 @tol 8.9605e-09 => naked 4, over-valenced 0, bowtie 0",
+    "[02:53:26][MANIFOLD-RAW] \"M3 Hexnut:4 (1)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 4 naked edge(s), 0 over-valenced edge(s), 548 triangle(s)",
+    "[WELD] \"M2x6 SHCS:52 (1)\" verts 559->266, topo 46, residual 6 @tol 9.63743e-07 => naked 8, over-valenced 0, bowtie 0",
+    "[02:53:26][MANIFOLD-RAW] \"M2x6 SHCS:52 (1)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 8 naked edge(s), 0 over-valenced edge(s), 530 triangle(s)",
+    "[WELD] \"M2x6 SHCS:53 (1)\" verts 563->268, topo 46, residual 6 @tol 9.63616e-07 => naked 8, over-valenced 0, bowtie 0",
+    "[02:53:26][MANIFOLD-RAW] \"M2x6 SHCS:53 (1)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 8 naked edge(s), 0 over-valenced edge(s), 534 triangle(s)",
+    "[WELD] \"M2x6 SHCS:54 (1)\" verts 559->266, topo 46, residual 6 @tol 9.63544e-07 => naked 8, over-valenced 0, bowtie 0",
+    "[02:53:26][MANIFOLD-RAW] \"M2x6 SHCS:54 (1)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 8 naked edge(s), 0 over-valenced edge(s), 530 triangle(s)",
+    "[WELD] \"M3 Hexnut:6 (1)\" verts 582->266, topo 55, residual 2 @tol 8.73747e-09 => naked 4, over-valenced 0, bowtie 0",
+    "[02:53:26][MANIFOLD-RAW] \"M3 Hexnut:6 (1)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 4 naked edge(s), 0 over-valenced edge(s), 532 triangle(s)",
+    "[WELD] \"M3 Threaded Insert Short:31 (1)\" verts 3107->1329, topo 699, residual 2 @tol 8.71897e-09 => naked 4, over-valenced 0, bowtie 0",
+    "[02:53:26][MANIFOLD-RAW] \"M3 Threaded Insert Short:31 (1)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 4 naked edge(s), 0 over-valenced edge(s), 2658 triangle(s)",
+    "[WELD] \"M3 Threaded Insert Short:32 (1)\" verts 3099->1326, topo 699, degen 4, -degen-tri 4 => naked 4, over-valenced 0, bowtie 0",
+    "[02:53:26][MANIFOLD-RAW] \"M3 Threaded Insert Short:32 (1)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 4 naked edge(s), 0 over-valenced edge(s), 2650 triangle(s)",
+    "[WELD] \"COMPOUND\" verts 5382->2614, topo 793, degen 4, -degen-tri 4 => naked 20, over-valenced 0, bowtie 0",
+    "[02:53:26][MANIFOLD-RAW] \"COMPOUND\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 20 naked edge(s), 0 over-valenced edge(s), 5266 triangle(s)"
+   ]
+  }
+ ],
+ "platform": "Ubuntu 24.04, OCCT 7.6.3 (apt), Manifold v3.5.3, g++ 13, 4 cores",
+ "source": "MEDUSA_SOURCE/nasscad_medusa.cpp @ d038996 (main)",
+ "input": "25 part files of CAD/ (hotend, ADXL, electronics mounts, bowden toolhead) — VoronDesign/Voron-0 branch Voron0.2 @ a4d02db, not versioned"
+}

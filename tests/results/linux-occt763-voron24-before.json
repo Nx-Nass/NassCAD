@@ -1,0 +1,2793 @@
+{
+ "label": "before",
+ "engine": {
+  "engine": "nasscad-medusa-engine",
+  "version": "3.1",
+  "occt": "7.6.3",
+  "protocol": "NSTP1",
+  "csgtree": true,
+  "stepexport": true,
+  "stepload": true,
+  "ramMB": 16095,
+  "availMB": 15494,
+  "cores": 4,
+  "runawayThreads": 0,
+  "deviationPct": 0.5
+ },
+ "date": "2026-09-28T02:35:48.102Z",
+ "results": [
+  {
+   "file": "Voron_2.4r2_Assembly.step",
+   "sizeKB": 235862,
+   "declared": {
+    "solids": 1563,
+    "closedShells": 1574,
+    "openShells": 0,
+    "faces": 100800,
+    "edges": 268575,
+    "edgeValence": {
+     "2": 268575
+    },
+    "closedByDeclaration": true,
+    "system": "Autodesk Translation Framework v12.9.0.99"
+   },
+   "bodies": 1715,
+   "verts": 1147090,
+   "tris": 2291031,
+   "stepMs": 366632,
+   "engineMs": 363237,
+   "smoothMs": 1182,
+   "weldMeta": {
+    "bodies": 1715,
+    "watertight": 578,
+    "stillBroken": 1137,
+    "edgesTopo": 278415,
+    "edgesResidual": 977,
+    "edgesMismatch": 0,
+    "trisDropped": 706,
+    "legacyFallback": 0,
+    "enabled": true
+   },
+   "raw": {
+    "bodiesBroken": 134,
+    "naked": 4215,
+    "over": 22,
+    "weldedVerts": 1140538,
+    "closedBodies": null,
+    "closedBroken": null,
+    "closedNaked": null,
+    "closedOver": null
+   },
+   "client": {
+    "bodiesBroken": 135,
+    "naked": 4215,
+    "over": 24,
+    "weldedVerts": 1140568,
+    "closedBodies": null,
+    "closedBroken": null,
+    "closedNaked": null,
+    "closedOver": null
+   },
+   "brep": null,
+   "brokenBodies": [
+    {
+     "name": "Z Belt Clamp Upper (2)",
+     "verts": 361,
+     "tris": 726,
+     "raw": {
+      "naked": 4,
+      "over": 0,
+      "weldedVerts": 361,
+      "manifold": false
+     },
+     "client": {
+      "naked": 4,
+      "over": 0,
+      "weldedVerts": 361,
+      "manifold": false
+     }
+    },
+    {
+     "name": "M5x10 BHCS (7)",
+     "verts": 504,
+     "tris": 960,
+     "raw": {
+      "naked": 30,
+      "over": 0,
+      "weldedVerts": 496,
+      "manifold": false
+     },
+     "client": {
+      "naked": 30,
+      "over": 0,
+      "weldedVerts": 496,
+      "manifold": false
+     }
+    },
+    {
+     "name": "M5x10 BHCS (8)",
+     "verts": 504,
+     "tris": 960,
+     "raw": {
+      "naked": 30,
+      "over": 0,
+      "weldedVerts": 496,
+      "manifold": false
+     },
+     "client": {
+      "naked": 30,
+      "over": 0,
+      "weldedVerts": 496,
+      "manifold": false
+     }
+    },
+    {
+     "name": "M5x10 BHCS (9)",
+     "verts": 504,
+     "tris": 960,
+     "raw": {
+      "naked": 30,
+      "over": 0,
+      "weldedVerts": 496,
+      "manifold": false
+     },
+     "client": {
+      "naked": 30,
+      "over": 0,
+      "weldedVerts": 496,
+      "manifold": false
+     }
+    },
+    {
+     "name": "M5x10 BHCS (10)",
+     "verts": 504,
+     "tris": 960,
+     "raw": {
+      "naked": 30,
+      "over": 0,
+      "weldedVerts": 496,
+      "manifold": false
+     },
+     "client": {
+      "naked": 30,
+      "over": 0,
+      "weldedVerts": 496,
+      "manifold": false
+     }
+    },
+    {
+     "name": "M5x16 BHCS (7)",
+     "verts": 292,
+     "tris": 550,
+     "raw": {
+      "naked": 30,
+      "over": 0,
+      "weldedVerts": 291,
+      "manifold": false
+     },
+     "client": {
+      "naked": 30,
+      "over": 0,
+      "weldedVerts": 291,
+      "manifold": false
+     }
+    },
+    {
+     "name": "M5x16 BHCS (8)",
+     "verts": 292,
+     "tris": 550,
+     "raw": {
+      "naked": 30,
+      "over": 0,
+      "weldedVerts": 291,
+      "manifold": false
+     },
+     "client": {
+      "naked": 30,
+      "over": 0,
+      "weldedVerts": 291,
+      "manifold": false
+     }
+    },
+    {
+     "name": "M5x30 BHCS (2)",
+     "verts": 450,
+     "tris": 852,
+     "raw": {
+      "naked": 30,
+      "over": 0,
+      "weldedVerts": 442,
+      "manifold": false
+     },
+     "client": {
+      "naked": 30,
+      "over": 0,
+      "weldedVerts": 442,
+      "manifold": false
+     }
+    },
+    {
+     "name": "M5x30 BHCS (3)",
+     "verts": 450,
+     "tris": 852,
+     "raw": {
+      "naked": 30,
+      "over": 0,
+      "weldedVerts": 442,
+      "manifold": false
+     },
+     "client": {
+      "naked": 30,
+      "over": 0,
+      "weldedVerts": 442,
+      "manifold": false
+     }
+    },
+    {
+     "name": "M5x10 BHCS (11)",
+     "verts": 504,
+     "tris": 960,
+     "raw": {
+      "naked": 30,
+      "over": 0,
+      "weldedVerts": 496,
+      "manifold": false
+     },
+     "client": {
+      "naked": 30,
+      "over": 0,
+      "weldedVerts": 496,
+      "manifold": false
+     }
+    },
+    {
+     "name": "M5x10 BHCS (12)",
+     "verts": 504,
+     "tris": 960,
+     "raw": {
+      "naked": 30,
+      "over": 0,
+      "weldedVerts": 496,
+      "manifold": false
+     },
+     "client": {
+      "naked": 30,
+      "over": 0,
+      "weldedVerts": 496,
+      "manifold": false
+     }
+    },
+    {
+     "name": "M5x10 BHCS (13)",
+     "verts": 504,
+     "tris": 960,
+     "raw": {
+      "naked": 30,
+      "over": 0,
+      "weldedVerts": 496,
+      "manifold": false
+     },
+     "client": {
+      "naked": 30,
+      "over": 0,
+      "weldedVerts": 496,
+      "manifold": false
+     }
+    },
+    {
+     "name": "M5x10 BHCS (14)",
+     "verts": 504,
+     "tris": 960,
+     "raw": {
+      "naked": 30,
+      "over": 0,
+      "weldedVerts": 496,
+      "manifold": false
+     },
+     "client": {
+      "naked": 30,
+      "over": 0,
+      "weldedVerts": 496,
+      "manifold": false
+     }
+    },
+    {
+     "name": "M5x16 BHCS (9)",
+     "verts": 292,
+     "tris": 550,
+     "raw": {
+      "naked": 30,
+      "over": 0,
+      "weldedVerts": 291,
+      "manifold": false
+     },
+     "client": {
+      "naked": 30,
+      "over": 0,
+      "weldedVerts": 291,
+      "manifold": false
+     }
+    },
+    {
+     "name": "M5x16 BHCS (10)",
+     "verts": 292,
+     "tris": 550,
+     "raw": {
+      "naked": 30,
+      "over": 0,
+      "weldedVerts": 291,
+      "manifold": false
+     },
+     "client": {
+      "naked": 30,
+      "over": 0,
+      "weldedVerts": 291,
+      "manifold": false
+     }
+    },
+    {
+     "name": "M5x30 BHCS (4)",
+     "verts": 450,
+     "tris": 852,
+     "raw": {
+      "naked": 30,
+      "over": 0,
+      "weldedVerts": 442,
+      "manifold": false
+     },
+     "client": {
+      "naked": 30,
+      "over": 0,
+      "weldedVerts": 442,
+      "manifold": false
+     }
+    },
+    {
+     "name": "M5x30 BHCS (6)",
+     "verts": 450,
+     "tris": 852,
+     "raw": {
+      "naked": 30,
+      "over": 0,
+      "weldedVerts": 442,
+      "manifold": false
+     },
+     "client": {
+      "naked": 30,
+      "over": 0,
+      "weldedVerts": 442,
+      "manifold": false
+     }
+    },
+    {
+     "name": "PRODUCT_NAME_6 (1)",
+     "verts": 196,
+     "tris": 317,
+     "raw": {
+      "naked": 71,
+      "over": 0,
+      "weldedVerts": 196,
+      "manifold": false
+     },
+     "client": {
+      "naked": 71,
+      "over": 0,
+      "weldedVerts": 196,
+      "manifold": false
+     }
+    },
+    {
+     "name": "PRODUCT_NAME_8 (1)",
+     "verts": 196,
+     "tris": 317,
+     "raw": {
+      "naked": 71,
+      "over": 0,
+      "weldedVerts": 196,
+      "manifold": false
+     },
+     "client": {
+      "naked": 71,
+      "over": 0,
+      "weldedVerts": 196,
+      "manifold": false
+     }
+    },
+    {
+     "name": "Toolhead Revo Voron Front",
+     "verts": 9712,
+     "tris": 19389,
+     "raw": {
+      "naked": 21,
+      "over": 0,
+      "weldedVerts": 9663,
+      "manifold": false
+     },
+     "client": {
+      "naked": 21,
+      "over": 0,
+      "weldedVerts": 9662,
+      "manifold": false
+     }
+    },
+    {
+     "name": "Main_Body",
+     "verts": 4101,
+     "tris": 8116,
+     "raw": {
+      "naked": 104,
+      "over": 0,
+      "weldedVerts": 4075,
+      "manifold": false
+     },
+     "client": {
+      "naked": 104,
+      "over": 0,
+      "weldedVerts": 4075,
+      "manifold": false
+     }
+    },
+    {
+     "name": "BMG Spring",
+     "verts": 2825,
+     "tris": 5330,
+     "raw": {
+      "naked": 0,
+      "over": 12,
+      "weldedVerts": 2667,
+      "manifold": false
+     },
+     "client": {
+      "naked": 0,
+      "over": 12,
+      "weldedVerts": 2667,
+      "manifold": false
+     }
+    },
+    {
+     "name": "Stealthburner_Body",
+     "verts": 9318,
+     "tris": 18666,
+     "raw": {
+      "naked": 0,
+      "over": 2,
+      "weldedVerts": 9308,
+      "manifold": false
+     },
+     "client": {
+      "naked": 0,
+      "over": 2,
+      "weldedVerts": 9308,
+      "manifold": false
+     }
+    },
+    {
+     "name": "M5x10 BHCS (27)",
+     "verts": 504,
+     "tris": 960,
+     "raw": {
+      "naked": 30,
+      "over": 0,
+      "weldedVerts": 496,
+      "manifold": false
+     },
+     "client": {
+      "naked": 30,
+      "over": 0,
+      "weldedVerts": 496,
+      "manifold": false
+     }
+    },
+    {
+     "name": "M5x10 BHCS ",
+     "verts": 504,
+     "tris": 960,
+     "raw": {
+      "naked": 30,
+      "over": 0,
+      "weldedVerts": 496,
+      "manifold": false
+     },
+     "client": {
+      "naked": 30,
+      "over": 0,
+      "weldedVerts": 496,
+      "manifold": false
+     }
+    },
+    {
+     "name": "M5x30 BHCS (5)",
+     "verts": 450,
+     "tris": 852,
+     "raw": {
+      "naked": 30,
+      "over": 0,
+      "weldedVerts": 442,
+      "manifold": false
+     },
+     "client": {
+      "naked": 30,
+      "over": 0,
+      "weldedVerts": 442,
+      "manifold": false
+     }
+    },
+    {
+     "name": "MGN9H - Carriage (33)",
+     "verts": 314,
+     "tris": 626,
+     "raw": {
+      "naked": 6,
+      "over": 0,
+      "weldedVerts": 313,
+      "manifold": false
+     },
+     "client": {
+      "naked": 6,
+      "over": 0,
+      "weldedVerts": 313,
+      "manifold": false
+     }
+    },
+    {
+     "name": "MGN9H - Carriage (34)",
+     "verts": 314,
+     "tris": 626,
+     "raw": {
+      "naked": 6,
+      "over": 0,
+      "weldedVerts": 313,
+      "manifold": false
+     },
+     "client": {
+      "naked": 6,
+      "over": 0,
+      "weldedVerts": 313,
+      "manifold": false
+     }
+    },
+    {
+     "name": "VORONDESIGN_XY-Endstop",
+     "verts": 400,
+     "tris": 796,
+     "raw": {
+      "naked": 0,
+      "over": 0,
+      "weldedVerts": 400,
+      "manifold": true
+     },
+     "client": {
+      "naked": 0,
+      "over": 2,
+      "weldedVerts": 399,
+      "manifold": false
+     }
+    },
+    {
+     "name": "VORONDESIGN_XY-Endstop",
+     "verts": 400,
+     "tris": 796,
+     "raw": {
+      "naked": 0,
+      "over": 2,
+      "weldedVerts": 399,
+      "manifold": false
+     },
+     "client": {
+      "naked": 0,
+      "over": 0,
+      "weldedVerts": 400,
+      "manifold": true
+     }
+    },
+    {
+     "name": "VORONDESIGN_XY-Endstop",
+     "verts": 400,
+     "tris": 796,
+     "raw": {
+      "naked": 0,
+      "over": 0,
+      "weldedVerts": 400,
+      "manifold": true
+     },
+     "client": {
+      "naked": 0,
+      "over": 2,
+      "weldedVerts": 399,
+      "manifold": false
+     }
+    },
+    {
+     "name": "M5x16 BHCS (2)",
+     "verts": 481,
+     "tris": 914,
+     "raw": {
+      "naked": 30,
+      "over": 0,
+      "weldedVerts": 473,
+      "manifold": false
+     },
+     "client": {
+      "naked": 30,
+      "over": 0,
+      "weldedVerts": 473,
+      "manifold": false
+     }
+    },
+    {
+     "name": "M5x30 BHCS (18)",
+     "verts": 450,
+     "tris": 852,
+     "raw": {
+      "naked": 30,
+      "over": 0,
+      "weldedVerts": 442,
+      "manifold": false
+     },
+     "client": {
+      "naked": 30,
+      "over": 0,
+      "weldedVerts": 442,
+      "manifold": false
+     }
+    },
+    {
+     "name": "M5x16 BHCS (15)",
+     "verts": 481,
+     "tris": 914,
+     "raw": {
+      "naked": 30,
+      "over": 0,
+      "weldedVerts": 473,
+      "manifold": false
+     },
+     "client": {
+      "naked": 30,
+      "over": 0,
+      "weldedVerts": 473,
+      "manifold": false
+     }
+    },
+    {
+     "name": "MGN9H - Carriage (21)",
+     "verts": 314,
+     "tris": 626,
+     "raw": {
+      "naked": 6,
+      "over": 0,
+      "weldedVerts": 313,
+      "manifold": false
+     },
+     "client": {
+      "naked": 6,
+      "over": 0,
+      "weldedVerts": 313,
+      "manifold": false
+     }
+    },
+    {
+     "name": "MGN9H - Carriage (22)",
+     "verts": 314,
+     "tris": 626,
+     "raw": {
+      "naked": 6,
+      "over": 0,
+      "weldedVerts": 313,
+      "manifold": false
+     },
+     "client": {
+      "naked": 6,
+      "over": 0,
+      "weldedVerts": 313,
+      "manifold": false
+     }
+    },
+    {
+     "name": "10x11 Fixed End (1)",
+     "verts": 591,
+     "tris": 1028,
+     "raw": {
+      "naked": 156,
+      "over": 0,
+      "weldedVerts": 588,
+      "manifold": false
+     },
+     "client": {
+      "naked": 156,
+      "over": 0,
+      "weldedVerts": 588,
+      "manifold": false
+     }
+    },
+    {
+     "name": "M5x16 BHCS (11)",
+     "verts": 292,
+     "tris": 550,
+     "raw": {
+      "naked": 30,
+      "over": 0,
+      "weldedVerts": 291,
+      "manifold": false
+     },
+     "client": {
+      "naked": 30,
+      "over": 0,
+      "weldedVerts": 291,
+      "manifold": false
+     }
+    },
+    {
+     "name": "M5x16 BHCS (12)",
+     "verts": 292,
+     "tris": 550,
+     "raw": {
+      "naked": 30,
+      "over": 0,
+      "weldedVerts": 291,
+      "manifold": false
+     },
+     "client": {
+      "naked": 30,
+      "over": 0,
+      "weldedVerts": 291,
+      "manifold": false
+     }
+    },
+    {
+     "name": "Z Belt Clamp Upper",
+     "verts": 361,
+     "tris": 726,
+     "raw": {
+      "naked": 4,
+      "over": 0,
+      "weldedVerts": 361,
+      "manifold": false
+     },
+     "client": {
+      "naked": 4,
+      "over": 0,
+      "weldedVerts": 361,
+      "manifold": false
+     }
+    },
+    {
+     "name": "M5x16 BHCS",
+     "verts": 292,
+     "tris": 550,
+     "raw": {
+      "naked": 30,
+      "over": 0,
+      "weldedVerts": 291,
+      "manifold": false
+     },
+     "client": {
+      "naked": 30,
+      "over": 0,
+      "weldedVerts": 291,
+      "manifold": false
+     }
+    },
+    {
+     "name": "M5x16 BHCS (13)",
+     "verts": 292,
+     "tris": 550,
+     "raw": {
+      "naked": 30,
+      "over": 0,
+      "weldedVerts": 291,
+      "manifold": false
+     },
+     "client": {
+      "naked": 30,
+      "over": 0,
+      "weldedVerts": 291,
+      "manifold": false
+     }
+    },
+    {
+     "name": "M5x10 BHCS (28)",
+     "verts": 504,
+     "tris": 960,
+     "raw": {
+      "naked": 30,
+      "over": 0,
+      "weldedVerts": 496,
+      "manifold": false
+     },
+     "client": {
+      "naked": 30,
+      "over": 0,
+      "weldedVerts": 496,
+      "manifold": false
+     }
+    },
+    {
+     "name": "M5x30 BHCS",
+     "verts": 450,
+     "tris": 852,
+     "raw": {
+      "naked": 30,
+      "over": 0,
+      "weldedVerts": 442,
+      "manifold": false
+     },
+     "client": {
+      "naked": 30,
+      "over": 0,
+      "weldedVerts": 442,
+      "manifold": false
+     }
+    },
+    {
+     "name": "MGN9H",
+     "verts": 314,
+     "tris": 626,
+     "raw": {
+      "naked": 6,
+      "over": 0,
+      "weldedVerts": 313,
+      "manifold": false
+     },
+     "client": {
+      "naked": 6,
+      "over": 0,
+      "weldedVerts": 313,
+      "manifold": false
+     }
+    },
+    {
+     "name": "MGN9H",
+     "verts": 314,
+     "tris": 626,
+     "raw": {
+      "naked": 6,
+      "over": 0,
+      "weldedVerts": 313,
+      "manifold": false
+     },
+     "client": {
+      "naked": 6,
+      "over": 0,
+      "weldedVerts": 313,
+      "manifold": false
+     }
+    },
+    {
+     "name": "M5x30 BHCS (7)",
+     "verts": 450,
+     "tris": 852,
+     "raw": {
+      "naked": 30,
+      "over": 0,
+      "weldedVerts": 442,
+      "manifold": false
+     },
+     "client": {
+      "naked": 30,
+      "over": 0,
+      "weldedVerts": 442,
+      "manifold": false
+     }
+    },
+    {
+     "name": "MGN9H (3)",
+     "verts": 314,
+     "tris": 626,
+     "raw": {
+      "naked": 6,
+      "over": 0,
+      "weldedVerts": 313,
+      "manifold": false
+     },
+     "client": {
+      "naked": 6,
+      "over": 0,
+      "weldedVerts": 313,
+      "manifold": false
+     }
+    },
+    {
+     "name": "MGN9H (3)",
+     "verts": 314,
+     "tris": 626,
+     "raw": {
+      "naked": 6,
+      "over": 0,
+      "weldedVerts": 313,
+      "manifold": false
+     },
+     "client": {
+      "naked": 6,
+      "over": 0,
+      "weldedVerts": 313,
+      "manifold": false
+     }
+    },
+    {
+     "name": "M5x30 BHCS (8)",
+     "verts": 450,
+     "tris": 852,
+     "raw": {
+      "naked": 30,
+      "over": 0,
+      "weldedVerts": 442,
+      "manifold": false
+     },
+     "client": {
+      "naked": 30,
+      "over": 0,
+      "weldedVerts": 442,
+      "manifold": false
+     }
+    },
+    {
+     "name": "MGN9H (4)",
+     "verts": 314,
+     "tris": 626,
+     "raw": {
+      "naked": 6,
+      "over": 0,
+      "weldedVerts": 313,
+      "manifold": false
+     },
+     "client": {
+      "naked": 6,
+      "over": 0,
+      "weldedVerts": 313,
+      "manifold": false
+     }
+    },
+    {
+     "name": "MGN9H (4)",
+     "verts": 314,
+     "tris": 626,
+     "raw": {
+      "naked": 6,
+      "over": 0,
+      "weldedVerts": 313,
+      "manifold": false
+     },
+     "client": {
+      "naked": 6,
+      "over": 0,
+      "weldedVerts": 313,
+      "manifold": false
+     }
+    },
+    {
+     "name": "M5x30 BHCS (9)",
+     "verts": 450,
+     "tris": 852,
+     "raw": {
+      "naked": 30,
+      "over": 0,
+      "weldedVerts": 442,
+      "manifold": false
+     },
+     "client": {
+      "naked": 30,
+      "over": 0,
+      "weldedVerts": 442,
+      "manifold": false
+     }
+    },
+    {
+     "name": "MGN9H (5)",
+     "verts": 314,
+     "tris": 626,
+     "raw": {
+      "naked": 6,
+      "over": 0,
+      "weldedVerts": 313,
+      "manifold": false
+     },
+     "client": {
+      "naked": 6,
+      "over": 0,
+      "weldedVerts": 313,
+      "manifold": false
+     }
+    },
+    {
+     "name": "MGN9H (5)",
+     "verts": 314,
+     "tris": 626,
+     "raw": {
+      "naked": 6,
+      "over": 0,
+      "weldedVerts": 313,
+      "manifold": false
+     },
+     "client": {
+      "naked": 6,
+      "over": 0,
+      "weldedVerts": 313,
+      "manifold": false
+     }
+    },
+    {
+     "name": "NEMA17 Stepper",
+     "verts": 13197,
+     "tris": 26887,
+     "raw": {
+      "naked": 209,
+      "over": 0,
+      "weldedVerts": 13114,
+      "manifold": false
+     },
+     "client": {
+      "naked": 209,
+      "over": 0,
+      "weldedVerts": 13114,
+      "manifold": false
+     }
+    },
+    {
+     "name": "M5x16 BHCS (14)",
+     "verts": 292,
+     "tris": 550,
+     "raw": {
+      "naked": 30,
+      "over": 0,
+      "weldedVerts": 291,
+      "manifold": false
+     },
+     "client": {
+      "naked": 30,
+      "over": 0,
+      "weldedVerts": 291,
+      "manifold": false
+     }
+    },
+    {
+     "name": "M5x10 BHCS (17)",
+     "verts": 504,
+     "tris": 960,
+     "raw": {
+      "naked": 30,
+      "over": 0,
+      "weldedVerts": 496,
+      "manifold": false
+     },
+     "client": {
+      "naked": 30,
+      "over": 0,
+      "weldedVerts": 496,
+      "manifold": false
+     }
+    },
+    {
+     "name": "M5x10 BHCS (18)",
+     "verts": 504,
+     "tris": 960,
+     "raw": {
+      "naked": 30,
+      "over": 0,
+      "weldedVerts": 496,
+      "manifold": false
+     },
+     "client": {
+      "naked": 30,
+      "over": 0,
+      "weldedVerts": 496,
+      "manifold": false
+     }
+    },
+    {
+     "name": "M5x40 SHCS (14)",
+     "verts": 387,
+     "tris": 728,
+     "raw": {
+      "naked": 30,
+      "over": 0,
+      "weldedVerts": 380,
+      "manifold": false
+     },
+     "client": {
+      "naked": 30,
+      "over": 0,
+      "weldedVerts": 380,
+      "manifold": false
+     }
+    },
+    {
+     "name": "M5x40 SHCS (15)",
+     "verts": 387,
+     "tris": 728,
+     "raw": {
+      "naked": 30,
+      "over": 0,
+      "weldedVerts": 380,
+      "manifold": false
+     },
+     "client": {
+      "naked": 30,
+      "over": 0,
+      "weldedVerts": 380,
+      "manifold": false
+     }
+    },
+    {
+     "name": "NEMA17 Stepper (1)",
+     "verts": 13197,
+     "tris": 26887,
+     "raw": {
+      "naked": 209,
+      "over": 0,
+      "weldedVerts": 13114,
+      "manifold": false
+     },
+     "client": {
+      "naked": 209,
+      "over": 0,
+      "weldedVerts": 13114,
+      "manifold": false
+     }
+    },
+    {
+     "name": "M5x16 BHCS (17)",
+     "verts": 292,
+     "tris": 550,
+     "raw": {
+      "naked": 30,
+      "over": 0,
+      "weldedVerts": 291,
+      "manifold": false
+     },
+     "client": {
+      "naked": 30,
+      "over": 0,
+      "weldedVerts": 291,
+      "manifold": false
+     }
+    },
+    {
+     "name": "M5x40 SHCS (17)",
+     "verts": 387,
+     "tris": 728,
+     "raw": {
+      "naked": 30,
+      "over": 0,
+      "weldedVerts": 380,
+      "manifold": false
+     },
+     "client": {
+      "naked": 30,
+      "over": 0,
+      "weldedVerts": 380,
+      "manifold": false
+     }
+    },
+    {
+     "name": "M3 Threaded Insert (38)",
+     "verts": 907,
+     "tris": 1814,
+     "raw": {
+      "naked": 6,
+      "over": 0,
+      "weldedVerts": 907,
+      "manifold": false
+     },
+     "client": {
+      "naked": 6,
+      "over": 0,
+      "weldedVerts": 907,
+      "manifold": false
+     }
+    },
+    {
+     "name": "M5x40 SHCS (16)",
+     "verts": 387,
+     "tris": 728,
+     "raw": {
+      "naked": 30,
+      "over": 0,
+      "weldedVerts": 380,
+      "manifold": false
+     },
+     "client": {
+      "naked": 30,
+      "over": 0,
+      "weldedVerts": 380,
+      "manifold": false
+     }
+    },
+    {
+     "name": "M3 Threaded Insert (39)",
+     "verts": 907,
+     "tris": 1814,
+     "raw": {
+      "naked": 6,
+      "over": 0,
+      "weldedVerts": 907,
+      "manifold": false
+     },
+     "client": {
+      "naked": 6,
+      "over": 0,
+      "weldedVerts": 907,
+      "manifold": false
+     }
+    },
+    {
+     "name": "M3 Threaded Insert (40)",
+     "verts": 907,
+     "tris": 1814,
+     "raw": {
+      "naked": 6,
+      "over": 0,
+      "weldedVerts": 907,
+      "manifold": false
+     },
+     "client": {
+      "naked": 6,
+      "over": 0,
+      "weldedVerts": 907,
+      "manifold": false
+     }
+    },
+    {
+     "name": "M3 Threaded Insert (41)",
+     "verts": 907,
+     "tris": 1814,
+     "raw": {
+      "naked": 6,
+      "over": 0,
+      "weldedVerts": 907,
+      "manifold": false
+     },
+     "client": {
+      "naked": 6,
+      "over": 0,
+      "weldedVerts": 907,
+      "manifold": false
+     }
+    },
+    {
+     "name": "M3 Threaded Insert (42)",
+     "verts": 907,
+     "tris": 1814,
+     "raw": {
+      "naked": 6,
+      "over": 0,
+      "weldedVerts": 907,
+      "manifold": false
+     },
+     "client": {
+      "naked": 6,
+      "over": 0,
+      "weldedVerts": 907,
+      "manifold": false
+     }
+    },
+    {
+     "name": "M3 Threaded Insert (43)",
+     "verts": 907,
+     "tris": 1814,
+     "raw": {
+      "naked": 6,
+      "over": 0,
+      "weldedVerts": 907,
+      "manifold": false
+     },
+     "client": {
+      "naked": 6,
+      "over": 0,
+      "weldedVerts": 907,
+      "manifold": false
+     }
+    },
+    {
+     "name": "M3 Threaded Insert (44)",
+     "verts": 907,
+     "tris": 1814,
+     "raw": {
+      "naked": 6,
+      "over": 0,
+      "weldedVerts": 907,
+      "manifold": false
+     },
+     "client": {
+      "naked": 6,
+      "over": 0,
+      "weldedVerts": 907,
+      "manifold": false
+     }
+    },
+    {
+     "name": "M3 Threaded Insert (45)",
+     "verts": 907,
+     "tris": 1814,
+     "raw": {
+      "naked": 6,
+      "over": 0,
+      "weldedVerts": 907,
+      "manifold": false
+     },
+     "client": {
+      "naked": 6,
+      "over": 0,
+      "weldedVerts": 907,
+      "manifold": false
+     }
+    },
+    {
+     "name": "M3 Threaded Insert (46)",
+     "verts": 907,
+     "tris": 1814,
+     "raw": {
+      "naked": 6,
+      "over": 0,
+      "weldedVerts": 907,
+      "manifold": false
+     },
+     "client": {
+      "naked": 6,
+      "over": 0,
+      "weldedVerts": 907,
+      "manifold": false
+     }
+    },
+    {
+     "name": "M5x10 BHCS (19)",
+     "verts": 504,
+     "tris": 960,
+     "raw": {
+      "naked": 30,
+      "over": 0,
+      "weldedVerts": 496,
+      "manifold": false
+     },
+     "client": {
+      "naked": 30,
+      "over": 0,
+      "weldedVerts": 496,
+      "manifold": false
+     }
+    },
+    {
+     "name": "M5x10 BHCS (20)",
+     "verts": 504,
+     "tris": 960,
+     "raw": {
+      "naked": 30,
+      "over": 0,
+      "weldedVerts": 496,
+      "manifold": false
+     },
+     "client": {
+      "naked": 30,
+      "over": 0,
+      "weldedVerts": 496,
+      "manifold": false
+     }
+    },
+    {
+     "name": "NEMA17 Stepper (2)",
+     "verts": 13197,
+     "tris": 26887,
+     "raw": {
+      "naked": 209,
+      "over": 0,
+      "weldedVerts": 13114,
+      "manifold": false
+     },
+     "client": {
+      "naked": 209,
+      "over": 0,
+      "weldedVerts": 13114,
+      "manifold": false
+     }
+    },
+    {
+     "name": "M5x16 BHCS (16)",
+     "verts": 292,
+     "tris": 550,
+     "raw": {
+      "naked": 30,
+      "over": 0,
+      "weldedVerts": 291,
+      "manifold": false
+     },
+     "client": {
+      "naked": 30,
+      "over": 0,
+      "weldedVerts": 291,
+      "manifold": false
+     }
+    },
+    {
+     "name": "M5x40 SHCS (18)",
+     "verts": 387,
+     "tris": 728,
+     "raw": {
+      "naked": 30,
+      "over": 0,
+      "weldedVerts": 380,
+      "manifold": false
+     },
+     "client": {
+      "naked": 30,
+      "over": 0,
+      "weldedVerts": 380,
+      "manifold": false
+     }
+    },
+    {
+     "name": "M5x10 BHCS (21)",
+     "verts": 504,
+     "tris": 960,
+     "raw": {
+      "naked": 30,
+      "over": 0,
+      "weldedVerts": 496,
+      "manifold": false
+     },
+     "client": {
+      "naked": 30,
+      "over": 0,
+      "weldedVerts": 496,
+      "manifold": false
+     }
+    },
+    {
+     "name": "M5x10 BHCS (22)",
+     "verts": 504,
+     "tris": 960,
+     "raw": {
+      "naked": 30,
+      "over": 0,
+      "weldedVerts": 496,
+      "manifold": false
+     },
+     "client": {
+      "naked": 30,
+      "over": 0,
+      "weldedVerts": 496,
+      "manifold": false
+     }
+    },
+    {
+     "name": "M5x40 SHCS (19)",
+     "verts": 387,
+     "tris": 728,
+     "raw": {
+      "naked": 30,
+      "over": 0,
+      "weldedVerts": 380,
+      "manifold": false
+     },
+     "client": {
+      "naked": 30,
+      "over": 0,
+      "weldedVerts": 380,
+      "manifold": false
+     }
+    },
+    {
+     "name": "NEMA17 Stepper (3)",
+     "verts": 13197,
+     "tris": 26887,
+     "raw": {
+      "naked": 209,
+      "over": 0,
+      "weldedVerts": 13114,
+      "manifold": false
+     },
+     "client": {
+      "naked": 209,
+      "over": 0,
+      "weldedVerts": 13114,
+      "manifold": false
+     }
+    },
+    {
+     "name": "M3 Threaded Insert (58)",
+     "verts": 907,
+     "tris": 1814,
+     "raw": {
+      "naked": 6,
+      "over": 0,
+      "weldedVerts": 907,
+      "manifold": false
+     },
+     "client": {
+      "naked": 6,
+      "over": 0,
+      "weldedVerts": 907,
+      "manifold": false
+     }
+    },
+    {
+     "name": "M5x40 SHCS (20)",
+     "verts": 387,
+     "tris": 728,
+     "raw": {
+      "naked": 30,
+      "over": 0,
+      "weldedVerts": 380,
+      "manifold": false
+     },
+     "client": {
+      "naked": 30,
+      "over": 0,
+      "weldedVerts": 380,
+      "manifold": false
+     }
+    },
+    {
+     "name": "M3 Threaded Insert (59)",
+     "verts": 907,
+     "tris": 1814,
+     "raw": {
+      "naked": 6,
+      "over": 0,
+      "weldedVerts": 907,
+      "manifold": false
+     },
+     "client": {
+      "naked": 6,
+      "over": 0,
+      "weldedVerts": 907,
+      "manifold": false
+     }
+    },
+    {
+     "name": "M3 Threaded Insert (60)",
+     "verts": 907,
+     "tris": 1814,
+     "raw": {
+      "naked": 6,
+      "over": 0,
+      "weldedVerts": 907,
+      "manifold": false
+     },
+     "client": {
+      "naked": 6,
+      "over": 0,
+      "weldedVerts": 907,
+      "manifold": false
+     }
+    },
+    {
+     "name": "M3 Threaded Insert (61)",
+     "verts": 907,
+     "tris": 1814,
+     "raw": {
+      "naked": 6,
+      "over": 0,
+      "weldedVerts": 907,
+      "manifold": false
+     },
+     "client": {
+      "naked": 6,
+      "over": 0,
+      "weldedVerts": 907,
+      "manifold": false
+     }
+    },
+    {
+     "name": "M3 Threaded Insert (62)",
+     "verts": 907,
+     "tris": 1814,
+     "raw": {
+      "naked": 6,
+      "over": 0,
+      "weldedVerts": 907,
+      "manifold": false
+     },
+     "client": {
+      "naked": 6,
+      "over": 0,
+      "weldedVerts": 907,
+      "manifold": false
+     }
+    },
+    {
+     "name": "M3 Threaded Insert (63)",
+     "verts": 907,
+     "tris": 1814,
+     "raw": {
+      "naked": 6,
+      "over": 0,
+      "weldedVerts": 907,
+      "manifold": false
+     },
+     "client": {
+      "naked": 6,
+      "over": 0,
+      "weldedVerts": 907,
+      "manifold": false
+     }
+    },
+    {
+     "name": "M3 Threaded Insert (64)",
+     "verts": 907,
+     "tris": 1814,
+     "raw": {
+      "naked": 6,
+      "over": 0,
+      "weldedVerts": 907,
+      "manifold": false
+     },
+     "client": {
+      "naked": 6,
+      "over": 0,
+      "weldedVerts": 907,
+      "manifold": false
+     }
+    },
+    {
+     "name": "M3 Threaded Insert (65)",
+     "verts": 907,
+     "tris": 1814,
+     "raw": {
+      "naked": 6,
+      "over": 0,
+      "weldedVerts": 907,
+      "manifold": false
+     },
+     "client": {
+      "naked": 6,
+      "over": 0,
+      "weldedVerts": 907,
+      "manifold": false
+     }
+    },
+    {
+     "name": "M3 Threaded Insert (66)",
+     "verts": 907,
+     "tris": 1814,
+     "raw": {
+      "naked": 6,
+      "over": 0,
+      "weldedVerts": 907,
+      "manifold": false
+     },
+     "client": {
+      "naked": 6,
+      "over": 0,
+      "weldedVerts": 907,
+      "manifold": false
+     }
+    },
+    {
+     "name": "M5x10 BHCS (23)",
+     "verts": 504,
+     "tris": 960,
+     "raw": {
+      "naked": 30,
+      "over": 0,
+      "weldedVerts": 496,
+      "manifold": false
+     },
+     "client": {
+      "naked": 30,
+      "over": 0,
+      "weldedVerts": 496,
+      "manifold": false
+     }
+    },
+    {
+     "name": "M5x10 BHCS (24)",
+     "verts": 504,
+     "tris": 960,
+     "raw": {
+      "naked": 30,
+      "over": 0,
+      "weldedVerts": 496,
+      "manifold": false
+     },
+     "client": {
+      "naked": 30,
+      "over": 0,
+      "weldedVerts": 496,
+      "manifold": false
+     }
+    },
+    {
+     "name": "M5x40 SHCS (21)",
+     "verts": 387,
+     "tris": 728,
+     "raw": {
+      "naked": 30,
+      "over": 0,
+      "weldedVerts": 380,
+      "manifold": false
+     },
+     "client": {
+      "naked": 30,
+      "over": 0,
+      "weldedVerts": 380,
+      "manifold": false
+     }
+    },
+    {
+     "name": "M5x10 BHCS (6)",
+     "verts": 504,
+     "tris": 960,
+     "raw": {
+      "naked": 30,
+      "over": 0,
+      "weldedVerts": 496,
+      "manifold": false
+     },
+     "client": {
+      "naked": 30,
+      "over": 0,
+      "weldedVerts": 496,
+      "manifold": false
+     }
+    },
+    {
+     "name": "SOLID",
+     "verts": 2313,
+     "tris": 4604,
+     "raw": {
+      "naked": 34,
+      "over": 0,
+      "weldedVerts": 2313,
+      "manifold": false
+     },
+     "client": {
+      "naked": 34,
+      "over": 0,
+      "weldedVerts": 2313,
+      "manifold": false
+     }
+    },
+    {
+     "name": "S6 Bracket",
+     "verts": 2325,
+     "tris": 4630,
+     "raw": {
+      "naked": 0,
+      "over": 1,
+      "weldedVerts": 2305,
+      "manifold": false
+     },
+     "client": {
+      "naked": 0,
+      "over": 1,
+      "weldedVerts": 2305,
+      "manifold": false
+     }
+    },
+    {
+     "name": "S6 Bracket",
+     "verts": 2324,
+     "tris": 4628,
+     "raw": {
+      "naked": 0,
+      "over": 1,
+      "weldedVerts": 2304,
+      "manifold": false
+     },
+     "client": {
+      "naked": 0,
+      "over": 1,
+      "weldedVerts": 2304,
+      "manifold": false
+     }
+    },
+    {
+     "name": "EXP MOT Bracket",
+     "verts": 3448,
+     "tris": 6852,
+     "raw": {
+      "naked": 0,
+      "over": 1,
+      "weldedVerts": 3412,
+      "manifold": false
+     },
+     "client": {
+      "naked": 0,
+      "over": 1,
+      "weldedVerts": 3412,
+      "manifold": false
+     }
+    },
+    {
+     "name": "GTR Bracket",
+     "verts": 2189,
+     "tris": 4358,
+     "raw": {
+      "naked": 0,
+      "over": 1,
+      "weldedVerts": 2169,
+      "manifold": false
+     },
+     "client": {
+      "naked": 0,
+      "over": 1,
+      "weldedVerts": 2169,
+      "manifold": false
+     }
+    },
+    {
+     "name": "Duet3_Mini_5_+expander",
+     "verts": 2304,
+     "tris": 4588,
+     "raw": {
+      "naked": 0,
+      "over": 1,
+      "weldedVerts": 2284,
+      "manifold": false
+     },
+     "client": {
+      "naked": 0,
+      "over": 1,
+      "weldedVerts": 2284,
+      "manifold": false
+     }
+    },
+    {
+     "name": "Duet3_Mini_5_+expander",
+     "verts": 2303,
+     "tris": 4586,
+     "raw": {
+      "naked": 0,
+      "over": 1,
+      "weldedVerts": 2283,
+      "manifold": false
+     },
+     "client": {
+      "naked": 0,
+      "over": 1,
+      "weldedVerts": 2283,
+      "manifold": false
+     }
+    },
+    {
+     "name": "COMPOUND",
+     "verts": 232,
+     "tris": 460,
+     "raw": {
+      "naked": 4,
+      "over": 0,
+      "weldedVerts": 232,
+      "manifold": false
+     },
+     "client": {
+      "naked": 4,
+      "over": 0,
+      "weldedVerts": 232,
+      "manifold": false
+     }
+    },
+    {
+     "name": "Front_Skirt_Logo",
+     "verts": 2086,
+     "tris": 4229,
+     "raw": {
+      "naked": 49,
+      "over": 0,
+      "weldedVerts": 2086,
+      "manifold": false
+     },
+     "client": {
+      "naked": 49,
+      "over": 0,
+      "weldedVerts": 2086,
+      "manifold": false
+     }
+    },
+    {
+     "name": "6020 Housing (2)",
+     "verts": 1924,
+     "tris": 3747,
+     "raw": {
+      "naked": 131,
+      "over": 0,
+      "weldedVerts": 1921,
+      "manifold": false
+     },
+     "client": {
+      "naked": 131,
+      "over": 0,
+      "weldedVerts": 1921,
+      "manifold": false
+     }
+    },
+    {
+     "name": "6020 Housing",
+     "verts": 1924,
+     "tris": 3747,
+     "raw": {
+      "naked": 131,
+      "over": 0,
+      "weldedVerts": 1921,
+      "manifold": false
+     },
+     "client": {
+      "naked": 131,
+      "over": 0,
+      "weldedVerts": 1921,
+      "manifold": false
+     }
+    },
+    {
+     "name": "M5x16 BHCS (1)",
+     "verts": 292,
+     "tris": 550,
+     "raw": {
+      "naked": 30,
+      "over": 0,
+      "weldedVerts": 291,
+      "manifold": false
+     },
+     "client": {
+      "naked": 30,
+      "over": 0,
+      "weldedVerts": 291,
+      "manifold": false
+     }
+    },
+    {
+     "name": "M5x16 BHCS (34)",
+     "verts": 292,
+     "tris": 550,
+     "raw": {
+      "naked": 30,
+      "over": 0,
+      "weldedVerts": 291,
+      "manifold": false
+     },
+     "client": {
+      "naked": 30,
+      "over": 0,
+      "weldedVerts": 291,
+      "manifold": false
+     }
+    },
+    {
+     "name": "M5x16 BHCS (3)",
+     "verts": 292,
+     "tris": 550,
+     "raw": {
+      "naked": 30,
+      "over": 0,
+      "weldedVerts": 291,
+      "manifold": false
+     },
+     "client": {
+      "naked": 30,
+      "over": 0,
+      "weldedVerts": 291,
+      "manifold": false
+     }
+    },
+    {
+     "name": "M5x16 BHCS (33)",
+     "verts": 292,
+     "tris": 550,
+     "raw": {
+      "naked": 30,
+      "over": 0,
+      "weldedVerts": 291,
+      "manifold": false
+     },
+     "client": {
+      "naked": 30,
+      "over": 0,
+      "weldedVerts": 291,
+      "manifold": false
+     }
+    },
+    {
+     "name": "M5x16 BHCS (4)",
+     "verts": 292,
+     "tris": 550,
+     "raw": {
+      "naked": 30,
+      "over": 0,
+      "weldedVerts": 291,
+      "manifold": false
+     },
+     "client": {
+      "naked": 30,
+      "over": 0,
+      "weldedVerts": 291,
+      "manifold": false
+     }
+    },
+    {
+     "name": "M5x16 BHCS (32)",
+     "verts": 292,
+     "tris": 550,
+     "raw": {
+      "naked": 30,
+      "over": 0,
+      "weldedVerts": 291,
+      "manifold": false
+     },
+     "client": {
+      "naked": 30,
+      "over": 0,
+      "weldedVerts": 291,
+      "manifold": false
+     }
+    },
+    {
+     "name": "M5x16 BHCS (5)",
+     "verts": 292,
+     "tris": 550,
+     "raw": {
+      "naked": 30,
+      "over": 0,
+      "weldedVerts": 291,
+      "manifold": false
+     },
+     "client": {
+      "naked": 30,
+      "over": 0,
+      "weldedVerts": 291,
+      "manifold": false
+     }
+    },
+    {
+     "name": "M5x16 BHCS (31)",
+     "verts": 292,
+     "tris": 550,
+     "raw": {
+      "naked": 30,
+      "over": 0,
+      "weldedVerts": 291,
+      "manifold": false
+     },
+     "client": {
+      "naked": 30,
+      "over": 0,
+      "weldedVerts": 291,
+      "manifold": false
+     }
+    },
+    {
+     "name": "M5x16 BHCS (30)",
+     "verts": 292,
+     "tris": 550,
+     "raw": {
+      "naked": 30,
+      "over": 0,
+      "weldedVerts": 291,
+      "manifold": false
+     },
+     "client": {
+      "naked": 30,
+      "over": 0,
+      "weldedVerts": 291,
+      "manifold": false
+     }
+    },
+    {
+     "name": "M5x16 BHCS (29)",
+     "verts": 292,
+     "tris": 550,
+     "raw": {
+      "naked": 30,
+      "over": 0,
+      "weldedVerts": 291,
+      "manifold": false
+     },
+     "client": {
+      "naked": 30,
+      "over": 0,
+      "weldedVerts": 291,
+      "manifold": false
+     }
+    },
+    {
+     "name": "M5x16 BHCS (28)",
+     "verts": 292,
+     "tris": 550,
+     "raw": {
+      "naked": 30,
+      "over": 0,
+      "weldedVerts": 291,
+      "manifold": false
+     },
+     "client": {
+      "naked": 30,
+      "over": 0,
+      "weldedVerts": 291,
+      "manifold": false
+     }
+    },
+    {
+     "name": "M5x16 BHCS (27)",
+     "verts": 292,
+     "tris": 550,
+     "raw": {
+      "naked": 30,
+      "over": 0,
+      "weldedVerts": 291,
+      "manifold": false
+     },
+     "client": {
+      "naked": 30,
+      "over": 0,
+      "weldedVerts": 291,
+      "manifold": false
+     }
+    },
+    {
+     "name": "M5x16 BHCS (26)",
+     "verts": 292,
+     "tris": 550,
+     "raw": {
+      "naked": 30,
+      "over": 0,
+      "weldedVerts": 291,
+      "manifold": false
+     },
+     "client": {
+      "naked": 30,
+      "over": 0,
+      "weldedVerts": 291,
+      "manifold": false
+     }
+    },
+    {
+     "name": "M5x16 BHCS (25)",
+     "verts": 292,
+     "tris": 550,
+     "raw": {
+      "naked": 30,
+      "over": 0,
+      "weldedVerts": 291,
+      "manifold": false
+     },
+     "client": {
+      "naked": 30,
+      "over": 0,
+      "weldedVerts": 291,
+      "manifold": false
+     }
+    },
+    {
+     "name": "M5x16 BHCS (24)",
+     "verts": 292,
+     "tris": 550,
+     "raw": {
+      "naked": 30,
+      "over": 0,
+      "weldedVerts": 291,
+      "manifold": false
+     },
+     "client": {
+      "naked": 30,
+      "over": 0,
+      "weldedVerts": 291,
+      "manifold": false
+     }
+    },
+    {
+     "name": "M5x16 BHCS (23)",
+     "verts": 292,
+     "tris": 550,
+     "raw": {
+      "naked": 30,
+      "over": 0,
+      "weldedVerts": 291,
+      "manifold": false
+     },
+     "client": {
+      "naked": 30,
+      "over": 0,
+      "weldedVerts": 291,
+      "manifold": false
+     }
+    },
+    {
+     "name": "SOLID",
+     "verts": 953,
+     "tris": 1940,
+     "raw": {
+      "naked": 4,
+      "over": 0,
+      "weldedVerts": 952,
+      "manifold": false
+     },
+     "client": {
+      "naked": 4,
+      "over": 0,
+      "weldedVerts": 952,
+      "manifold": false
+     }
+    },
+    {
+     "name": "SOLID",
+     "verts": 953,
+     "tris": 1940,
+     "raw": {
+      "naked": 4,
+      "over": 0,
+      "weldedVerts": 952,
+      "manifold": false
+     },
+     "client": {
+      "naked": 4,
+      "over": 0,
+      "weldedVerts": 952,
+      "manifold": false
+     }
+    },
+    {
+     "name": "M5x16 BHCS (20)",
+     "verts": 292,
+     "tris": 550,
+     "raw": {
+      "naked": 30,
+      "over": 0,
+      "weldedVerts": 291,
+      "manifold": false
+     },
+     "client": {
+      "naked": 30,
+      "over": 0,
+      "weldedVerts": 291,
+      "manifold": false
+     }
+    },
+    {
+     "name": "M5x16 BHCS (19)",
+     "verts": 292,
+     "tris": 550,
+     "raw": {
+      "naked": 30,
+      "over": 0,
+      "weldedVerts": 291,
+      "manifold": false
+     },
+     "client": {
+      "naked": 30,
+      "over": 0,
+      "weldedVerts": 291,
+      "manifold": false
+     }
+    },
+    {
+     "name": "M5x16 BHCS (22)",
+     "verts": 292,
+     "tris": 550,
+     "raw": {
+      "naked": 30,
+      "over": 0,
+      "weldedVerts": 291,
+      "manifold": false
+     },
+     "client": {
+      "naked": 30,
+      "over": 0,
+      "weldedVerts": 291,
+      "manifold": false
+     }
+    },
+    {
+     "name": "M5x16 BHCS (21)",
+     "verts": 292,
+     "tris": 550,
+     "raw": {
+      "naked": 30,
+      "over": 0,
+      "weldedVerts": 291,
+      "manifold": false
+     },
+     "client": {
+      "naked": 30,
+      "over": 0,
+      "weldedVerts": 291,
+      "manifold": false
+     }
+    },
+    {
+     "name": "M5x10 BHCS (5)",
+     "verts": 504,
+     "tris": 960,
+     "raw": {
+      "naked": 30,
+      "over": 0,
+      "weldedVerts": 496,
+      "manifold": false
+     },
+     "client": {
+      "naked": 30,
+      "over": 0,
+      "weldedVerts": 496,
+      "manifold": false
+     }
+    },
+    {
+     "name": "M5x10 BHCS (3)",
+     "verts": 504,
+     "tris": 960,
+     "raw": {
+      "naked": 30,
+      "over": 0,
+      "weldedVerts": 496,
+      "manifold": false
+     },
+     "client": {
+      "naked": 30,
+      "over": 0,
+      "weldedVerts": 496,
+      "manifold": false
+     }
+    },
+    {
+     "name": "M5x10 BHCS (2)",
+     "verts": 504,
+     "tris": 960,
+     "raw": {
+      "naked": 30,
+      "over": 0,
+      "weldedVerts": 496,
+      "manifold": false
+     },
+     "client": {
+      "naked": 30,
+      "over": 0,
+      "weldedVerts": 496,
+      "manifold": false
+     }
+    },
+    {
+     "name": "M5x10 BHCS (4)",
+     "verts": 504,
+     "tris": 960,
+     "raw": {
+      "naked": 30,
+      "over": 0,
+      "weldedVerts": 496,
+      "manifold": false
+     },
+     "client": {
+      "naked": 30,
+      "over": 0,
+      "weldedVerts": 496,
+      "manifold": false
+     }
+    },
+    {
+     "name": "M5x16 BHCS (6)",
+     "verts": 292,
+     "tris": 550,
+     "raw": {
+      "naked": 30,
+      "over": 0,
+      "weldedVerts": 291,
+      "manifold": false
+     },
+     "client": {
+      "naked": 30,
+      "over": 0,
+      "weldedVerts": 291,
+      "manifold": false
+     }
+    },
+    {
+     "name": "6020 Housing (1)",
+     "verts": 1924,
+     "tris": 3747,
+     "raw": {
+      "naked": 131,
+      "over": 0,
+      "weldedVerts": 1921,
+      "manifold": false
+     },
+     "client": {
+      "naked": 131,
+      "over": 0,
+      "weldedVerts": 1921,
+      "manifold": false
+     }
+    }
+   ],
+   "weldLog": [
+    "[02:35:37][WELD] \"2020 Drop-in T-nut, M3 (57)\" verts 516->237, topo 63 => naked 4, over-valenced 0, bowtie 0",
+    "[02:35:37][MANIFOLD-RAW] \"2020 Drop-in T-nut, M3 (57)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 4 naked edge(s), 0 over-valenced edge(s), 472 triangle(s)",
+    "[02:35:37][WELD] \"SOLID\" verts 4992->2431, topo 165 => naked 60, over-valenced 0, bowtie 0",
+    "[02:35:37][WELD] \"2020 Drop-in T-nut, M5 (44)\" verts 546->248, topo 69, residual 4 @tol 1.57092e-06 => naked 4, over-valenced 0, bowtie 0",
+    "[02:35:37][MANIFOLD-RAW] \"2020 Drop-in T-nut, M5 (44)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 4 naked edge(s), 0 over-valenced edge(s), 498 triangle(s)",
+    "[02:35:37][MANIFOLD-RAW] \"SOLID\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 60 naked edge(s), 0 over-valenced edge(s), 4888 triangle(s)",
+    "[02:35:37][WELD] \"SOLID\" verts 2210->956, topo 432 => naked 8, over-valenced 0, bowtie 0",
+    "[02:35:37][MANIFOLD-RAW] \"SOLID\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 8 naked edge(s), 0 over-valenced edge(s), 1940 triangle(s)",
+    "[02:35:37][WELD] \"2020 Drop-in T-nut, M3 (12)\" verts 516->237, topo 63 => naked 4, over-valenced 0, bowtie 0",
+    "[02:35:37][MANIFOLD-RAW] \"2020 Drop-in T-nut, M3 (12)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 4 naked edge(s), 0 over-valenced edge(s), 472 triangle(s)",
+    "[02:35:37][WELD] \"2020 Drop-in T-nut, M3 (13)\" verts 516->237, topo 63 => naked 4, over-valenced 0, bowtie 0",
+    "[02:35:37][MANIFOLD-RAW] \"2020 Drop-in T-nut, M3 (13)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 4 naked edge(s), 0 over-valenced edge(s), 472 triangle(s)",
+    "[02:35:37][WELD] \"M5x16 BHCS (22)\" verts 505->292, topo 30 => naked 34, over-valenced 0, bowtie 0",
+    "[02:35:37][MANIFOLD-RAW] \"M5x16 BHCS (22)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 34 naked edge(s), 0 over-valenced edge(s), 550 triangle(s)",
+    "[02:35:37][MANIFOLD-RAW] \"2020 Drop-in T-nut, M5 (45)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 4 naked edge(s), 0 over-valenced edge(s), 498 triangle(s)",
+    "[02:35:37][WELD] \"2020 Drop-in T-nut, M3\" verts 516->237, topo 63 => naked 4, over-valenced 0, bowtie 0",
+    "[02:35:37][WELD] \"M5x16 BHCS (21)\" verts 505->292, topo 30 => naked 34, over-valenced 0, bowtie 0",
+    "[02:35:37][MANIFOLD-RAW] \"2020 Drop-in T-nut, M3\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 4 naked edge(s), 0 over-valenced edge(s), 472 triangle(s)",
+    "[02:35:37][MANIFOLD-RAW] \"M5x16 BHCS (21)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 34 naked edge(s), 0 over-valenced edge(s), 550 triangle(s)",
+    "[02:35:37][WELD] \"2020 Drop-in T-nut, M5 (46)\" verts 546->248, topo 69, residual 4 @tol 1.57092e-06 => naked 4, over-valenced 0, bowtie 0",
+    "[02:35:37][MANIFOLD-RAW] \"2020 Drop-in T-nut, M5 (46)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 4 naked edge(s), 0 over-valenced edge(s), 498 triangle(s)",
+    "[02:35:37][WELD] \"2020 Drop-in T-nut, M5 (43)\" verts 546->248, topo 69, residual 4 @tol 1.57092e-06 => naked 4, over-valenced 0, bowtie 0",
+    "[02:35:37][MANIFOLD-RAW] \"2020 Drop-in T-nut, M5 (43)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 4 naked edge(s), 0 over-valenced edge(s), 498 triangle(s)",
+    "[02:35:37][WELD] \"2020 Drop-in T-nut, M3 (3)\" verts 516->237, topo 63 => naked 4, over-valenced 0, bowtie 0",
+    "[02:35:37][MANIFOLD-RAW] \"2020 Drop-in T-nut, M3 (3)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 4 naked edge(s), 0 over-valenced edge(s), 472 triangle(s)",
+    "[WELD] \"M5x10 BHCS (3)\" verts 752->504, topo 31 => naked 48, over-valenced 0, bowtie 0",
+    "[02:35:37][MANIFOLD-RAW] \"M5x10 BHCS (3)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 48 naked edge(s), 0 over-valenced edge(s), 960 triangle(s)",
+    "[02:35:37][WELD] \"M5x10 BHCS (2)\" verts 752->504, topo 31 => naked 48, over-valenced 0, bowtie 0",
+    "[02:35:37][MANIFOLD-RAW] \"M5x10 BHCS (2)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 48 naked edge(s), 0 over-valenced edge(s), 960 triangle(s)",
+    "[02:35:37][WELD] \"M5x10 BHCS (5)\" verts 752->504, topo 31 => naked 48, over-valenced 0, bowtie 0",
+    "[02:35:37][MANIFOLD-RAW] \"M5x10 BHCS (5)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 48 naked edge(s), 0 over-valenced edge(s), 960 triangle(s)",
+    "[02:35:37][WELD] \"M5x10 BHCS (4)\" verts 752->504, topo 31 => naked 48, over-valenced 0, bowtie 0",
+    "[02:35:37][MANIFOLD-RAW] \"M5x10 BHCS (4)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 48 naked edge(s), 0 over-valenced edge(s), 960 triangle(s)",
+    "[02:35:37][WELD] \"M4 Knurled Nut DIN 466-B\" verts 1062->752, topo 11 => naked 32, over-valenced 0, bowtie 0",
+    "[02:35:37][MANIFOLD-RAW] \"M4 Knurled Nut DIN 466-B\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 32 naked edge(s), 0 over-valenced edge(s), 1478 triangle(s)",
+    "[02:35:37][WELD] \"Thermal Fuse\" verts 926->444, topo 55, residual 2 @tol 5.89507e-08 => naked 4, over-valenced 0, bowtie 0",
+    "[02:35:37][MANIFOLD-RAW] \"Thermal Fuse\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 4 naked edge(s), 0 over-valenced edge(s), 888 triangle(s)",
+    "[WELD] \"M4 Knurled Nut DIN 466-B (1)\" verts 1062->752, topo 11 => naked 32, over-valenced 0, bowtie 0",
+    "[02:35:37][MANIFOLD-RAW] \"M4 Knurled Nut DIN 466-B (1)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 32 naked edge(s), 0 over-valenced edge(s), 1478 triangle(s)",
+    "[02:35:37][WELD] \"M3x16 SHCS (2)\" verts 518->242, topo 33, residual 2 @tol 2.05198e-08 => naked 4, over-valenced 0, bowtie 0",
+    "[02:35:37][MANIFOLD-RAW] \"M3x16 SHCS (2)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 4 naked edge(s), 0 over-valenced edge(s), 480 triangle(s)",
+    "[02:35:37][WELD] \"M4 Knurled Nut DIN 466-B (2)\" verts 1062->752, topo 11 => naked 32, over-valenced 0, bowtie 0",
+    "[02:35:37][MANIFOLD-RAW] \"M4 Knurled Nut DIN 466-B (2)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 32 naked edge(s), 0 over-valenced edge(s), 1478 triangle(s)",
+    "[02:35:37][WELD] \"M4 Knurled Nut DIN 466-B (3)\" verts 1062->752, topo 11 => naked 32, over-valenced 0, bowtie 0",
+    "[02:35:37][MANIFOLD-RAW] \"M4 Knurled Nut DIN 466-B (3)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 32 naked edge(s), 0 over-valenced edge(s), 1478 triangle(s)",
+    "[02:35:37][WELD] \"M3x16 SHCS (18)\" verts 518->242, topo 33, residual 2 @tol 2.05198e-08 => naked 4, over-valenced 0, bowtie 0",
+    "[02:35:37][MANIFOLD-RAW] \"M3x16 SHCS (18)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 4 naked edge(s), 0 over-valenced edge(s), 480 triangle(s)",
+    "[02:35:37][WELD] \"M3x16 SHCS (17)\" verts 518->242, topo 33, residual 2 @tol 2.05198e-08 => naked 4, over-valenced 0, bowtie 0",
+    "[02:35:37][WELD] \"M3x16 SHCS (16)\" verts 518->242, topo 33, residual 2 @tol 2.05198e-08 => naked 4, over-valenced 0, bowtie 0",
+    "[02:35:37][MANIFOLD-RAW] \"M3x16 SHCS (17)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 4 naked edge(s), 0 over-valenced edge(s), 480 triangle(s)",
+    "[02:35:37][MANIFOLD-RAW] \"M3x16 SHCS (16)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 4 naked edge(s), 0 over-valenced edge(s), 480 triangle(s)",
+    "[02:35:37][WELD] \"M3x6 BHCS (33)\" verts 598->328, topo 30, residual 2 @tol 1.10972e-08 => WATERTIGHT",
+    "[02:35:37][WELD] \"M3x12 SHCS (21)\" verts 518->242, topo 33, residual 2 @tol 1.68837e-08 => naked 4, over-valenced 0, bowtie 0",
+    "[02:35:37][MANIFOLD-RAW] \"M3x12 SHCS (21)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 4 naked edge(s), 0 over-valenced edge(s), 480 triangle(s)",
+    "[02:35:37][WELD] \"M3x8 SHCS (95)\" verts 530->247, topo 32, residual 6 @tol 1.34722e-06 => naked 4, over-valenced 0, bowtie 0",
+    "[02:35:37][MANIFOLD-RAW] \"M3x8 SHCS (95)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 4 naked edge(s), 0 over-valenced edge(s), 492 triangle(s)",
+    "[02:35:37][WELD] \"M3x8 SHCS (96)\" verts 530->247, topo 32, residual 6 @tol 1.34722e-06 => naked 4, over-valenced 0, bowtie 0",
+    "[02:35:37][MANIFOLD-RAW] \"M3x8 SHCS (96)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 4 naked edge(s), 0 over-valenced edge(s), 492 triangle(s)",
+    "[02:35:37][WELD] \"M3 Hammerhead T-Nut (10)\" verts 888->448, topo 96 => naked 6, over-valenced 0, bowtie 0",
+    "[02:35:37][MANIFOLD-RAW] \"M3 Hammerhead T-Nut (10)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 6 naked edge(s), 0 over-valenced edge(s), 892 triangle(s)",
+    "[02:35:38][WELD] \"M3 Hammerhead T-Nut (11)\" verts 888->448, topo 96 => naked 6, over-valenced 0, bowtie 0",
+    "[02:35:38][MANIFOLD-RAW] \"M3 Hammerhead T-Nut (11)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 6 naked edge(s), 0 over-valenced edge(s), 892 triangle(s)",
+    "[02:35:38][WELD] \"M3x8 SHCS (98)\" verts 530->247, topo 32, residual 6 @tol 1.34722e-06 => naked 4, over-valenced 0, bowtie 0",
+    "[02:35:38][MANIFOLD-RAW] \"M3x8 SHCS (98)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 4 naked edge(s), 0 over-valenced edge(s), 492 triangle(s)",
+    "[02:35:38][WELD] \"M3x8 SHCS (97)\" verts 530->247, topo 32, residual 6 @tol 1.34722e-06 => naked 4, over-valenced 0, bowtie 0",
+    "[02:35:38][MANIFOLD-RAW] \"M3x8 SHCS (97)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 4 naked edge(s), 0 over-valenced edge(s), 492 triangle(s)",
+    "[WELD] \"M3 Hammerhead T-Nut (14)\" verts 888->448, topo 96 => naked 6, over-valenced 0, bowtie 0",
+    "[02:35:38][MANIFOLD-RAW] \"M3 Hammerhead T-Nut (14)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 6 naked edge(s), 0 over-valenced edge(s), 892 triangle(s)",
+    "[02:35:38][WELD] \"M3 Hammerhead T-Nut (12)\" verts 888->448, topo 96 => naked 6, over-valenced 0, bowtie 0",
+    "[02:35:38][MANIFOLD-RAW] \"M3 Hammerhead T-Nut (12)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 6 naked edge(s), 0 over-valenced edge(s), 892 triangle(s)",
+    "[02:35:38][WELD] \"M3x8 SHCS (100)\" verts 530->247, topo 32, residual 6 @tol 1.34722e-06 => naked 4, over-valenced 0, bowtie 0",
+    "[02:35:38][MANIFOLD-RAW] \"M3x8 SHCS (100)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 4 naked edge(s), 0 over-valenced edge(s), 492 triangle(s)",
+    "[02:35:38][WELD] \"M3x8 SHCS (99)\" verts 530->247, topo 32, residual 6 @tol 1.34722e-06 => naked 4, over-valenced 0, bowtie 0",
+    "[02:35:38][MANIFOLD-RAW] \"M3x8 SHCS (99)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 4 naked edge(s), 0 over-valenced edge(s), 492 triangle(s)",
+    "[02:35:38][WELD] \"M3 Hammerhead T-Nut (15)\" verts 888->448, topo 96 => naked 6, over-valenced 0, bowtie 0",
+    "[02:35:38][MANIFOLD-RAW] \"M3 Hammerhead T-Nut (15)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 6 naked edge(s), 0 over-valenced edge(s), 892 triangle(s)",
+    "[02:35:38][WELD] \"M3 Hammerhead T-Nut (16)\" verts 888->448, topo 96 => naked 6, over-valenced 0, bowtie 0",
+    "[02:35:38][MANIFOLD-RAW] \"M3 Hammerhead T-Nut (16)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 6 naked edge(s), 0 over-valenced edge(s), 892 triangle(s)",
+    "[02:35:38][WELD] \"M3x8 SHCS (101)\" verts 530->247, topo 32, residual 6 @tol 1.34722e-06 => naked 4, over-valenced 0, bowtie 0",
+    "[02:35:38][MANIFOLD-RAW] \"M3x8 SHCS (101)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 4 naked edge(s), 0 over-valenced edge(s), 492 triangle(s)",
+    "[02:35:38][WELD] \"M3 Hammerhead T-Nut (17)\" verts 888->448, topo 96 => naked 6, over-valenced 0, bowtie 0",
+    "[02:35:38][MANIFOLD-RAW] \"M3 Hammerhead T-Nut (17)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 6 naked edge(s), 0 over-valenced edge(s), 892 triangle(s)",
+    "[02:35:38][WELD] \"M3x8 SHCS (102)\" verts 530->247, topo 32, residual 6 @tol 1.34722e-06 => naked 4, over-valenced 0, bowtie 0",
+    "[02:35:38][MANIFOLD-RAW] \"M3x8 SHCS (102)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 4 naked edge(s), 0 over-valenced edge(s), 492 triangle(s)",
+    "[02:35:38][WELD] \"M3 Hammerhead T-Nut (18)\" verts 888->448, topo 96 => naked 6, over-valenced 0, bowtie 0",
+    "[02:35:38][MANIFOLD-RAW] \"M3 Hammerhead T-Nut (18)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 6 naked edge(s), 0 over-valenced edge(s), 892 triangle(s)",
+    "[02:35:38][WELD] \"M3 Hammerhead T-Nut (19)\" verts 888->448, topo 96 => naked 6, over-valenced 0, bowtie 0",
+    "[02:35:38][MANIFOLD-RAW] \"M3 Hammerhead T-Nut (19)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 6 naked edge(s), 0 over-valenced edge(s), 892 triangle(s)",
+    "[02:35:38][WELD] \"M3x8 SHCS (103)\" verts 530->247, topo 32, residual 6 @tol 1.34722e-06 => naked 4, over-valenced 0, bowtie 0",
+    "[02:35:38][MANIFOLD-RAW] \"M3x8 SHCS (103)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 4 naked edge(s), 0 over-valenced edge(s), 492 triangle(s)",
+    "[02:35:38][WELD] \"M3 Hammerhead T-Nut (20)\" verts 888->448, topo 96 => naked 6, over-valenced 0, bowtie 0",
+    "[02:35:38][MANIFOLD-RAW] \"M3 Hammerhead T-Nut (20)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 6 naked edge(s), 0 over-valenced edge(s), 892 triangle(s)",
+    "[WELD] \"M3 Hammerhead T-Nut (21)\" verts 888->448, topo 96 => naked 6, over-valenced 0, bowtie 0",
+    "[02:35:38][MANIFOLD-RAW] \"M3 Hammerhead T-Nut (21)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 6 naked edge(s), 0 over-valenced edge(s), 892 triangle(s)",
+    "[02:35:38][WELD] \"M3x8 SHCS (105)\" verts 530->247, topo 32, residual 6 @tol 1.34722e-06 => naked 4, over-valenced 0, bowtie 0",
+    "[02:35:38][MANIFOLD-RAW] \"M3x8 SHCS (105)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 4 naked edge(s), 0 over-valenced edge(s), 492 triangle(s)",
+    "[02:35:38][WELD] \"M3x8 SHCS (104)\" verts 530->247, topo 32, residual 6 @tol 1.34722e-06 => naked 4, over-valenced 0, bowtie 0",
+    "[02:35:38][MANIFOLD-RAW] \"M3x8 SHCS (104)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 4 naked edge(s), 0 over-valenced edge(s), 492 triangle(s)",
+    "[02:35:38][WELD] \"M3x8 SHCS (109)\" verts 685->422, topo 39, degen 1, -degen-tri 1 => naked 24, over-valenced 0, bowtie 0",
+    "[02:35:38][MANIFOLD-RAW] \"M3x8 SHCS (109)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 24 naked edge(s), 0 over-valenced edge(s), 822 triangle(s)",
+    "[02:35:38][WELD] \"bottom_panel_hinge_x2 (1)\" verts 952->462, topo 107 => naked 6, over-valenced 0, bowtie 0",
+    "[02:35:38][MANIFOLD-RAW] \"bottom_panel_hinge_x2 (1)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 6 naked edge(s), 0 over-valenced edge(s), 924 triangle(s)",
+    "[02:35:38][WELD] \"M3x8 SHCS (108)\" verts 685->422, topo 39, degen 1, -degen-tri 1 => naked 24, over-valenced 0, bowtie 0",
+    "[02:35:38][MANIFOLD-RAW] \"M3x8 SHCS (108)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 24 naked edge(s), 0 over-valenced edge(s), 822 triangle(s)",
+    "[02:35:38][WELD] \"bottom_panel_hinge_x2 (1)\" verts 1148->552, topo 140, residual 9 @tol 0.000498455 => naked 6, over-valenced 0, bowtie 0",
+    "[02:35:38][MANIFOLD-RAW] \"bottom_panel_hinge_x2 (1)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 6 naked edge(s), 0 over-valenced edge(s), 1112 triangle(s)",
+    "[02:35:38][WELD] \"bottom_panel_hinge_x2\" verts 1148->552, topo 140, residual 9 @tol 0.000498455 => naked 6, over-valenced 0, bowtie 0",
+    "[02:35:38][MANIFOLD-RAW] \"bottom_panel_hinge_x2\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 6 naked edge(s), 0 over-valenced edge(s), 1112 triangle(s)",
+    "[02:35:38][WELD] \"bottom_panel_hinge_x2\" verts 952->462, topo 107 => naked 6, over-valenced 0, bowtie 0",
+    "[02:35:38][MANIFOLD-RAW] \"bottom_panel_hinge_x2\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 6 naked edge(s), 0 over-valenced edge(s), 924 triangle(s)",
+    "[WELD] \"M3x8 SHCS\" verts 685->422, topo 39, degen 1, -degen-tri 1 => naked 24, over-valenced 0, bowtie 0",
+    "[02:35:38][MANIFOLD-RAW] \"M3x8 SHCS\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 24 naked edge(s), 0 over-valenced edge(s), 822 triangle(s)",
+    "[02:35:38][WELD] \"M3x8 SHCS (68)\" verts 685->422, topo 39, degen 1, -degen-tri 1 => naked 24, over-valenced 0, bowtie 0",
+    "[02:35:38][MANIFOLD-RAW] \"M3x8 SHCS (68)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 24 naked edge(s), 0 over-valenced edge(s), 822 triangle(s)",
+    "[02:35:38][WELD] \"M3x8 SHCS (67)\" verts 685->422, topo 39, degen 1, -degen-tri 1 => naked 24, over-valenced 0, bowtie 0",
+    "[02:35:38][MANIFOLD-RAW] \"M3x8 SHCS (67)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 24 naked edge(s), 0 over-valenced edge(s), 822 triangle(s)",
+    "[02:35:38][WELD] \"M3x8 SHCS (69)\" verts 685->422, topo 39, degen 1, -degen-tri 1 => naked 24, over-valenced 0, bowtie 0",
+    "[02:35:38][MANIFOLD-RAW] \"M3x8 SHCS (69)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 24 naked edge(s), 0 over-valenced edge(s), 822 triangle(s)",
+    "[02:35:38][WELD] \"M3x12 SHCS (4)\" verts 675->416, topo 39, degen 1, -degen-tri 1 => naked 24, over-valenced 0, bowtie 0",
+    "[02:35:38][MANIFOLD-RAW] \"M3x12 SHCS (4)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 24 naked edge(s), 0 over-valenced edge(s), 810 triangle(s)",
+    "[02:35:38][WELD] \"M3x12 SHCS (5)\" verts 675->416, topo 39, degen 1, -degen-tri 1 => naked 24, over-valenced 0, bowtie 0",
+    "[02:35:38][MANIFOLD-RAW] \"M3x12 SHCS (5)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 24 naked edge(s), 0 over-valenced edge(s), 810 triangle(s)",
+    "[02:35:38][WELD] \"M3 Hammerhead T-Nut (1)\" verts 888->448, topo 96 => naked 6, over-valenced 0, bowtie 0",
+    "[02:35:38][MANIFOLD-RAW] \"M3 Hammerhead T-Nut (1)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 6 naked edge(s), 0 over-valenced edge(s), 892 triangle(s)",
+    "[02:35:38][WELD] \"M3x12 SHCS (15)\" verts 675->416, topo 39, degen 1, -degen-tri 1 => naked 24, over-valenced 0, bowtie 0",
+    "[02:35:38][MANIFOLD-RAW] \"M3x12 SHCS (15)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 24 naked edge(s), 0 over-valenced edge(s), 810 triangle(s)",
+    "[WELD] \"M3 Hammerhead T-Nut (2)\" verts 888->448, topo 96 => naked 6, over-valenced 0, bowtie 0",
+    "[02:35:38][MANIFOLD-RAW] \"M3 Hammerhead T-Nut (2)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 6 naked edge(s), 0 over-valenced edge(s), 892 triangle(s)",
+    "[02:35:38][WELD] \"M3 Hammerhead T-Nut (7)\" verts 888->448, topo 96 => naked 6, over-valenced 0, bowtie 0",
+    "[02:35:38][MANIFOLD-RAW] \"M3 Hammerhead T-Nut (7)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 6 naked edge(s), 0 over-valenced edge(s), 892 triangle(s)",
+    "[02:35:38][WELD] \"M3x12 SHCS (16)\" verts 675->416, topo 39, degen 1, -degen-tri 1 => naked 24, over-valenced 0, bowtie 0",
+    "[02:35:38][MANIFOLD-RAW] \"M3x12 SHCS (16)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 24 naked edge(s), 0 over-valenced edge(s), 810 triangle(s)",
+    "[02:35:38][WELD] \"M3 Hammerhead T-Nut (8)\" verts 888->448, topo 96 => naked 6, over-valenced 0, bowtie 0",
+    "[02:35:38][MANIFOLD-RAW] \"M3 Hammerhead T-Nut (8)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 6 naked edge(s), 0 over-valenced edge(s), 892 triangle(s)",
+    "[02:35:38][WELD] \"M3x12 SHCS (17)\" verts 675->416, topo 39, degen 1, -degen-tri 1 => naked 24, over-valenced 0, bowtie 0",
+    "[02:35:38][MANIFOLD-RAW] \"M3x12 SHCS (17)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 24 naked edge(s), 0 over-valenced edge(s), 810 triangle(s)",
+    "[02:35:38][WELD] \"M3 Hammerhead T-Nut (13)\" verts 888->448, topo 96 => naked 6, over-valenced 0, bowtie 0",
+    "[02:35:38][MANIFOLD-RAW] \"M3 Hammerhead T-Nut (13)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 6 naked edge(s), 0 over-valenced edge(s), 892 triangle(s)",
+    "[02:35:38][WELD] \"M3 Hammerhead T-Nut (9)\" verts 888->448, topo 96 => naked 6, over-valenced 0, bowtie 0",
+    "[02:35:38][MANIFOLD-RAW] \"M3 Hammerhead T-Nut (9)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 6 naked edge(s), 0 over-valenced edge(s), 892 triangle(s)",
+    "[02:35:38][WELD] \"M3x12 SHCS (19)\" verts 675->416, topo 39, degen 1, -degen-tri 1 => naked 24, over-valenced 0, bowtie 0",
+    "[02:35:38][MANIFOLD-RAW] \"M3x12 SHCS (19)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 24 naked edge(s), 0 over-valenced edge(s), 810 triangle(s)",
+    "[02:35:38][WELD] \"M3x12 SHCS (20)\" verts 675->416, topo 39, degen 1, -degen-tri 1 => naked 24, over-valenced 0, bowtie 0",
+    "[02:35:38][MANIFOLD-RAW] \"M3x12 SHCS (20)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 24 naked edge(s), 0 over-valenced edge(s), 810 triangle(s)",
+    "[02:35:38][WELD] \"M3x12 SHCS (18)\" verts 675->416, topo 39, degen 1, -degen-tri 1 => naked 24, over-valenced 0, bowtie 0",
+    "[02:35:38][MANIFOLD-RAW] \"M3x12 SHCS (18)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 24 naked edge(s), 0 over-valenced edge(s), 810 triangle(s)",
+    "[02:35:38][WELD] \"M3 Hammerhead T-Nut (23)\" verts 888->448, topo 96 => naked 6, over-valenced 0, bowtie 0",
+    "[02:35:38][MANIFOLD-RAW] \"M3 Hammerhead T-Nut (23)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 6 naked edge(s), 0 over-valenced edge(s), 892 triangle(s)",
+    "[02:35:38][WELD] \"M3 Hammerhead T-Nut (22)\" verts 888->448, topo 96 => naked 6, over-valenced 0, bowtie 0",
+    "[02:35:38][MANIFOLD-RAW] \"M3 Hammerhead T-Nut (22)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 6 naked edge(s), 0 over-valenced edge(s), 892 triangle(s)",
+    "[02:35:38][WELD] \"M3x12 SHCS (7)\" verts 675->416, topo 39, degen 1, -degen-tri 1 => naked 24, over-valenced 0, bowtie 0",
+    "[02:35:38][MANIFOLD-RAW] \"M3x12 SHCS (7)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 24 naked edge(s), 0 over-valenced edge(s), 810 triangle(s)",
+    "[02:35:38][WELD] \"M3 Hammerhead T-Nut (3)\" verts 888->448, topo 96 => naked 6, over-valenced 0, bowtie 0",
+    "[02:35:38][MANIFOLD-RAW] \"M3 Hammerhead T-Nut (3)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 6 naked edge(s), 0 over-valenced edge(s), 892 triangle(s)",
+    "[WELD] \"M3x12 SHCS (8)\" verts 675->416, topo 39, degen 1, -degen-tri 1 => naked 24, over-valenced 0, bowtie 0",
+    "[02:35:38][MANIFOLD-RAW] \"M3x12 SHCS (8)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 24 naked edge(s), 0 over-valenced edge(s), 810 triangle(s)",
+    "[02:35:38][WELD] \"M3 Hammerhead T-Nut (4)\" verts 888->448, topo 96 => naked 6, over-valenced 0, bowtie 0",
+    "[02:35:38][MANIFOLD-RAW] \"M3 Hammerhead T-Nut (4)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 6 naked edge(s), 0 over-valenced edge(s), 892 triangle(s)",
+    "[02:35:38][WELD] \"M3x12 SHCS (13)\" verts 675->416, topo 39, degen 1, -degen-tri 1 => naked 24, over-valenced 0, bowtie 0",
+    "[02:35:38][MANIFOLD-RAW] \"M3x12 SHCS (13)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 24 naked edge(s), 0 over-valenced edge(s), 810 triangle(s)",
+    "[02:35:38][WELD] \"M3 Hammerhead T-Nut (5)\" verts 888->448, topo 96 => naked 6, over-valenced 0, bowtie 0",
+    "[02:35:38][MANIFOLD-RAW] \"M3 Hammerhead T-Nut (5)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 6 naked edge(s), 0 over-valenced edge(s), 892 triangle(s)",
+    "[02:35:38][WELD] \"M3x12 SHCS (14)\" verts 675->416, topo 39, degen 1, -degen-tri 1 => naked 24, over-valenced 0, bowtie 0",
+    "[02:35:38][MANIFOLD-RAW] \"M3x12 SHCS (14)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 24 naked edge(s), 0 over-valenced edge(s), 810 triangle(s)",
+    "[02:35:38][WELD] \"M3 Hammerhead T-Nut (6)\" verts 888->448, topo 96 => naked 6, over-valenced 0, bowtie 0",
+    "[02:35:38][MANIFOLD-RAW] \"M3 Hammerhead T-Nut (6)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 6 naked edge(s), 0 over-valenced edge(s), 892 triangle(s)",
+    "[02:35:38][WELD] \"M3x12 SHCS (22)\" verts 675->416, topo 39, degen 1, -degen-tri 1 => naked 24, over-valenced 0, bowtie 0",
+    "[02:35:38][MANIFOLD-RAW] \"M3x12 SHCS (22)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 24 naked edge(s), 0 over-valenced edge(s), 810 triangle(s)",
+    "[02:35:38][WELD] \"M3x12 SHCS (27)\" verts 675->416, topo 39, degen 1, -degen-tri 1 => naked 24, over-valenced 0, bowtie 0",
+    "[02:35:38][MANIFOLD-RAW] \"M3x12 SHCS (27)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 24 naked edge(s), 0 over-valenced edge(s), 810 triangle(s)",
+    "[02:35:38][WELD] \"M3 Hammerhead T-Nut (42)\" verts 888->448, topo 96 => naked 6, over-valenced 0, bowtie 0",
+    "[02:35:38][MANIFOLD-RAW] \"M3 Hammerhead T-Nut (42)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 6 naked edge(s), 0 over-valenced edge(s), 892 triangle(s)",
+    "[02:35:38][WELD] \"M3 Hammerhead T-Nut (43)\" verts 888->448, topo 96 => naked 6, over-valenced 0, bowtie 0",
+    "[02:35:38][MANIFOLD-RAW] \"M3 Hammerhead T-Nut (43)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 6 naked edge(s), 0 over-valenced edge(s), 892 triangle(s)",
+    "[WELD] \"M3x12 SHCS (29)\" verts 675->416, topo 39, degen 1, -degen-tri 1 => naked 24, over-valenced 0, bowtie 0",
+    "[02:35:38][MANIFOLD-RAW] \"M3x12 SHCS (29)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 24 naked edge(s), 0 over-valenced edge(s), 810 triangle(s)",
+    "[02:35:38][WELD] \"M3x12 SHCS (28)\" verts 675->416, topo 39, degen 1, -degen-tri 1 => naked 24, over-valenced 0, bowtie 0",
+    "[02:35:38][MANIFOLD-RAW] \"M3x12 SHCS (28)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 24 naked edge(s), 0 over-valenced edge(s), 810 triangle(s)",
+    "[02:35:38][WELD] \"M3 Hammerhead T-Nut (45)\" verts 888->448, topo 96 => naked 6, over-valenced 0, bowtie 0",
+    "[02:35:38][MANIFOLD-RAW] \"M3 Hammerhead T-Nut (45)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 6 naked edge(s), 0 over-valenced edge(s), 892 triangle(s)",
+    "[02:35:38][WELD] \"M3x12 SHCS (30)\" verts 675->416, topo 39, degen 1, -degen-tri 1 => naked 24, over-valenced 0, bowtie 0",
+    "[02:35:38][MANIFOLD-RAW] \"M3x12 SHCS (30)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 24 naked edge(s), 0 over-valenced edge(s), 810 triangle(s)",
+    "[02:35:38][WELD] \"M3x12 SHCS (31)\" verts 675->416, topo 39, degen 1, -degen-tri 1 => naked 24, over-valenced 0, bowtie 0",
+    "[02:35:38][MANIFOLD-RAW] \"M3x12 SHCS (31)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 24 naked edge(s), 0 over-valenced edge(s), 810 triangle(s)",
+    "[02:35:38][WELD] \"M3 Hammerhead T-Nut (44)\" verts 888->448, topo 96 => naked 6, over-valenced 0, bowtie 0",
+    "[02:35:38][MANIFOLD-RAW] \"M3 Hammerhead T-Nut (44)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 6 naked edge(s), 0 over-valenced edge(s), 892 triangle(s)",
+    "[02:35:38][WELD] \"M3 Hammerhead T-Nut (46)\" verts 888->448, topo 96 => naked 6, over-valenced 0, bowtie 0",
+    "[02:35:38][MANIFOLD-RAW] \"M3 Hammerhead T-Nut (46)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 6 naked edge(s), 0 over-valenced edge(s), 892 triangle(s)",
+    "[02:35:38][WELD] \"M3 Hammerhead T-Nut (47)\" verts 888->448, topo 96 => naked 6, over-valenced 0, bowtie 0",
+    "[02:35:38][MANIFOLD-RAW] \"M3 Hammerhead T-Nut (47)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 6 naked edge(s), 0 over-valenced edge(s), 892 triangle(s)",
+    "[02:35:38][WELD] \"M3x12 SHCS (33)\" verts 675->416, topo 39, degen 1, -degen-tri 1 => naked 24, over-valenced 0, bowtie 0",
+    "[02:35:38][MANIFOLD-RAW] \"M3x12 SHCS (33)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 24 naked edge(s), 0 over-valenced edge(s), 810 triangle(s)",
+    "[02:35:38][WELD] \"M3x12 SHCS (32)\" verts 675->416, topo 39, degen 1, -degen-tri 1 => naked 24, over-valenced 0, bowtie 0",
+    "[02:35:38][MANIFOLD-RAW] \"M3x12 SHCS (32)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 24 naked edge(s), 0 over-valenced edge(s), 810 triangle(s)",
+    "[02:35:38][WELD] \"M3 Hammerhead T-Nut (49)\" verts 888->448, topo 96 => naked 6, over-valenced 0, bowtie 0",
+    "[02:35:38][MANIFOLD-RAW] \"M3 Hammerhead T-Nut (49)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 6 naked edge(s), 0 over-valenced edge(s), 892 triangle(s)",
+    "[02:35:38][WELD] \"M3 Hammerhead T-Nut (48)\" verts 888->448, topo 96 => naked 6, over-valenced 0, bowtie 0",
+    "[02:35:38][MANIFOLD-RAW] \"M3 Hammerhead T-Nut (48)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 6 naked edge(s), 0 over-valenced edge(s), 892 triangle(s)",
+    "[02:35:38][WELD] \"M3x12 SHCS (34)\" verts 675->416, topo 39, degen 1, -degen-tri 1 => naked 24, over-valenced 0, bowtie 0",
+    "[02:35:38][MANIFOLD-RAW] \"M3x12 SHCS (34)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 24 naked edge(s), 0 over-valenced edge(s), 810 triangle(s)",
+    "[WELD] \"M3 Hammerhead T-Nut (50)\" verts 888->448, topo 96 => naked 6, over-valenced 0, bowtie 0",
+    "[02:35:38][MANIFOLD-RAW] \"M3 Hammerhead T-Nut (50)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 6 naked edge(s), 0 over-valenced edge(s), 892 triangle(s)",
+    "[02:35:38][WELD] \"M3x12 SHCS (35)\" verts 675->416, topo 39, degen 1, -degen-tri 1 => naked 24, over-valenced 0, bowtie 0",
+    "[02:35:38][MANIFOLD-RAW] \"M3x12 SHCS (35)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 24 naked edge(s), 0 over-valenced edge(s), 810 triangle(s)",
+    "[02:35:38][WELD] \"M3x12 SHCS (36)\" verts 675->416, topo 39, degen 1, -degen-tri 1 => naked 24, over-valenced 0, bowtie 0",
+    "[02:35:38][MANIFOLD-RAW] \"M3x12 SHCS (36)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 24 naked edge(s), 0 over-valenced edge(s), 810 triangle(s)",
+    "[02:35:38][WELD] \"M3 Hammerhead T-Nut (51)\" verts 888->448, topo 96 => naked 6, over-valenced 0, bowtie 0",
+    "[02:35:38][MANIFOLD-RAW] \"M3 Hammerhead T-Nut (51)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 6 naked edge(s), 0 over-valenced edge(s), 892 triangle(s)",
+    "[02:35:38][WELD] \"M3x12 SHCS (38)\" verts 675->416, topo 39, degen 1, -degen-tri 1 => naked 24, over-valenced 0, bowtie 0",
+    "[02:35:38][MANIFOLD-RAW] \"M3x12 SHCS (38)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 24 naked edge(s), 0 over-valenced edge(s), 810 triangle(s)",
+    "[02:35:38][WELD] \"M3 Hammerhead T-Nut (52)\" verts 888->448, topo 96 => naked 6, over-valenced 0, bowtie 0",
+    "[02:35:38][MANIFOLD-RAW] \"M3 Hammerhead T-Nut (52)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 6 naked edge(s), 0 over-valenced edge(s), 892 triangle(s)",
+    "[02:35:38][WELD] \"M3 Hammerhead T-Nut (53)\" verts 888->448, topo 96 => naked 6, over-valenced 0, bowtie 0",
+    "[02:35:38][MANIFOLD-RAW] \"M3 Hammerhead T-Nut (53)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 6 naked edge(s), 0 over-valenced edge(s), 892 triangle(s)",
+    "[02:35:38][WELD] \"M3x8 SHCS (53)\" verts 685->422, topo 39, degen 1, -degen-tri 1 => naked 24, over-valenced 0, bowtie 0",
+    "[02:35:38][MANIFOLD-RAW] \"M3x8 SHCS (53)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 24 naked edge(s), 0 over-valenced edge(s), 822 triangle(s)",
+    "[02:35:38][WELD] \"M3x8 SHCS (54)\" verts 685->422, topo 39, degen 1, -degen-tri 1 => naked 24, over-valenced 0, bowtie 0",
+    "[02:35:38][MANIFOLD-RAW] \"M3x8 SHCS (54)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 24 naked edge(s), 0 over-valenced edge(s), 822 triangle(s)",
+    "[02:35:38][WELD] \"M3 Hammerhead T-Nut (25)\" verts 888->448, topo 96 => naked 6, over-valenced 0, bowtie 0",
+    "[02:35:38][MANIFOLD-RAW] \"M3 Hammerhead T-Nut (25)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 6 naked edge(s), 0 over-valenced edge(s), 892 triangle(s)",
+    "[02:35:38][WELD] \"M3x8 SHCS (59)\" verts 685->422, topo 39, degen 1, -degen-tri 1 => naked 24, over-valenced 0, bowtie 0",
+    "[02:35:38][MANIFOLD-RAW] \"M3x8 SHCS (59)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 24 naked edge(s), 0 over-valenced edge(s), 822 triangle(s)",
+    "[WELD] \"M3 Hammerhead T-Nut (24)\" verts 888->448, topo 96 => naked 6, over-valenced 0, bowtie 0",
+    "[02:35:38][MANIFOLD-RAW] \"M3 Hammerhead T-Nut (24)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 6 naked edge(s), 0 over-valenced edge(s), 892 triangle(s)",
+    "[02:35:38][WELD] \"M3x8 SHCS (60)\" verts 685->422, topo 39, degen 1, -degen-tri 1 => naked 24, over-valenced 0, bowtie 0",
+    "[02:35:38][MANIFOLD-RAW] \"M3x8 SHCS (60)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 24 naked edge(s), 0 over-valenced edge(s), 822 triangle(s)",
+    "[02:35:38][WELD] \"M3 Hammerhead T-Nut (30)\" verts 888->448, topo 96 => naked 6, over-valenced 0, bowtie 0",
+    "[02:35:38][MANIFOLD-RAW] \"M3 Hammerhead T-Nut (30)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 6 naked edge(s), 0 over-valenced edge(s), 892 triangle(s)",
+    "[02:35:38][WELD] \"M3 Hammerhead T-Nut (31)\" verts 888->448, topo 96 => naked 6, over-valenced 0, bowtie 0",
+    "[02:35:38][MANIFOLD-RAW] \"M3 Hammerhead T-Nut (31)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 6 naked edge(s), 0 over-valenced edge(s), 892 triangle(s)",
+    "[02:35:38][WELD] \"M3x8 SHCS (62)\" verts 685->422, topo 39, degen 1, -degen-tri 1 => naked 24, over-valenced 0, bowtie 0",
+    "[02:35:38][MANIFOLD-RAW] \"M3x8 SHCS (62)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 24 naked edge(s), 0 over-valenced edge(s), 822 triangle(s)",
+    "[02:35:38][WELD] \"M3 Hammerhead T-Nut (32)\" verts 888->448, topo 96 => naked 6, over-valenced 0, bowtie 0",
+    "[02:35:38][MANIFOLD-RAW] \"M3 Hammerhead T-Nut (32)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 6 naked edge(s), 0 over-valenced edge(s), 892 triangle(s)",
+    "[02:35:38][WELD] \"M3 Hammerhead T-Nut (33)\" verts 888->448, topo 96 => naked 6, over-valenced 0, bowtie 0",
+    "[02:35:38][MANIFOLD-RAW] \"M3 Hammerhead T-Nut (33)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 6 naked edge(s), 0 over-valenced edge(s), 892 triangle(s)",
+    "[02:35:38][WELD] \"M3x8 SHCS (63)\" verts 685->422, topo 39, degen 1, -degen-tri 1 => naked 24, over-valenced 0, bowtie 0",
+    "[02:35:38][MANIFOLD-RAW] \"M3x8 SHCS (63)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 24 naked edge(s), 0 over-valenced edge(s), 822 triangle(s)",
+    "[02:35:38][WELD] \"M3x8 SHCS (61)\" verts 685->422, topo 39, degen 1, -degen-tri 1 => naked 24, over-valenced 0, bowtie 0",
+    "[02:35:38][MANIFOLD-RAW] \"M3x8 SHCS (61)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 24 naked edge(s), 0 over-valenced edge(s), 822 triangle(s)",
+    "[02:35:38][WELD] \"M3x8 SHCS (64)\" verts 685->422, topo 39, degen 1, -degen-tri 1 => naked 24, over-valenced 0, bowtie 0",
+    "[02:35:38][MANIFOLD-RAW] \"M3x8 SHCS (64)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 24 naked edge(s), 0 over-valenced edge(s), 822 triangle(s)",
+    "[02:35:38][WELD] \"M3 Hammerhead T-Nut (34)\" verts 888->448, topo 96 => naked 6, over-valenced 0, bowtie 0",
+    "[02:35:38][MANIFOLD-RAW] \"M3 Hammerhead T-Nut (34)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 6 naked edge(s), 0 over-valenced edge(s), 892 triangle(s)",
+    "[02:35:38][WELD] \"M3 Hammerhead T-Nut (35)\" verts 888->448, topo 96 => naked 6, over-valenced 0, bowtie 0",
+    "[02:35:38][MANIFOLD-RAW] \"M3 Hammerhead T-Nut (35)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 6 naked edge(s), 0 over-valenced edge(s), 892 triangle(s)",
+    "[02:35:38][WELD] \"M3x8 SHCS (55)\" verts 685->422, topo 39, degen 1, -degen-tri 1 => naked 24, over-valenced 0, bowtie 0",
+    "[02:35:38][MANIFOLD-RAW] \"M3x8 SHCS (55)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 24 naked edge(s), 0 over-valenced edge(s), 822 triangle(s)",
+    "[02:35:38][WELD] \"M3 Hammerhead T-Nut (26)\" verts 888->448, topo 96 => naked 6, over-valenced 0, bowtie 0",
+    "[02:35:38][MANIFOLD-RAW] \"M3 Hammerhead T-Nut (26)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 6 naked edge(s), 0 over-valenced edge(s), 892 triangle(s)",
+    "[WELD] \"M3x8 SHCS (56)\" verts 685->422, topo 39, degen 1, -degen-tri 1 => naked 24, over-valenced 0, bowtie 0",
+    "[02:35:38][MANIFOLD-RAW] \"M3x8 SHCS (56)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 24 naked edge(s), 0 over-valenced edge(s), 822 triangle(s)",
+    "[02:35:38][WELD] \"M3 Hammerhead T-Nut (27)\" verts 888->448, topo 96 => naked 6, over-valenced 0, bowtie 0",
+    "[02:35:38][MANIFOLD-RAW] \"M3 Hammerhead T-Nut (27)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 6 naked edge(s), 0 over-valenced edge(s), 892 triangle(s)",
+    "[02:35:38][WELD] \"M3 Hammerhead T-Nut (28)\" verts 888->448, topo 96 => naked 6, over-valenced 0, bowtie 0",
+    "[02:35:38][MANIFOLD-RAW] \"M3 Hammerhead T-Nut (28)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 6 naked edge(s), 0 over-valenced edge(s), 892 triangle(s)",
+    "[02:35:38][WELD] \"M3x8 SHCS (57)\" verts 685->422, topo 39, degen 1, -degen-tri 1 => naked 24, over-valenced 0, bowtie 0",
+    "[02:35:38][MANIFOLD-RAW] \"M3x8 SHCS (57)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 24 naked edge(s), 0 over-valenced edge(s), 822 triangle(s)",
+    "[02:35:38][WELD] \"M3x8 SHCS (58)\" verts 685->422, topo 39, degen 1, -degen-tri 1 => naked 24, over-valenced 0, bowtie 0",
+    "[02:35:38][MANIFOLD-RAW] \"M3x8 SHCS (58)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 24 naked edge(s), 0 over-valenced edge(s), 822 triangle(s)",
+    "[02:35:38][WELD] \"M3 Hammerhead T-Nut (29)\" verts 888->448, topo 96 => naked 6, over-valenced 0, bowtie 0",
+    "[02:35:38][MANIFOLD-RAW] \"M3 Hammerhead T-Nut (29)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 6 naked edge(s), 0 over-valenced edge(s), 892 triangle(s)",
+    "[02:35:38][WELD] \"M3x8 SHCS (123)\" verts 546->266, topo 32 => naked 10, over-valenced 0, bowtie 0",
+    "[02:35:38][MANIFOLD-RAW] \"M3x8 SHCS (123)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 10 naked edge(s), 0 over-valenced edge(s), 522 triangle(s)",
+    "[02:35:38][WELD] \"M3 Hammerhead T-Nut (62)\" verts 888->448, topo 96 => naked 6, over-valenced 0, bowtie 0",
+    "[02:35:38][MANIFOLD-RAW] \"M3 Hammerhead T-Nut (62)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 6 naked edge(s), 0 over-valenced edge(s), 892 triangle(s)",
+    "[02:35:38][WELD] \"door_hinge_x6 (5)\" verts 1833->1116, topo 142 => naked 40, over-valenced 0, bowtie 0",
+    "[02:35:38][MANIFOLD-RAW] \"door_hinge_x6 (5)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 40 naked edge(s), 0 over-valenced edge(s), 2202 triangle(s)",
+    "[02:35:38][WELD] \"door_hinge_x6 (3)\" verts 1833->1116, topo 142 => naked 40, over-valenced 0, bowtie 0",
+    "[02:35:38][MANIFOLD-RAW] \"door_hinge_x6 (3)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 40 naked edge(s), 0 over-valenced edge(s), 2202 triangle(s)",
+    "[WELD] \"M3x8 SHCS (129)\" verts 546->266, topo 32 => naked 10, over-valenced 0, bowtie 0",
+    "[02:35:38][MANIFOLD-RAW] \"M3x8 SHCS (129)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 10 naked edge(s), 0 over-valenced edge(s), 522 triangle(s)",
+    "[02:35:38][WELD] \"M3 Hammerhead T-Nut (54)\" verts 888->448, topo 96 => naked 6, over-valenced 0, bowtie 0",
+    "[02:35:38][MANIFOLD-RAW] \"M3 Hammerhead T-Nut (54)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 6 naked edge(s), 0 over-valenced edge(s), 892 triangle(s)",
+    "[02:35:38][WELD] \"M3x8 SHCS (124)\" verts 546->266, topo 32 => naked 10, over-valenced 0, bowtie 0",
+    "[02:35:38][MANIFOLD-RAW] \"M3x8 SHCS (124)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 10 naked edge(s), 0 over-valenced edge(s), 522 triangle(s)",
+    "[02:35:38][WELD] \"3x6mm Magnet (8)\" verts 894->753, topo 6 => naked 28, over-valenced 0, bowtie 0",
+    "[02:35:38][MANIFOLD-RAW] \"3x6mm Magnet (8)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 28 naked edge(s), 0 over-valenced edge(s), 1478 triangle(s)",
+    "[02:35:38][WELD] \"M3 Hammerhead T-Nut (63)\" verts 888->448, topo 96 => naked 6, over-valenced 0, bowtie 0",
+    "[02:35:38][MANIFOLD-RAW] \"M3 Hammerhead T-Nut (63)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 6 naked edge(s), 0 over-valenced edge(s), 892 triangle(s)",
+    "[02:35:38][WELD] \"door_hinge_x6 (4)\" verts 1833->1116, topo 142 => naked 40, over-valenced 0, bowtie 0",
+    "[02:35:38][MANIFOLD-RAW] \"door_hinge_x6 (4)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 40 naked edge(s), 0 over-valenced edge(s), 2202 triangle(s)",
+    "[02:35:38][WELD] \"3x6mm Magnet (9)\" verts 894->753, topo 6 => naked 28, over-valenced 0, bowtie 0",
+    "[02:35:38][MANIFOLD-RAW] \"3x6mm Magnet (9)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 28 naked edge(s), 0 over-valenced edge(s), 1478 triangle(s)",
+    "[02:35:38][WELD] \"3x6mm Magnet (6)\" verts 894->753, topo 6 => naked 28, over-valenced 0, bowtie 0",
+    "[02:35:38][MANIFOLD-RAW] \"3x6mm Magnet (6)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 28 naked edge(s), 0 over-valenced edge(s), 1478 triangle(s)",
+    "[WELD] \"3x6mm Magnet (7)\" verts 894->753, topo 6 => naked 28, over-valenced 0, bowtie 0",
+    "[02:35:38][MANIFOLD-RAW] \"3x6mm Magnet (7)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 28 naked edge(s), 0 over-valenced edge(s), 1478 triangle(s)",
+    "[02:35:38][WELD] \"M3x8 SHCS (120)\" verts 546->266, topo 32 => naked 10, over-valenced 0, bowtie 0",
+    "[02:35:38][MANIFOLD-RAW] \"M3x8 SHCS (120)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 10 naked edge(s), 0 over-valenced edge(s), 522 triangle(s)",
+    "[02:35:38][WELD] \"door_hinge_x6\" verts 1831->1114, topo 142 => naked 40, over-valenced 0, bowtie 0",
+    "[02:35:38][MANIFOLD-RAW] \"door_hinge_x6\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 40 naked edge(s), 0 over-valenced edge(s), 2198 triangle(s)",
+    "[02:35:38][WELD] \"M3 Hammerhead T-Nut (59)\" verts 888->448, topo 96 => naked 6, over-valenced 0, bowtie 0",
+    "[02:35:38][MANIFOLD-RAW] \"M3 Hammerhead T-Nut (59)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 6 naked edge(s), 0 over-valenced edge(s), 892 triangle(s)",
+    "[02:35:38][WELD] \"M3x8 SHCS (121)\" verts 546->266, topo 32 => naked 10, over-valenced 0, bowtie 0",
+    "[02:35:38][MANIFOLD-RAW] \"M3x8 SHCS (121)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 10 naked edge(s), 0 over-valenced edge(s), 522 triangle(s)",
+    "[02:35:38][WELD] \"door_hinge_x6 (1)\" verts 1831->1114, topo 142 => naked 40, over-valenced 0, bowtie 0",
+    "[02:35:38][MANIFOLD-RAW] \"door_hinge_x6 (1)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 40 naked edge(s), 0 over-valenced edge(s), 2198 triangle(s)",
+    "[02:35:39][WELD] \"M3 Hammerhead T-Nut (60)\" verts 888->448, topo 96 => naked 6, over-valenced 0, bowtie 0",
+    "[02:35:39][MANIFOLD-RAW] \"M3 Hammerhead T-Nut (60)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 6 naked edge(s), 0 over-valenced edge(s), 892 triangle(s)",
+    "[02:35:39][WELD] \"M3x8 SHCS (122)\" verts 546->266, topo 32 => naked 10, over-valenced 0, bowtie 0",
+    "[02:35:39][MANIFOLD-RAW] \"M3x8 SHCS (122)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 10 naked edge(s), 0 over-valenced edge(s), 522 triangle(s)",
+    "[02:35:39][WELD] \"door_hinge_x6 (2)\" verts 1819->1089, topo 172 => naked 36, over-valenced 0, bowtie 0",
+    "[MANIFOLD-RAW] \"door_hinge_x6 (2)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 36 naked edge(s), 0 over-valenced edge(s), 2152 triangle(s)",
+    "[02:35:39][WELD] \"M3x8 SHCS (65)\" verts 546->266, topo 32 => naked 10, over-valenced 0, bowtie 0",
+    "[02:35:39][MANIFOLD-RAW] \"M3x8 SHCS (65)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 10 naked edge(s), 0 over-valenced edge(s), 522 triangle(s)",
+    "[02:35:39][WELD] \"3x6mm Magnet (4)\" verts 894->753, topo 6 => naked 28, over-valenced 0, bowtie 0",
+    "[02:35:39][MANIFOLD-RAW] \"3x6mm Magnet (4)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 28 naked edge(s), 0 over-valenced edge(s), 1478 triangle(s)",
+    "[02:35:39][WELD] \"3x6mm Magnet (5)\" verts 894->753, topo 6 => naked 28, over-valenced 0, bowtie 0",
+    "[02:35:39][MANIFOLD-RAW] \"3x6mm Magnet (5)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 28 naked edge(s), 0 over-valenced edge(s), 1478 triangle(s)",
+    "[02:35:39][WELD] \"M3 Hammerhead T-Nut (61)\" verts 888->448, topo 96 => naked 6, over-valenced 0, bowtie 0",
+    "[02:35:39][MANIFOLD-RAW] \"M3 Hammerhead T-Nut (61)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 6 naked edge(s), 0 over-valenced edge(s), 892 triangle(s)",
+    "[02:35:39][WELD] \"M3x8 SHCS (2)\" verts 546->266, topo 32 => naked 10, over-valenced 0, bowtie 0",
+    "[02:35:39][MANIFOLD-RAW] \"M3x8 SHCS (2)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 10 naked edge(s), 0 over-valenced edge(s), 522 triangle(s)",
+    "[02:35:39][WELD] \"M3 Hammerhead T-Nut (37)\" verts 888->448, topo 96 => naked 6, over-valenced 0, bowtie 0",
+    "[02:35:39][MANIFOLD-RAW] \"M3 Hammerhead T-Nut (37)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 6 naked edge(s), 0 over-valenced edge(s), 892 triangle(s)",
+    "[02:35:39][WELD] \"3x6mm Magnet (3)\" verts 894->753, topo 6 => naked 28, over-valenced 0, bowtie 0",
+    "[02:35:39][MANIFOLD-RAW] \"3x6mm Magnet (3)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 28 naked edge(s), 0 over-valenced edge(s), 1478 triangle(s)",
+    "[02:35:39][WELD] \"3x6mm Magnet (2)\" verts 894->753, topo 6 => naked 28, over-valenced 0, bowtie 0",
+    "[02:35:39][MANIFOLD-RAW] \"3x6mm Magnet (2)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 28 naked edge(s), 0 over-valenced edge(s), 1478 triangle(s)",
+    "[02:35:39][WELD] \"M3 Hammerhead T-Nut (36)\" verts 888->448, topo 96 => naked 6, over-valenced 0, bowtie 0",
+    "[02:35:39][MANIFOLD-RAW] \"M3 Hammerhead T-Nut (36)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 6 naked edge(s), 0 over-valenced edge(s), 892 triangle(s)",
+    "[02:35:39][WELD] \"M3x6 BHCS\" verts 598->328, topo 30, residual 2 @tol 1.10972e-08 => WATERTIGHT",
+    "[02:35:39][WELD] \"M3 Hammerhead T-Nut (41)\" verts 888->448, topo 96 => naked 6, over-valenced 0, bowtie 0",
+    "[02:35:39][MANIFOLD-RAW] \"M3 Hammerhead T-Nut (41)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 6 naked edge(s), 0 over-valenced edge(s), 892 triangle(s)",
+    "[02:35:39][WELD] \"M3 Hammerhead T-Nut (38)\" verts 888->448, topo 96 => naked 6, over-valenced 0, bowtie 0",
+    "[02:35:39][MANIFOLD-RAW] \"M3 Hammerhead T-Nut (38)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 6 naked edge(s), 0 over-valenced edge(s), 892 triangle(s)",
+    "[02:35:39][WELD] \"SOLID\" verts 1240->583, topo 162 => naked 6, over-valenced 0, bowtie 0",
+    "[02:35:39][MANIFOLD-RAW] \"SOLID\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 6 naked edge(s), 0 over-valenced edge(s), 1162 triangle(s)",
+    "[WELD] \"M3x6 BHCS (1)\" verts 598->328, topo 30, residual 2 @tol 1.10972e-08 => WATERTIGHT",
+    "[02:35:39][WELD] \"M3x6 BHCS (5)\" verts 598->328, topo 30, residual 2 @tol 1.10972e-08 => WATERTIGHT",
+    "[02:35:39][WELD] \"Z_Belt_Cover_A v1\" verts 2777->1504, topo 310, degen 2, -degen-tri 2 => naked 4, over-valenced 0, bowtie 0",
+    "[02:35:39][MANIFOLD-RAW] \"Z_Belt_Cover_A v1\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 4 naked edge(s), 0 over-valenced edge(s), 3006 triangle(s)",
+    "[02:35:39][WELD] \"M3 Hammerhead T-Nut (40)\" verts 888->448, topo 96 => naked 6, over-valenced 0, bowtie 0",
+    "[02:35:39][MANIFOLD-RAW] \"M3 Hammerhead T-Nut (40)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 6 naked edge(s), 0 over-valenced edge(s), 892 triangle(s)",
+    "[02:35:39][WELD] \"M3x6 BHCS (6)\" verts 598->328, topo 30, residual 2 @tol 1.10972e-08 => WATERTIGHT",
+    "[02:35:39][WELD] \"M3 Hammerhead T-Nut (39)\" verts 888->448, topo 96 => naked 6, over-valenced 0, bowtie 0",
+    "[02:35:39][MANIFOLD-RAW] \"M3 Hammerhead T-Nut (39)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 6 naked edge(s), 0 over-valenced edge(s), 892 triangle(s)",
+    "[02:35:39][WELD] \"M5x16 BHCS (6)\" verts 505->292, topo 30 => naked 34, over-valenced 0, bowtie 0",
+    "[02:35:39][MANIFOLD-RAW] \"M5x16 BHCS (6)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 34 naked edge(s), 0 over-valenced edge(s), 550 triangle(s)",
+    "[02:35:39][WELD] \"Z_Belt_Cover_B v1\" verts 2779->1506, topo 310, degen 2, -degen-tri 2 => naked 4, over-valenced 0, bowtie 0",
+    "[02:35:39][MANIFOLD-RAW] \"Z_Belt_Cover_B v1\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 4 naked edge(s), 0 over-valenced edge(s), 3010 triangle(s)",
+    "[02:35:39][WELD] \"SOLID\" verts 2770->1499, topo 310 => naked 4, over-valenced 0, bowtie 0",
+    "[02:35:39][MANIFOLD-RAW] \"SOLID\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 4 naked edge(s), 0 over-valenced edge(s), 2996 triangle(s)",
+    "[02:35:39][WELD] \"M3 Hammerhead T-Nut\" verts 888->448, topo 96 => naked 6, over-valenced 0, bowtie 0",
+    "[02:35:39][MANIFOLD-RAW] \"M3 Hammerhead T-Nut\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 6 naked edge(s), 0 over-valenced edge(s), 892 triangle(s)",
+    "[02:35:39][WELD] \"SOLID\" verts 2769->1497, topo 310, residual 2 @tol 7.61131e-08 => naked 4, over-valenced 0, bowtie 0",
+    "[02:35:39][MANIFOLD-RAW] \"SOLID\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 4 naked edge(s), 0 over-valenced edge(s), 2994 triangle(s)",
+    "[02:35:39][WELD] \"M3x8 SHCS (24)\" verts 685->422, topo 39, degen 1, -degen-tri 1 => naked 24, over-valenced 0, bowtie 0",
+    "[02:35:39][MANIFOLD-RAW] \"M3x8 SHCS (24)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 24 naked edge(s), 0 over-valenced edge(s), 822 triangle(s)",
+    "[02:35:39][WELD] \"SOLID\" verts 1752->913, topo 201, degen 8, -degen-tri 8 => naked 6, over-valenced 0, bowtie 0",
+    "[02:35:39][MANIFOLD-RAW] \"SOLID\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 6 naked edge(s), 0 over-valenced edge(s), 1830 triangle(s)",
+    "[02:35:39][WELD] \"M3 Threaded Insert (87)\" verts 2016->910, topo 324 => naked 8, over-valenced 0, bowtie 0",
+    "[02:35:39][MANIFOLD-RAW] \"M3 Threaded Insert (87)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 8 naked edge(s), 0 over-valenced edge(s), 1814 triangle(s)",
+    "[02:35:39][WELD] \"M3 Threaded Insert (86)\" verts 2016->910, topo 324 => naked 8, over-valenced 0, bowtie 0",
+    "[02:35:39][MANIFOLD-RAW] \"M3 Threaded Insert (86)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 8 naked edge(s), 0 over-valenced edge(s), 1814 triangle(s)",
+    "[WELD] \"M3 Threaded Insert (88)\" verts 2016->910, topo 324 => naked 8, over-valenced 0, bowtie 0",
+    "[02:35:39][MANIFOLD-RAW] \"M3 Threaded Insert (88)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 8 naked edge(s), 0 over-valenced edge(s), 1814 triangle(s)",
+    "[02:35:39][WELD] \"M3 Threaded Insert (85)\" verts 2016->910, topo 324 => naked 8, over-valenced 0, bowtie 0",
+    "[02:35:39][MANIFOLD-RAW] \"M3 Threaded Insert (85)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 8 naked edge(s), 0 over-valenced edge(s), 1814 triangle(s)",
+    "[02:35:39][WELD] \"M3 Threaded Insert (84)\" verts 2016->910, topo 324 => naked 8, over-valenced 0, bowtie 0",
+    "[02:35:39][MANIFOLD-RAW] \"M3 Threaded Insert (84)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 8 naked edge(s), 0 over-valenced edge(s), 1814 triangle(s)",
+    "[02:35:39][WELD] \"M3x30 SHCS (24)\" verts 518->242, topo 33, residual 2 @tol 3.38978e-08 => naked 4, over-valenced 0, bowtie 0",
+    "[02:35:39][MANIFOLD-RAW] \"M3x30 SHCS (24)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 4 naked edge(s), 0 over-valenced edge(s), 480 triangle(s)",
+    "[02:35:39][WELD] \"M3x30 SHCS (23)\" verts 518->242, topo 33, residual 2 @tol 3.38978e-08 => naked 4, over-valenced 0, bowtie 0",
+    "[02:35:39][MANIFOLD-RAW] \"M3x30 SHCS (23)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 4 naked edge(s), 0 over-valenced edge(s), 480 triangle(s)",
+    "[02:35:39][WELD] \"M3 Threaded Insert (82)\" verts 2016->910, topo 324 => naked 8, over-valenced 0, bowtie 0",
+    "[02:35:39][MANIFOLD-RAW] \"M3 Threaded Insert (82)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 8 naked edge(s), 0 over-valenced edge(s), 1814 triangle(s)",
+    "[02:35:39][WELD] \"M3 Threaded Insert (83)\" verts 2016->910, topo 324 => naked 8, over-valenced 0, bowtie 0",
+    "[02:35:39][MANIFOLD-RAW] \"M3 Threaded Insert (83)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 8 naked edge(s), 0 over-valenced edge(s), 1814 triangle(s)",
+    "[02:35:39][WELD] \"M3x12 SHCS (37)\" verts 518->242, topo 33, residual 2 @tol 1.68837e-08 => naked 4, over-valenced 0, bowtie 0",
+    "[02:35:39][MANIFOLD-RAW] \"M3x12 SHCS (37)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 4 naked edge(s), 0 over-valenced edge(s), 480 triangle(s)",
+    "[02:35:39][WELD] \"M3x30 SHCS (22)\" verts 518->242, topo 33, residual 2 @tol 3.38978e-08 => naked 4, over-valenced 0, bowtie 0",
+    "[02:35:39][MANIFOLD-RAW] \"M3x30 SHCS (22)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 4 naked edge(s), 0 over-valenced edge(s), 480 triangle(s)",
+    "[02:35:39][WELD] \"M3x8 SHCS (91)\" verts 546->264, topo 33, residual 4 @tol 1.34722e-08 => naked 8, over-valenced 0, bowtie 0",
+    "[02:35:39][MANIFOLD-RAW] \"M3x8 SHCS (91)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 8 naked edge(s), 0 over-valenced edge(s), 522 triangle(s)",
+    "[02:35:39][WELD] \"M3x30 SHCS (21)\" verts 518->242, topo 33, residual 2 @tol 3.38978e-08 => naked 4, over-valenced 0, bowtie 0",
+    "[02:35:39][MANIFOLD-RAW] \"M3x30 SHCS (21)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 4 naked edge(s), 0 over-valenced edge(s), 480 triangle(s)",
+    "[02:35:39][WELD] \"M3x8 SHCS (90)\" verts 546->264, topo 33, residual 4 @tol 1.34722e-08 => naked 8, over-valenced 0, bowtie 0",
+    "[02:35:39][MANIFOLD-RAW] \"M3x8 SHCS (90)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 8 naked edge(s), 0 over-valenced edge(s), 522 triangle(s)",
+    "[02:35:39][WELD] \"M3x12 SHCS (6)\" verts 518->242, topo 33, residual 2 @tol 1.68837e-08 => naked 4, over-valenced 0, bowtie 0",
+    "[02:35:39][MANIFOLD-RAW] \"M3x12 SHCS (6)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 4 naked edge(s), 0 over-valenced edge(s), 480 triangle(s)",
+    "[WELD] \"M3 Threaded Insert (81)\" verts 2016->910, topo 324 => naked 8, over-valenced 0, bowtie 0",
+    "[02:35:39][MANIFOLD-RAW] \"M3 Threaded Insert (81)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 8 naked edge(s), 0 over-valenced edge(s), 1814 triangle(s)",
+    "[02:35:39][WELD] \"Rear Cover (1)\" verts 2198->992, topo 336 => naked 8, over-valenced 0, bowtie 0",
+    "[02:35:39][MANIFOLD-RAW] \"Rear Cover (1)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 8 naked edge(s), 0 over-valenced edge(s), 1984 triangle(s)",
+    "[02:35:39][WELD] \"SOLID\" verts 764->344, topo 104, degen 2, -degen-tri 2 => naked 6, over-valenced 0, bowtie 0",
+    "[02:35:39][MANIFOLD-RAW] \"SOLID\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 6 naked edge(s), 0 over-valenced edge(s), 684 triangle(s)",
+    "[02:35:39][WELD] \"Exhaust Grill\" verts 3434->1538, topo 527 => naked 8, over-valenced 0, bowtie 0",
+    "[02:35:39][MANIFOLD-RAW] \"Exhaust Grill\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 8 naked edge(s), 0 over-valenced edge(s), 3152 triangle(s)",
+    "[02:35:39][WELD] \"SOLID\" verts 764->344, topo 104, degen 2, -degen-tri 2 => naked 6, over-valenced 0, bowtie 0",
+    "[02:35:39][MANIFOLD-RAW] \"SOLID\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 6 naked edge(s), 0 over-valenced edge(s), 684 triangle(s)",
+    "[02:35:39][WELD] \"SOLID\" verts 9635->5445, topo 496 => naked 12, over-valenced 0, bowtie 0",
+    "[02:35:39][MANIFOLD-RAW] \"SOLID\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 12 naked edge(s), 0 over-valenced edge(s), 10914 triangle(s)",
+    "[02:35:39][WELD] \"6020 Housing (1)\" verts 3798->1924, topo 496, residual 2 @tol 8.7178e-06 => naked 133, over-valenced 0, bowtie 0",
+    "[02:35:39][MANIFOLD-RAW] \"6020 Housing (1)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 133 naked edge(s), 0 over-valenced edge(s), 3747 triangle(s)",
+    "[02:35:39][WELD] \"BSP Bowden Connector v1 (1)\" verts 9813->7337, topo 153 => naked 28, over-valenced 0, bowtie 0",
+    "[02:35:39][MANIFOLD-RAW] \"BSP Bowden Connector v1 (1)\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 28 naked edge(s), 0 over-valenced edge(s), 14650 triangle(s)",
+    "[02:35:39][WELD] \"4x3mm PTFE Guide Tube\" verts 7158->7050, topo 4 => naked 198, over-valenced 0, bowtie 0",
+    "[02:35:39][MANIFOLD-RAW] \"4x3mm PTFE Guide Tube\" ALREADY has holes as it leaves OCCT (before any browser-side repair) : 198 naked edge(s), 0 over-valenced edge(s), 13906 triangle(s)"
+   ]
+  }
+ ],
+ "platform": "Ubuntu 24.04, OCCT 7.6.3 (apt), Manifold v3.5.3, g++ 13, 4 cores",
+ "source": "MEDUSA_SOURCE/nasscad_medusa.cpp @ d038996 (main)",
+ "input": "Voron_2.4r2_Assembly.step (241 MB, Autodesk Translation Framework v12.9, AP214) — VoronDesign/Voron-2 @ a192410, CAD/Voron_2.4r2_Assembly_STEP.zip (SHA-256 36c6c58e…c1c6), not versioned"
+}
