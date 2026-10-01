@@ -1,0 +1,70 @@
+name: Feature request
+description: Suggest something NASSCAD should be able to do
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        NASSCAD is one person's project, with a long list already. A clear
+        "not planned" is a real answer here — it is not a rejection of the idea.
+
+        Describing the problem before the solution helps: the underlying need often
+        has a cheaper answer than the feature first imagined.
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: What problem are you trying to solve?
+      description: The situation you run into, not the feature you have in mind.
+      placeholder: |
+        When I import an assembly from ..., I have to ... by hand for every part,
+        which takes ...
+    validations:
+      required: true
+
+  - type: textarea
+    id: solution
+    attributes:
+      label: What would you like NASSCAD to do?
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: What do you do today instead?
+      description: Workarounds, or how another program handles it. Screenshots welcome.
+
+  - type: dropdown
+    id: area
+    attributes:
+      label: Which part of NASSCAD?
+      options:
+        - Modelling (primitives, generators, sketcher)
+        - Boolean operations and the CSG tree
+        - STEP import / export
+        - IFC import / export
+        - Mesh formats (STL, OBJ, 3MF, GLB, PLY)
+        - Display, camera, selection, editing
+        - Measurement and inspection
+        - 3D printing (build volumes, export)
+        - NassScript
+        - MEDUSA engine
+        - Documentation
+        - Something else
+    validations:
+      required: true
+
+  - type: dropdown
+    id: use
+    attributes:
+      label: How do you use NASSCAD?
+      description: Helps weigh the request. The licence is free for everything except commercial use.
+      options:
+        - Personal projects / hobby
+        - Teaching or studying
+        - FabLab, makerspace, association
+        - Professional work
+        - Just evaluating it
+    validations:
+      required: true
