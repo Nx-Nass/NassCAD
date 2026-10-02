@@ -14,7 +14,7 @@ Create solids, sketch in 2D, apply fillets and chamfers, and exchange STEP, IFC 
 
 | Version | Best for | Requirements |
 |---|---|---|
-| **4.7.0 — MEDUSA** | Current development, STEP / IFC, B-Rep fillets and chamfers | Modern browser and local HTTP server. **MEDUSA must be built and started for boolean operations.** |
+| **4.7.0 — MEDUSA** | Current development, STEP / IFC, B-Rep fillets and chamfers | Modern browser and local HTTP server. Booleans work in the browser; **MEDUSA is optional for native multi-core processing and required for exact B-Rep STEP export.** |
 | [**4.2.7 — classic**](https://github.com/Nx-Nass/NassCAD/releases/tag/v4.2.7) | The earlier self-contained HTML application | Browser; see the [original setup instructions](https://github.com/Nx-Nass/NassCAD/blob/v4.2.7/README.md). |
 
 This is the canonical repository for NASSCAD. Versions are identified by tags and releases, rather than separate repository names. The histories of the former 4.2.7 and 4.7.0 repositories are retained.
@@ -31,7 +31,7 @@ python -m http.server 8080
 
 Open **http://localhost:8080/NASSCAD_V4_7_0.htm** in your browser. Keep the bundled files together. The current checkout includes the OpenCASCADE WASM and data files.
 
-For Union, Subtraction and Intersection, also extract the build bundle for your platform and follow its instructions to build and start **MEDUSA**. See [the engine guide](#-nasscad-engine--medusa). Viewing, primitives, fillets, chamfers and file import/export work without MEDUSA.
+Union, Subtraction and Intersection work in the browser using the bundled Manifold WASM engine, loaded on the first boolean operation. For native multi-core booleans, large STEP assemblies and exact B-Rep STEP export, extract the build bundle for your platform and follow its instructions to build and start **MEDUSA**. See [the engine guide](#-nasscad-engine--medusa).
 
 On Windows, `nasscad.bat` can start MEDUSA and open the page once the engine is built; it expects `Nasscad_Medusa_Engine_3.1.exe` beside the application. The build bundles contain source and build instructions, not a ready-to-run engine.
 
@@ -48,7 +48,7 @@ NASSCAD processes models locally. After downloading its components, it can run w
 | **PMI & GD&T** | Product manufacturing information read from STEP assemblies |
 | **IFC — BIM read & write** | Opens IFC2X3 / IFC4 / IFC4X3 in the browser (bundled web-ifc engine, offline): every building element as its own object, with its IFC name, colour and real position in mm. Writes **IFC4** with the Project › Site › Building › Storey structure strict BIM software expects — cubes, cylinders, tubes, hollow boxes, spheres and cones as true parametric solids, everything else as triangulated surfaces, colours per face kept |
 | **Non-destructive CSG tree** | Union / Subtraction / Intersection keep their construction tree — change a source and Re-run |
-| **Native CSG engine** | All booleans run in MEDUSA — C++, multithreaded, on your own machine. **Required**, no browser fallback. Progressive mode: a quick preview first, the full-quality result right after |
+| **CSG engines** | Booleans use native, multi-core MEDUSA when available, or bundled Manifold WASM in the browser otherwise. The CSG panel identifies the active engine. MEDUSA supports progressive preview and full-quality results |
 | **Build volume** | Your printer's bed and build volume on the grid — **28 best-selling printers** (Bambu Lab, Creality from the original Ender-3 and the Neo to the K2 Plus, Prusa, Elegoo, Anycubic, Voron, Sovol). Only the walls behind the part are drawn; a wall turns red when the part sticks out |
 | **World grid** | A gridded room — floor, walls, ceiling — around your work, sized to the scene (1 m, 2 m, 5 m…) so depth and scale read at a glance. One button hides volume + room, the work grid stays |
 | **Toolbox** | 6 icons per row. Scale the selection /5 /2 1× ×2 ×5 ×10, set the scroll-wheel zoom speed /5 /2 1× ×2 ×5 ×10 (remembered), measure, frame, drop to ground, centre of gravity… every button documented in the built-in help |
@@ -122,13 +122,13 @@ DEPLOY_UBUNTU_WSL/          DEPLOY_UBUNTU_WSL.zip  — MEDUSA, WSL deployment
 
 ## 🐙 NASSCAD Engine — MEDUSA
 
-**Required for boolean operations.** Since 4.7.0, `manifold.js` and `manifold_worker.js` are gone: Manifold no longer runs in the browser at all. Every boolean goes to MEDUSA over local HTTP (`POST /csg` for a flat operation, `POST /csgtree` for a whole tree), and reachability is re-probed before each one. There is **no WASM fallback** — with MEDUSA stopped, the engine badge turns red (`MEDUSA OFF`) and the operation stops with an explicit error rather than silently degrading.
+**Optional for boolean operations.** NASSCAD probes MEDUSA before each operation and uses its native engine when available (`POST /csg` for a flat operation, `POST /csgtree` for a whole tree). Otherwise it loads `nasscad-manifold-wasm.js` on demand and performs the operation locally in a browser worker. The CSG panel shows **Manifold C++ · MEDUSA** or **Manifold WASM**. Browser processing uses one core and is slower on large models.
 
 MEDUSA is a small native binary that runs **on your own machine** and listens only to it — nothing is uploaded, no account, no remote server. It links Manifold in native C++ with oneTBB, so booleans run at compiled-native speed across your cores instead of single-threaded WASM, and it also does native STEP reading and tessellation.
 
-**Works without MEDUSA** — viewing, the 18 primitives, selection, gizmos, fillet and chamfer, build volume, and import/export of STEP, IFC, STL, OBJ, 3MF, GLB and PLY. All of that runs in the browser (OpenCASCADE and web-ifc in WebAssembly) and needs nothing installed.
+**Works without MEDUSA** — viewing, the 18 primitives, selection, gizmos, fillet and chamfer, build volume, boolean operations, browser STEP import, IFC and mesh I/O. Keep the bundled files together; browser STEP import has limitations on large assemblies and per-face colors.
 
-**Needs MEDUSA** — Union, Subtraction and Intersection, Deep Re-run of a CSG tree, and auto-union repair.
+**Needs MEDUSA** — exact B-Rep STEP export. MEDUSA also provides native multi-core booleans and large-assembly STEP import.
 
 **23/09/2026 fix** — mesh welding by proximity now probes neighbouring cells by integer index. Spheres centred on a plane at 0 (Z = 0) used to keep one unwelded seam vertex and fail as *NotManifold*; they now union cleanly. The source in all three `DEPLOY_*` bundles carries the fix.
 
@@ -151,6 +151,7 @@ The C++ source is readable in [`MEDUSA_SOURCE/`](MEDUSA_SOURCE/). Build bundles 
 | Component | Author | License |
 |-----------|--------|---------|
 | `three.js` r128 | three.js authors | MIT |
+| `manifold-3d` 3.5.4 (bundled WASM) | Emmett Lalish and contributors | Apache 2.0 |
 | OpenCASCADE Technology 7.4.0 via opencascade.js 1.1.1 | Open Cascade SAS / Sebastian Alff | LGPL 2.1 with exception |
 | `occt-import-js` | Viktor Kovács | LGPL 2.1 |
 | `web-ifc` 0.0.77 | That Open Company | MPL 2.0 |

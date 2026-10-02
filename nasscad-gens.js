@@ -2776,6 +2776,14 @@ function _pipeBuild(p){
   buildCap(0, true);
   buildCap(pts.length-1, false);
 
+  // [FIX 28/09 — audit] Le repère (N, B = T×N) fait tourner les anneaux de sorte
+  // que TOUS les triangles ci-dessus regardent vers l'intérieur : le tuyau sortait
+  // retourné (volume signé négatif, ex. −3195 mm³ avec les réglages par défaut),
+  // masqué à l'écran par le DoubleSide mais faux à l'export STL et en booléen
+  // (union tuyau ∪ cube = −2195 mm³). On inverse le sens de chaque triangle :
+  // étanchéité inchangée, volume positif.
+  for(let k = 0; k < indices.length; k += 3){ const t = indices[k+1]; indices[k+1] = indices[k+2]; indices[k+2] = t; }
+
   return { vPos: Array.from(vertices), tris: Array.from(indices) };
 }
 
