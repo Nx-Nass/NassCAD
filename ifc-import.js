@@ -1,4 +1,7 @@
-/* NASSCAD IFC browser import. web-ifc 0.0.77 (MPL-2.0), bundled locally.
+/* NASSCAD IFC browser import. web-ifc 0.0.78 (MPL-2.0), bundled locally.
+ * [28/09 — audit] 0.0.77 → 0.0.78 : 0.0.77 appliquait deux fois la position d'une
+ * IfcSphere et la rendait retournée (volume négatif) — nos propres exports
+ * revenaient faux. Corrigé en 0.0.78, vérifié par aller-retour export/import.
  * Geometry import: IFC2X3 / IFC4 / IFC4X3. The original BIM relationship and
  * property graph is not retained: exported NASSCAD geometry is IFC4 proxies.
  */

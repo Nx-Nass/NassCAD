@@ -7,6 +7,7 @@ NASSCAD 4.7.0 bundles the components below. **All of them are local — zero CDN
 | Component | Version | Author | License | Used for |
 |-----------|---------|--------|---------|----------|
 | **three.js** | r128 | three.js authors | MIT | 3D WebGL rendering |
+| **manifold-3d** | 3.5.4 | Emmett Lalish and contributors | Apache 2.0 | In-browser boolean CSG fallback (`nasscad-manifold-wasm.js`), loaded on demand |
 | **OpenCASCADE Technology** | 7.4.0 via opencascade.js 1.1.1 | Open Cascade SAS / Sebastian Alff | LGPL 2.1 with exception | B-Rep CAD kernel — fillet/chamfer, STEP assembly, colour and PMI reading (`opencascade.wasm.wasm`, `opencascade.wasm.data.js`) |
 | **occt-import-js** | — | Viktor Kovács | LGPL 2.1 | STEP import, embeds OpenCASCADE Technology |
 | **web-ifc** | 0.0.77 | That Open Company | MPL 2.0 | IFC import — IFC2X3 / IFC4 / IFC4X3 (`web-ifc-api-iife.js`, `nasscad-ifc-wasm.js`) — license text in [`web-ifc-LICENSE.md`](web-ifc-LICENSE.md) |
@@ -16,7 +17,7 @@ NASSCAD 4.7.0 bundles the components below. **All of them are local — zero CDN
 | **gentilis** regular / bold | — | J. Victor Gaultney / SIL International | SIL OFL 1.1 | Text geometry |
 | **nasscad_logs.js** | — | NassLab | CC BY-NC 4.0 | Structured logging module |
 
-## In the NASSCAD Engine (MEDUSA) — required for booleans, runs on your own machine
+## In the NASSCAD Engine (MEDUSA) — native processing on your own machine
 
 | Component | Version | Author | License | Used for |
 |-----------|---------|--------|---------|----------|

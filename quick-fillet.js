@@ -16,6 +16,7 @@
 //   showSpinner, hideSpinner, _bboxCache, _camDirty                — UI/état global
 //   GeometryPool, updPoolStats, _meshMap, _raycastFiltered,
 //   _softenColor, computeCenterOfGravity, makeGeoCSG               — pipeline géométrie/CSG
+//   _genKey                                                        — helper des champs numériques
 //
 //   ⚠ COUPLAGE INTER-MODULES : _OCCT_LOADER_B64 (déclarée dans occt-loader-b64.js,
 //     module séparé juste à côté) — chargée via atob() dans _occtGetFactory().
@@ -27,6 +28,51 @@
 //     volontairement dans le host (partagées avec step-import.js, cf. son
 //     propre header). Confirmé une seconde fois par ce scan — cohérent avec
 //     la découverte initiale.
+//
+//   ⚠ COUPLAGE VERS LE HOST (UI) : le modal #qf-modal du host doit contenir les
+//     ids utilisés par _qfSyncUI() (qf-sub-fillet, qf-sub-chamfer, qf-law-*,
+//     qf-ct-*, qf-sp2/qf-vp2, qf-swap, qf-cm-*, qf-vc, qf-groups, qf-grp-add).
+//     Tous les accès DOM sont gardés (?./if(el)) : un host v4 sans ces ids
+//     continue de fonctionner en congé/chanfrein simples.
+// ══════════════════════════════════════════════════════════════════════════
+// ══ QUICK FILLET v5 (28/09) — types de finition, coins/extrémités, groupes ══
+// Référence : planche "FINITIONS D'ARÊTES" de Nass (congé, chanfrein, coins
+// arrondis, coins biseautés, double finition, congé variable, chanfrein
+// intérieur, multiples congés, chanfrein 5×30°).
+//
+//  · Congé : R constant, ou VARIABLE R1→R2 (loi linéaire OCCT Add(R1,R2,E) ;
+//    R1 du côté où l'on a cliqué l'arête ; boucle fermée → R1→R2→R1 via
+//    Add(UandR,E) — une loi linéaire y serait discontinue).
+//  · Chanfrein : les 4 méthodes du noyau (API identique d'OCCT 7.4 à 8.0.x) —
+//      d×45°  (ChFiDS_Sym)           Add(d,E)
+//      d1×d2  (ChFiDS_TwoDist)       Add(d1,d2,E,F)   d1 sur la face de réf. F
+//      d×α    (ChFiDS_DistAngle)     AddDA(d,α,E,F)   d sur F, α entre chanfrein et F
+//      gorge a (ChFiDS_ConstThroat[WithPenetration]Chamfer, OCCT ≥ 7.4) —
+//             hauteur constante de la section, + pénétration p optionnelle.
+//    Face de référence F = la face CLIQUÉE au pick ; sinon la plus horizontale
+//    (dessus/dessous) ; ⇄ l'inverse. Conventions mesurées sur le noyau :
+//    chanfrein 3×30° réf. dessus → 3,000 sur le dessus, 1,732 = 3·tan30° sur le côté.
+//  · Coins / extrémités (arêtes verticales) : Idem | Vif | Arrondi Rc | Biseau c×45°.
+//    Arrondi/Biseau = passe B-Rep n°1 sur les coins, PUIS la finition des
+//    arêtes sur le résultat B-Rep (passe 2) : le chanfrein du dessus contourne
+//    alors l'arrondi du coin (propagation tangente OCCT) → "double finition".
+//  · Groupes : "＋ Group" fige les arêtes piquées avec la finition courante ;
+//    on pique ensuite d'autres arêtes pour une autre finition (multiples congés
+//    R4/R6, congé + chanfrein…). Tout part en UN calcul, multi-passes B-Rep,
+//    sans retour au maillage entre deux passes (fini le "re-congé sur résultat
+//    facetté" pour enchaîner deux finitions).
+//  · Garde-fous : recensement B-Rep des arêtes (vives ≥ 20°, convexes/concaves,
+//    tangentes G1 écartées), invariant de volume BORNÉ et mesuré sur la
+//    TRIANGULATION (BRepGProp se trompe sur les congés qui suivent un contour
+//    facetté : faux "volume grew" qui faisait échouer la v4 sur un simple
+//    cylindre res 32 ; et le congé concave ajoute de la matière — l'ancien test
+//    le rejetait), repli : micro-arêtes/faces lamelles laissées vives
+//    (diagnostic OCCT NbFaultyContours), puis réduction uniforme + bissection
+//    → la plus grande taille réalisable.
+//  · Affichage : normales par face OCCT → un chanfrein se voit plat, un congé
+//    lisse (la v4 moyennait les normales à travers les arêtes vives).
+//  · Panneau élargi à 380 px (validé par Nass) : pictogrammes des profils,
+//    préréglages ①–⑥ de la planche, sections Finish / Corners / Edges.
 // ══════════════════════════════════════════════════════════════════════════
 // ══ Quick Fillet — état partagé pour le scan/highlight d'arêtes OCCT ═════
 // Détecte les chaînes d'arêtes vives de l'objet sélectionné (convexe/
@@ -47,19 +93,28 @@ function _qfCanRebuild(o){
 }
 let _qfActive     = false;
 let _qfSrcObj     = null;      // objet source
-let _qfChains     = [];        // chaînes courbes {pts,segN1,segN2,convex,closed,len,cum}
+let _qfChains     = [];        // chaînes courbes {pts,segN1,segN2,convex,closed,len,cum,vertical}
 let _qfEdgeTubes  = [];        // Groups de tubes colorés permanents (1 Group/chaîne)
 let _qfHoverMesh  = null;      // Group hover blanc (chaîne survolée entière)
 let _qfHoverEdge  = null;      // chaîne actuellement survolée
 let _qfHoverS     = 0;         // abscisse curviligne du point snappé sur _qfHoverEdge
 let _qfSegs       = 32;
-let _qfMode       = 'round';   // 'round' | 'chamfer'
+let _qfMode       = 'round';   // 'round' | 'chamfer'  (miroir de _qfFin.kind, gardé pour compat)
 let _qfOcctPick   = false;     // true : le clic toggle une arête dans la sélection OCCT
 let _qfOcctSel    = new Set(); // indices dans _qfChains retenus pour le fillet OCCT sélectif
 let _qfOcctSelTubes = new Map(); // idx chain -> Group de tubes doré persistant
 let _qfDragSel    = false;     // true : bouton maintenu, on "peint" la sélection en glissant
 let _qfDragAdding = true;      // direction figée au premier clic du drag (ajoute ou retire)
 let _qfDragLastIdx= -1;        // dernière chaîne traitée pendant CE drag (évite le spam)
+// [v5] Pinceau de finition courant. Une seule structure pour tous les champs :
+// changer de type ne perd pas les valeurs des autres (R ≠ d ≠ α…).
+let _qfFin = {kind:'fillet', law:'const', R:3, R2:6, type:'sym', d:3, d2:5, ang:30, pen:0, swap:false};
+let _qfCorner = {mode:'idem', size:5};   // coins/extrémités : 'idem'|'vif'|'round'|'chamfer'
+let _qfGroups = [];                      // groupes figés [{fin, idx:Set, info:Map, tubes:Map}]
+let _qfPickInfo = new Map();             // idx chaîne -> {pt, n} point + normale de face cliqués (monde)
+let _qfLastHit = null;                   // dernier point survolé sur la pièce {pt, n}
+let _qfCornerTubes = [];                 // aperçu violet des coins traités automatiquement
+const _QF_COL_PICK=0xffd23f, _QF_COL_GFIL=0xff9f1c, _QF_COL_GCHA=0x3ec9f0, _QF_COL_CORNER=0xc77dff;
 
 function toggleQuickFillet(){
   if(_qfActive){ _qfExit(); return; }
@@ -71,17 +126,20 @@ function toggleQuickFillet(){
   ren.domElement.style.cursor='crosshair';
   const m=document.getElementById('qf-modal');
   if(m){ m.classList.add('open');
-    m.style.left=Math.max(196,innerWidth-310-20)+'px';
-    m.style.top=Math.max(34,innerHeight-300-32)+'px'; }
+    _qfSyncUI();
+    // [v5] modal plus haut : on se cale sur sa hauteur réelle au lieu de 300 px
+    const h=m.offsetHeight||600, w=m.offsetWidth||380;
+    m.style.left=Math.max(196,innerWidth-w-20)+'px';
+    m.style.top=Math.max(34,innerHeight-h-32)+'px'; }
   _qfScanAndShow();
-  nasLog('QF','Quick Fillet v4 — curved chains — ☑full=1 click, partial=A→B');
+  nasLog('QF','Quick Fillet v5 — fillet const/variable · chamfer d×45° / d1×d2 / d×α / throat · corners · groups');
 }
 
-function _qfMakeTube(edge, mat){
+function _qfMakeTube(edge, mat, rMul){
   const a=new THREE.Vector3(edge.v0.x,edge.v0.y,edge.v0.z);
   const b=new THREE.Vector3(edge.v1.x,edge.v1.y,edge.v1.z);
   const len=a.distanceTo(b);
-  const r=Math.min(Math.max(len*0.010,0.07),0.4);
+  const r=Math.min(Math.max(len*0.010,0.07),0.4)*(rMul||1);
   const geo=new THREE.CylinderGeometry(r,r,len,6,1);
   const mesh=new THREE.Mesh(geo,mat);
   const dir=b.clone().sub(a).normalize();
@@ -93,11 +151,11 @@ function _qfMakeTube(edge, mat){
 }
 
 // Group de tubes pour une polyline (1 tube/segment + fermeture si boucle)
-function _qfMakeChainGroup(pts, closed, mat){
+function _qfMakeChainGroup(pts, closed, mat, rMul){
   const grp=new THREE.Group();
   const n=pts.length, nSeg=closed?n:n-1;
   for(let i=0;i<nSeg;i++){
-    grp.add(_qfMakeTube({v0:pts[i],v1:pts[(i+1)%n]},mat));
+    grp.add(_qfMakeTube({v0:pts[i],v1:pts[(i+1)%n]},mat,rMul));
   }
   return grp;
 }
@@ -141,30 +199,59 @@ function _qfClearHover(){
 function _qfOcctPickToggle(){
   _qfOcctPick=!_qfOcctPick;
   document.getElementById('qf-occtpick')?.classList.toggle('active',_qfOcctPick);
-  _qfSetStatus(_qfOcctPick?'🖱 Click the edges to fillet (click again to remove)':'Select an object then ⌐R');
+  _qfSetStatus(_qfOcctPick?'🖱 Click the edges to finish (click again to remove) — the face you click is the reference face':'Select an object then ⌐R');
+}
+// Nombre total d'arêtes à traiter en mode sélection (piquées + groupes figés)
+function _qfSelCount(){
+  let n=_qfOcctSel.size;
+  for(const g of _qfGroups) n+=g.idx.size;
+  return n;
+}
+function _qfUpdSelBtn(){
+  const n=_qfSelCount();
+  const btn=document.getElementById('qf-occt-sel');
+  if(btn){btn.textContent=`⬡ Apply selection (${n})`;btn.disabled=(n===0);}
+  const ga=document.getElementById('qf-grp-add');
+  if(ga) ga.disabled=(_qfOcctSel.size===0);
+}
+// Retire une chaîne d'un groupe figé (et son tube coloré)
+function _qfGroupDropIdx(g, idx){
+  if(!g.idx.has(idx)) return false;
+  g.idx.delete(idx); g.info.delete(idx);
+  const t=g.tubes.get(idx); if(t){ _qfDisposeGroup(t); g.tubes.delete(idx); }
+  return true;
 }
 // Version directionnelle (add=true/false) — nécessaire pour le drag-paint :
 // un toggle pur ferait clignoter la sélection si le curseur repasse deux
 // fois sur la même arête pendant un même geste de glisser.
+// [v5] À l'ajout on mémorise le point + la normale de la face survolée
+// (_qfLastHit) : face de référence des chanfreins asymétriques et extrémité R1
+// des congés variables. Piquer une arête d'un groupe figé la "re-tamponne"
+// avec la finition courante (elle quitte son groupe).
 function _qfOcctSetSel(idx, add){
   if(idx<0||idx>=_qfChains.length) return;
   const already=_qfOcctSel.has(idx);
   if(add===already) return; // déjà dans l'état voulu, rien à faire
   if(!add){
-    _qfOcctSel.delete(idx);
+    _qfOcctSel.delete(idx); _qfPickInfo.delete(idx);
     const g=_qfOcctSelTubes.get(idx);
     if(g){_qfDisposeGroup(g);_qfOcctSelTubes.delete(idx);}
   }else{
+    let moved=false;
+    for(const g of _qfGroups) moved=_qfGroupDropIdx(g,idx)||moved;
+    if(moved){ _qfGroups=_qfGroups.filter(g=>g.idx.size); _qfRenderGroups(); }
     _qfOcctSel.add(idx);
+    if(_qfLastHit) _qfPickInfo.set(idx,{pt:{x:_qfLastHit.pt.x,y:_qfLastHit.pt.y,z:_qfLastHit.pt.z},
+                                        n:_qfLastHit.n?{x:_qfLastHit.n.x,y:_qfLastHit.n.y,z:_qfLastHit.n.z}:null});
     const c=_qfChains[idx];
-    const mat=new THREE.MeshBasicMaterial({color:0xffd23f,depthTest:false,transparent:true,opacity:0.9});
+    const mat=new THREE.MeshBasicMaterial({color:_QF_COL_PICK,depthTest:false,transparent:true,opacity:0.9});
     const g=_qfMakeChainGroup(c.pts,c.closed,mat);
     scene.add(g); _qfOcctSelTubes.set(idx,g);
   }
+  _qfUpdSelBtn(); _qfUpdCornerPreview();
   const n=_qfOcctSel.size;
-  const btn=document.getElementById('qf-occt-sel');
-  if(btn){btn.textContent=`⬡ Selected (${n})`;btn.disabled=(n===0);}
-  _qfSetStatus(`${n} chain(s) selected for OCCT — click again to remove`);
+  _qfSetStatus(`${n} edge(s) picked · ${_qfFinLabel(_qfCurFinish())}`
+    +(_qfGroups.length?` + ${_qfGroups.length} group(s)`:'')+' — ＋Group to freeze, Apply to run');
   _camDirty=true;
 }
 // Présélection par zone — "Top"/"Bottom" ajoutent toutes les chaînes dont
@@ -172,32 +259,125 @@ function _qfOcctSetSel(idx, add){
 // (donc le contour d'une face plate, pas une arête verticale qui relie
 // les deux et dont les points s'étalent sur toute la hauteur). Idée Nass
 // 21/07. Tolérance relative à la diagonale, cohérente avec le reste du code.
+// [v5] + 'corners' (toutes les arêtes verticales : coins extérieurs ET
+// intérieurs — planche ③/④) et 'concave' (arêtes rentrantes : fonds de
+// poche, marches, coins intérieurs).
 function _qfPresetZone(zone){
   if(!_qfChains.length||!_qfSrcObj) return;
   const bb=_bboxCache.get(_qfSrcObj.mesh)||new THREE.Box3().setFromObject(_qfSrcObj.mesh);
   const diag=bb.getSize(new THREE.Vector3()).length();
   const tol=Math.max(0.05,diag*0.01);
   const targetY=(zone==='top')?bb.max.y:bb.min.y;
+  const pick=(zone==='corners')?(c=>c.vertical)
+            :(zone==='concave')?(c=>!c.convex)
+            :(c=>c.pts.every(p=>Math.abs(p.y-targetY)<tol));
+  const saveHit=_qfLastHit; _qfLastHit=null;   // pas de face "cliquée" pour une présélection
   let n=0;
   _qfChains.forEach((c,idx)=>{
-    const allNear=c.pts.every(p=>Math.abs(p.y-targetY)<tol);
-    if(allNear&&!_qfOcctSel.has(idx)){ _qfOcctSetSel(idx,true); n++; }
+    if(pick(c)&&!_qfOcctSel.has(idx)){ _qfOcctSetSel(idx,true); n++; }
   });
-  _qfSetStatus(n?`${n} chain(s) added from ${zone}`:`⚠ No ${zone} edge found`,n?'var(--success)':'var(--warn)');
+  _qfLastHit=saveHit;
+  const names={top:'top',bottom:'bottom',corners:'corner (vertical)',concave:'concave'};
+  _qfSetStatus(n?`${n} ${names[zone]||zone} edge(s) added · ${_qfFinLabel(_qfCurFinish())}`:`⚠ No ${names[zone]||zone} edge found`,n?'var(--success)':'var(--warn)');
 }
 function _qfOcctClearSel(){
   for(const g of _qfOcctSelTubes.values()) _qfDisposeGroup(g);
-  _qfOcctSelTubes.clear(); _qfOcctSel.clear();
+  _qfOcctSelTubes.clear(); _qfOcctSel.clear(); _qfPickInfo.clear();
   _qfDragSel=false; _qfDragLastIdx=-1;
-  const btn=document.getElementById('qf-occt-sel');
-  if(btn){btn.textContent='⬡ Selected (0)';btn.disabled=true;}
+  _qfUpdSelBtn();
   _qfOcctPick=false;
   document.getElementById('qf-occtpick')?.classList.remove('active');
+}
+function _qfGroupsClear(){
+  for(const g of _qfGroups) for(const t of g.tubes.values()) _qfDisposeGroup(t);
+  _qfGroups=[]; _qfRenderGroups(); _qfUpdSelBtn();
+}
+// Bouton ⌫ : vide piquées + groupes, SANS quitter le mode pick
+function _qfSelClearAll(){
+  for(const g of _qfOcctSelTubes.values()) _qfDisposeGroup(g);
+  _qfOcctSelTubes.clear(); _qfOcctSel.clear(); _qfPickInfo.clear();
+  _qfGroupsClear(); _qfUpdCornerPreview(); _qfUpdSelBtn();
+  _qfSetStatus('Selection cleared'); _camDirty=true;
+}
+// ── Groupes figés : même arêtes → même finition, plusieurs finitions → 1 calcul
+function _qfGroupAdd(){
+  if(!_qfOcctSel.size){ _qfSetStatus('⚠ Pick edges first, then ＋Group freezes them with the current finish','var(--warn)'); return; }
+  const fin=_qfCurFinish();
+  const g={fin, idx:new Set(_qfOcctSel), info:new Map(), tubes:new Map()};
+  for(const i of g.idx) if(_qfPickInfo.has(i)) g.info.set(i,_qfPickInfo.get(i));
+  for(const t of _qfOcctSelTubes.values()) _qfDisposeGroup(t);
+  _qfOcctSelTubes.clear(); _qfOcctSel.clear(); _qfPickInfo.clear();
+  const col=fin.kind==='fillet'?_QF_COL_GFIL:_QF_COL_GCHA;
+  for(const i of g.idx){
+    const c=_qfChains[i];
+    const mat=new THREE.MeshBasicMaterial({color:col,depthTest:false,transparent:true,opacity:0.85});
+    const t=_qfMakeChainGroup(c.pts,c.closed,mat); scene.add(t); g.tubes.set(i,t);
+  }
+  _qfGroups.push(g);
+  _qfRenderGroups(); _qfUpdSelBtn(); _qfUpdCornerPreview();
+  _qfSetStatus(`Group ${_qfGroups.length} frozen: ${_qfFinLabel(fin)} ×${g.idx.size} — change the finish and pick other edges`,'var(--success)');
+  _camDirty=true;
+}
+function _qfGroupRemove(k){
+  const g=_qfGroups[k]; if(!g) return;
+  for(const t of g.tubes.values()) _qfDisposeGroup(t);
+  _qfGroups.splice(k,1);
+  _qfRenderGroups(); _qfUpdSelBtn(); _qfUpdCornerPreview(); _camDirty=true;
+}
+function _qfRenderGroups(){
+  const el=document.getElementById('qf-groups'); if(!el) return;
+  el.innerHTML=''; el.style.display=_qfGroups.length?'flex':'none';
+  _qfGroups.forEach((g,k)=>{
+    const chip=document.createElement('span');
+    chip.className='qf-chip '+g.fin.kind;
+    chip.title=(g.fin.kind==='fillet'?'Fillet':'Chamfer')+' group — ✕ to remove';
+    chip.textContent=`${k+1}· ${_qfFinLabel(g.fin)} ×${g.idx.size}`;
+    const x=document.createElement('button'); x.textContent='✕'; x.onclick=()=>_qfGroupRemove(k);
+    chip.appendChild(x); el.appendChild(chip);
+  });
+}
+// ── Coins automatiques (mode sélection, Coins = Arrondi/Biseau) ──────────────
+// Arêtes verticales NON piquées qui touchent une arête piquée non verticale :
+// ce sont les "extrémités" des arêtes finies. Aperçu violet avant calcul ; le
+// noyau refait le même test sur le B-Rep (source de vérité).
+function _qfSelEntries(){
+  const out=[];
+  for(const g of _qfGroups) for(const i of g.idx) out.push(i);
+  for(const i of _qfOcctSel) out.push(i);
+  return out;
+}
+function _qfAutoCornerIdx(selIdx){
+  if(!_qfSrcObj||!_qfChains.length) return [];
+  const set=new Set(selIdx);
+  const others=selIdx.map(i=>_qfChains[i]).filter(c=>c&&!c.vertical);
+  if(!others.length) return [];
+  const bb=_bboxCache.get(_qfSrcObj.mesh)||new THREE.Box3().setFromObject(_qfSrcObj.mesh);
+  const tol=Math.max(0.05,bb.getSize(new THREE.Vector3()).length()*0.002);
+  const out=[];
+  _qfChains.forEach((c,i)=>{
+    if(!c.vertical||set.has(i)) return;
+    const e0=c.pts[0], e1=c.pts[c.pts.length-1];
+    if(others.some(o=>_qfDistPtPoly(e0,o.pts,o.closed)<tol||_qfDistPtPoly(e1,o.pts,o.closed)<tol)) out.push(i);
+  });
+  return out;
+}
+function _qfUpdCornerPreview(){
+  for(const g of _qfCornerTubes) _qfDisposeGroup(g);
+  _qfCornerTubes=[];
+  if(!_qfActive||(_qfCorner.mode!=='round'&&_qfCorner.mode!=='chamfer')) { _camDirty=true; return; }
+  for(const i of _qfAutoCornerIdx(_qfSelEntries())){
+    const c=_qfChains[i];
+    const mat=new THREE.MeshBasicMaterial({color:_QF_COL_CORNER,depthTest:false,transparent:true,opacity:0.95});
+    const g=_qfMakeChainGroup(c.pts,c.closed,mat,2.5); scene.add(g); _qfCornerTubes.push(g);
+  }
+  _camDirty=true;
 }
 
 function _qfExit(){
   _qfActive=false; _qfSrcObj=null; _qfChains=[];
-  _qfClearTubes(); _qfClearHover(); _qfOcctClearSel();
+  _qfClearTubes(); _qfClearHover(); _qfOcctClearSel(); _qfGroupsClear();
+  for(const g of _qfCornerTubes) _qfDisposeGroup(g); _qfCornerTubes=[];
+  _qfLastHit=null;
   const b=document.getElementById('tbx-quickfillet'); if(b) b.classList.remove('active');
   ren.domElement.style.cursor='';
   const m=document.getElementById('qf-modal'); if(m) m.classList.remove('open');
@@ -210,12 +390,140 @@ function _qfSeg(v){
   [...document.querySelectorAll('#qf-segbtns .vb-btn')].find(b=>+b.textContent===v)?.classList.add('active');
 }
 
+// ── [v5] Pinceau de finition : état → UI (source de vérité = _qfFin) ─────────
 function _qfModeSet(m){
-  _qfMode=m;
-  document.getElementById('qf-mround').classList.toggle('active',m==='round');
-  document.getElementById('qf-mchamfer').classList.toggle('active',m==='chamfer');
-  const lbl=document.getElementById('qf-plabel');
-  if(lbl) lbl.textContent=m==='chamfer'?'Distance C':'Radius R (mm)';
+  _qfMode=(m==='chamfer')?'chamfer':'round';
+  _qfFin.kind=(_qfMode==='chamfer')?'chamfer':'fillet';
+  _qfSyncUI();
+}
+function _qfLawSet(l){ _qfFin.law=(l==='var')?'var':'const'; _qfSyncUI(); }
+function _qfChamfTypeSet(t){ _qfFin.type=['sym','dd','da','throat'].includes(t)?t:'sym'; _qfSyncUI(); }
+function _qfSwapToggle(){ _qfFin.swap=!_qfFin.swap; _qfSyncUI(); }
+function _qfCornerSet(m){
+  _qfCorner.mode=['idem','vif','round','chamfer'].includes(m)?m:'idem';
+  _qfSyncUI(); _qfUpdCornerPreview();
+}
+// Clé d'état portée par le champ p1/p2 selon le type courant
+function _qfParamKey(which){
+  const f=_qfFin;
+  if(which==='p1') return f.kind==='fillet'?'R':'d';
+  if(f.kind==='fillet') return f.law==='var'?'R2':null;
+  return ({dd:'d2',da:'ang',throat:'pen'})[f.type]||null;
+}
+const _QF_PARAM_META={
+  R:  {min:0.05,max:999,smax:50,step:0.1, lbl:()=>_qfFin.law==='var'?'R1 (mm)':'Radius R (mm)'},
+  R2: {min:0.05,max:999,smax:50,step:0.1, lbl:()=>'R2 (mm)'},
+  d:  {min:0.05,max:999,smax:50,step:0.1, lbl:()=>({dd:'d1 (mm)',da:'d (mm)',throat:'Throat a (mm)'})[_qfFin.type]||'d (mm)'},
+  d2: {min:0.05,max:999,smax:50,step:0.1, lbl:()=>'d2 (mm)'},
+  ang:{min:5,   max:80, smax:80,step:0.5, lbl:()=>'Angle α (°)'},
+  pen:{min:0,   max:999,smax:20,step:0.1, lbl:()=>'Penetr. p (mm)'}
+};
+function _qfParam(which, v){
+  v=parseFloat(v); if(!isFinite(v)) { _qfSyncUI(); return; }
+  if(which==='pc'){ _qfCorner.size=Math.min(999,Math.max(0.05,v)); _qfSyncUI(); return; }
+  const key=_qfParamKey(which); if(!key) return;
+  const m=_QF_PARAM_META[key];
+  _qfFin[key]=Math.min(m.max,Math.max(m.min,v));
+  _qfSyncUI();
+}
+// Snapshot immuable de la finition courante (ce qui part au noyau / dans un groupe)
+function _qfCurFinish(){
+  const f=_qfFin;
+  if(f.kind==='fillet') return {kind:'fillet',law:f.law,R:f.R,R2:f.law==='var'?f.R2:f.R,swap:f.swap};
+  return {kind:'chamfer',type:f.type,d:f.d,d2:f.d2,ang:f.ang,pen:(f.type==='throat')?f.pen:0,swap:f.swap};
+}
+function _qfCornerFinish(){
+  const c=_qfCorner;
+  if(c.mode==='round')   return {kind:'fillet', law:'const',R:c.size,R2:c.size,swap:false};
+  if(c.mode==='chamfer') return {kind:'chamfer',type:'sym',d:c.size,d2:c.size,ang:45,pen:0,swap:false};
+  return null;
+}
+// ── [v5] Préréglages = les cases de la planche "finitions d'arêtes" ─────────
+// Un clic règle finition + coins + arêtes (tailles de la planche, à ajuster) ;
+// rien n'est calculé tant qu'on n'a pas cliqué Apply / All.
+const _QF_RECIPE_HINT={
+  fillet:'① Fillet R5 on the top edges + corners — adjust R, then Apply selection',
+  chamfer:'② Chamfer 3 × 45° on the top edges — adjust d, then Apply selection',
+  rcorners:'③ Rounded corners R10 — adjust R, then Apply selection',
+  bcorners:'④ Bevelled corners 8 × 45° — adjust d, then Apply selection',
+  double:'⑤ Corners R8 first, then chamfer 2 × 45° around them — Apply selection',
+  var:'⑥ Click the edge near the end that gets R1 (R3), the other end gets R2 (R8)',
+  inner:'⑥ Click the rim edges of the pocket / hollow (inner chamfer 4 × 45°)',
+  multi:'⑥ Pick the R4 edges, ＋ Group, set R6, pick the others, Apply selection',
+  da:'⑥ Click the edge ON the face that carries the 5 mm (30° from that face)'
+};
+function _qfRecipe(v){
+  const sel=document.getElementById('qf-recipe'); if(sel) sel.value='';
+  if(!v||!_qfActive||!_QF_RECIPE_HINT[v]) return;
+  _qfSelClearAll();
+  const F=_qfFin;
+  const pick=on=>{ if(_qfOcctPick!==on) _qfOcctPickToggle(); };
+  const setCorner=(m,sz)=>{ if(sz) _qfCorner.size=sz; _qfCornerSet(m); };
+  switch(v){
+    case 'fillet':   _qfModeSet('round');   _qfLawSet('const'); F.R=5; setCorner('idem'); _qfPresetZone('top'); _qfPresetZone('corners'); break;
+    case 'chamfer':  _qfModeSet('chamfer'); _qfChamfTypeSet('sym'); F.d=3; setCorner('idem'); _qfPresetZone('top'); break;
+    case 'rcorners': _qfModeSet('round');   _qfLawSet('const'); F.R=10; setCorner('idem'); _qfPresetZone('corners'); break;
+    case 'bcorners': _qfModeSet('chamfer'); _qfChamfTypeSet('sym'); F.d=8; setCorner('idem'); _qfPresetZone('corners'); break;
+    case 'double':   _qfModeSet('chamfer'); _qfChamfTypeSet('sym'); F.d=2; setCorner('round',8); _qfPresetZone('top'); break;
+    case 'var':      _qfModeSet('round');   _qfLawSet('var'); F.R=3; F.R2=8; F.swap=false; setCorner('idem'); pick(true); break;
+    case 'inner':    _qfModeSet('chamfer'); _qfChamfTypeSet('sym'); F.d=4; setCorner('idem'); pick(true); break;
+    case 'multi':    _qfModeSet('round');   _qfLawSet('const'); F.R=4; setCorner('idem'); pick(true); break;
+    case 'da':       _qfModeSet('chamfer'); _qfChamfTypeSet('da'); F.d=5; F.ang=30; F.swap=false; setCorner('idem'); pick(true); break;
+  }
+  _qfSyncUI();
+  _qfSetStatus(_QF_RECIPE_HINT[v],'var(--success)');
+  nasLog('QF','Preset: '+_QF_RECIPE_HINT[v].split(' — ')[0]);
+}
+function _qfSyncUI(){
+  const f=_qfFin, $=id=>document.getElementById(id);
+  const act=(id,on)=>{ const e=$(id); if(e) e.classList.toggle('active',!!on); };
+  const show=(el,on)=>{ if(el) el.style.display=on?'':'none'; };
+  const isF=f.kind==='fillet';
+  _qfMode=isF?'round':'chamfer';
+  act('qf-mround',isF); act('qf-mchamfer',!isF);
+  show($('qf-sub-fillet'),isF); show($('qf-sub-chamfer'),!isF);
+  act('qf-law-const',f.law!=='var'); act('qf-law-var',f.law==='var');
+  for(const t of ['sym','dd','da','throat']) act('qf-ct-'+t,f.type===t);
+  // p1
+  const k1=_qfParamKey('p1'), m1=_QF_PARAM_META[k1];
+  const lbl=$('qf-plabel'); if(lbl) lbl.textContent=m1.lbl();
+  const sp=$('qf-sp'), vp=$('qf-vp');
+  if(sp){ sp.min=0.1; sp.max=m1.smax; sp.step=m1.step; sp.value=Math.min(m1.smax,f[k1]); }
+  if(vp&&vp!==document.activeElement) vp.value=(+f[k1]).toFixed(k1==='ang'?1:2).replace(/\.?0+$/,'')||'0';
+  // p2
+  const k2=_qfParamKey('p2');
+  document.querySelectorAll('#qf-modal .qf-p2').forEach(e=>show(e,!!k2));
+  if(k2){
+    const m2=_QF_PARAM_META[k2];
+    const l2=$('qf-p2label'); if(l2) l2.textContent=m2.lbl();
+    const sp2=$('qf-sp2'), vp2=$('qf-vp2');
+    if(sp2){ sp2.min=(k2==='pen')?0:(k2==='ang'?5:0.1); sp2.max=m2.smax; sp2.step=m2.step; sp2.value=Math.min(m2.smax,f[k2]); }
+    if(vp2&&vp2!==document.activeElement) vp2.value=(+f[k2]).toFixed(k2==='ang'?1:2).replace(/\.?0+$/,'')||'0';
+  }
+  // ⇄ : extrémité R1 (congé variable) ou face de référence (chanfreins asymétriques)
+  const sw=$('qf-swap');
+  const swapUse=isF?(f.law==='var'):(f.type==='dd'||f.type==='da'||(f.type==='throat'&&f.pen>0));
+  if(sw){
+    show(sw,swapUse); sw.classList.toggle('active',!!f.swap);
+    const what=isF?'R1 at':({dd:'d1 on',da:'d on',throat:'p on'})[f.type]||'d on';
+    sw.textContent=isF?`⇄ ${what}: ${f.swap?'the far end':'the clicked end'}`
+                      :`⇄ ${what}: ${f.swap?'the other face':'clicked / top face'}`;
+  }
+  // coins / extrémités
+  for(const cm of ['idem','vif','round','chamfer']) act('qf-cm-'+cm,_qfCorner.mode===cm);
+  const vc=$('qf-vc');
+  if(vc){ vc.disabled=!(_qfCorner.mode==='round'||_qfCorner.mode==='chamfer');
+          if(vc!==document.activeElement) vc.value=+(+_qfCorner.size).toFixed(2); }
+  const occ=$('qf-occt');
+  if(occ) occ.textContent=`⬡ All sharp edges · ${_qfFinLabel(_qfCurFinish())}`
+    +(_qfCorner.mode==='round'?` + corners R${+_qfCorner.size.toFixed(2)}`:_qfCorner.mode==='chamfer'?` + corners C${+_qfCorner.size.toFixed(2)}`:_qfCorner.mode==='vif'?' · corners sharp':'');
+  _qfUpdSelBtn();
+  // le modal grandit/rapetisse selon le type : on le garde entièrement visible
+  const mod=$('qf-modal');
+  if(mod&&mod.classList.contains('open')&&typeof innerHeight==='number'&&mod.getBoundingClientRect){
+    const r=mod.getBoundingClientRect();
+    if(r.height&&r.bottom>innerHeight-6) mod.style.top=Math.max(34,innerHeight-r.height-6)+'px';
+  }
 }
 
 function _qfSetStatus(msg,col){
@@ -251,18 +559,39 @@ function _qfNearestChain(hitPt, candidates){
   return best?{chain:best,s:bs}:null;
 }
 
+// [v5] Point + normale MONDE de la face de la pièce sous le curseur (ou null).
+// La normale sert à désigner la face de référence des chanfreins asymétriques.
+function _qfHitOnSrc(){
+  ray.setFromCamera(mouse,cam);
+  const hits=_raycastFiltered();
+  for(const h of hits){
+    const c=_meshMap.get(h.object);
+    if(c&&c.id===_qfSrcObj.id){
+      let n=null;
+      if(h.face&&h.face.normal){
+        const v=h.face.normal.clone().transformDirection(h.object.matrixWorld);
+        n={x:v.x,y:v.y,z:v.z};
+      }
+      return {pt:h.point.clone(),n};
+    }
+  }
+  return null;
+}
+// Finition portée par une chaîne (groupe figé ou piquée) — pour le survol
+function _qfChainFinLabel(idx){
+  if(_qfOcctSel.has(idx)) return _qfFinLabel(_qfCurFinish());
+  for(const g of _qfGroups) if(g.idx.has(idx)) return _qfFinLabel(g.fin)+' (group)';
+  return '';
+}
+
 // Hover : chaîne survolée en surbrillance blanche + preview sous-chaîne
 // ambre A→hover si un point de départ est figé (verrouillé sur sa chaîne).
 function _qfOnHover(){
   if(!_qfActive||!_qfSrcObj) return;
-  ray.setFromCamera(mouse,cam);
-  const hits=_raycastFiltered();
-  let hitPt=null;
-  for(const h of hits){
-    const c=_meshMap.get(h.object);
-    if(c&&c.id===_qfSrcObj.id){hitPt=h.point;break;}
-  }
-  if(!hitPt){_qfClearHover();return;}
+  const hit=_qfHitOnSrc();
+  if(!hit){_qfClearHover();return;}
+  _qfLastHit=hit;
+  const hitPt=hit.pt;
 
   const hitRes=_qfNearestChain(hitPt,_qfChains);
 
@@ -283,20 +612,18 @@ function _qfOnHover(){
 
   const tag=best.convex?'▲ convex':'▼ concave';
   const loop=best.closed?' ⟳loop':'';
-  _qfSetStatus(`${tag}${loop} len=${best.len.toFixed(1)}mm`);
+  const vert=best.vertical?' ▮corner':'';
+  const fl=_qfChainFinLabel(_qfChains.indexOf(best));
+  _qfSetStatus(`${tag}${loop}${vert} len=${best.len.toFixed(1)}mm${fl?' · '+fl:''}`);
   _camDirty=true;
 }
 
 // Click : bascule une chaîne dans/hors la sélection OCCT (mode pick actif)
 function _qfOnClick(){
-  ray.setFromCamera(mouse,cam);
-  const hits=_raycastFiltered();
-  let hitPt=null;
-  for(const h of hits){
-    const c=_meshMap.get(h.object);
-    if(c&&c.id===_qfSrcObj.id){hitPt=h.point;break;}
-  }
-  if(!hitPt){_qfSetStatus('Click on the part','var(--warn)');return true;}
+  const hit=_qfHitOnSrc();
+  if(!hit){_qfSetStatus('Click on the part','var(--warn)');return true;}
+  _qfLastHit=hit;
+  const hitPt=hit.pt;
 
   if(_qfOcctPick){
     const hr=_qfNearestChain(hitPt,_qfChains);
@@ -308,7 +635,7 @@ function _qfOnClick(){
     return true;
   }
 
-  _qfSetStatus('🖱 Click "Pick edges" first to select edges for OCCT','var(--warn)');
+  _qfSetStatus('🖱 Click "Pick edges" first — or use Top / Bottom / Corners / Concave, or All sharp edges','var(--warn)');
   return true;
 }
 
@@ -443,13 +770,19 @@ function _qfScanChains(targetObj){
       const d=sub(pts[0],pts[pts.length-1]);
       len+=Math.sqrt(dot(d,d));
     }
+    // [v5] chaîne "verticale" (coin) : tous ses segments à ≤ 10° de l'axe Y
+    let vertical=!closed&&pts.length>=2;
+    for(let i=0;vertical&&i<pts.length-1;i++){
+      const d=sub(pts[i+1],pts[i]), l=Math.sqrt(dot(d,d));
+      if(l>1e-9&&Math.abs(d.y)/l<_QF_VERT_COS) vertical=false;
+    }
     chains.push({pts,segN1:segList.map(s=>s.n1),segN2:segList.map(s=>s.n2),
-                 convex:seed.convex,closed,len,cum});
+                 convex:seed.convex,closed,len,cum,vertical});
   }
   return chains;
 }
 
-// ══ Fin Quick Congé v4 ═══════════════════════════════════════════════════
+// ══ Fin Quick Congé v5 (UI) ══════════════════════════════════════════════
 
 // ══ OCCT All-Edges Fillet — BRepFilletAPI_MakeFillet (opencascade.js) ═════
 // Real B-Rep kernel pipeline: mesh → per-triangle faces → Sewing (welds
@@ -648,19 +981,29 @@ function _occtLoad(){
 // au lieu du segment isolé. Le reste de l'heuristique est inchangé (conservatrice,
 // basée sur la longueur de l'arête et non sur la largeur réelle de la face
 // adjacente ; l'échelle de repli du kernel couvre désormais ce qu'elle rate).
+// [v5 28/09] Devenu INFORMATIF (journal + statut), plus de confirm() bloquant :
+//  · faux positif systématique sur le cas phare "coins arrondis" — les arêtes
+//    verticales d'une plaque de 10 mm "n'acceptent pas" R10 selon ce test alors
+//    que le noyau le fait (planche ③ : R10 sur plaque) ; la longueur d'une arête
+//    ne borne pas son rayon, la largeur des faces adjacentes si ;
+//  · le noyau v5 ne "plante" plus sur un R trop grand : il cherche lui-même la
+//    plus grande taille réalisable (réduction + bissection) et l'annonce.
+// Accepte une taille par chaîne : list = [{chain, size}] (ou (chains, R) v4).
 const _QF_RUN_COS=Math.cos(5*Math.PI/180);
-function _qfCheckRadiusFits(chains, R){
+function _qfCheckRadiusFits(list, R){
+  if(R!==undefined) list=list.map(c=>({chain:c,size:R}));
   let worst=null;
   const dirOf=(a,b)=>{const dx=b.x-a.x,dy=b.y-a.y,dz=b.z-a.z;
     const l=Math.sqrt(dx*dx+dy*dy+dz*dz);
     return l>1e-9?{x:dx/l,y:dy/l,z:dz/l,l}:null;};
-  for(const c of chains){
+  for(const {chain:c,size:Rc} of list){
+    if(!c||!(Rc>0)) continue;
     const n=c.segN1.length, np=c.pts.length;
     let runLen=0, runAngMin=Math.PI, prevDir=null;
     const flush=()=>{
       if(runLen<=0) return;
       const maxR=0.5*runLen*Math.tan(runAngMin/2);
-      if(R>maxR*1.05 && (!worst||maxR<worst.maxR)) worst={segLen:runLen,angDeg:runAngMin*180/Math.PI,maxR};
+      if(Rc>maxR*1.05 && (!worst||maxR/Rc<worst.maxR/worst.R)) worst={segLen:runLen,angDeg:runAngMin*180/Math.PI,maxR,R:Rc};
       runLen=0; runAngMin=Math.PI; prevDir=null;
     };
     for(let i=0;i<n;i++){
@@ -710,106 +1053,652 @@ function _occtIsValid(oc, shape){
     _occtDrop(a); return v;
   }catch(_){ return null; }   // API différente → on retombe sur les autres gardes
 }
-// Longueur d'une arête OCCT (corde sommet→sommet — suffisant pour trier les
-// arêtes trop courtes pour accueillir R).
-function _occtEdgeLen(oc, edge){
-  try{
-    const a=oc.BRep_Tool.Pnt(oc.TopExp.FirstVertex(edge,false));
-    const b=oc.BRep_Tool.Pnt(oc.TopExp.LastVertex(edge,false));
-    const d=Math.hypot(a.X()-b.X(),a.Y()-b.Y(),a.Z()-b.Z());
-    _occtDrop(a,b); return d;
-  }catch(_){ return Infinity; }  // dans le doute on garde l'arête
+// ══ QF v5 — noyau B-Rep multi-passes (congés / chanfreins OCCT) ═════════════
+// Code pur noyau : aucune dépendance DOM/THREE — validé tel quel sous Node avec
+// le même opencascade.wasm que NASSCAD (pipeline triangles → sewing → unify
+// identique), sur plaque, bloc en L, marche, poche, plaque à coins facettés.
+//
+// Descripteurs de finition ("pinceau") :
+//   congé   {kind:'fillet',  law:'const'|'var', R, R2}
+//   chanfrein {kind:'chamfer', type:'sym'|'dd'|'da'|'throat', d, d2, ang, pen, swap}
+//     sym    : d × 45°            → Add(d, E)                 (ChFiDS_Sym)
+//     dd     : d1 × d2            → Add(d1, d2, E, F)         (ChFiDS_TwoDist, d1 sur F)
+//     da     : d × α              → AddDA(d, α, E, F)         (ChFiDS_DistAngle, d sur F)
+//     throat : gorge a [+ pén. p] → SetMode(ConstThroat[WithPenetration]) — OCCT ≥ 7.4
+// ═════════════════════════════════════════════════════════════════════════════
+const _QF_SHARP_DEG = 20;                               // même seuil que le scan maillage
+const _QF_VERT_COS  = Math.cos(10*Math.PI/180);         // arête "verticale" (coin) : ≤ 10° de Y
+
+// Taille caractéristique d'une finition (pour filtres/garde-fous/déflexion).
+function _qfFinSize(f){
+  if(!f) return 0;
+  if(f.kind==='fillet') return f.law==='var'?Math.max(f.R,f.R2):f.R;
+  switch(f.type){
+    case 'dd': return Math.max(f.d,f.d2);
+    case 'da': { const a=Math.min(80,Math.max(10,f.ang))*Math.PI/180; return Math.max(f.d, f.d*Math.tan(a)); }
+    case 'throat': return f.d*Math.SQRT2+(f.pen||0);
+    default: return f.d;
+  }
 }
-// Échelle de repli — essayée dans l'ordre jusqu'au premier résultat VALIDE.
-// f = facteur sur R demandé ; skip = ignorer les arêtes plus courtes que skip×R
-// (celles qui ne peuvent physiquement pas accueillir le congé), 0 = tout garder.
-const _OCCT_FALLBACK=[
-  {f:1,    skip:0},
-  {f:1,    skip:2},
-  {f:0.6,  skip:2},
-  {f:0.4,  skip:2},
-  {f:0.25, skip:2},
-  {f:0.15, skip:0}
-];
-// Une tentative = un MakeFillet/MakeChamfer complet + validation.
-// Renvoie {ok, shape, mk, R, nAdded, nSkipped, nEdges, why}.
-function _occtAttempt(oc, unified, R, skipK, round, volBefore, keepSegs, segOnEdge){
-  const mk=round
-    ?new oc.BRepFilletAPI_MakeFillet(unified,oc.ChFi3d_FilletShape.ChFi3d_Rational)
-    :new oc.BRepFilletAPI_MakeChamfer(unified);
-  const minLen=skipK>0?skipK*R:0;
-  let nEdges=0,nAdded=0,nSkipped=0;
-  const ex=new oc.TopExp_Explorer_2(unified,oc.TopAbs_ShapeEnum.TopAbs_EDGE,oc.TopAbs_ShapeEnum.TopAbs_SHAPE);
-  while(ex.More()){
-    const edge=oc.TopoDS.Edge_1(ex.Current());
-    nEdges++;
-    let take=true;
-    if(keepSegs){
-      const vF=oc.TopExp.FirstVertex(edge,false),vL=oc.TopExp.LastVertex(edge,false);
-      const pF=oc.BRep_Tool.Pnt(vF),pL=oc.BRep_Tool.Pnt(vL);
-      const v1={x:pF.X(),y:pF.Y(),z:pF.Z()},v2={x:pL.X(),y:pL.Y(),z:pL.Z()};
-      _occtDrop(pF,pL,vF,vL);
-      take=keepSegs.some(s=>segOnEdge(v1,v2,s.p0,s.p1));
+function _qfFinLabel(f){
+  if(!f) return '—';
+  if(f.kind==='fillet') return f.law==='var'?`R${+f.R.toFixed(2)}→R${+f.R2.toFixed(2)}`:`R${+f.R.toFixed(2)}`;
+  switch(f.type){
+    case 'dd': return `C${+f.d.toFixed(2)}×${+f.d2.toFixed(2)}`;
+    case 'da': return `C${+f.d.toFixed(2)}×${+f.ang.toFixed(1)}°`;
+    case 'throat': return `a${+f.d.toFixed(2)}`+(f.pen>0?`+p${+f.pen.toFixed(2)}`:'');
+    default: return `C${+f.d.toFixed(2)}×45°`;
+  }
+}
+// Finition réellement appliquée après réduction ×s (l'angle d'un d×α ne change pas)
+function _qfFinScaled(f, s){
+  if(!f||s===1) return f;
+  const g=Object.assign({},f);
+  for(const k of ['R','R2','d','d2','pen']) if(typeof g[k]==='number') g[k]*=s;
+  return g;
+}
+// Aire max de la section retirée/ajoutée par une finition sur une arête dont les
+// normales font un angle θ (rad) — borne l'invariant de volume.
+function _qfFinArea(f, s, theta){
+  const th=Math.min(Math.max(theta,0.05),170*Math.PI/180);
+  if(f.kind==='fillet'){
+    const R=(f.law==='var'?Math.max(f.R,f.R2):f.R)*s;
+    return R*R*(Math.tan(th/2)-th/2)+1e-9;
+  }
+  const L=_qfFinSize(f)*s*1.5;                 // jambes majorées
+  return 0.5*L*L+1e-9;
+}
+
+// ── Recensement topologique d'une forme : 1 fiche par arête unique ──────────
+// {edge, fa, fb (faces), oa (orientation de l'arête dans fa), p0, p1, pts[],
+//  len, dih (°), convex, vertical, sharp, why}
+function _occtCensus(oc, shape){
+  const TA=oc.TopAbs_ShapeEnum;
+  const faces=[], recs=[], buckets=new Map();
+  const fex=new oc.TopExp_Explorer_2(shape,TA.TopAbs_FACE,TA.TopAbs_SHAPE);
+  while(fex.More()){
+    const f=oc.TopoDS.Face_1(fex.Current());
+    const fi=faces.length; faces.push(f);
+    const eex=new oc.TopExp_Explorer_2(f,TA.TopAbs_EDGE,TA.TopAbs_SHAPE);
+    while(eex.More()){
+      const e=oc.TopoDS.Edge_1(eex.Current());
+      const h=e.HashCode(0x3fffffff);
+      let arr=buckets.get(h); if(!arr){arr=[];buckets.set(h,arr);}
+      let r=arr.find(x=>x.edge.IsSame(e));
+      if(!r){ r={edge:e,adj:[],extra:[]}; arr.push(r); recs.push(r); }
+      else r.extra.push(e);
+      r.adj.push({fi,ori:e.Orientation_1()});
+      eex.Next();
     }
-    if(take&&minLen>0&&_occtEdgeLen(oc,edge)<minLen){ take=false; nSkipped++; }
-    if(take){ mk.Add_2(R,edge); nAdded++; }
-    _occtDrop(edge);
-    ex.Next();
+    _occtDrop(eex);
+    fex.Next();
   }
-  _occtDrop(ex);
-  if(!nAdded){ _occtDrop(mk); return {ok:false,nEdges,nAdded,nSkipped,why:'no edge left to fillet'}; }
-  try{ mk.Build(); }
-  catch(err){ const m=(err&&err.message)||String(err); _occtDrop(mk); return {ok:false,nEdges,nAdded,nSkipped,why:m,raw:err}; }
-  if(!mk.IsDone()){ _occtDrop(mk); return {ok:false,nEdges,nAdded,nSkipped,why:'kernel Build failed'}; }
-  const shape=mk.Shape();
-  // Deux vérités indépendantes, parce que IsDone()===true ne garantit rien :
-  //  · le B-Rep est-il topologiquement valide (BRepCheck_Analyzer) ;
-  //  · un congé/chanfrein ne peut QU'ENLEVER de la matière — un volume qui
-  //    augmente est la signature d'un solide auto-intersecté ou retourné.
-  //    Mesuré : plaque 60×4×40 (9 600 mm³) filetée R=3 → IsDone=true et
-  //    volume 15 328 mm³. Cas que le check mesh-side laissait passer.
-  const vol=_occtVolume(oc,shape);
+  _occtDrop(fex);
+  const REV=oc.TopAbs_Orientation.TopAbs_REVERSED;
+  const fverts=[];
+  const faceVerts=(fi)=>{
+    if(fverts[fi]) return fverts[fi];
+    const arr=[]; const vex=new oc.TopExp_Explorer_2(faces[fi],TA.TopAbs_VERTEX,TA.TopAbs_SHAPE);
+    while(vex.More()){ const v=oc.TopoDS.Vertex_1(vex.Current()), p=oc.BRep_Tool.Pnt(v);
+      arr.push({x:p.X(),y:p.Y(),z:p.Z()}); _occtDrop(p,v); vex.Next(); }
+    _occtDrop(vex); return (fverts[fi]=arr);
+  };
+  const faceWidth=(fi,r)=>{ let w=0; for(const v of faceVerts(fi)){ const d=_qfDistPtPoly(v,r.pts,false); if(d>w) w=d; } return w; };
+  const normalAt=(face,edge,t)=>{
+    // normale sortante de `face` au point de paramètre relatif t de `edge`
+    let c2=null,uv=null,s=null,pr=null;
+    try{
+      c2=new oc.BRepAdaptor_Curve2d_2(edge,face);
+      const a=c2.FirstParameter(),b=c2.LastParameter();
+      uv=c2.Value(a+(b-a)*t);
+      s=new oc.BRepAdaptor_Surface_2(face,true);
+      pr=new oc.BRepLProp_SLProps_1(s,uv.X(),uv.Y(),1,1e-7);
+      if(!pr.IsNormalDefined()) return null;
+      const n=pr.Normal();
+      let v={x:n.X(),y:n.Y(),z:n.Z()};
+      _occtDrop(n);
+      if(face.Orientation_1()===REV) v={x:-v.x,y:-v.y,z:-v.z};
+      return v;
+    }catch(_){ return null; }
+    finally{ _occtDrop(pr,s,uv,c2); }
+  };
+  for(const r of recs){
+    r.fa=faces[r.adj[0].fi]; r.oa=r.adj[0].ori;
+    r.fb=r.adj.length>1?faces[r.adj[1].fi]:null;
+    // points échantillonnés (12) + longueur
+    let c=null;
+    try{
+      if(oc.BRep_Tool.Degenerated(r.edge)){ r.why='degenerated'; r.pts=[]; r.len=0; continue; }
+      c=new oc.BRepAdaptor_Curve_2(r.edge);
+      const u0=c.FirstParameter(),u1=c.LastParameter(),K=12;
+      r.pts=[];
+      for(let k=0;k<=K;k++){ const p=c.Value(u0+(u1-u0)*k/K); r.pts.push({x:p.X(),y:p.Y(),z:p.Z()}); _occtDrop(p); }
+      r.len=0; for(let k=1;k<r.pts.length;k++){ const a=r.pts[k-1],b=r.pts[k]; r.len+=Math.hypot(b.x-a.x,b.y-a.y,b.z-a.z); }
+      // tangente au milieu (orientée comme l'arête parcourue dans fa)
+      const P=new oc.gp_Pnt_1(), V=new oc.gp_Vec_1();
+      c.D1(u0+(u1-u0)*0.5,P,V);
+      r.tan={x:V.X(),y:V.Y(),z:V.Z()};
+      _occtDrop(P,V);
+    }catch(e){ r.why='curve: '+(e&&e.message||e); r.pts=r.pts||[]; r.len=r.len||0; }
+    finally{ _occtDrop(c); }
+    r.p0=r.pts[0]; r.p1=r.pts[r.pts.length-1];
+    if(r.adj.length!==2){ r.why=r.why||('non-manifold ('+r.adj.length+' faces)'); continue; }
+    if(r.adj[0].fi===r.adj[1].fi){ r.why='seam'; continue; }
+    const na=normalAt(r.fa,r.edge,0.5), nb=normalAt(r.fb,r.edge,0.5);
+    r.na=na; r.nb=nb;
+    if(!na||!nb){ r.why='normals'; continue; }
+    const d=Math.max(-1,Math.min(1,na.x*nb.x+na.y*nb.y+na.z*nb.z));
+    r.dih=Math.acos(d)*180/Math.PI;
+    // convexité : (na × nb)·T > 0 avec T orientée comme l'arête dans fa
+    const cx=na.y*nb.z-na.z*nb.y, cy=na.z*nb.x-na.x*nb.z, cz=na.x*nb.y-na.y*nb.x;
+    let t=r.tan||{x:0,y:0,z:0}; if(r.oa===REV) t={x:-t.x,y:-t.y,z:-t.z};
+    r.convex=(cx*t.x+cy*t.y+cz*t.z)>0;
+    // continuité codée par OCCT (arêtes de raccord des congés précédents)
+    let g1=false;
+    try{ const cont=oc.BRep_Tool.Continuity_1(r.edge,r.fa,r.fb);
+         g1=(cont!==oc.GeomAbs_Shape.GeomAbs_C0); }catch(_){}
+    r.sharp=!g1 && r.dih>=_QF_SHARP_DEG;
+    if(!r.sharp) r.why=g1?'tangent (G1)':('smooth '+r.dih.toFixed(1)+'°');
+    // verticalité (coin) : corde ~ Y et arête rectiligne
+    const dx=r.p1.x-r.p0.x, dy=r.p1.y-r.p0.y, dz=r.p1.z-r.p0.z, L=Math.hypot(dx,dy,dz);
+    let straight=L>1e-9;
+    if(straight){ for(const p of r.pts){ const w=((p.x-r.p0.x)*dx+(p.y-r.p0.y)*dy+(p.z-r.p0.z)*dz)/(L*L);
+      if(Math.hypot(p.x-(r.p0.x+dx*w),p.y-(r.p0.y+dy*w),p.z-(r.p0.z+dz*w))>Math.max(1e-3,0.02*L)){straight=false;break;} } }
+    r.vertical=straight && Math.abs(dy)/L>=_QF_VERT_COS;
+    // largeur des faces adjacentes perpendiculairement à l'arête (distance max
+    // d'un sommet de la face à l'arête) → détecte les faces "lamelles" d'une
+    // couture CSG, qui bornent la taille de finition quelle que soit la longueur.
+    if(r.sharp){ r.wmin=Math.min(faceWidth(r.adj[0].fi,r),faceWidth(r.adj[1].fi,r)); }
+  }
+  return {faces,recs,dispose(){ for(const r of recs){ _occtDrop(r.edge,...r.extra); } _occtDrop(...faces); }};
+}
+
+// ── Géométrie polyline ───────────────────────────────────────────────────────
+function _qfDistPtSeg(p,a,b){
+  const dx=b.x-a.x,dy=b.y-a.y,dz=b.z-a.z,l2=dx*dx+dy*dy+dz*dz;
+  let t=l2>1e-18?((p.x-a.x)*dx+(p.y-a.y)*dy+(p.z-a.z)*dz)/l2:0; t=Math.max(0,Math.min(1,t));
+  return Math.hypot(p.x-(a.x+dx*t),p.y-(a.y+dy*t),p.z-(a.z+dz*t));
+}
+function _qfDistPtPoly(p,pts,closed){
+  let d=Infinity; const n=pts.length, m=closed?n:n-1;
+  for(let i=0;i<m;i++){ const v=_qfDistPtSeg(p,pts[i],pts[(i+1)%n]); if(v<d)d=v; }
+  return d;
+}
+// Une arête OCCT correspond-elle à une chaîne picked ? Deux sens :
+//  A) l'arête est portée par la chaîne (≥ 2/3 des échantillons intérieurs dessus) —
+//     couvre les arêtes RACCOURCIES par une passe précédente (coins arrondis) ;
+//  B) un segment de la chaîne est porté par l'arête — couvre les arêtes FUSIONNÉES
+//     par UnifySameDomain (un segment picked = sous-partie d'une arête longue).
+function _qfBBox(pts){
+  const a={x:Infinity,y:Infinity,z:Infinity}, b={x:-Infinity,y:-Infinity,z:-Infinity};
+  for(const p of pts){ if(p.x<a.x)a.x=p.x; if(p.y<a.y)a.y=p.y; if(p.z<a.z)a.z=p.z;
+                       if(p.x>b.x)b.x=p.x; if(p.y>b.y)b.y=p.y; if(p.z>b.z)b.z=p.z; }
+  return {a,b};
+}
+function _qfRecOnChain(r,ch,tol){
+  if(!r.pts||r.pts.length<3) return false;
+  const P=ch.pts, closed=ch.closed;
+  // pré-filtre boîtes englobantes (mises en cache) : O(1) pour les paires éloignées
+  const cb=ch._bb||(ch._bb=_qfBBox(P)), rb=r._bb||(r._bb=_qfBBox(r.pts));
+  if(rb.a.x>cb.b.x+tol||rb.b.x<cb.a.x-tol||rb.a.y>cb.b.y+tol||rb.b.y<cb.a.y-tol||rb.a.z>cb.b.z+tol||rb.b.z<cb.a.z-tol) return false;
+  let inner=0,ok=0;
+  for(let k=1;k<r.pts.length-1;k++){ inner++; if(_qfDistPtPoly(r.pts[k],P,closed)<tol) ok++; }
+  if(inner && ok>=Math.ceil(inner*2/3)) return true;
+  const n=P.length, m=closed?n:n-1;
+  for(let i=0;i<m;i++){
+    const a=P[i], b=P[(i+1)%n];
+    if(_qfDistPtPoly(a,r.pts,false)<tol && _qfDistPtPoly(b,r.pts,false)<tol){
+      const mid={x:(a.x+b.x)/2,y:(a.y+b.y)/2,z:(a.z+b.z)/2};
+      if(_qfDistPtPoly(mid,r.pts,false)<tol) return true;
+    }
+  }
+  return false;
+}
+
+// Face de référence pour les chanfreins asymétriques (d1 / d mesurée dessus) :
+//  1) face cliquée (normale mémorisée au pick) ;
+//  2) sinon la plus "horizontale" (|n·Y| max) — le dessus/dessous d'une plaque ;
+//  3) arête verticale (coin) : la face la plus alignée sur Z (avant/arrière).
+// `swap` inverse le choix.
+function _qfRefFace(r, refN, swap){
+  const na=r.na, nb=r.nb; let useA=true;
+  if(na&&nb){
+    if(refN){ useA=(na.x*refN.x+na.y*refN.y+na.z*refN.z)>=(nb.x*refN.x+nb.y*refN.y+nb.z*refN.z); }
+    else if(Math.abs(Math.abs(na.y)-Math.abs(nb.y))>0.1) useA=Math.abs(na.y)>Math.abs(nb.y);
+    else useA=Math.abs(na.z)>=Math.abs(nb.z);
+  }
+  if(swap) useA=!useA;
+  return useA?r.fa:r.fb;
+}
+
+// ── Une construction OCCT (un seul MakeFillet OU MakeChamfer) ────────────────
+// items : [{rec, fin, scale, drop, r1Pt, refN}] — tous du même `kind`.
+function _occtBuildOnce(oc, shape, kind, items, ctx){
+  const M=oc.ChFiDS_ChamfMode;
+  const mk=(kind==='fillet')
+    ? new oc.BRepFilletAPI_MakeFillet(shape,oc.ChFi3d_FilletShape.ChFi3d_Rational)
+    : new oc.BRepFilletAPI_MakeChamfer(shape);
+  const used=[]; const notes=[];
+  for(const it of items){
+    if(it.drop) continue;
+    const f=it.fin, s=it.scale||1, E=it.rec.edge;
+    try{
+      if(kind==='fillet'){
+        if(f.law==='var' && Math.abs(f.R-f.R2)>1e-9){
+          let Ra=f.R*s, Rb=f.R2*s;
+          mk.Add_3(Ra,Rb,E);
+          const IC=mk.Contour(E);
+          if(IC>0){
+            if(mk.Closed(IC)){
+              // loi linéaire impossible sur un contour fermé (R1≠R2 au même sommet)
+              // → loi symétrique R1 → R2 → R1 via Add(UandR)
+              mk.Remove(E);
+              const arr=new oc.TColgp_Array1OfPnt2d_2(1,3);
+              const q1=new oc.gp_Pnt2d_3(0,Ra),q2=new oc.gp_Pnt2d_3(0.5,Rb),q3=new oc.gp_Pnt2d_3(1,Ra);
+              arr.SetValue(1,q1);arr.SetValue(2,q2);arr.SetValue(3,q3);
+              mk.Add_5(arr,E);
+              _occtDrop(q1,q2,q3,arr);
+              notes.push('closed contour: R1→R2→R1');
+            }else if(it.r1Pt){
+              // R1 du côté du clic : si le 1er sommet du contour est plus loin du clic
+              // que le dernier, on retire et on ré-ajoute avec R1/R2 inversés
+              const vF=mk.FirstVertex(IC), vL=mk.LastVertex(IC);
+              const pF=oc.BRep_Tool.Pnt(vF), pL=oc.BRep_Tool.Pnt(vL);
+              const dF=Math.hypot(pF.X()-it.r1Pt.x,pF.Y()-it.r1Pt.y,pF.Z()-it.r1Pt.z);
+              const dL=Math.hypot(pL.X()-it.r1Pt.x,pL.Y()-it.r1Pt.y,pL.Z()-it.r1Pt.z);
+              _occtDrop(pF,pL,vF,vL);
+              if(dL<dF){ mk.Remove(E); mk.Add_3(Rb,Ra,E); }
+            }
+          }
+        }else mk.Add_2(f.R*s,E);
+      }else{
+        const F=(f.type==='dd'||f.type==='da'||(f.type==='throat'&&f.pen>0))?_qfRefFace(it.rec,it.refN,f.swap):null;
+        switch(f.type){
+          case 'dd':
+            mk.SetMode(M.ChFiDS_ClassicChamfer);
+            mk.Add_3(f.d*s,f.d2*s,E,F); break;
+          case 'da':
+            mk.SetMode(M.ChFiDS_ClassicChamfer);
+            mk.AddDA(f.d*s,Math.min(80,Math.max(5,f.ang))*Math.PI/180,E,F); break;
+          case 'throat':
+            if(f.pen>0){ mk.SetMode(M.ChFiDS_ConstThroatWithPenetrationChamfer); mk.Add_3(f.pen*s,f.d*s,E,F); }
+            else{ mk.SetMode(M.ChFiDS_ConstThroatChamfer); mk.Add_2(f.d*s,E); }
+            break;
+          default:
+            mk.SetMode(M.ChFiDS_ClassicChamfer);
+            mk.Add_2(f.d*s,E);
+        }
+      }
+      used.push(it);
+    }catch(e){ notes.push('Add: '+(e&&e.message||e)); }
+  }
+  if(!used.length){ _occtDrop(mk); return {ok:false,used,why:'no edge to process',notes}; }
+  let built=false, why='';
+  try{ mk.Build(); built=mk.IsDone(); if(!built) why='kernel Build failed'; }
+  catch(err){ why=(err&&err.message)||String(err); }
+  // Diagnostics OCCT (MakeFillet uniquement) : quels contours / sommets ont échoué
+  const faulty=new Set(); const faultyInfo=[];
+  if(!built && kind==='fillet'){
+    try{
+      const ES=oc.ChFiDS_ErrorStatus;
+      const nf=mk.NbFaultyContours();
+      for(let i=1;i<=nf;i++){
+        const IC=mk.FaultyContour(i);
+        let st='?'; try{ const v=mk.StripeStatus(IC); st=Object.keys(ES).find(k=>ES[k]===v)||'?'; }catch(_){}
+        faultyInfo.push('C'+IC+':'+st.replace('ChFiDS_',''));
+        const ne=mk.NbEdges(IC);
+        for(let j=1;j<=ne;j++){
+          const E=mk.Edge(IC,j);
+          for(const it of used) if(it.rec.edge.IsSame(E)) faulty.add(it);
+          _occtDrop(E);
+        }
+      }
+      const nv=mk.NbFaultyVertices();
+      for(let i=1;i<=nv;i++){
+        const V=mk.FaultyVertex(i), P=oc.BRep_Tool.Pnt(V);
+        const q={x:P.X(),y:P.Y(),z:P.Z()}; _occtDrop(P,V);
+        faultyInfo.push('V('+q.x.toFixed(1)+','+q.y.toFixed(1)+','+q.z.toFixed(1)+')');
+        for(const it of used){ const r=it.rec;
+          if(Math.hypot(r.p0.x-q.x,r.p0.y-q.y,r.p0.z-q.z)<ctx.tol*4||Math.hypot(r.p1.x-q.x,r.p1.y-q.y,r.p1.z-q.z)<ctx.tol*4) faulty.add(it); }
+      }
+    }catch(_){ /* diagnostics indisponibles → échelle globale */ }
+    if(faultyInfo.length) why+=' ['+faultyInfo.slice(0,6).join(' ')+(faultyInfo.length>6?' …':'')+']';
+  }
+  if(!built){ _occtDrop(mk); return {ok:false,used,why,faulty,notes}; }
+  const res=mk.Shape();
+  return {ok:true,mk,shape:res,used,notes};
+}
+
+// Aire MINIMALE réaliste de la section retirée (congé : formule exacte au dièdre,
+// rayon mini ; chanfrein symétrique : triangle exact ; autres : pas de borne basse)
+function _qfFinAreaLo(f, s, theta){
+  const th=Math.min(Math.max(theta,0.05),170*Math.PI/180);
+  if(f.kind==='fillet'){ const R=(f.law==='var'?Math.min(f.R,f.R2):f.R)*s; return R*R*(Math.tan(th/2)-th/2); }
+  if(f.type==='sym'){ const d=f.d*s; return 0.5*d*d*Math.sin(Math.PI-th); }
+  return 0;
+}
+// Volume du solide mesuré sur SA TRIANGULATION (BRepMesh), + nombre de faces
+// impossibles à trianguler. [v5] Mesuré : sur une plaque percée d'un trou à 64
+// facettes, BRepGProp donnait ΔV = −23 mm³ après congé R1 de toutes les arêtes,
+// la triangulation −117 mm³ (valeur attendue ≈ −116) ; et sur un résultat
+// réellement cassé (congés des seuls bords du trou) BRepGProp −279, maillage +120
+// — le maillage, lui, voit l'aberration (un congé convexe n'AJOUTE pas de
+// matière). C'est aussi exactement ce que NASSCAD affichera et exportera.
+function _occtMeshVolume(oc, shape, defl){
+  const REV=oc.TopAbs_Orientation.TopAbs_REVERSED;
+  let mesher=null, fex=null, v=0, nNull=0, nTri=0;
+  try{
+    mesher=new oc.BRepMesh_IncrementalMesh_2(shape,defl,false,0.5,false);
+    fex=new oc.TopExp_Explorer_2(shape,oc.TopAbs_ShapeEnum.TopAbs_FACE,oc.TopAbs_ShapeEnum.TopAbs_SHAPE);
+    while(fex.More()){
+      const face=oc.TopoDS.Face_1(fex.Current()), loc=new oc.TopLoc_Location_1();
+      const triH=oc.BRep_Tool.Triangulation(face,loc);
+      if(triH.IsNull()) nNull++;
+      else{
+        const tri=triH.get(), trsf=loc.Transformation(), rev=face.Orientation_1()===REV;
+        const nv=tri.NbNodes(), nt=tri.NbTriangles(), P=new Float64Array(nv*3);
+        for(let i=1;i<=nv;i++){ const nd=tri.Node(i), q=nd.Transformed(trsf);
+          P[(i-1)*3]=q.X(); P[(i-1)*3+1]=q.Y(); P[(i-1)*3+2]=q.Z(); _occtDrop(q,nd); }
+        for(let i=1;i<=nt;i++){
+          const t=tri.Triangle(i); let a=t.Value(1)-1,b=t.Value(2)-1,c=t.Value(3)-1; _occtDrop(t);
+          if(rev){ const w=b; b=c; c=w; }
+          const ax=P[a*3],ay=P[a*3+1],az=P[a*3+2],bx=P[b*3],by=P[b*3+1],bz=P[b*3+2],cx=P[c*3],cy=P[c*3+1],cz=P[c*3+2];
+          v+=ax*(by*cz-bz*cy)-ay*(bx*cz-bz*cx)+az*(bx*cy-by*cx); nTri++;
+        }
+        _occtDrop(trsf,triH);
+      }
+      _occtDrop(loc,face); fex.Next();
+    }
+  }catch(_){ return {vol:NaN,nNull,nTri}; }
+  finally{ _occtDrop(fex,mesher); }
+  return {vol:v/6,nNull,nTri};
+}
+// Validation indépendante d'un résultat (IsDone()===true ne garantit rien) :
+//  · BRepCheck_Analyzer ;
+//  · toutes les faces triangulables ;
+//  · invariant de volume BORNÉ, mesuré sur la triangulation (cf. ci-dessus) :
+//    une arête convexe ne peut qu'enlever de la matière, une concave ne peut
+//    qu'en ajouter, jamais plus que la section maximale × longueur (× 3), et —
+//    sans arête concave — au moins 30 % de la section minimale réaliste (un
+//    contour sauté en silence par le noyau se voit ici).
+//    [FIX v5] l'ancien test "le volume ne doit pas croître" rejetait à tort
+//    tout congé CONCAVE (qui ajoute de la matière).
+function _occtValidate(oc, shape, used, volBeforeAt, defl){
   const valid=_occtIsValid(oc,shape);
-  const grew=isFinite(vol)&&isFinite(volBefore)&&vol>volBefore*1.001;
-  if(valid===false||grew){
-    _occtDrop(shape,mk);
-    return {ok:false,nEdges,nAdded,nSkipped,
-      why:grew?`result volume grew ${volBefore.toFixed(0)} → ${vol.toFixed(0)} mm³ (self-intersecting solid)`
-              :'BRepCheck_Analyzer rejected the resulting B-Rep'};
+  if(valid===false) return {ok:false,vol:NaN,why:'BRepCheck_Analyzer rejected the resulting B-Rep'};
+  const mv=_occtMeshVolume(oc,shape,defl);
+  if(mv.nNull>0) return {ok:false,vol:NaN,why:`${mv.nNull} face(s) could not be triangulated (degenerate B-Rep)`};
+  const vol=mv.vol, volBefore=volBeforeAt(defl);
+  if(isFinite(vol)&&isFinite(volBefore)){
+    let rem=0, add=0, remLo=0, concave=false;
+    for(const it of used){
+      const th=(it.rec.dih||90)*Math.PI/180, L=it.rec.len||0, s=it.scale||1;
+      const a=L*_qfFinArea(it.fin,s,th);
+      if(it.rec.convex===false){ add+=a; concave=true; }
+      else { rem+=a; remLo+=L*_qfFinAreaLo(it.fin,s,th); }
+    }
+    const eps=Math.abs(volBefore)*1e-3, dV=vol-volBefore;
+    if(dV>3*add+eps) return {ok:false,vol,why:`result volume grew ${volBefore.toFixed(0)} → ${vol.toFixed(0)} mm³ (self-intersecting solid)`};
+    if(dV<-3*rem-eps) return {ok:false,vol,why:`result lost ${(-dV).toFixed(0)} mm³, far beyond the finish section (corrupted solid)`};
+    if(!concave && remLo>0 && -dV<0.3*remLo-eps)
+      return {ok:false,vol,why:`only ${(-dV).toFixed(1)} mm³ removed for ~${remLo.toFixed(0)} expected (kernel skipped part of the finish)`};
   }
-  return {ok:true,shape,mk,R,nEdges,nAdded,nSkipped,vol};
+  return {ok:true,vol};
+}
+
+// ── Une passe (un kind) avec repli ───────────────────────────────────────────
+// 1) tout à la taille demandée ;
+// 2) micro-arêtes (plus courtes que 2×taille ET que 15 % de la plus longue arête
+//    traitée — typiquement les coutures d'une union CSG) laissées vives, taille
+//    pleine ailleurs. Pour les congés, OCCT désigne lui-même les contours fautifs
+//    (NbFaultyContours / NbFaultyVertices) : on écarte d'abord SEULEMENT les
+//    micro-arêtes fautives, puis toutes ;
+// 3) réduction UNIFORME ×0.85 … ×0.15, puis UNE bissection entre le dernier échec
+//    et le premier succès → la plus grande taille réalisable, pas la première.
+// Choix délibéré : une vraie arête n'est jamais laissée vive ni réduite seule
+// (résultat asymétrique surprenant) — seules les micro-arêtes le sont.
+// [v5] L'ancienne règle "écarter toute arête < 2R" retirait aussi les arêtes
+// verticales d'une plaque de 10 mm dont le congé R25 était faisable jusqu'à
+// R≈20 : la longueur d'une arête ne borne pas le rayon, la largeur des faces
+// adjacentes si. D'où le critère "micro" relatif.
+const _QF_SCALES=[0.85,0.7,0.55,0.4,0.25,0.15];
+function _occtRunPass(oc, shape, kind, items, ctx){
+  // volume "avant" sur la triangulation, à la même déflexion que le "après"
+  // (mis en cache : les faces inchangées gardent la même triangulation)
+  const vbCache=new Map();
+  const volBeforeAt=defl=>{ if(!vbCache.has(defl)) vbCache.set(defl,_occtMeshVolume(oc,shape,defl).vol); return vbCache.get(defl); };
+  // déflexion de contrôle : 5 % de la plus petite taille EN JEU (bornée 0.005–0.1)
+  const vDefl=()=>{ let m=Infinity; for(const it of items){ if(it.drop) continue; const f=it.fin;
+      const z=(f.kind==='fillet'?(f.law==='var'?Math.min(f.R,f.R2):f.R):f.d)*(it.scale||1); if(z<m) m=z; }
+    const d=isFinite(m)?0.05*m:0.1; return Math.min(0.1,Math.max(0.005,+d.toPrecision(2))); };
+  const log=[]; const t0=Date.now(); let budget=0;
+  const tryOnce=(label)=>{
+    const tA=Date.now();
+    const b=_occtBuildOnce(oc,shape,kind,items,ctx);
+    let ok=b.ok, why=b.why, vol=NaN;
+    if(ok){ const v=_occtValidate(oc,b.shape,b.used,volBeforeAt,vDefl()); ok=v.ok; why=v.why; vol=v.vol;
+            if(!ok){ _occtDrop(b.shape,b.mk); b.shape=null; b.mk=null; } }
+    const dt=Date.now()-tA; if(!budget) budget=Math.max(8000,dt*6);   // même budget que la v4 (6× la 1re tentative)
+    log.push(`${label} → ${ok?'valid':why} (${dt}ms)`);
+    return Object.assign(b,{ok,why,vol});
+  };
+  const expired=()=>Date.now()-t0>budget;
+  const isFatal=r=>!!(ctx.isFatal&&ctx.isFatal(r.why));
+  const done=(r)=>Object.assign(r,{log,volBefore:volBeforeAt(vDefl())});
+  const fail=(r,fatal)=>Object.assign(r,{ok:false,log,fatal:!!fatal});
+  let lmax=0; for(const it of items) lmax=Math.max(lmax,it.rec.len||0);
+  // micro à l'échelle s : arête courte (coutures) OU bordée d'une face lamelle
+  const isMicro=(it,s)=>{ const sz=_qfFinSize(it.fin)*s, L=it.rec.len||0;
+    return (L<2*sz && L<0.15*lmax) || (isFinite(it.rec.wmin) && it.rec.wmin<0.5*sz); };
+  const microAt=s=>{ const m=new Set(items.filter(i=>isMicro(i,s))); return m.size<items.length?m:new Set(); };
+  let sMin=Infinity; for(const it of items) sMin=Math.min(sMin,_qfFinSize(it.fin));
+  let dropSet=new Set();
+  const set=(s)=>{ for(const it of items){ it.scale=s; it.drop=dropSet.has(it); } };
+  set(1);
+  let r=tryOnce(`${kind} ×${items.length}`);
+  if(r.ok) return done(r);
+  if(isFatal(r)) return fail(r,true);
+  // (2) micro-arêtes vives à taille pleine — d'abord les seules fautives
+  //     désignées par OCCT, puis toutes
+  const micro1=microAt(1);
+  if(micro1.size){
+    const faultyMicro=r.faulty?[...r.faulty].filter(i=>micro1.has(i)):[];
+    if(faultyMicro.length && faultyMicro.length<micro1.size && !expired()){
+      dropSet=new Set(faultyMicro); set(1);
+      r=tryOnce(`${faultyMicro.length} faulty micro-edge(s) left sharp`);
+      if(r.ok) return done(r);
+      if(isFatal(r)) return fail(r,true);
+    }
+    if(!expired()){
+      dropSet=micro1; set(1);
+      r=tryOnce(`${micro1.size} micro-edge(s) left sharp`);
+      if(r.ok) return done(r);
+      if(isFatal(r)) return fail(r,true);
+    }
+  }
+  // (3) réduction uniforme + bissection (les micro-arêtes sont réévaluées à
+  //     chaque échelle : plus la taille baisse, moins il y en a)
+  let lastFail=1;
+  for(const s of _QF_SCALES){
+    if(expired()){ log.push('stopped on time budget'); break; }
+    if(sMin*s<0.02) break;
+    dropSet=microAt(s);
+    set(s);
+    r=tryOnce(`×${s}`);
+    if(r.ok){
+      if(!expired() && lastFail-s>0.1){
+        const sm=(s+lastFail)/2, keepR=r, keepDrop=dropSet;
+        dropSet=microAt(sm); set(sm);
+        const r2=tryOnce(`×${sm.toFixed(3)} (refine)`);
+        if(r2.ok){ _occtDrop(keepR.shape,keepR.mk); return done(r2); }
+        dropSet=keepDrop; set(s);
+        return done(keepR);
+      }
+      return done(r);
+    }
+    if(isFatal(r)) return fail(r,true);
+    lastFail=s;
+  }
+  return fail(r,false);
+}
+
+// ── Plan multi-passes ────────────────────────────────────────────────────────
+// passes : [{label, kind, resolve(census) → items}] exécutées dans l'ordre, chacune
+// sur le B-Rep produit par la précédente (pas de retour maillage entre passes :
+// plus de "re-congé sur résultat facetté").
+function _occtRunPlan(oc, shape0, passes, ctx){
+  let shape=shape0; const keep=[]; const report=[]; let anyDone=false;
+  for(const p of passes){
+    const cen=_occtCensus(oc,shape);
+    let items=[];
+    try{ items=p.resolve(cen)||[]; }catch(e){ cen.dispose(); return {ok:false,why:'resolve '+p.label+': '+(e&&e.message||e),report,keep,shape}; }
+    if(!items.length){ report.push({label:p.label,n:0}); cen.dispose(); continue; }
+    const r=_occtRunPass(oc,shape,p.kind,items,ctx);
+    let minSize=Infinity, minR=Infinity;
+    for(const it of items){ if(it.drop) continue; const sc=it.scale||1;
+      minSize=Math.min(minSize,_qfFinSize(it.fin)*sc);
+      if(it.fin.kind==='fillet') minR=Math.min(minR,(it.fin.law==='var'?Math.min(it.fin.R,it.fin.R2):it.fin.R)*sc); }
+    const scales=items.filter(i=>!i.drop).map(i=>i.scale||1);
+    const summary={label:p.label,kind:p.kind,n:items.length,log:r.log,ok:r.ok,
+      applied:items.filter(i=>!i.drop).length, dropped:items.filter(i=>i.drop).length,
+      bridges:items.filter(i=>i.bridge).length,
+      scale:scales.length?Math.min(...scales):1, minSize, minR,
+      finishes:[...new Set(items.map(i=>_qfFinLabel(i.fin)))],
+      appliedLabels:[...new Set(items.filter(i=>!i.drop).map(i=>_qfFinLabel(_qfFinScaled(i.fin,i.scale||1))))],
+      notes:r.notes};
+    report.push(summary);
+    cen.dispose();
+    if(!r.ok) return {ok:false,why:`${p.label}: ${r.why}`,fatal:r.fatal,report,keep,shape};
+    keep.push(r.mk,r.shape); shape=r.shape; anyDone=true;
+  }
+  return {ok:anyDone,why:anyDone?'':'nothing matched',report,keep,shape};
+}
+
+// ── [v5] Sélection → entrées noyau ──────────────────────────────────────────
+// Chaque entrée : {idx, chain, fin, refN, r1Pt}. Les piquées "vivantes" prennent
+// la finition courante et priment sur un groupe figé pour la même chaîne.
+function _qfR1Point(c, fin, info){
+  if(fin.kind!=='fillet'||fin.law!=='var') return null;
+  const a=c.pts[0], b=c.pts[c.pts.length-1];
+  if(c.closed) return info&&info.pt?info.pt:a;       // boucle : loi R1→R2→R1 depuis le 1er sommet OCCT
+  let near=a, far=b;
+  if(info&&info.pt){
+    const da=Math.hypot(info.pt.x-a.x,info.pt.y-a.y,info.pt.z-a.z);
+    const db=Math.hypot(info.pt.x-b.x,info.pt.y-b.y,info.pt.z-b.z);
+    if(db<da){ near=b; far=a; }
+  }
+  return fin.swap?far:near;
+}
+function _qfCollectSelection(curFin){
+  const out=new Map();
+  const push=(idx,fin,info)=>{
+    const c=_qfChains[idx]; if(!c) return;
+    out.set(idx,{idx,chain:c,fin,refN:(info&&info.n)||null,r1Pt:_qfR1Point(c,fin,info)});
+  };
+  for(const g of _qfGroups) for(const i of g.idx) push(i,g.fin,g.info.get(i));
+  for(const i of _qfOcctSel) push(i,curFin,_qfPickInfo.get(i));
+  return [...out.values()];
+}
+// Arêtes OCCT d'une passe ← chaînes piquées (+ "ponts" : arêtes neuves créées
+// par une passe de coins biseautés, qui relient deux arêtes retenues — sans eux
+// le chanfrein du dessus s'arrêterait net sur chaque biseau de coin).
+function _qfResolveSel(cen, list, tol, bridgeMax){
+  const items=[]; const matched=new Set();
+  for(const r of cen.recs){
+    if(!r.sharp) continue;
+    for(const s of list){
+      if(_qfRecOnChain(r,s.chain,tol)){ items.push({rec:r,fin:s.fin,r1Pt:s.r1Pt,refN:s.refN}); matched.add(r); break; }
+    }
+  }
+  if(bridgeMax>0 && items.length){
+    const ends=[]; for(const it of items) ends.push({p:it.rec.p0,it},{p:it.rec.p1,it});
+    const near=p=>ends.find(e=>Math.hypot(e.p.x-p.x,e.p.y-p.y,e.p.z-p.z)<tol*2);
+    const extra=[];
+    for(const r of cen.recs){
+      if(!r.sharp||matched.has(r)||r.vertical||!(r.len<=bridgeMax)) continue;
+      const a=near(r.p0), b=near(r.p1);
+      if(a&&b&&a.it!==b.it) extra.push({rec:r,fin:a.it.fin,refN:a.it.refN,bridge:true});
+    }
+    items.push(...extra);   // après les arêtes piquées : OCCT les ignore si déjà propagées
+  }
+  return items;
+}
+// Plan de passes B-Rep. Ordre : coins (verticales) d'abord, congés avant
+// chanfreins — l'ordre standard des modeleurs (le contour du dessus peut alors
+// contourner un coin déjà arrondi par propagation tangente).
+// Une seule passe quand tout est homogène (même type, pas de coins dédiés) :
+// les congés de même rayon s'y raccordent par de vrais congés de sommet.
+function _qfBuildPlan(selectedOnly, sel, mainFin, cornerFin, cMode, tol){
+  const passes=[];
+  const add=(label,kind,resolve)=>passes.push({label,kind,resolve});
+  if(!selectedOnly){
+    if(cornerFin){
+      add('corners',cornerFin.kind,cen=>cen.recs.filter(r=>r.sharp&&r.vertical).map(rec=>({rec,fin:cornerFin})));
+      add('edges',mainFin.kind,cen=>cen.recs.filter(r=>r.sharp&&!r.vertical).map(rec=>({rec,fin:mainFin})));
+    }else{
+      add('edges',mainFin.kind,cen=>cen.recs.filter(r=>r.sharp&&!(cMode==='vif'&&r.vertical)).map(rec=>({rec,fin:mainFin})));
+    }
+    return passes;
+  }
+  const cornerSel=cornerFin?_qfAutoCornerIdx(sel.map(s=>s.idx)).map(i=>({idx:i,chain:_qfChains[i],fin:cornerFin,refN:null,r1Pt:null})):[];
+  const kinds=new Set(sel.map(s=>s.fin.kind));
+  if(!cornerSel.length && kinds.size===1){
+    const k=[...kinds][0];
+    add('selection',k,cen=>_qfResolveSel(cen,sel,tol,0));
+    return passes;
+  }
+  const A=[...sel.filter(s=>s.chain.vertical),...cornerSel];
+  const B=sel.filter(s=>!s.chain.vertical);
+  let cornerMax=0; for(const s of A) cornerMax=Math.max(cornerMax,_qfFinSize(s.fin));
+  for(const k of ['fillet','chamfer']){
+    const a=A.filter(s=>s.fin.kind===k);
+    if(a.length) add('corners '+k,k,cen=>_qfResolveSel(cen,a,tol,0));
+  }
+  for(const k of ['fillet','chamfer']){
+    const b=B.filter(s=>s.fin.kind===k);
+    if(b.length) add('edges '+k,k,cen=>_qfResolveSel(cen,b,tol,A.length?2.5*cornerMax+tol:0));
+  }
+  return passes;
 }
 
 async function _occtFilletAll(selectedOnly){
   const obj=_qfSrcObj;
   if(!obj){_qfSetStatus('⚠ Select an object first','var(--danger)');return;}
-  if(selectedOnly&&_qfOcctSel.size===0){
-    _qfSetStatus('⚠ Click "🖱 Pick edges" then select at least one edge','var(--danger)');
-    return;
+  const mainFin=_qfCurFinish();
+  const cMode=_qfCorner.mode;
+  const cornerFin=_qfCornerFinish();
+  let sel=null;
+  if(selectedOnly){
+    sel=_qfCollectSelection(mainFin);
+    if(!sel.length){
+      _qfSetStatus('⚠ Click "🖱 Pick edges" (or Top / Bottom / Corners / Concave) to select at least one edge','var(--danger)');
+      return;
+    }
   }
-  const R=Math.max(0.05,parseFloat(document.getElementById('qf-vp').value)||3);
-  const mode=_qfMode;
-  // [NEW 25/07] Empêcher le calcul plutôt que le laisser planter — les deux
-  // causes identifiées (R trop grand, re-fillet sur courbe) sont maintenant
-  // des gates actifs avant le moindre appel kernel, pas des warnings passifs.
-  const _chainsToCheck=selectedOnly?[..._qfOcctSel].map(i=>_qfChains[i]).filter(Boolean):_qfChains;
-  const _rIssue=_qfCheckRadiusFits(_chainsToCheck,R);
+  const fins=selectedOnly?[...sel.map(s=>s.fin),...(cornerFin?[cornerFin]:[])]:[mainFin,...(cornerFin?[cornerFin]:[])];
+  const kinds=new Set(fins.map(f=>f.kind));
+  const opName=kinds.size>1?'finish':(kinds.has('fillet')?'fillet':'chamfer');
+  const opLbl=selectedOnly
+    ? [...new Set(sel.map(s=>_qfFinLabel(s.fin)))].join(' + ')+(cornerFin?` · corners ${_qfFinLabel(cornerFin)}`:'')
+    : _qfFinLabel(mainFin)+(cornerFin?` · corners ${_qfFinLabel(cornerFin)}`:cMode==='vif'?' · corners sharp':'');
+  // [v5] Pré-check local : désormais informatif (cf. _qfCheckRadiusFits)
+  const _chk=selectedOnly
+    ? sel.map(s=>({chain:s.chain,size:_qfFinSize(s.fin)}))
+    : _qfChains.map(c=>({chain:c,size:c.vertical?(cornerFin?_qfFinSize(cornerFin):(cMode==='vif'?0:_qfFinSize(mainFin))):_qfFinSize(mainFin)}));
+  const _rIssue=_qfCheckRadiusFits(_chk);
   if(_rIssue){
-    const _ok=confirm(`⚠ R=${R}mm seems too large for at least one edge `
-      +`(${_rIssue.segLen.toFixed(2)}mm, angle ${_rIssue.angDeg.toFixed(0)}°, `
-      +`recommended R ≤ ${_rIssue.maxR.toFixed(2)}mm).\n\n`
-      +`The OCCT kernel will likely fail or produce an invalid result.\n\n`
-      +`Continue anyway?`);
-    if(!_ok){ _qfSetStatus('⚠ Cancelled — R too large for the local geometry','var(--warn)'); return; }
-    nasLog('WARN',`OCCT: R=${R}mm beyond the recommended R ${_rIssue.maxR.toFixed(2)}mm — proceeding after confirmation`);
+    nasLog('WARN',`OCCT: size ${_rIssue.R}mm beyond the local estimate ${_rIssue.maxR.toFixed(2)}mm `
+      +`(edge ${_rIssue.segLen.toFixed(2)}mm, ${_rIssue.angDeg.toFixed(0)}°) — the kernel will apply the largest feasible size if needed`);
   }
   if(obj.isOcctResult){
     const _ok2=confirm(`⚠ This object is already an OCCT fillet/chamfer result.\n\n`
       +`Re-filleting on top of it is a known kernel edge case: it can succeed, `
       +`fail cleanly, or (more insidiously) appear to succeed with an `
       +`invisible gap in the mesh.\n\n`
-      +`Better: go back to the original object (before any fillet) and select `
-      +`all the edges you want in a single pass.\n\n`
+      +`Better: go back to the original object (before any fillet) and do it in `
+      +`ONE pass — Quick Fillet v5 chains several finishes on the B-Rep itself `
+      +`(＋ Group for several radii / fillet + chamfer, Corners for rounded or `
+      +`bevelled corners).\n\n`
       +`Continue anyway on this already-filleted object?`);
     if(!_ok2){ _qfSetStatus('⚠ Cancelled — go back to the original object to avoid the edge case','var(--warn)'); return; }
     nasLog('OCCT','⚠ Re-filleting an already-curved OCCT result — the rebuilt B-Rep may hit a kernel edge case (see fallback below if it fails)');
@@ -835,19 +1724,6 @@ async function _occtFilletAll(selectedOnly){
     nasLog('WARN',`OCCT: ${nTris} tris exceeds limit ${_OCCT_MAX_TRIS}`);
     geo.dispose();return;
   }
-  // Selective mode: flatten the picked chains (world-space, same frame as
-  // the mesh) into a segment list [{p0,p1}]. Matching against OCCT edges
-  // is geometric (endpoint/collinearity test), not index-based — robust
-  // to UnifySameDomain merging several mesh sub-segments into one edge.
-  let keepSegs=null;
-  if(selectedOnly){
-    keepSegs=[];
-    for(const idx of _qfOcctSel){
-      const c=_qfChains[idx];
-      const n=c.pts.length,nSeg=c.closed?n:n-1;
-      for(let i=0;i<nSeg;i++)keepSegs.push({p0:c.pts[i],p1:c.pts[(i+1)%n]});
-    }
-  }
   let oc;
   try{oc=await _occtLoad();}
   catch(e){
@@ -860,8 +1736,8 @@ async function _occtFilletAll(selectedOnly){
   // slot vide sur un early-return). Sans ça, _occtFilletAll ne poussait JAMAIS d'undo :
   // Ctrl+Z après un fillet sautait par-dessus et annulait l'opération PRÉCÉDENTE à la place
   // (ex: le CSG Union) — cf. logs 06:31:16 "undo [CSG]" déclenché juste après un fillet.
-  undoPush(mode==='round'?'fillet':'chamfer');
-  showSpinner('OCCT '+(mode==='round'?'Fillet':'Chamfer'),`${nTris} tris → B-Rep — all edges R=${R}`);
+  undoPush(opName==='chamfer'?'chamfer':'fillet');
+  showSpinner('OCCT '+(opName==='fillet'?'Fillet':opName==='chamfer'?'Chamfer':'Finish'),`${nTris} tris → B-Rep — ${selectedOnly?sel.length+' picked edge(s)':'all sharp edges'} · ${opLbl}`);
   await new Promise(r=>setTimeout(r,30)); // let the spinner paint (OCCT runs sync on main thread)
   const t0=performance.now();
   const _keep=[];                       // instances embind vivantes jusqu'au finally
@@ -899,67 +1775,39 @@ async function _occtFilletAll(selectedOnly){
     _keep.push(unify,unified);
     _occtDrop(shell,mkSolid,solid);
     const tUnify=performance.now();
-    // Volume de référence : un congé ou un chanfrein ne peut qu'en retirer.
-    const volBefore=_occtVolume(oc,unified);
-    // 3. Add edges — ALL of them, or only those matching the picked chains
-    //    (edges shared by 2 faces are explored twice — OCCT merges
-    //    duplicates into one contour, harmless and validated).
-    //    Match test: geometric, not index-based (robust to UnifySameDomain
-    //    merging several mesh sub-segments into one longer OCCT edge —
-    //    a picked segment can be an interior sub-part of a merged edge).
-    const segTol=Math.max(0.02,diag*0.0015);
-    const segOnEdge=(v1,v2,p0,p1)=>{
-      const dx=v2.x-v1.x,dy=v2.y-v1.y,dz=v2.z-v1.z,len2=dx*dx+dy*dy+dz*dz;
-      if(len2<1e-9)return false;
-      const proj=p=>{
-        const t=((p.x-v1.x)*dx+(p.y-v1.y)*dy+(p.z-v1.z)*dz)/len2;
-        return {t,d:Math.hypot(p.x-(v1.x+dx*t),p.y-(v1.y+dy*t),p.z-(v1.z+dz*t))};
-      };
-      const r0=proj(p0),r1=proj(p1);
-      return r0.d<segTol&&r1.d<segTol&&r0.t>-0.02&&r0.t<1.02&&r1.t>-0.02&&r1.t<1.02;
-    };
-    // [NEW 04/09] Échelle de repli au lieu d'un throw sec. Un Build en échec
-    // n'est plus une erreur terminale : on retente en écartant les arêtes trop
-    // courtes pour accueillir R (typiquement les micro-arêtes de couture d'une
-    // union CSG), puis en réduisant R. Chaque tentative est validée par
-    // BRepCheck_Analyzer ET par l'invariant de volume avant d'être retenue —
-    // un "succès" qui gonfle le volume est rejeté comme un échec.
-    // Budget de temps : la ligne de repli s'arrête si le cumul dépasse 6× la
-    // première tentative (plancher 8 s), pour ne jamais transformer une pièce
-    // lourde en gel d'interface.
-    let att=null,attempts=[],tLadder0=performance.now(),budget=0;
-    for(let k=0;k<_OCCT_FALLBACK.length;k++){
-      const st=_OCCT_FALLBACK[k], Rk=R*st.f;
-      if(Rk<0.02) break;
-      const tA=performance.now();
-      const a=_occtAttempt(oc,unified,Rk,st.skip,mode==='round',volBefore,keepSegs,segOnEdge);
-      const dtA=performance.now()-tA;
-      if(k===0) budget=Math.max(8000,dtA*6);
-      attempts.push(`R=${Rk.toFixed(3)}${st.skip?` skip<${(st.skip*Rk).toFixed(2)}mm`:''} → ${a.ok?'valid':a.why} (${Math.round(dtA)}ms)`);
-      if(a.ok){ att=a; break; }
-      if(keepSegs&&a.nAdded===0&&!a.nSkipped) break;   // la sélection ne matche aucune arête OCCT
-      if(_occtIsFatal(a.why)) throw new Error(a.why);   // module mort → sortie immédiate
-      if(performance.now()-tLadder0>budget){
-        nasLog('WARN','OCCT: fallback ladder stopped on time budget after '+attempts.length+' attempt(s)');
-        break;
-      }
+    // 3. [v5] Plan multi-passes sur le B-Rep : recensement des arêtes vives de la
+    //    forme COURANTE à chaque passe (convexes/concaves, verticales, tangentes
+    //    G1 écartées), appariement géométrique des chaînes piquées (robuste aux
+    //    arêtes fusionnées par UnifySameDomain ET raccourcies par une passe
+    //    précédente), construction + validation + repli par passe.
+    const tol=Math.max(0.02,diag*0.0015);
+    const passes=_qfBuildPlan(!!selectedOnly,sel,mainFin,cornerFin,cMode,tol);
+    const plan=_occtRunPlan(oc,unified,passes,{tol,isFatal:_occtIsFatal});
+    _keep.push(...plan.keep);
+    for(const r of plan.report){
+      if(!r.n) { nasLog('DBG',`  pass "${r.label}": no matching edge`); continue; }
+      nasLog('DBG',`  pass "${r.label}" (${r.kind}, ${r.finishes.join(' + ')}): ${r.applied}/${r.n} edge(s)`
+        +(r.bridges?`, ${r.bridges} bridge(s)`:'')+` — ${r.log.join(' | ')}`
+        +(r.notes&&r.notes.length?` — ${r.notes.join('; ')}`:''));
     }
-    if(!att){
-      if(keepSegs&&attempts.length===1&&/no edge left/.test(attempts[0]))
+    if(!plan.ok){
+      if(plan.fatal) throw new Error(plan.why);
+      if(selectedOnly&&plan.report.every(r=>!r.n))
         throw new Error('no OCCT edge matched the picked selection — try picking again');
-      throw new Error(`kernel could not build a valid ${mode==='round'?'fillet':'chamfer'} at R=${R} `
-        +`nor at any reduced radius — ${attempts.join(' | ')}`);
+      throw new Error(`kernel could not build a valid ${opName} (${opLbl}) — ${plan.why}`);
     }
-    const result=att.shape, nEdges=att.nEdges, nKept=att.nAdded, Reff=att.R;
-    _keep.push(att.mk,result);
+    const result=plan.shape;
     const tFillet=performance.now();
-    if(attempts.length>1){
-      const dropped=att.nSkipped?` and left ${att.nSkipped} edge(s) sharp (shorter than ${(2*Reff).toFixed(2)}mm)`:'';
-      _qfSetStatus(`⚠ R=${R} impossible here — applied R=${Reff.toFixed(2)}${dropped}`,'var(--warn)');
-      nasLog('WARN',`OCCT: R=${R} rejected by the kernel — fell back to R=${Reff.toFixed(3)} on ${nKept}/${nEdges} edges${dropped}`);
-      nasLog('DBG','  ladder: '+attempts.join(' | '));
+    // Réductions/abandons éventuels → message clair (taille réellement appliquée)
+    const degraded=plan.report.filter(r=>r.n&&(r.scale<0.999||r.dropped));
+    const nEdges=plan.report.reduce((a,r)=>a+(r.applied||0),0);
+    if(degraded.length){
+      const parts=degraded.map(r=>(r.scale<0.999?`${r.finishes.join('+')} impossible here → applied ${r.appliedLabels.join('+')} (largest feasible)`:`${r.finishes.join('+')}`)
+        +(r.dropped?` · ${r.dropped} micro-edge(s) left sharp`:''));
+      _qfSetStatus('⚠ '+parts.join(' · '),'var(--warn)');
+      nasLog('WARN','OCCT: '+parts.join(' · '));
     }
-    const _brepInvalid=false;   // déjà validé dans _occtAttempt (B-Rep + volume)
+    const _brepInvalid=false;   // déjà validé passe par passe (B-Rep + volume borné)
     // 4. B-Rep → triangles. Deflection derived from R and the Segments
     // slider — same physical quantity as the mesh sweep path: sagitta of
     // an arc of radius R split into N segments ≈ R·π²/(2N²). This makes
@@ -967,11 +1815,26 @@ async function _occtFilletAll(selectedOnly){
     // 192 = near-smooth), instead of an object-size heuristic the slider
     // had zero effect on. Clamped to avoid pathological mesh sizes on
     // extreme R/segments combos.
+    // [v5] R = plus PETIT rayon réellement appliqué (congés variables/multiples),
+    // à défaut la plus petite taille de chanfrein.
+    let Rmesh=Infinity;
+    for(const r of plan.report){ if(!r.n) continue; Rmesh=Math.min(Rmesh,isFinite(r.minR)?r.minR:r.minSize); }
+    if(!isFinite(Rmesh)) Rmesh=_qfFinSize(mainFin);
     const arcSegs=Math.max(3,Math.min(192,Math.round(_qfSegs)));
-    const sagitta=Reff*Math.PI*Math.PI/(2*arcSegs*arcSegs);
+    const sagitta=Rmesh*Math.PI*Math.PI/(2*arcSegs*arcSegs);
     const defl=Math.min(0.5,Math.max(0.005,sagitta));
+    // les triangulations de CONTRÔLE (validation des passes) sont jetées : le
+    // maillage final doit suivre la déflexion demandée (curseur Segments)
+    try{ oc.BRepTools.Clean(result); }catch(_){}
     const mesher=new oc.BRepMesh_IncrementalMesh_2(result,defl,false,0.5,false);
     const out=[];
+    // [v5] Géométrie d'AFFICHAGE : un bloc de sommets par face OCCT (sommets
+    // partagés À L'INTÉRIEUR d'une face seulement). computeVertexNormals() lisse
+    // donc les congés mais garde nettes les arêtes entre faces — un chanfrein
+    // se voit enfin comme un plan, pas comme un arrondi (la v4 soudait tout puis
+    // moyennait les normales à travers les arêtes vives). Aux raccords tangents
+    // (congé → face plane) les normales coïncident déjà : transition lisse.
+    const dPos=[], dIdx=[]; let dOff=0;
     const fex=new oc.TopExp_Explorer_2(result,oc.TopAbs_ShapeEnum.TopAbs_FACE,oc.TopAbs_ShapeEnum.TopAbs_SHAPE);
     while(fex.More()){
       const face=oc.TopoDS.Face_1(fex.Current());
@@ -984,6 +1847,7 @@ async function _occtFilletAll(selectedOnly){
         for(let i=1;i<=nv;i++){
           const nd=tri.Node(i), p=nd.Transformed(trsf);
           pts[(i-1)*3]=p.X();pts[(i-1)*3+1]=p.Y();pts[(i-1)*3+2]=p.Z();
+          dPos.push(pts[(i-1)*3],pts[(i-1)*3+1],pts[(i-1)*3+2]);
           _occtDrop(p,nd);
         }
         for(let i=1;i<=nt;i++){
@@ -993,8 +1857,10 @@ async function _occtFilletAll(selectedOnly){
           out.push(pts[(a-1)*3],pts[(a-1)*3+1],pts[(a-1)*3+2],
                    pts[(b-1)*3],pts[(b-1)*3+1],pts[(b-1)*3+2],
                    pts[(c-1)*3],pts[(c-1)*3+1],pts[(c-1)*3+2]);
+          dIdx.push(dOff+a-1,dOff+b-1,dOff+c-1);
           _occtDrop(t);
         }
+        dOff+=nv;
         _occtDrop(trsf,triH);
       }
       _occtDrop(loc,face);
@@ -1004,7 +1870,10 @@ async function _occtFilletAll(selectedOnly){
     if(!out.length)throw new Error('empty triangulation from kernel');
     const tMesh=performance.now();
     // 5. Result object — doCSG pattern, single source consumed
-    const rGeo=new THREE.BufferGeometry();
+    //    Contrôle d'étanchéité sur une copie SOUDÉE (soupe) ; l'objet reçoit la
+    //    géo d'affichage par faces, sauf si un bouchage de trou a été nécessaire
+    //    (on garde alors la géo soudée + bouchons, comportement v4).
+    let rGeo=new THREE.BufferGeometry();
     rGeo.setAttribute('position',new THREE.Float32BufferAttribute(out,3));
     // [FIX 25/07 — "trou" silencieux] mk.IsDone()===true ne garantit pas un B-Rep clos.
     // Cas vécu : re-fileter un résultat déjà courbé refacette la surface de congé
@@ -1017,15 +1886,21 @@ async function _occtFilletAll(selectedOnly){
     // isManifold=false. Bénéfice bonus : rGeo ressort indexée/dédupliquée au lieu du
     // triangle-soup non-indexé actuel.
     let isManifold=_weldAndCheckManifold(rGeo,3);
+    let _capped=false;
     if(!isManifold && rGeo._nakedEdgePairs && rGeo._nakedEdgePairs.length && _capStepGaps(rGeo)){
-      isManifold=true;
+      isManifold=true; _capped=true;
       nasLog('DBG','OCCT gap filled — mesh now watertight');
+    }
+    if(!_capped && dIdx.length){
+      rGeo.dispose();
+      rGeo=new THREE.BufferGeometry();
+      rGeo.setAttribute('position',new THREE.Float32BufferAttribute(dPos,3));
+      rGeo.setIndex(dIdx);
     }
     if(_brepInvalid) isManifold=false; // signal B-Rep pré-triangulation, indépendant du check mesh
     if(!isManifold){
-      nasLog('WARN',`OCCT ${mode==='round'?'fillet':'chamfer'} result NON-MANIFOLD — ${rGeo._nakedEdges||0} naked edge(s)`
+      nasLog('WARN',`OCCT ${opName} result NON-MANIFOLD — ${rGeo._nakedEdges||0} naked edge(s)`
         +(rGeo._overEdges?`, ${rGeo._overEdges} over-valenced`:'')
-        +(_brepInvalid?' — BRepCheck_Analyzer flagged the B-Rep invalid pre-triangulation':'')
         +(obj.isOcctResult?' — likely the re-fillet-of-curved-result kernel edge case':'')
         +'. CSG disabled on this object.');
     }
@@ -1038,10 +1913,22 @@ async function _occtFilletAll(selectedOnly){
     rMesh.position.set(cg.x,cg.y,cg.z);rMesh.castShadow=true;
     scene.add(rMesh);
     objCnt++;
-    // Le rayon réellement appliqué apparaît dans le nom quand il diffère du rayon
-    // demandé — sans ça l'info disparaît avec le panneau QF à la fermeture.
-    const _suffix=(Reff!==R)?('_R'+Reff.toFixed(2)):'';
-    const ro={id:objCnt,name:'OCCT_'+(mode==='round'?'Fillet':'Chamfer')+'_'+objCnt+_suffix,type:'csg',mesh:rMesh,isHole:false,color:_col,isOcctResult:true,isManifold};
+    // Le facteur réellement appliqué apparaît dans le nom quand la taille a dû
+    // être réduite — sans ça l'info disparaît avec le panneau QF à la fermeture.
+    const sMin=Math.min(1,...plan.report.filter(r=>r.n).map(r=>r.scale));
+    let _suffix='';
+    if(sMin<0.999){
+      const _one=plan.report.filter(r=>r.n);
+      const _f=(_one.length===1&&_one[0].finishes.length===1)?(selectedOnly?sel[0].fin:mainFin):null;
+      _suffix=(_f&&_f.kind==='fillet'&&_f.law!=='var')?('_R'+(_f.R*sMin).toFixed(2))
+             :(_f&&_f.kind==='chamfer'&&_f.type==='sym')?('_C'+(_f.d*sMin).toFixed(2))
+             :('_x'+sMin.toFixed(2));
+    }
+    // nom d'après ce qui a VRAIMENT été construit (une passe de coins vide ne compte pas)
+    const _kinds=new Set(plan.report.filter(r=>r.n&&r.applied).map(r=>r.kind));
+    const _base=_kinds.size>1?'Finish':_kinds.has('chamfer')?'Chamfer':'Fillet';
+    const ro={id:objCnt,name:'OCCT_'+_base+'_'+objCnt+_suffix,type:'csg',mesh:rMesh,isHole:false,color:_col,isOcctResult:true,isManifold,
+              occtFinish:{label:opLbl,passes:plan.report.filter(r=>r.n).map(r=>({label:r.label,kind:r.kind,finishes:r.finishes,edges:r.applied,scale:+r.scale.toFixed(3)}))}};
     if(GeometryPool.initialized){ro._poolSlot=GeometryPool.geoStore(rGeo);updPoolStats();}
     scene.remove(obj.mesh);obj.mesh.geometry.dispose();obj.mesh.material.dispose();
     objs=objs.filter(x=>x!==obj);
@@ -1049,8 +1936,11 @@ async function _occtFilletAll(selectedOnly){
     updProps();updOList();updStats();
     const dt=Math.round(performance.now()-t0);
     const _fmtMs=ms=>ms<1000?Math.round(ms)+'ms':(ms/1000).toFixed(1)+'s';
-    nasLog('OCCT',`✓ ${mode==='round'?'fillet':'chamfer'} ${keepSegs?nKept+'/'+nEdges+' picked edges':'ALL edges ('+nEdges+' explored)'} R=${Reff}${Reff!==R?` (requested ${R})`:''} — ${nTris}→${(out.length/9)|0} tris, defl=${defl.toFixed(3)} — ⏱ ${_fmtMs(dt)}`);
-    nasLog('DBG',`  detail: sewing ${_fmtMs(tSew-t0)} · unify ${_fmtMs(tUnify-tSew)} · ${mode==='round'?'fillet':'chamfer'} ${_fmtMs(tFillet-tUnify)} · meshing ${_fmtMs(tMesh-tFillet)}`);
+    const _applied=[...new Set(plan.report.filter(r=>r.n).flatMap(r=>r.appliedLabels))].join(' + ');
+    nasLog('OCCT',`✓ ${opName} ${opLbl} — ${nEdges} edge(s) in ${plan.report.filter(r=>r.n).length} B-Rep pass(es)`
+      +(sMin<0.999?` — applied ${_applied} (×${sMin.toFixed(2)}, largest feasible)`:'')
+      +` — ${nTris}→${(out.length/9)|0} tris, defl=${defl.toFixed(3)} — ⏱ ${_fmtMs(dt)}`);
+    nasLog('DBG',`  detail: sewing ${_fmtMs(tSew-t0)} · unify ${_fmtMs(tUnify-tSew)} · ${opName} ${_fmtMs(tFillet-tUnify)} · meshing ${_fmtMs(tMesh-tFillet)}`);
     _qfExit();
   }catch(e){
     const raw=String(e&&e.message||e);
