@@ -6,9 +6,9 @@
 
 Create solids, sketch in 2D, apply fillets and chamfers, and exchange STEP, IFC and mesh files. NASSCAD is a personal project by Nasser / NassLab. Personal, non-commercial and educational use is free under the terms in [LICENSE](LICENSE); commercial use requires an agreement.
 
-![NASSCAD 4.7.0 interface with an imported STEP assembly](docs/images/hero.png)
+![Four-cylinder engine modeled in NASSCAD with NassScript](nassscript-engine-preview.png)
 
-*Interface illustration from an earlier 4.7.0 build, before the switch to the MEDUSA engine.*
+*Four-cylinder engine created and animated with NassScript in NASSCAD.*
 
 ## Which version should I use?
 
