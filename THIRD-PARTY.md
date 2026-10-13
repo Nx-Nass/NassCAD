@@ -11,6 +11,7 @@ NASSCAD 4.7.0 bundles the components below. **All of them are local — zero CDN
 | **OpenCASCADE Technology** | 7.4.0 via opencascade.js 1.1.1 | Open Cascade SAS / Sebastian Alff | LGPL 2.1 with exception | B-Rep CAD kernel — fillet/chamfer, STEP assembly, colour and PMI reading (`opencascade.wasm.wasm`, `opencascade.wasm.data.js`) |
 | **occt-import-js** | — | Viktor Kovács | LGPL 2.1 | STEP import, embeds OpenCASCADE Technology |
 | **web-ifc** | 0.0.77 | That Open Company | MPL 2.0 | IFC import — IFC2X3 / IFC4 / IFC4X3 (`web-ifc-api-iife.js`, `nasscad-ifc-wasm.js`) — license text in [`web-ifc-LICENSE.md`](web-ifc-LICENSE.md) |
+| **Acorn** | 8.17.0 | Marijn Haverbeke, Ingvar Stepanyan and contributors | MIT | JavaScript parser bundled with `nassscript.js`; license notice retained in the source |
 | **Draco** | 1.5.7 | Google | Apache 2.0 | Mesh compression, glTF/GLB import and export |
 | **helvetiker** regular / bold | — | MAGENTA Ltd — MgOpen Modata | MgOpen License | Text geometry |
 | **optimer** regular / bold | — | MAGENTA Ltd — MgOpen Cosmetica | MgOpen License | Text geometry |
@@ -33,6 +34,7 @@ NASSCAD 4.7.0 bundles the components below. **All of them are local — zero CDN
 - opencascade.js — https://github.com/donalffons/opencascade.js (v1.1.1)
 - occt-import-js — https://github.com/kovacsv/occt-import-js
 - web-ifc — https://github.com/ThatOpen/engine_web-ifc (0.0.77)
+- Acorn — https://github.com/acornjs/acorn (8.17.0)
 
 ## License texts
 

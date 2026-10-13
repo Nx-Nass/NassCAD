@@ -352,7 +352,7 @@ async function _stepCacheKey(buffer, params, hashHex){
   const salt = '|' + ((params && params.linearUnit) || 'mm')
              + '|d' + ((params && params.linearDeflection)  ?? _STEP_WASM_DEFLECTION)
              + '|a' + ((params && params.angularDeflection) ?? _STEP_WASM_ANGULAR)
-             + '|NSTP8';
+             + '|NSTP9';
   // [17/09] Le digest lui-même est calculé par _stepDigestHex (plus bas), et
   // l'appelant peut le passer déjà calculé : sur 235 Mo, hacher deux fois le
   // même buffer — une fois pour le cache de parsing, une fois pour le cache de
@@ -366,6 +366,7 @@ async function _stepCacheKey(buffer, params, hashHex){
 // en JS pur — le cache est local et non adversarial, la résistance aux
 // collisions cryptographique n'y sert à rien, seule l'unicité de fait compte.
 async function _stepDigestHex(buffer){
+  if(buffer?.nasscadFileToken)return buffer.hashHex;
   try{
     if(typeof crypto !== 'undefined' && crypto.subtle && crypto.subtle.digest){
       const h = await crypto.subtle.digest('SHA-256', buffer);
@@ -578,7 +579,8 @@ function _geoCacheKey(hashHex, repairApplied){
     + '|g' + (_STEP_CAP_GAPS ? 1 : 0)
     + '|r' + (repairApplied ? 1 : 0)
     + '|f' + (_STEP_LEAN_IMPORT ? 1 : 0)
-    + '|NSPG3';                               // [24/09, soir] 2 : les corps portent leur référence exacte
+    + '|coords'+(window.NasscadImportSettings?.preserveCoordinates!==false?1:0)
+    + '|NSPG4';                               // [24/09, soir] 2 : les corps portent leur référence exacte
                                               // [28/09 — audit] 3 : corps tessellés complétés (cf. _stepTessMissing)
 }
 
@@ -785,8 +787,9 @@ async function _detectBooster(timeoutMs = 300){
     const res = await fetch(`${_BOOSTER_URL}/ping`, (typeof _nasPingInit === 'function') ? _nasPingInit(ctrl.signal) : { signal: ctrl.signal });
     clearTimeout(timer);
     _boosterState = res.ok;
+    await res.arrayBuffer();
   }catch(e){ _boosterState = false; }
-  if(_boosterState) nasLog('OK', '⚡ NASSCAD Engine detected (native localhost companion) — native tessellation available');
+  if(_boosterState) nasLog('OK', '⚡ NASSCAD Engine detected (native engine) — native tessellation available');
   return _boosterState;
 }
 
@@ -1083,13 +1086,18 @@ function _stepTagQuery(hashHex){
 }
 
 async function _readStepFileViaBoosterStream(buffer, params, onMesh, hashHex){
-  const res = await fetch(`${_BOOSTER_URL}/stepstream${_stepTagQuery(hashHex)}`, { method: 'POST', body: buffer });
+  const ctrl=new AbortController();
+  const timeoutMs=Math.max(120000,Math.ceil(buffer.byteLength/(1024*1024))*3000);
+  const timer=setTimeout(()=>ctrl.abort(),timeoutMs);
+  let reader;
+  try {
+  const res = await fetch(`${_BOOSTER_URL}/stepstream${_stepTagQuery(hashHex)}`, { method: 'POST', body: buffer, signal:ctrl.signal });
   if(!res.ok || !res.body){
     const err = new Error('stream unavailable (HTTP ' + res.status + ')');
     err.streamUnsupported = true; // vieux serveur sans /stepstream → repli /step
     throw err;
   }
-  const reader = res.body.getReader();
+  reader = res.body.getReader();
   let buf = new Uint8Array(0);
   const meshes = [];
   let endInfo = null;
@@ -1130,11 +1138,15 @@ async function _readStepFileViaBoosterStream(buffer, params, onMesh, hashHex){
   for(;;){
     const { done, value } = await reader.read();
     if(value && value.length){ append(value); tryParseFrames(); }
-    if(endInfo || done) break;
+    if(done) break;
   }
   if(endInfo && endInfo.error) throw new Error(endInfo.error);
   if(!meshes.length) throw new Error('empty stream');
   return { success: true, meshes };
+  }catch(error){
+    if(ctrl.signal.aborted){const e=new Error('MEDUSA import timed out after '+Math.round(timeoutMs/1000)+' seconds.');e.boosterAlive=true;e.nativeCanceled=true;throw e;}
+    throw error;
+  }finally{clearTimeout(timer);if(reader){await reader.cancel().catch(()=>{});reader.releaseLock();}}
 }
 
 // POST du buffer STEP brut au compagnon natif. Le buffer n'est PAS détaché par
@@ -1756,6 +1768,7 @@ async function _readStepFileOffloaded(buffer, params, _perf, _hashHex){
             `${n} body(ies) received…`, 'indeterminate');
         }, _fileHash);
       }catch(_se){
+        if(_se.nativeCanceled)throw _se;
         // Vieux serveur (pas de /stepstream), coupure en cours, erreur serveur :
         // le /step classique reste la voie sûre — comportement identique à avant.
         nasLog('DBG', `MEDUSA stream unavailable (${_se.message}) — falling back to classic /step`);
@@ -1769,6 +1782,7 @@ async function _readStepFileOffloaded(buffer, params, _perf, _hashHex){
       }
       return _bres;
     }catch(e){
+      if(e.nativeCanceled)throw e;
       if(e.boosterAlive){
         // Serveur vivant, seul ce fichier a échoué (géométrie exotique...) —
         // ne pas pénaliser les imports suivants dans la même session.
@@ -3081,7 +3095,7 @@ function _stepRebaseName(orig, innerName){
 // stricte) pour survivre aux variantes d'édition (ex: suffixes AP242
 // _MIM_LF, _ED2…). Aligné sur le commentaire d'en-tête de ce fichier :
 // "supporte tout STEP AP203/AP214/AP242".
-const _STEP_KNOWN_SCHEMAS = ['CONFIG_CONTROL_DESIGN', 'AUTOMOTIVE_DESIGN', 'AP242'];
+const _STEP_KNOWN_SCHEMAS = ['CONFIG_CONTROL_DESIGN', 'CONFIGURATION_CONTROL', 'AUTOMOTIVE_DESIGN', 'AP242', 'SHAPE_APPEARANCE_LAYER_MIM', 'STRUCTURAL_ANALYSIS_DESIGN'];
 function _checkStepSchema(headText, fileName){
   const m = headText.match(/FILE_SCHEMA\s*\(\s*\(([^)]*)\)/i);
   if(!m) return; // header tronqué avant FILE_SCHEMA (rare, >4KB de préambule) — OCCT tranchera
@@ -4160,13 +4174,18 @@ async function _importSTEPSingle(file, _impOpts){
   const _big = !!(_impOpts && _impOpts.big) && !(_impOpts && _impOpts.ifc);
   let _bigText = null, _turboInfo = null;
   try {
-    let buffer = await file.arrayBuffer();
+    let buffer=null;
+    if(file.size>64*1048576 && window.electronAPI?.prepareStepFile && await _detectBooster()){
+      try{buffer=await electronAPI.prepareStepFile(file);}catch(error){nasLog('WARN','Direct disk transport unavailable: '+error.message);}
+    }
+    if(!buffer)buffer=await file.arrayBuffer();
+    if(buffer.nasscadFileToken)nasLog('OK','STEP file streamed from disk to Medusa; no full source buffer in the 3D view.');
     // [NEW V4.2.7 19/06] Détection schéma STEP — diagnostic only, header ASCII en clair
     // (ISO 10303-21). N'influence rien pour l'instant — juste de la visibilité avant
     // d'éventuellement adapter la stratégie de repair par schéma/exportateur plus tard.
     let _stepSchema = '?';
     try {
-      const _head = new TextDecoder('ascii').decode(new Uint8Array(buffer, 0, Math.min(4096, buffer.byteLength)));
+      const _head = new TextDecoder('ascii').decode(buffer.nasscadFileToken?buffer.head:new Uint8Array(buffer, 0, Math.min(4096, buffer.byteLength)));
       const _sm = _head.match(/FILE_SCHEMA\s*\(\s*\(\s*'([^']+)'/i);
       if(_sm){
         const _proto = _sm[1].toUpperCase();
@@ -4264,7 +4283,7 @@ async function _importSTEPSingle(file, _impOpts){
       _bigText = _stepDecodeBig(buffer, file);
     }
     const _tDecl0 = performance.now();
-    try { if(typeof nasStepDeclared === 'function') _stepDeclared = nasStepDeclared(_bigText || buffer); }
+    try { if(buffer.nasscadFileToken){nasLog('INFO','Full STEP declaration scan skipped for direct disk transport; geometry and colours are read by Medusa.');}else if(typeof nasStepDeclared === 'function') _stepDeclared = nasStepDeclared(_bigText || buffer); }
     catch(e){ nasLog('WARN', `STEP declaration scan failed (${e.message}) — import continue`); }
     _stepAlphaTable = _stepDeclared;
     if(_stepDeclared && _stepDeclared.styleAlpha){
@@ -4304,7 +4323,7 @@ async function _importSTEPSingle(file, _impOpts){
       linearDeflectionType: 'bounding_box_ratio',
       linearDeflection:  _STEP_WASM_DEFLECTION,
       angularDeflection: _STEP_WASM_ANGULAR,
-      boosterOnly: !!(_impOpts && _impOpts.boosterOnly),
+      boosterOnly: !!buffer.nasscadFileToken || !!(_impOpts && _impOpts.boosterOnly),
       ifc:         !!(_impOpts && _impOpts.ifc) };
     if(_big){
       // [NEW V4.7.1 → 29/09] Gros fichier : MEDUSA lit le fichier ENTIER s'il
@@ -4316,6 +4335,7 @@ async function _importSTEPSingle(file, _impOpts){
         catch(e){ result = null; nasLog('WARN', `Turbo bypass: MEDUSA failed (${e.message}) — STEP Turbo in the browser`); }
       }
       if(!result){
+        if(buffer?.nasscadFileToken)buffer=await file.arrayBuffer();
         if(!_bigText) _bigText = _stepDecodeBig(buffer, file);
         buffer = null;   // plus utile : le Turbo travaille sur le texte
         result = await _stepTurboImportRead(_bigText, file.name, file.size, _rdParams, _perf);
@@ -4444,8 +4464,13 @@ async function _importSTEPSingle(file, _impOpts){
       // transposée à sortir).
       let isManifold = null;   // null = non évalué, cf. nasEnsureManifold côté host
       if(_STEP_LEAN_IMPORT){
+        const check=_edgeManifoldCheck(geo.index.array,geo.attributes.position.array);
+        isManifold=check.manifold;
+        if(!isManifold){const test=geo.clone();try{isManifold=_weldAndCheckManifold(test,6);}finally{test.dispose();}}
+        _nasNormalizeClosedMesh(geo,isManifold);
+        if(!isManifold){nonManifoldCount++;nasLog('WARN','Imported STEP body is not a closed manifold mesh: '+m.name);}
         const _nSrc = m.attributes?.normal?.array;
-        if(_nSrc && _nSrc.length === posArr.length){
+        if(!geo.attributes.normal && _nSrc && _nSrc.length === posArr.length){
           const _nrm = new Float32Array(_nSrc.length);
           for(let i=0; i<_nSrc.length; i+=3){
             _nrm[i]   = _nSrc[i];
@@ -4535,9 +4560,10 @@ async function _importSTEPSingle(file, _impOpts){
     if(_stepGeos.length){
       const _gBB = new THREE.Box3();
       _stepGeos.forEach(({geo}) => { geo.computeBoundingBox(); _gBB.union(geo.boundingBox); });
-      const _gOx = -(_gBB.min.x + _gBB.max.x) * 0.5;
-      const _gOy =  -_gBB.min.y;
-      const _gOz = -(_gBB.min.z + _gBB.max.z) * 0.5;
+      const _keep=window.NasscadImportSettings?.preserveCoordinates!==false;
+      const _gOx = _keep?0:-(_gBB.min.x + _gBB.max.x) * 0.5;
+      const _gOy = _keep?0:-_gBB.min.y;
+      const _gOz = _keep?0:-(_gBB.min.z + _gBB.max.z) * 0.5;
       const _impObjs = [];
 
       nasLog('DBG', `[perf-step] sewing: ${(performance.now()-_tSewStart).toFixed(0)}ms — ${_stepGeos.length} body(ies)`);

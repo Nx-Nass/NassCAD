@@ -210,6 +210,7 @@ function _stepFold(s, max){
 // fileHandle : FileSystemFileHandle obtenu dans doStepExport() pendant le clic.
 //   null/undefined → repli download (API absente ou erreur picker).
 async function _nasStepSave(suggestedName, blob, fileHandle){
+  if(fileHandle?.electronPath){const result=await electronAPI.writeFile(fileHandle.electronPath,new Uint8Array(await blob.arrayBuffer()));if(!result.ok)throw new Error(result.error);return;}
   if(fileHandle){
     try{
       const ws=await fileHandle.createWritable();
@@ -221,7 +222,7 @@ async function _nasStepSave(suggestedName, blob, fileHandle){
     }
   }
   // Repli : download navigateur → dossier Téléchargements par défaut
-  _nasDownload(suggestedName, blob, 'application/step');
+  return await _nasDownload(suggestedName, blob, 'application/step');
 }
 // Config globale lue par l'export — modifiable via la modale ou en console.
 globalThis._stepExportConfig = globalThis._stepExportConfig || {
@@ -278,7 +279,8 @@ async function doStepExport(){
   if(list && !list.length){ nasLog('WARN','STEP export: the selected bodies are no longer in the scene'); cancelStepExportModal(); return; }
   // ── Picker pendant le geste ──────────────────────────────────────────────
   let fileHandle=null;
-  if(typeof showSaveFilePicker==='function'){
+  if(window.electronAPI?.isElectron){const selected=await electronAPI.showSaveDialog({defaultPath:baseName+'_'+_apInfo.name+'.stp',filters:[{name:'STEP ('+_apInfo.name+')',extensions:['stp','step']}]});if(!selected){nasLog('INFO','STEP export canceled before calculation');return;}fileHandle={electronPath:selected};}
+  if(typeof showSaveFilePicker==='function' && !(window.electronAPI&&window.electronAPI.isElectron)){
     try{
       fileHandle=await showSaveFilePicker({
         suggestedName:baseName+'_'+_apInfo.name+'.stp',
@@ -539,7 +541,7 @@ async function _stepExactPrepare(list, avail, opts, P){
       // Blob sans type : pas d'en-tête Content-Type, donc requête CORS simple
       // (pas de pré-vol), comme l'import ; le fichier est lu depuis le disque.
       const r = await fetch(`${_STEP_MEDUSA_URL()}/stepload?tag=${tag.slice(1)}`,
-        { method: 'POST', body: e.src.slice(0, e.src.size, '') });
+        { method: 'POST', body: (e.src.size>64*1048576 && window.electronAPI?.prepareStepFile ? await electronAPI.prepareStepFile(e.src) : null) || e.src.slice(0, e.src.size, '') });
       let j = null;
       try{ j = await r.json(); }catch(_){ /* corps illisible : on garde le statut */ }
       if(!r.ok || !j || !j.success) throw new Error((j && j.error) || ('HTTP '+r.status));
@@ -765,7 +767,7 @@ async function _expSTEPRunMedusa(objList, opts, avail){
 //   • returnText → morceaux décodés en texte (round-trip interne).
 async function _stepOpenSink(opts, P){
   const parts = [];
-  if(!opts.returnText && opts.fileHandle){
+  if(!opts.returnText && opts.fileHandle && !opts.fileHandle.electronPath){
     try{
       const ws = await opts.fileHandle.createWritable();
       return {
@@ -785,7 +787,8 @@ async function _stepOpenSink(opts, P){
         for(const c of parts) s += dec.decode(c, {stream:true});
         return s + dec.decode();
       }
-      _nasDownload((opts.baseName||'model')+'_'+P.apInfo.name+'.stp', new Blob(parts, {type:'application/step'}), 'application/step');
+      await _nasStepSave((opts.baseName||'model')+'_'+P.apInfo.name+'.stp', new Blob(parts, {type:'application/step'}), opts.fileHandle);
+      parts.length=0;
       return undefined;
     },
     abort: async () => { parts.length = 0; }

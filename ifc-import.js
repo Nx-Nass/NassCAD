@@ -126,7 +126,7 @@ async function _ifcImportBrowser(file, opts){
           const clamp = (x, fallback) => Number.isFinite(x) ? Math.min(1,Math.max(0,x)) : fallback;
           const color = new THREE.Color(clamp(c.x,0.7),clamp(c.y,0.7),clamp(c.z,0.7));
           const alpha = clamp(c.w,1);
-          const hex = '#' + color.getHexString();
+          const hex = '#'+((Math.round(clamp(c.x,0.7)*255)<<16)|(Math.round(clamp(c.y,0.7)*255)<<8)|Math.round(clamp(c.z,0.7)*255)).toString(16).padStart(6,'0');
           material = new THREE.MeshPhongMaterial({color:hex, opacity:alpha, transparent:alpha<1,
             shininess:8, specular:0x1a1a1a, side:THREE.DoubleSide});
           const mesh = new THREE.Mesh(geo,material);

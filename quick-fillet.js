@@ -891,7 +891,7 @@ async function _occtWasmBinary(){
   if(_occtWasmCache) return _occtWasmCache;   // reset kernel → zéro re-téléchargement
   if(!_occtNeedLocal){
     try{
-      const r=await fetch(_OCCT_CDN+'opencascade.wasm.wasm');
+      const r=await fetch('opencascade.wasm.wasm');
       if(r.ok){const b=_sane(await r.arrayBuffer());if(b)return b;}
     }catch(e){/* CDN unreachable/CORS — expected, next step in the chain picks it up */}
     try{
@@ -1887,7 +1887,7 @@ async function _occtFilletAll(selectedOnly){
     // triangle-soup non-indexé actuel.
     let isManifold=_weldAndCheckManifold(rGeo,3);
     let _capped=false;
-    if(!isManifold && rGeo._nakedEdgePairs && rGeo._nakedEdgePairs.length && _capStepGaps(rGeo)){
+    if(!isManifold && rGeo._nakedEdgePairs && rGeo._nakedEdgePairs.length && confirm('The fillet mesh has open boundaries. Attempt to seal them? This may alter the geometry.') && _capStepGaps(rGeo)){
       isManifold=true; _capped=true;
       nasLog('DBG','OCCT gap filled — mesh now watertight');
     }
@@ -1896,13 +1896,15 @@ async function _occtFilletAll(selectedOnly){
       rGeo=new THREE.BufferGeometry();
       rGeo.setAttribute('position',new THREE.Float32BufferAttribute(dPos,3));
       rGeo.setIndex(dIdx);
+      isManifold=_weldAndCheckManifold(rGeo,3);
     }
     if(_brepInvalid) isManifold=false; // signal B-Rep pré-triangulation, indépendant du check mesh
     if(!isManifold){
       nasLog('WARN',`OCCT ${opName} result NON-MANIFOLD — ${rGeo._nakedEdges||0} naked edge(s)`
         +(rGeo._overEdges?`, ${rGeo._overEdges} over-valenced`:'')
         +(obj.isOcctResult?' — likely the re-fillet-of-curved-result kernel edge case':'')
-        +'. CSG disabled on this object.');
+        +'. Original object retained.');
+      rGeo.dispose();throw new Error('Fillet/chamfer produced an invalid open mesh. The original shape was retained.');
     }
     rGeo.computeVertexNormals();
     const cg=computeCenterOfGravity(rGeo);

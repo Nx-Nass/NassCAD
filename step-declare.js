@@ -215,7 +215,7 @@ function nasStepDeclared(text, opts) {
   }
 
   const C = out.counts;
-  out.solids = (C.MANIFOLD_SOLID_BREP || 0) + (C.BREP_WITH_VOIDS || 0);
+  out.solids = (C.MANIFOLD_SOLID_BREP || 0) + (C.BREP_WITH_VOIDS || 0) + (C.TESSELLATED_SOLID || 0);
   out.shellsClosed = C.CLOSED_SHELL || 0;
   out.shellsOpen   = (C.OPEN_SHELL || 0) + (C.SHELL_BASED_SURFACE_MODEL || 0);
   out.edges = edgeIds.size;
@@ -227,7 +227,7 @@ function nasStepDeclared(text, opts) {
   out.manifoldByDeclaration = out.edges > 0 && two === out.edges && out.shellsOpen === 0;
 
   if (!out.solids && !out.shellsOpen)
-    out.warnings.push('no B-Rep solid declared — surface, point or purely structural file');
+    out.warnings.push('no B-Rep or tessellated solid declared — surface, point or structural file');
   for (const k of Object.keys(out.edgeValence)) {
     if (+k !== 2) out.warnings.push(`${out.edgeValence[k]} edge(s) referenced ${k} time(s) instead of 2 — the file itself is non-manifold here`);
   }

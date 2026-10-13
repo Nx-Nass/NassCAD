@@ -31,3 +31,8 @@ _BACKUPS*/
 # ─── Divers ───────────────────────────────────────────────────────────────────
 *.log
 node_modules/
+
+# Windows release binaries are published as release assets, not committed.
+/NASSCAD-4.7.0-*.exe
+/NASSCAD-4.7.0-*.exe.sha256
+/NASSCAD-4.7.0-*.exe.blockmap

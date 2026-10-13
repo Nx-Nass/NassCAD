@@ -1524,6 +1524,25 @@ function hideScrewDialog(cancel) {
 }
 
 // ── Validation et ajout en scène ───────────────────────────────────
+// Keep canonical automatic names current, preserving user labels and copy suffixes.
+function _fastenerAutoRename(obj, oldLabel, newLabel) {
+  const prefix = oldLabel + '_';
+  if (typeof obj.name !== 'string' || !obj.name.startsWith(prefix)) return;
+  const suffix = obj.name.slice(prefix.length);
+  if (suffix === String(obj.id) || /^\d+_Cp\d+$/.test(suffix)) {
+    obj.name = newLabel + '_' + suffix;
+  }
+}
+function _screwAutoLabel(p) {
+  const db = _SCREW_DB[p.system] || _SCREW_DB.metric;
+  const spec = db[Math.min(p.specIdx, db.length - 1)] || {};
+  return `screw_${spec.name || p.specIdx}_L${p.length}`;
+}
+function _nutAutoLabel(p) {
+  const db = _SCREW_DB[p.system] || _SCREW_DB.metric;
+  const spec = db[Math.min(p.specIdx, db.length - 1)] || {};
+  return 'nut_' + (spec.name || ('spec_' + p.specIdx)).replace(/[^A-Za-z0-9]/g, '_');
+}
 function _screwToScene() {
   const specIdx     = +document.getElementById('sc-spec').value;
   const length      = +document.getElementById('sc-slen').value;
@@ -1545,7 +1564,10 @@ function _screwToScene() {
                       pitchCustom, length, head:_screwHead, nRad:_screwNRad, chamferAbout,
                       hand:_screwHand, clearance, bluntStart };
   if (_genEditObj) {
+    if (_genEditObj.genParams) _fastenerAutoRename(_genEditObj,
+      _screwAutoLabel(_genEditObj.genParams), _screwAutoLabel(genParams));
     _genEditObj.genParams = genParams;
+    updOList(); updProps();
     nasLog('OK','Screw.Gen edited: '+_genEditObj.name);
     _csgLog && _csgLog('✏ Screw.Gen edited → '+_genEditObj.name);
     hideScrewDialog(false);
@@ -1567,7 +1589,7 @@ function _screwToScene() {
     // [REFACTOR V4.7.1] cf. tore-gen.js — bloc mutualisé dans _finalizeGenToScene (htm).
     _finalizeGenToScene({
       label: 'Screw.Gen', geo,
-      name: (n) => `screw_${spec.name||specIdx}_L${length}_${n}`,
+      name: (n) => _screwAutoLabel(genParams) + '_' + n,
       genType: 'screw',
       genParams,
       hideDialogFn: () => hideScrewDialog(false)
@@ -1873,7 +1895,10 @@ function _nutToScene() {
   }
 
   if (_genEditObj) {
+    if (_genEditObj.genParams) _fastenerAutoRename(_genEditObj,
+      _nutAutoLabel(_genEditObj.genParams), _nutAutoLabel(p));
     _genEditObj.genParams = p;
+    updOList(); updProps();
     nasLog && nasLog('OK', 'Nut.Gen edited: ' + _genEditObj.name);
     hideNutDialog(false);
     return;
@@ -1897,7 +1922,7 @@ function _nutToScene() {
     // du cycle de vie de la page ; aucune régression).
     _finalizeGenToScene({
       label: 'Nut.Gen', geo,
-      name: (n) => 'nut_' + label.replace(/[^A-Za-z0-9]/g,'_') + '_' + n,
+      name: (n) => _nutAutoLabel(p) + '_' + n,
       genType: 'nut',
       genParams: p,
       hideDialogFn: () => hideNutDialog(false)
@@ -3171,7 +3196,11 @@ function _gearInvoluteShape(m, z, rHole, nPts, backlash){
     hole.absarc(0,0,rHole, 0, Math.PI*2, true);
     sh.holes.push(hole);
   }
-  return sh;
+  // ExtrudeGeometry's triangulator must not receive repeated arc/line junctions.
+  const clean=points=>{const result=[];for(const pt of points){if(!result.length || pt.distanceToSquared(result[result.length-1])>1e-16)result.push(pt);}if(result.length>1 && result[0].distanceToSquared(result[result.length-1])<1e-16)result.pop();return result;};
+  const polygon=new THREE.Shape(clean(sh.getPoints(12)));
+  polygon.holes=sh.holes.map(h=>new THREE.Path(clean(h.getPoints(12))));
+  return polygon;
 }
 
 // ── Couple d'engrenages — entraxe et calage ──────────────────────────────
@@ -4643,7 +4672,7 @@ function updateEntityList() {
   list.innerHTML = entities.map(e => {
     const dotClass = `dot-${e.type === 'point' ? 'line' : e.type}`;
     const label = entityLabel(e);
-    return `<div class="entity-item${selected.has(e.id)?' selected':''}" onclick="selectEntity(${e.id})">
+    return `<div class="entity-item${selected.has(e.id)?' selected':''}" onclick="SK.selectEntity(${e.id})">
       <div class="entity-dot ${dotClass}"></div>${label}</div>`;
   }).join('');
 }
@@ -4676,7 +4705,7 @@ function updateProps() {
   const field = (label, key, val) =>
     `<div class="prop-row"><span class="prop-label">${label}</span>
      <input class="prop-val" value="${parseFloat(val).toFixed(3)}"
-       onchange="updateProp(${e.id},'${key}',this.value)"></div>`;
+       onchange="SK.updateProp(${e.id},'${key}',this.value)"></div>`;
 
   switch (e.type) {
     case 'point':  rows = field('X', 'x', e.x) + field('Y', 'y', e.y); break;
@@ -4697,6 +4726,9 @@ function updateProp(id, key, val) {
   if (!e) return;
   const _u = _skSnapshot();   // [V4.7.3] undo — éditer une cote au clavier s'annule aussi
   const v = parseFloat(val);
+  if (!Number.isFinite(v)) {
+    updateProps(); _skHint('Enter a finite number.'); return;
+  }
   if (e.type === 'rect' && (key === 'rx' || key === 'ry' || key === 'rw' || key === 'rh')) {
     const x1 = Math.min(e.x1, e.x2), x2 = Math.max(e.x1, e.x2);
     const y1 = Math.min(e.y1, e.y2), y2 = Math.max(e.y1, e.y2);

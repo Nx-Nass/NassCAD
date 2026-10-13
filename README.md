@@ -1,6 +1,6 @@
 # NASSCAD
 
-**Parametric 3D CAD in your browser, with local processing and no account.**
+**Parametric 3D CAD in your browser or as a Windows desktop app, with local processing and no account.**
 
 [Try NASSCAD](https://www.nasscad.com/) · [Download releases](https://github.com/Nx-Nass/NassCAD/releases) · [Report a bug](https://github.com/Nx-Nass/NassCAD/issues) · [Getting started](#getting-started)
 
@@ -14,14 +14,17 @@ Create solids, sketch in 2D, apply fillets and chamfers, and exchange STEP, IFC 
 
 | Version | Best for | Requirements |
 |---|---|---|
-| **4.7.0 — MEDUSA** | Current development, STEP / IFC, B-Rep fillets and chamfers | Modern browser and local HTTP server. Booleans work in the browser; **MEDUSA is optional for native multi-core processing and required for exact B-Rep STEP export.** |
+| [**4.7.0 — Windows desktop**](https://github.com/Nx-Nass/NassCAD/releases/latest) | Ready-to-run offline application with integrated MEDUSA | Windows x64; choose Setup or Portable in the latest release. No separate engine launcher is needed. |
+| **4.7.0 — browser** | STEP / IFC, B-Rep fillets and chamfers | Modern browser and local HTTP server. Booleans work in the browser; **MEDUSA is optional for native multi-core processing and required for exact B-Rep STEP export.** |
 | [**4.2.7 — classic**](https://github.com/Nx-Nass/NassCAD/releases/tag/v4.2.7) | The earlier self-contained HTML application | Browser; see the [original setup instructions](https://github.com/Nx-Nass/NassCAD/blob/v4.2.7/README.md). |
 
 This is the canonical repository for NASSCAD. Versions are identified by tags and releases, rather than separate repository names. The histories of the former 4.2.7 and 4.7.0 repositories are retained.
 
 ## Getting started
 
-Download a release or clone the current development version:
+For Windows x64, download **Setup** or **Portable** from the [latest release](https://github.com/Nx-Nass/NassCAD/releases/latest). Both packages include MEDUSA and start it with the application through an internal pipe. They include the illustrated manual and run locally without an account.
+
+For the browser edition, clone the repository and serve its files over local HTTP:
 
 ```bash
 git clone https://github.com/Nx-Nass/NassCAD.git
@@ -33,7 +36,7 @@ Open **http://localhost:8080/NASSCAD_V4_7_0.htm** in your browser. Keep the bund
 
 Union, Subtraction and Intersection work in the browser using the bundled Manifold WASM engine, loaded on the first boolean operation. For native multi-core booleans, large STEP assemblies and exact B-Rep STEP export, extract the build bundle for your platform and follow its instructions to build and start **MEDUSA**. See [the engine guide](#-nasscad-engine--medusa).
 
-On Windows, `nasscad.bat` can start MEDUSA and open the page once the engine is built; it expects `Nasscad_Medusa_Engine_3.1.exe` beside the application. The build bundles contain source and build instructions, not a ready-to-run engine.
+The release also provides a standalone MEDUSA engine package for browser users. The `DEPLOY_*` build bundles contain source and build instructions.
 
 NASSCAD processes models locally. After downloading its components, it can run without an internet connection. A display of **1920×1080 or higher** is recommended.
 
@@ -42,7 +45,7 @@ NASSCAD processes models locally. After downloading its components, it can run w
 
 | | |
 |---|---|
-| **18 watertight primitives** | ArcSphere, Cylind, Cubic, Tore, Gear, Screw, Nut, Pipe, RevSolid, Roof, Hollow box, Gen… |
+| **Watertight primitives** | ArcSphere, Cylind, Cubic, Tore, Gear, Screw, Nut, Pipe, RevSolid, Roof, Hollow box, Gen… |
 | **Real fillet & chamfer** | True B-Rep operations via OpenCASCADE, on picked edges or all edges |
 | **STEP AP203 / AP214 / AP242** | Import **and** export, with per-part *and* per-face colours read from the file itself |
 | **PMI & GD&T** | Product manufacturing information read from STEP assemblies |
@@ -83,8 +86,12 @@ Measured on 23/09/2026 with `NASSCAD_bench_perf.js` on an Intel Core i5-9400 (6 
 
 ```
 NASSCAD_V4_7_0.htm          Application — the single entry point
-nasscad.bat                 Windows launcher: starts MEDUSA, then opens NASSCAD
 three.js                    Renderer
+nasscad-desktop.js          Desktop MEDUSA status and log panel
+nasscad-medusa-bridge.js    Desktop internal-pipe transport for MEDUSA requests
+nasscad-audit-fixes.js      Application fixes used by the published build
+nasscad-object-range.js    Object range tools
+nasscad-manifold-wasm.js    Browser boolean fallback
 nasscad-fonts.js            Bundled typefaces
 nasscad-draco.js            Draco codec (GLB/glTF)
 nasscad-gens.js             Generators: Sketch, Screw, Nut, Gear, Pipe, CircularText
@@ -95,6 +102,10 @@ nasscad_logs.js             Structured logging
 nasscad_occt_wasm.js        OCCT glue layer
 nassscript.js               NassScript console
 nasscript_doc.html          NassScript documentation
+nasscad_user_manual.html    Illustrated user manual
+NASSCAD_User_Manual_EN.pdf  Printable user manual
+nass-demo-solar.js          NassScript solar-system demo
+nass-demo-engine.js         NassScript engine demo
 occt-import-js.js           occt-import-js bridge
 occt-loader-b64.js          OCCT loader
 opencascade.wasm.wasm       OpenCASCADE compiled to WebAssembly (66 MB)
@@ -122,11 +133,11 @@ DEPLOY_UBUNTU_WSL/          DEPLOY_UBUNTU_WSL.zip  — MEDUSA, WSL deployment
 
 ## 🐙 NASSCAD Engine — MEDUSA
 
-**Optional for boolean operations.** NASSCAD probes MEDUSA before each operation and uses its native engine when available (`POST /csg` for a flat operation, `POST /csgtree` for a whole tree). Otherwise it loads `nasscad-manifold-wasm.js` on demand and performs the operation locally in a browser worker. The CSG panel shows **Manifold C++ · MEDUSA** or **Manifold WASM**. Browser processing uses one core and is slower on large models.
+**Optional for boolean operations in the browser; integrated in the Windows desktop packages.** NASSCAD probes MEDUSA before each operation and uses its native engine when available (`POST /csg` for a flat operation, `POST /csgtree` for a whole tree). Otherwise it loads `nasscad-manifold-wasm.js` on demand and performs the operation locally in a browser worker. The Windows desktop app transports these requests over an internal pipe. The CSG panel shows **Manifold C++ · MEDUSA** or **Manifold WASM**. Browser processing uses one core and is slower on large models.
 
 MEDUSA is a small native binary that runs **on your own machine** and listens only to it — nothing is uploaded, no account, no remote server. It links Manifold in native C++ with oneTBB, so booleans run at compiled-native speed across your cores instead of single-threaded WASM, and it also does native STEP reading and tessellation.
 
-**Works without MEDUSA** — viewing, the 18 primitives, selection, gizmos, fillet and chamfer, build volume, boolean operations, browser STEP import, IFC and mesh I/O. Keep the bundled files together; browser STEP import has limitations on large assemblies and per-face colors.
+**Works without MEDUSA in a browser** — viewing, primitives, selection, gizmos, fillet and chamfer, build volume, boolean operations, browser STEP import, IFC and mesh I/O. Keep the bundled files together; browser STEP import has limitations on large assemblies and per-face colors.
 
 **Needs MEDUSA** — exact B-Rep STEP export. MEDUSA also provides native multi-core booleans and large-assembly STEP import.
 
@@ -155,6 +166,7 @@ The C++ source is readable in [`MEDUSA_SOURCE/`](MEDUSA_SOURCE/). Build bundles 
 | OpenCASCADE Technology 7.4.0 via opencascade.js 1.1.1 | Open Cascade SAS / Sebastian Alff | LGPL 2.1 with exception |
 | `occt-import-js` | Viktor Kovács | LGPL 2.1 |
 | `web-ifc` 0.0.77 | That Open Company | MPL 2.0 |
+| Acorn 8.17.0 (bundled in NassScript) | Marijn Haverbeke, Ingvar Stepanyan and contributors | MIT |
 | Draco 1.5.7 | Google | Apache 2.0 |
 | `helvetiker` regular / bold | MAGENTA Ltd — MgOpen Modata | MgOpen License |
 | `optimer` regular / bold | MAGENTA Ltd — MgOpen Cosmetica | MgOpen License |

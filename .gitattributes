@@ -11,6 +11,7 @@
 *.wasm binary
 *.png  binary
 *.ico  binary
+*.pdf  binary
 
 # Bibliothèques tierces : exclues des statistiques de langage GitHub
 three.js            linguist-vendored

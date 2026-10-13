@@ -93,7 +93,7 @@ function _ioBakeGeo(so){
   }
   g.applyMatrix4(M);
   if(M.determinant() < 0) _ioFlipWinding(g);
-  return g;
+  return _nasCleanTriangles(g);
 }
 
 // Retourne l'orientation de chaque triangle (échange des sommets 2 et 3).
@@ -349,10 +349,12 @@ async function _watertightGate(items, label){
     nasLog('DBG', `${label} — watertight check skipped on "${n}" (over ${MAX_TRI.toLocaleString('en-US')} triangles)`);
 
   if(!bad.length){
-    nasLog('OK', `${label} — watertight: ${items.length} body(ies) checked, all closed`
+    nasLog('OK', `${label} — watertight: ${items.length-skipped.length} body(ies) checked, ${skipped.length} not checked, no defects found in checked bodies`
                  + ` (${Math.round(performance.now()-t0)}ms)`);
     return {checked: items.length, open: 0, repaired: 0, stillOpen: []};
   }
+
+  if(!confirm(label+': '+bad.length+' body(ies) have mesh defects.\nAttempt to seal open boundaries for this export?\nThis can change the geometry. Cancel exports the unchanged mesh.')){nasLog('WARN',label+': exporting mesh with uncorrected defects');return {checked:items.length-skipped.length,open:bad.length,repaired:0,stillOpen:bad.map(i=>items[i].name)};}
 
   // ── Réparation : auto-union Manifold, exactement le chemin déjà emprunté à
   //    l'import STEP. Serveur absent ⇒ _manifoldRepair retombe silencieusement
@@ -897,10 +899,11 @@ async function import3MF(file, opts){
       gMin = [Math.min(gMin[0], bb.min.x), Math.min(gMin[1], bb.min.y), Math.min(gMin[2], bb.min.z)];
       gMax = [Math.max(gMax[0], bb.max.x), Math.max(gMax[1], bb.max.y), Math.max(gMax[2], bb.max.z)];
     }
-    const ox = -(gMin[0] + gMax[0])/2, oy = -gMin[1], oz = -(gMin[2] + gMax[2])/2;
+    const keep=window.NasscadImportSettings?.preserveCoordinates!==false;
+    const ox = keep?0:-(gMin[0] + gMax[0])/2, oy = keep?0:-gMin[1], oz = keep?0:-(gMin[2] + gMax[2])/2;
     // Place libre calculée AVANT d'ajouter nos objets à objs : _findFreePos
     // n'examine que les positions déjà en scène (et ignore son 1er argument).
-    const fp = _findFreePos(null, Math.max(gMax[0] - gMin[0], gMax[2] - gMin[2]) + 2);
+    const fp = keep?{x:0,z:0}:_findFreePos(null, Math.max(gMax[0] - gMin[0], gMax[2] - gMin[2]) + 2);
     const made = [];
     for(const b of bodies){
       const geo = b.geo;
@@ -1728,16 +1731,11 @@ async function importGLB(file, opts){
     // le dit.
     let unitNote = UNIT === 1000 ? 'metres → mm' : 'legacy NASSCAD file in mm';
     const extent = Math.max(gMaxX-gMinX, gMaxY-gMinY, gMaxZ-gMinZ);
-    if(UNIT === 1000 && extent > _GLTF_MAX_MM){
-      const k = 1/UNIT;
-      geos.forEach(({geo}) => geo.scale(k, k, k));
-      gMinX*=k; gMinY*=k; gMinZ*=k; gMaxX*=k; gMaxY*=k; gMaxZ*=k;
-      nasLog('WARN', `Import ${_fmt}: read as metres, this model would be ${Math.round(extent/1000).toLocaleString('en-US')} m wide — beyond the working range, so its units were kept as millimetres (1 unit = 1 mm). Many glTF exporters ignore the metre convention; rescale it if needed.`);
-      unitNote = 'units kept as mm (oversized in metres)';
-    }
-    const ox=-(gMinX+gMaxX)/2, oy=-gMinY, oz=-(gMinZ+gMaxZ)/2;
+    if(UNIT === 1000 && extent > _GLTF_MAX_MM)nasLog('WARN','Large glTF model: metre units were preserved.');
+    const keep=window.NasscadImportSettings?.preserveCoordinates!==false;
+    const ox=keep?0:-(gMinX+gMaxX)/2, oy=keep?0:-gMinY, oz=keep?0:-(gMinZ+gMaxZ)/2;
     // Place libre AVANT d'ajouter nos objets (sinon ils se gênent eux-mêmes)
-    const fp=_findFreePos(null, Math.max(gMaxX-gMinX, gMaxZ-gMinZ)+2);
+    const fp=keep?{x:0,z:0}:_findFreePos(null, Math.max(gMaxX-gMinX, gMaxZ-gMinZ)+2);
     const groupObjs = [];
     geos.forEach(({geo,name,hex,rgb,prefer})=>{
       geo.translate(ox,oy,oz);
@@ -1748,7 +1746,7 @@ async function importGLB(file, opts){
       const mesh=new THREE.Mesh(geo,mat); mesh.castShadow=true; scene.add(mesh);
       mesh.position.set(fp.x, 0, fp.z);
       mesh.updateMatrixWorld(true);
-      const oname=name.replace(/[^a-zA-Z0-9_]/g,'_')+'_'+objCnt;
+      const oname=name.replace(/[\x00-\x1f]/g,'')+'_'+objCnt;
       const obj={id:objCnt,name:oname,type:'csg',mesh,color:col,isHole:false};
       objs.push(obj); groupObjs.push(obj);
     });
