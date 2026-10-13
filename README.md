@@ -6,9 +6,15 @@
 
 Create solids, sketch in 2D, apply fillets and chamfers, and exchange STEP, IFC and mesh files. NASSCAD is a personal project by Nasser / NassLab. Personal, non-commercial and educational use is free under the terms in [LICENSE](LICENSE); commercial use requires an agreement.
 
-![Four-cylinder engine modeled in NASSCAD with NassScript](nassscript-engine-preview.png)
+![Four-cylinder engine modeled in NASSCAD with NassScript](nassscript-engine-preview.png)*Four-cylinder engine created and animated with NassScript in NASSCAD.*
 
-*Four-cylinder engine created and animated with NassScript in NASSCAD.*
+## Create with an AI assistant through NassScript
+
+NassScript is a practical bridge between a language model and NASSCAD's live 3D scene. Give an assistant the [NassScript reference](https://www.nasscad.com/nasscript_doc.html), describe the part or mechanism you want, and ask it to draft a script. Review the JavaScript, then paste and run it in NASSCAD's integrated Script panel. You can refine the geometry, dimensions and motion by iterating on the script; NASSCAD processes the model locally.
+
+The **[four-cylinder engine demo](https://www.nasscad.com/nasscript_doc.html#engine-demo)** shows the scope of this workflow: pistons, connecting rods, crankshaft, camshafts, timing belt and animation coordinated in one scene. [Explore the actual NassScript source](nass-demo-engine.js), or launch the demo from NASSCAD's welcome screen. AI assistance is optional; NASSCAD has no built-in LLM connection or AI account requirement.
+
+
 
 ## Which version should I use?
 
