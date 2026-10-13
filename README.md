@@ -194,7 +194,6 @@ NASSCAD is a personal project, developed by one person on his own time. It doesn
 
 Third-party components listed above are **not** covered by CC BY-NC 4.0 and remain under their respective licenses.
 
-
 > No implied warranty. The author cannot be held liable for any damage resulting from the use of this software.
 
 ---
