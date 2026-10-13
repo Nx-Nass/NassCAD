@@ -4,9 +4,9 @@
 
 [Try NASSCAD](https://www.nasscad.com/) · [Download releases](https://github.com/Nx-Nass/NassCAD/releases) · [Report a bug](https://github.com/Nx-Nass/NassCAD/issues) · [Getting started](#getting-started)
 
-Create solids, sketch in 2D, apply fillets and chamfers, and exchange STEP, IFC and mesh files. NASSCAD is a personal project by Nasser / NassLab. Personal, non-commercial and educational use is free under the terms in [LICENSE](LICENSE); commercial use requires an agreement.
+Create solids, sketch in 2D, apply fillets and chamfers, and exchange STEP, IFC and mesh files. NASSCAD is a personal project by Nasser / NassLab. Personal, non-commercial and educational use is free under the terms in [LICENSE](LICENSE); commercial use requires an agreement.![Four-cylinder engine modeled in NASSCAD with NassScript](nassscript-engine-preview.png)
 
-![Four-cylinder engine modeled in NASSCAD with NassScript](nassscript-engine-preview.png)*Four-cylinder engine created and animated with NassScript in NASSCAD.*
+*Four-cylinder engine created and animated with NassScript in NASSCAD.*
 
 ## Create with an AI assistant through NassScript
 
