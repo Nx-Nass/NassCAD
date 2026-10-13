@@ -57,28 +57,13 @@ NASSCAD processes models locally. After downloading its components, it can run w
 | **Toolbox** | 6 icons per row. Scale the selection /5 /2 1× ×2 ×5 ×10, set the scroll-wheel zoom speed /5 /2 1× ×2 ×5 ×10 (remembered), measure, frame, drop to ground, centre of gravity… every button documented in the built-in help |
 | **Sketch.Gen** | 2D sketcher |
 | **Generators** | Screw.Gen & Nut.Gen (ISO / ASME, right- or left-hand thread, print clearance, Higbee cut), Gear.Gen, Pipe.Gen, CircularText.Gen |
-| **NassScript** | Full-access JS console over the scene graph — `NASSCAD_bench_perf.js` is a ready-made benchmark to run in it |
+| **NassScript** | Full-access JS console over the scene graph, with engine and solar-system demos |
 | **Undo / Redo** | 200 levels, IndexedDB-persistent |
 | **Editing** | Box-select, double-click cycle (resize handles → dimensions → rotation rings), X-Ray mode, magnetic snap down to 0.001 mm |
 | **Import** | STL · OBJ · 3MF · GLB · PLY · STEP · IFC |
 | **Export** | STL · OBJ · 3MF · GLB · PLY · STEP AP242 · IFC4 · SVG · DXF |
 
 Requires a modern browser with WebGL and WebAssembly: Chrome 90+, Firefox 90+, Safari 16+.
-
----
-
-## ⏱ Performance — measured
-
-Measured on 23/09/2026 with `NASSCAD_bench_perf.js` on an Intel Core i5-9400 (6 cores), 64 GB RAM, NVIDIA RTX 3050 8 GB, Firefox 152, 1920×1080, NASSCAD Engine 3.1. Booleans scale with the CPU cores, display with the graphics card.
-
-| Test | Result |
-|------|--------|
-| Display — camera orbit | **60 FPS** up to 1,000 objects (even 16.6 M vertices) · ~30 FPS around 2,000 objects |
-| Cube − cylinder · two spheres at CSG⚡ 64 | 0.15 – 0.4 s |
-| Two spheres at CSG⚡ 128 · 200 mm plate − 100 holes | 0.4 s · 0.8 s (preview after 0.1 – 0.25 s) |
-| Union of 200 spheres that do not touch (fast path, 19.5 M vertices) | 3.6 s |
-| Two spheres at CSG⚡ 256 · CSG⚡ 512 | 1.1 s · 4.0 s (preview after 0.1 s) |
-| Union of 100 overlapping spheres (3.2 M triangles in) | 12.7 s (preview after 0.5 s) |
 
 ---
 
@@ -120,9 +105,6 @@ ifc-export.js               IFC4 writer
 web-ifc-api-iife.js         web-ifc engine
 nasscad-ifc-wasm.js         web-ifc WebAssembly, embedded
 web-ifc-LICENSE.md          web-ifc license (MPL 2.0)
-NASSCAD_bench_perf.js       Performance benchmark (NassScript)
-capture_csg.js              CSG payload capture, for engine debugging
-
 MEDUSA_SOURCE/              MEDUSA engine — C++ source (nasscad_medusa.cpp)
 DEPLOY_WINDOWS_11_MSVC/     Medusa_Engine_MSVC.zip — MEDUSA, MSVC build (source + CMake + vcpkg)
 DEPLOY_UBUNTU_LINUX/        DEPLOY_UBUNTU.zip      — MEDUSA, native Ubuntu installer
