@@ -1,0 +1,24 @@
+/* NassLab homepage engine showcase — AGPL-3.0-only. */
+.hero-engine{position:relative;z-index:1;align-self:center;min-width:0;animation:up .7s .35s both}
+.engine-heading{display:flex;align-items:center;justify-content:space-between;gap:1rem;padding:0 1rem;font:500 .62rem 'JetBrains Mono',monospace;letter-spacing:.14em;color:#99b8ee}
+.engine-heading strong{color:#e2ecff;font-weight:500}
+.engine-heading span:last-child{white-space:nowrap;color:#91a4c4;letter-spacing:.04em}
+.engine-stage{position:relative;width:100%;aspect-ratio:560 / 500;isolation:isolate;touch-action:pan-y;cursor:grab;background:radial-gradient(ellipse at 50% 65%,rgba(37,87,173,.16),transparent 65%);border-radius:20px;outline-offset:3px}
+.engine-stage:focus-visible{outline:2px solid #93b4ff}
+.engine-stage.dragging{cursor:grabbing}
+.engine-stage::after{content:'';position:absolute;z-index:-1;left:12%;right:12%;bottom:6%;height:12%;border-radius:50%;background:rgba(0,3,16,.5);filter:blur(22px);pointer-events:none}
+.engine-poster,.engine-stage canvas{position:absolute;inset:0;width:100%;height:100%;display:block;object-fit:contain;transition:opacity .3s;pointer-events:none}
+.engine-stage canvas{opacity:0}
+.engine-stage[data-state=ready] canvas{opacity:1}
+.engine-stage[data-state=ready] .engine-poster{opacity:0}
+.engine-controls{position:relative;display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:.65rem;margin-top:.3rem}
+.engine-controls button,.engine-demo-link{min-height:40px;border:1px solid rgba(131,168,241,.26);border-radius:8px;background:rgba(14,28,54,.65);color:#c4d7fa;padding:.55rem .85rem;font:500 .74rem 'DM Sans',sans-serif;cursor:pointer;text-decoration:none;transition:background .2s,border-color .2s}
+.engine-controls button:hover,.engine-demo-link:hover{background:rgba(35,70,130,.45);border-color:#7798d5}
+.engine-controls button:disabled{opacity:.5;cursor:default}
+.engine-controls button:focus-visible,.engine-demo-link:focus-visible{outline:2px solid #93b4ff;outline-offset:3px}
+.engine-demo-link{color:#ffab70;border-color:rgba(234,88,12,.4)}
+.engine-note{margin-top:.8rem;text-align:center;font:400 .59rem 'JetBrains Mono',monospace;color:#91a4c4;letter-spacing:.035em;line-height:1.8}
+.engine-note span{display:block;color:#6f86ac;font-size:.56rem}
+@media(max-width:900px){.hero-engine{width:min(100%,640px);justify-self:center}}
+@media(max-width:480px){.engine-heading{padding:0;font-size:.55rem;gap:.5rem;letter-spacing:.08em}.engine-heading span:last-child{font-size:.53rem}.engine-note{font-size:.54rem}.engine-controls{gap:.4rem}.engine-controls button,.engine-demo-link{padding:.5rem .65rem;font-size:.72rem;min-height:44px}}
+@media(prefers-reduced-motion:reduce){.hero-engine{animation:none}.engine-poster,.engine-stage canvas{transition:none}}
