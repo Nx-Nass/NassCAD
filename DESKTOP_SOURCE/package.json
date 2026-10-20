@@ -1,0 +1,111 @@
+{
+  "name": "nasscad-ui-test",
+  "version": "4.7.0",
+  "description": "NASSCAD — local 3D CAD with integrated MEDUSA; AGPLv3",
+  "author": "NASSCAD",
+  "private": true,
+  "main": "electron/main.cjs",
+  "scripts": {
+    "build:medusa": "powershell -NoProfile -ExecutionPolicy Bypass -File native/build.ps1",
+    "pack": "electron-builder --win --x64 --dir",
+    "dist": "electron-builder --win --x64"
+  },
+  "devDependencies": {
+    "electron": "44.6.0",
+    "electron-builder": "26.15.3",
+    "playwright": "1.58.2"
+  },
+  "build": {
+    "appId": "com.nasscad.desktop.uitest",
+    "productName": "NASSCAD",
+    "directories": {
+      "output": "dist",
+      "buildResources": "."
+    },
+    "files": [
+      "electron/main.cjs",
+      "electron/preload.cjs",
+      "electron/supervisor.cjs",
+      "electron/medusa-pipe.cjs",
+      "package.json",
+      "LICENSE.txt",
+      "SOURCE.md"
+    ],
+    "extraResources": [
+      {
+        "from": "..",
+        "to": "nasscad",
+        "filter": [
+          "NASSCAD_V4_7_0.htm",
+          "*.js",
+          "*.wasm",
+          "*.pdf",
+          "*.png",
+          "*.ico",
+          "*.css",
+          "nasscad_user_manual.html",
+          "nasscript_doc.html",
+          "license.html",
+          "LICENSE",
+          "LICENSE.txt",
+          "LICENSING.md",
+          "THIRD-PARTY.md",
+          "SOURCE.md",
+          "web-ifc-LICENSE.md"
+        ]
+      },
+      {
+        "from": "runtime/medusa",
+        "to": "medusa",
+        "filter": [
+          "**/*"
+        ]
+      }
+    ],
+    "asar": true,
+    "win": {
+      "icon": "Nasscad_V4.ico",
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        },
+        {
+          "target": "portable",
+          "arch": [
+            "x64"
+          ]
+        }
+      ]
+    },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "artifactName": "NASSCAD-${version}-Setup-${arch}.${ext}",
+      "installerLanguages": [
+        "en_US"
+      ],
+      "displayLanguageSelector": false,
+      "selectPerMachineByDefault": true,
+      "allowElevation": true,
+      "createStartMenuShortcut": true,
+      "installerIcon": "Nasscad_V4.ico",
+      "uninstallerIcon": "Nasscad_V4.ico",
+      "installerHeader": "installer/header.bmp",
+      "installerSidebar": "installer/sidebar.bmp",
+      "uninstallerSidebar": "installer/sidebar.bmp",
+      "include": "installer/installer.nsh",
+      "license": "../LICENSE.txt"
+    },
+    "portable": {
+      "artifactName": "NASSCAD-${version}-Portable-${arch}.${ext}"
+    },
+    "electronVersion": "44.6.0",
+    "npmRebuild": false
+  },
+  "license": "AGPL-3.0-only"
+}

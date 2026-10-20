@@ -1,0 +1,29 @@
+.nass-license{position:relative;flex:none;font-family:inherit;text-transform:none;letter-spacing:normal;line-height:1.4;z-index:30}
+.nass-license>summary{list-style:none;display:flex;align-items:center;gap:10px;cursor:pointer;border:1px solid #4565a3;border-radius:10px;padding:10px 13px;color:#e2ecff;background:#142748;text-align:left;box-sizing:border-box}
+.nass-license>summary::-webkit-details-marker{display:none}
+.nass-license>summary::before{content:'i';display:grid;place-items:center;width:22px;height:22px;border:1px solid currentColor;border-radius:50%;font:700 14px/1 Georgia,serif;flex:none;color:#a9c8ff}
+.nass-license>summary strong{display:block;font-size:12px;font-weight:650;white-space:nowrap}
+.nass-license>summary small{display:block;margin-top:2px;font-size:10px;color:#c1d3f1;white-space:nowrap}
+.nass-license>summary:hover{border-color:#93b4ff;background:#1a335b}
+.nass-license>summary:focus-visible{outline:3px solid #93b4ff;outline-offset:3px}
+.nass-license-panel{position:absolute;right:0;top:calc(100% + 9px);width:320px;max-width:calc(100vw - 32px);box-sizing:border-box;padding:18px;border:1px solid #466392;border-radius:12px;background:#11213c;color:#e2ecff;box-shadow:0 16px 40px #0006;font-size:13px;font-weight:400;text-align:left;white-space:normal;line-height:1.55;z-index:100}
+.nass-license-panel h2{font-family:inherit;font-weight:700;font-size:16px;line-height:1.4;margin:0 0 10px;color:inherit}
+.nass-license-panel p{margin:0 0 10px;color:inherit;font-size:13px;line-height:1.55}
+.nass-license-panel ul{margin:0 0 13px;padding-left:18px;list-style:disc;display:block}
+.nass-license-panel li{margin:5px 0;display:list-item;font-size:13px;line-height:1.5;color:inherit}
+.nass-license-panel a{color:#b8d2ff;text-decoration:underline;text-underline-offset:2px}
+.nass-license-links{display:flex;gap:8px 16px;flex-wrap:wrap}
+.hero-heading-row{display:flex;align-items:center;justify-content:space-between;gap:18px;position:relative;z-index:5;margin-bottom:8px}
+.hero-heading-row .hero-title{margin:0}
+.hero-content>.hero-tagline{font-family:'Inter','Inter Fallback',sans-serif;font-size:min(4rem,5cqw);font-weight:800;line-height:.98;letter-spacing:-.045em;white-space:nowrap;text-transform:uppercase;color:var(--blue);margin:0 0 1.4rem;position:relative;z-index:1;animation:up .6s .08s both}
+.hero-heading-row .nass-license-panel{width:330px}
+.nass-license--app{margin-left:5px}
+.nass-license--app>summary{border-radius:5px;min-height:23px;padding:2px 7px;gap:5px;background:var(--input-bg);color:var(--text);border-color:var(--lo)}
+.nass-license--app>summary::before{width:13px;height:13px;font-size:10px;color:var(--accent)}
+.nass-license--app>summary strong{font-family:inherit;font-weight:600;font-size:11px;line-height:1.4}
+.nass-license--app>summary:hover{background:var(--sel-bg);border-color:var(--accent)}
+.nass-license--app .nass-license-panel{top:calc(100% + 7px);color:var(--text);background:var(--panel);border-color:var(--lo)}
+.nass-license--app .nass-license-panel a{color:var(--accent)}
+#mbar:has(.nass-license[open]){z-index:10050}
+@media(max-width:1200px){.hero-heading-row{flex-wrap:wrap;justify-content:flex-start;gap:14px}.hero-heading-row .nass-license-panel{left:0;right:auto}}
+@media(max-width:600px){.hero-heading-row{align-items:flex-start;flex-direction:column;gap:15px;margin-bottom:14px}.nass-license-panel{max-width:calc(100vw - 40px)}.nass-license--app>summary{padding:2px 4px}.nass-license--app>summary::before{display:none}}

@@ -1,6 +1,6 @@
 // Copyright (C) 2026 NassLab — Nasser, France.
 // SPDX-License-Identifier: AGPL-3.0-only
-// See LICENSE and LICENSING.md. Third-party components retain their own licenses.
+// Third-party components retain their own licenses.
 
 // ══════════════════════════════════════════════════════════════
 // ██  NASSCAD — LOG ENGINE  v4.2.5

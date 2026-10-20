@@ -1,0 +1,4 @@
+20 October 2026: NASSCAD is now licensed under AGPLv3. Personal, educational and commercial use is allowed; your original designs remain yours. Browser, Setup and Portable include the new license information. Full license and corresponding source: nasscad.com/license.html
+Dimensioning: the previous method is back. Measurements follow the workplane axes and show the object's occupied size. Existing gizmos and resize handles are preserved.
+New: NASSCAD 4.7.0 Desktop is now available as an All-in-One Electron pack for Windows x64: Setup or Portable, with MEDUSA and runtime dependencies included. Setup defaults to all users; Portable runs without installation. MEDUSA starts and stops with NASSCAD through an internal pipe, with no local HTTP server.
+Using NASSCAD in a school, university or FabLab? NassLab is one person — I read every message. Share criticism, bugs or feature requests without leaving an email: nasscad.com/feedback.html

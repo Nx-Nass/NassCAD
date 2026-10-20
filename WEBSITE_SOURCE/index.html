@@ -1,0 +1,2462 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NASSCAD - Free Browser CAD &amp; Offline 3D Modeling</title>
+
+  <!-- ── SEO ── -->
+  <meta name="description"
+    content="Create mechanical parts with free browser CAD or offline on Windows. Local model processing, no account required, STEP viewing and STL export for 3D printing.">
+  <link rel="canonical" href="https://www.nasscad.com/">
+  <link rel="icon" href="/favicon.ico">
+  <meta name="google" content="notranslate">
+  <!-- Open Graph -->
+  <meta property="og:site_name"   content="NASSCAD">
+  <meta property="og:locale"      content="en_US">
+  <meta property="og:title"       content="NASSCAD - Free Browser CAD &amp; Offline 3D Modeling">
+  <meta property="og:description" content="Create mechanical parts with free browser CAD or offline on Windows. Local model processing, no account required, STEP viewing and STL export for 3D printing.">
+  <meta property="og:type"        content="website">
+  <meta property="og:url"         content="https://www.nasscad.com/">
+  <meta property="og:image"        content="https://www.nasscad.com/og-image.png">
+  <meta property="og:image:type"   content="image/png">
+  <meta property="og:image:width"  content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt"    content="NASSCAD — parametric 3D CAD running in the browser, with STEP and IFC import and export">
+  <!-- Twitter Card -->
+  <meta name="twitter:card"        content="summary_large_image">
+  <meta name="twitter:title"       content="NASSCAD - Free Browser CAD &amp; Offline 3D Modeling">
+  <meta name="twitter:description" content="Create mechanical parts with free browser CAD or offline on Windows. Local model processing, no account required, STEP viewing and STL export for 3D printing.">
+  <meta name="twitter:image"       content="https://www.nasscad.com/og-image.png">
+  <meta name="twitter:image:alt"   content="NASSCAD — parametric 3D CAD running in the browser, with STEP and IFC import and export">
+  <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Organization","@id":"https://www.nasscad.com/#nasslab","name":"NassLab","url":"https://www.nasscad.com/","email":"contact@nasscad.com","sameAs":["https://github.com/Nx-Nass/NassCAD","https://www.youtube.com/@Nasscad"]},{"@type":"SoftwareApplication","@id":"https://www.nasscad.com/#software","name":"NASSCAD","url":"https://www.nasscad.com/","softwareVersion":"4.7.0","applicationCategory":"DesignApplication","applicationSubCategory":"3D CAD","operatingSystem":"Web browser; Windows x64 (Electron desktop application with bundled MEDUSA)","browserRequirements":"Requires WebGL 2 and WebAssembly (recent Chrome, Edge, Firefox or Safari)","softwareRequirements":"Browser modelling uses WebGL 2 and WebAssembly. Windows Setup and Portable bundle MEDUSA and runtime dependencies; browser users can optionally start a compatible MEDUSA companion.","isAccessibleForFree":true,"offers":{"@type":"Offer","price":"0","priceCurrency":"EUR","description":"Free personal, educational, professional and commercial use under AGPL-3.0-only. Your original designs remain yours."},"license":"https://github.com/Nx-Nass/NassCAD/blob/main/LICENSE","downloadUrl":["https://www.nasscad.com/NASSCAD-4.7.0-Setup-x64.exe","https://www.nasscad.com/NASSCAD-4.7.0-Portable-x64.exe","https://www.nasscad.com/Medusa_Engine_3.1.zip"],"image":"https://www.nasscad.com/og-image.png","screenshot":["https://www.nasscad.com/og-image.png","https://www.nasscad.com/nasscad_screen1.jpg","https://www.nasscad.com/nasscad_screen2.jpg","https://www.nasscad.com/nasscad_screen3.jpg","https://www.nasscad.com/nasscad_screen4.jpg"],"description":"Practical browser-based 3D CAD for mechanical parts, STEP assemblies, fabrication and NassScript automation. Local model processing. HTML entry point with companion JavaScript and WebAssembly files; complete package required for offline use. OpenCASCADE for STEP and B-Rep operations, Manifold for mesh booleans, web-ifc for IFC import. MEDUSA is optional for browser booleans and adds native multicore acceleration and additional STEP capabilities. Imported STEP and IFC are viewer/inspection workflows; export does not guarantee repair or full source-semantic preservation. The Windows All-in-One Electron edition is available as Setup or Portable, includes MEDUSA and runtime dependencies, works offline, and manages the engine automatically through an internal pipe without a local HTTP server.","featureList":["STEP AP203 / AP214 / AP242 import and export (OpenCASCADE)","STEP export with available referenced source B-Rep or tessellated representations","STEP AP242 PMI / GD&T extraction (semantic + graphical)","IFC2X3 / IFC4 / IFC4X3 import, IFC4 export (BIM)","Multi-body assembly import AP203/AP214/AP242","Real B-Rep fillet and chamfer (OpenCASCADE)","19 watertight parametric primitives","Boolean CSG — Union, Subtraction, Intersection (Manifold: in the browser, or native C++ with Intel TBB via MEDUSA)","NassScript full-access JS console","Hideable panels — full-screen viewport with one key (H)","Export STL, OBJ, 3MF, GLB, PLY, SVG, DXF, STEP, IFC","Export the whole design or only the selected shapes, in every format","STEP and IFC viewing and inspection; verify exported files in the receiving CAD tool","Runs in the browser — no account, no cloud upload","Windows All-in-One Setup and Portable with MEDUSA included","Integrated help and interactive tutorial","Detailed NassScript reference with examples and animated demonstrations","Illustrated English user manual: 50 chapters, HTML and 54-page PDF"],"author":{"@type":"Person","name":"Nasser","sameAs":"https://www.linkedin.com/in/nasser-z","affiliation":{"@id":"https://www.nasscad.com/#nasslab"}},"publisher":{"@id":"https://www.nasscad.com/#nasslab"},"subjectOf":[{"@type":"TechArticle","name":"NASSCAD illustrated user manual","url":"https://www.nasscad.com/nasscad_user_manual.html","inLanguage":"en"},{"@type":"WebPage","name":"NASSCAD FAQ, formats and licensing","url":"https://www.nasscad.com/nasscad-faq.html","inLanguage":"en"}]},{"@type":"WebSite","@id":"https://www.nasscad.com/#website","url":"https://www.nasscad.com/","name":"NASSCAD","publisher":{"@id":"https://www.nasscad.com/#nasslab"},"inLanguage":"en"},{"@type":"WebPage","@id":"https://www.nasscad.com/#webpage","url":"https://www.nasscad.com/","name":"NASSCAD - Free Browser CAD & Offline 3D Modeling","dateModified":"2026-10-20","inLanguage":"en","isPartOf":{"@id":"https://www.nasscad.com/#website"},"about":{"@id":"https://www.nasscad.com/#software"}}]}</script>
+  <link rel="preconnect" href="https://fonts.googleapis.com/">
+  <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin="">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=Inter:wght@700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    /* Match fallback font metrics while preserving the original Google Fonts. */
+@font-face { font-family: 'DM Sans Fallback'; src: local('Arial'); font-style: normal; font-weight: 400; size-adjust: 102.31363%; ascent-override: 96.95678%; descent-override: 30.29899%; line-gap-override: 0.00000%; }
+@font-face { font-family: 'DM Sans Fallback'; src: local('Arial'); font-style: normal; font-weight: 500; size-adjust: 103.99301%; ascent-override: 95.39102%; descent-override: 29.80970%; line-gap-override: 0.00000%; }
+@font-face { font-family: 'DM Sans Fallback'; src: local('Arial'); font-style: normal; font-weight: 600; size-adjust: 106.08793%; ascent-override: 93.50734%; descent-override: 29.22104%; line-gap-override: 0.00000%; }
+@font-face { font-family: 'Inter Fallback'; src: local('Arial Bold'); font-style: normal; font-weight: 700; size-adjust: 102.18179%; ascent-override: 94.80652%; descent-override: 23.60606%; line-gap-override: 0.00000%; }
+@font-face { font-family: 'Inter Fallback'; src: local('Arial Bold'); font-style: normal; font-weight: 800; size-adjust: 103.33755%; ascent-override: 93.74617%; descent-override: 23.34204%; line-gap-override: 0.00000%; }
+@font-face { font-family: 'JetBrains Mono Fallback'; src: local('Consolas'); font-style: normal; font-weight: 400; size-adjust: 109.12966%; ascent-override: 93.46680%; descent-override: 27.49023%; line-gap-override: 0.00000%; }
+@font-face { font-family: 'JetBrains Mono Fallback'; src: local('Consolas'); font-style: normal; font-weight: 500; size-adjust: 109.12966%; ascent-override: 93.46680%; descent-override: 27.49023%; line-gap-override: 0.00000%; }
+    :root {
+      --bg:         #F4F3EE;
+      --white:      #FFFFFF;
+      --navy:       #0B1628;
+      --navy-mid:   #1E2D45;
+      --blue:       #1D4ED8;
+      --blue-dim:   #EEF3FD;
+      --orange:     #EA580C;
+      --muted:      #64748B;
+      --border:     #DDD9CE;
+      --radius:     14px;
+      --shadow-sm:  0 1px 4px rgba(11,22,40,.06), 0 2px 10px rgba(11,22,40,.04);
+      --shadow-lg:  0 8px 40px rgba(11,22,40,.12), 0 2px 8px rgba(11,22,40,.06);
+    }
+
+    html { scroll-behavior: smooth; scroll-padding-top: 66px; }
+
+    body {
+      font-family: 'DM Sans', 'DM Sans Fallback', sans-serif;
+      background: var(--bg);
+      color: var(--navy);
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 200;
+      height: 66px;
+      padding: 0 max(1.5rem, calc(50% - 640px));
+      display: flex; align-items: center; justify-content: space-between; gap: 1rem;
+      background: rgba(244,243,238,.88);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid transparent;
+      transition: border-color .3s, background .3s;
+    }
+    nav.scrolled { border-bottom-color: var(--border); background: rgba(244,243,238,.97); }
+
+    .nav-logo {
+      display: flex; align-items: center; gap: 9px;
+      text-decoration: none;
+      font-family: 'Inter', 'Inter Fallback', sans-serif; font-weight: 800; font-size: 1.1rem;
+      color: var(--navy); letter-spacing: -.02em; flex-shrink: 0;
+    }
+    .nav-hex {
+      width: 26px; height: 26px; flex-shrink: 0;
+      clip-path: polygon(50% 0%,100% 25%,100% 75%,50% 100%,0% 75%,0% 25%);
+      background: var(--blue);
+    }
+    .nav-links { display: flex; align-items: center; gap: 2px; list-style: none; }
+    .nav-links a {
+      color: var(--muted); text-decoration: none; font-size: .875rem; font-weight: 400;
+      padding: .4rem .85rem; border-radius: 8px;
+      transition: color .2s, background .2s;
+    }
+    .nav-links a:hover { color: var(--navy); background: rgba(11,22,40,.05); }
+    .nav-cta {
+      background: var(--blue) !important; color: #fff !important;
+      font-weight: 500 !important;
+      box-shadow: 0 2px 8px rgba(29,78,216,.25);
+      transition: background .2s, transform .15s, box-shadow .2s !important;
+    }
+    .nav-cta:hover {
+      background: #1640B0 !important; color: #fff !important;
+      transform: translateY(-1px); box-shadow: 0 4px 14px rgba(29,78,216,.35) !important;
+    }
+    .nav-ver {
+      font-family: 'JetBrains Mono', 'JetBrains Mono Fallback', monospace; font-size: .65rem;
+      color: var(--muted); padding: .2rem .55rem;
+      background: var(--border); border-radius: 5px;
+    }
+
+    /* ── NEWS button + dropdown panel (nav) ── */
+    .nav-news-item { position: relative; display: flex; align-items: center; }
+    .nav-news {
+      display: inline-flex; align-items: center; gap: 7px;
+      font-family: 'DM Sans', 'DM Sans Fallback', sans-serif; font-size: .875rem; font-weight: 500;
+      color: var(--blue); background: var(--blue-dim);
+      border: 1px solid rgba(29,78,216,.18); border-radius: 20px;
+      padding: .4rem .95rem; cursor: pointer;
+      transition: background .2s, border-color .2s;
+    }
+    .nav-news:hover { background: #E3ECFC; }
+    .nav-news[aria-expanded="true"] { background: #E3ECFC; border-color: rgba(29,78,216,.32); }
+    .nav-news .news-dot {
+      width: 6px; height: 6px; border-radius: 50%; background: var(--blue);
+      flex-shrink: 0; animation: blink 2s ease infinite;
+    }
+    .news-panel {
+      position: absolute; top: calc(100% + 12px); right: 0;
+      width: 340px; max-width: calc(100vw - 2rem);
+      background: var(--white); border: 1px solid var(--border);
+      border-radius: var(--radius); box-shadow: var(--shadow-lg);
+      padding: .5rem;
+      opacity: 0; transform: translateY(-6px) scale(.98);
+      pointer-events: none;
+      transition: opacity .18s ease, transform .18s ease;
+    }
+    .news-panel.open { opacity: 1; transform: translateY(0) scale(1); pointer-events: auto; }
+    .news-panel ul { list-style: none; }
+    .news-panel li {
+      display: flex; align-items: flex-start; gap: .6rem;
+      padding: .65rem .55rem; font-size: .82rem; line-height: 1.45;
+      color: var(--navy); border-bottom: 1px solid var(--border);
+    }
+    .news-panel li:last-child { border-bottom: none; }
+    .news-panel li .dot {
+      width: 5px; height: 5px; margin-top: .45rem; border-radius: 50%;
+      background: var(--blue); flex-shrink: 0;
+    }
+
+    /* ── HERO ── */
+    .hero {
+      min-height: 100vh;
+      padding: 0 max(1.5rem, calc(50% - 720px));
+      padding-top: 108px; padding-bottom: 72px;
+      display: grid;
+      grid-template-columns: 1fr minmax(0, 560px);
+      align-items: center;
+      gap: 3.5rem;
+      position: relative; overflow: hidden;
+      background:
+        radial-gradient(circle, rgba(29,78,216,.065) 1px, transparent 1px),
+        radial-gradient(circle, rgba(29,78,216,.065) 1px, transparent 1px);
+      background-size: 28px 28px;
+      background-position: 0 0, 14px 14px;
+    }
+    .hero::before {
+      content: ''; position: absolute; inset: 0; pointer-events: none;
+      background: radial-gradient(ellipse 90% 70% at 50% -10%, rgba(29,78,216,.06) 0%, transparent 65%);
+    }
+    /* big decorative hex */
+    .hero-deco {
+      position: absolute; right: -80px; top: 50%; transform: translateY(-50%);
+      width: 480px; height: 480px; pointer-events: none; opacity: .02;
+      clip-path: polygon(50% 0%,100% 25%,100% 75%,50% 100%,0% 75%,0% 25%);
+      background: var(--navy);
+    }
+    /* hero text wrapper */
+    .hero-content {
+      display: flex; flex-direction: column;
+      position: relative; z-index: 1;
+    }
+    /* hero image */
+    .hero-visual {
+      position: relative; z-index: 1;
+      animation: up .7s .35s both;
+      max-height: calc(100vh - 80px);
+      overflow: hidden;
+      border-radius: 18px;
+      box-shadow: 0 24px 64px rgba(11,22,40,.22), 0 4px 16px rgba(11,22,40,.1);
+      align-self: center;
+    }
+    .hero-visual img {
+      width: 100%; height: 100%; display: block;
+      object-fit: cover;
+      object-position: center top;
+    }
+    .hero-visual-caption {
+      margin-top: .65rem;
+      font-family: 'JetBrains Mono', 'JetBrains Mono Fallback', monospace; font-size: .68rem;
+      color: var(--muted); text-align: center; letter-spacing: .04em;
+    }
+    /* responsive: stack on small screens */
+    @media (max-width: 900px) {
+      .hero {
+        grid-template-columns: 1fr;
+        padding-top: 90px; gap: 2.5rem;
+      }
+      .hero-visual { order: -1; }
+    }
+
+    .hero-tag {
+      display: inline-flex; align-items: center; gap: 8px; width: fit-content;
+      background: var(--blue-dim); color: var(--blue);
+      border: 1px solid rgba(29,78,216,.18);
+      font-family: 'JetBrains Mono', 'JetBrains Mono Fallback', monospace; font-size: .72rem; font-weight: 500;
+      padding: .28rem .8rem; border-radius: 20px; margin-bottom: 1.6rem;
+      animation: up .6s both;
+    }
+    .hero-tag .dot {
+      width: 6px; height: 6px; background: var(--blue); border-radius: 50%;
+      animation: blink 2s ease infinite;
+    }
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:.3} }
+
+    /* ── B-Rep viewport — moteur CAO temps réel (canvas 2D, sans dépendance) ── */
+    .hero-brep {
+      position: relative; z-index: 1; align-self: center;
+      animation: up .7s .35s both;
+    }
+    .brep-stage {
+      position: relative; width: 100%; aspect-ratio: 640 / 560;
+      cursor: grab; touch-action: pan-y;
+    }
+    .brep-stage.dragging { cursor: grabbing; }
+    .brep-stage canvas {
+      position: absolute; inset: 0; width: 100%; height: 100%; display: block;
+    }
+    .brep-hint {
+      position: absolute; left: 50%; bottom: -2px; transform: translateX(-50%);
+      font-family: 'JetBrains Mono', 'JetBrains Mono Fallback', monospace; font-size: .6rem; letter-spacing: .14em;
+      color: rgba(147,180,255,.55); pointer-events: none; white-space: nowrap;
+      opacity: 0; transition: opacity .35s;
+    }
+    .brep-stage:hover .brep-hint { opacity: 1; }
+    @media (hover: none) { .brep-hint { display: none; } }
+
+    /* ── technical spec line under title ── */
+    .hero-spec {
+      display: flex; align-items: center; gap: .9rem;
+      margin: -.5rem 0 1.6rem; position: relative; z-index: 1;
+      animation: up .6s .14s both;
+    }
+    .hero-spec-txt {
+      font-family: 'JetBrains Mono', 'JetBrains Mono Fallback', monospace; font-weight: 600;
+      font-size: clamp(.95rem, 2.1vw, 1.35rem); letter-spacing: .2em;
+      color: var(--blue); white-space: nowrap;
+    }
+    .hero-spec-rule { height: 1.5px; flex: 1; max-width: 70px;
+      background: linear-gradient(90deg, var(--blue), transparent); opacity: .55; }
+    .hero-spec-rule.l { background: linear-gradient(90deg, transparent, var(--blue)); }
+    /* la ligne de spec est en nowrap : on resserre le pas sur mobile pour
+       qu'elle tienne dans la largeur au lieu de deborder */
+    @media (max-width: 560px) {
+      .hero-spec-txt { font-size: .8rem; letter-spacing: .1em; }
+      .hero-spec { gap: .6rem; }
+    }
+
+    .hero-title {
+      font-family: 'Inter', 'Inter Fallback', sans-serif;
+      font-size: clamp(2.2rem, 5vw, 4rem);
+      font-weight: 800; line-height: .92; letter-spacing: -.045em;
+      color: var(--navy); margin-bottom: 1.4rem; position: relative; z-index: 1;
+      animation: up .6s .08s both;
+      text-transform: uppercase;
+    }
+    .hero-title .blue { color: var(--blue); }
+    .hero-content { min-width:0; container-type:inline-size; }
+    .hero-title .hero-brand, .hero-title .hero-tagline { display:block; }
+    .hero-title .hero-tagline { font-size:min(1em, 5cqw); white-space:nowrap; margin-top:.12em; }
+
+    .hero-sub {
+      font-size: 1.1rem; color: var(--muted); font-weight: 400; line-height: 1.7;
+      max-width: 500px; margin-bottom: 2.25rem; position: relative; z-index: 1;
+      animation: up .6s .16s both;
+    }
+    .hero-ctas {
+      display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 2.75rem;
+      position: relative; z-index: 1;
+      animation: up .6s .24s both;
+    }
+    .btn-primary {
+      background: var(--orange); color: #fff; text-decoration: none;
+      padding: .8rem 1.75rem; border-radius: 10px; font-weight: 600; font-size: .92rem;
+      box-shadow: 0 4px 14px rgba(234,88,12,.28);
+      transition: background .2s, transform .15s, box-shadow .2s;
+    }
+    .btn-primary:hover { background: #C94E09; transform: translateY(-2px); box-shadow: 0 8px 24px rgba(234,88,12,.32); }
+    .btn-secondary {
+      background: var(--white); color: var(--navy); text-decoration: none;
+      padding: .8rem 1.75rem; border-radius: 10px; font-weight: 500; font-size: .92rem;
+      border: 1.5px solid var(--border);
+      transition: border-color .2s, color .2s, transform .15s, box-shadow .2s;
+    }
+    .btn-secondary:hover { border-color: var(--blue); color: var(--blue); transform: translateY(-2px); box-shadow: var(--shadow-sm); }
+    .btn-download {
+      background: var(--navy); color: #fff; text-decoration: none;
+      padding: .8rem 1.75rem; border-radius: 10px; font-weight: 600; font-size: .92rem;
+      display: inline-flex; align-items: center; gap: 8px;
+      box-shadow: 0 4px 14px rgba(11,22,40,.18);
+      transition: background .2s, transform .15s, box-shadow .2s;
+      border: 1.5px solid transparent;
+    }
+    .btn-download:hover { background: var(--navy-mid); transform: translateY(-2px); box-shadow: 0 8px 24px rgba(11,22,40,.22); }
+    .btn-download svg { flex-shrink: 0; }
+    /* offline callout under hero CTAs */
+    .dl-note {
+      display: inline-flex; align-items: center; gap: 18px;
+      margin-top: 1rem;
+      background: var(--white);
+      border: 1.5px solid var(--border);
+      border-left: 4px solid var(--orange);
+      border-radius: 12px;
+      padding: 1.1rem 1.75rem;
+      font-size: 1rem; color: var(--navy);
+      font-weight: 500;
+      box-shadow: var(--shadow-sm);
+      max-width: fit-content;
+    }
+    .dl-note .dl-icon {
+      width: 44px; height: 44px; flex-shrink: 0;
+      background: rgba(234,88,12,.1); border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      color: var(--orange);
+    }
+    .dl-note .dl-text { display: flex; flex-direction: column; gap: 3px; }
+    .dl-note .dl-label {
+      font-family: 'JetBrains Mono', 'JetBrains Mono Fallback', monospace; font-size: .82rem;
+      font-weight: 700; letter-spacing: .08em; text-transform: uppercase;
+      color: var(--orange);
+    }
+    .dl-note .dl-desc {
+      font-size: .95rem; color: var(--muted); font-weight: 400;
+    }
+    .dl-note.dl-note-alt { display: flex; border-left-color: var(--blue); margin-top: .7rem; }
+    .dl-note.dl-note-alt .dl-icon { background: rgba(29,78,216,.1); color: var(--blue); }
+    .dl-note.dl-note-alt .dl-label { color: var(--blue); }
+
+    .hero-pills {
+      display: flex; flex-wrap: wrap; gap: 7px; z-index: 1; position: relative;
+      margin-top: 1.6rem;
+      animation: up .6s .32s both;
+    }
+    .pill {
+      font-family: 'JetBrains Mono', 'JetBrains Mono Fallback', monospace; font-size: .72rem;
+      background: var(--white); border: 1px solid var(--border);
+      color: var(--muted); padding: .23rem .65rem; border-radius: 6px;
+    }
+
+    /* ── HERO: night/dark treatment ── */
+    .hero {
+      background:
+        radial-gradient(circle, rgba(93,146,255,.12) 1px, transparent 1px),
+        radial-gradient(circle, rgba(93,146,255,.12) 1px, transparent 1px),
+        linear-gradient(160deg,#0a0f1e 0%,#0d1a3a 60%,#0a0f1e 100%);
+    }
+    .hero::before {
+      background: radial-gradient(ellipse 90% 70% at 50% -10%, rgba(93,146,255,.12) 0%, transparent 65%);
+    }
+    .hero .hero-deco { background: var(--blue); opacity: .05; }
+
+    .hero .hero-tag {
+      background: rgba(29,78,216,.15); color: #93b4ff;
+      border-color: rgba(29,78,216,.4);
+    }
+    .hero .hero-tag .dot { background: #93b4ff; }
+
+    .hero .hero-title { color: #fff; }
+    .hero .hero-sub { color: rgba(255,255,255,.55); }
+    .hero .hero-visual-caption { color: rgba(255,255,255,.4); }
+
+    .hero .btn-secondary {
+      background: rgba(255,255,255,.06); color: rgba(255,255,255,.85);
+      border-color: rgba(255,255,255,.2);
+    }
+    .hero .btn-secondary:hover {
+      border-color: #93b4ff; color: #93b4ff; background: rgba(255,255,255,.09);
+    }
+    .hero .btn-download {
+      background: rgba(255,255,255,.06); color: #fff;
+      border-color: rgba(93,146,255,.35);
+    }
+    .hero .btn-download:hover { background: rgba(255,255,255,.11); }
+
+
+    .hero .pill {
+      background: rgba(255,255,255,.06); border-color: rgba(255,255,255,.16);
+      color: rgba(255,255,255,.7);
+    }
+
+    /* Hero notice — CSG engines (browser + optional MEDUSA). Same width as the
+       button row above it: the wrapper takes the row's natural width (capped by
+       the column), and the note (width 0 / min-width 100%) fills it without
+       ever widening it. */
+    .hero-cta-block { width: fit-content; max-width: 100%; }
+    .hero-cta-block .hero-note { width: 0; min-width: 100%; box-sizing: border-box; }
+    .hero-note {
+      display: flex; align-items: flex-start; gap: .7rem;
+      margin-top: -1.6rem; margin-bottom: 2.4rem; padding: .8rem 1rem;
+      background: rgba(234,88,12,.10);
+      border: 1px solid rgba(234,88,12,.38);
+      border-left: 3px solid var(--orange);
+      border-radius: 8px;
+    }
+    .hero-note .hn-ico {
+      font-family: 'JetBrains Mono', 'JetBrains Mono Fallback', monospace; font-weight: 800;
+      color: #FB923C; font-size: .95rem; line-height: 1.5; flex: none;
+    }
+    .hero-note p {
+      margin: 0; font-size: .84rem; line-height: 1.55;
+      color: rgba(255,255,255,.78);
+    }
+    .hero-note strong { color: #FDBA74; font-weight: 700; }
+    .hero-note a { color: #FDBA74; text-decoration: underline; text-underline-offset: 2px; }
+    .hero-note a:hover { color: #fff; }
+    #education a { color: var(--blue); text-decoration: underline; text-underline-offset: 2px; }
+    #education a:hover { color: var(--navy); }
+
+    @keyframes up {
+      from { opacity:0; transform:translateY(22px); }
+      to   { opacity:1; transform:translateY(0); }
+    }
+
+    /* ── SHARED SECTION ── */
+    .sec {
+      padding: 6rem max(1.5rem, calc(50% - 640px));
+    }
+    .sec.white { background: var(--white); }
+
+    .sec-label {
+      font-family: 'JetBrains Mono', 'JetBrains Mono Fallback', monospace; font-size: .68rem; font-weight: 500;
+      text-transform: uppercase; letter-spacing: .14em; color: var(--blue);
+      margin-bottom: .7rem;
+    }
+    .sec-title {
+      font-family: 'Inter', 'Inter Fallback', sans-serif;
+      font-size: clamp(1.8rem, 3.5vw, 2.8rem);
+      font-weight: 800; letter-spacing: -.035em; line-height: 1.05;
+      color: var(--navy); margin-bottom: .8rem;
+    }
+    .sec-sub {
+      font-size: .95rem; color: var(--muted); max-width: 520px;
+      line-height: 1.65; margin-bottom: 3rem;
+    }
+
+    /* ── ABOUT GRID ── */
+    .about-grid {
+      display: grid; grid-template-columns: repeat(auto-fit,minmax(260px,1fr));
+      border: 1.5px solid var(--border); border-radius: 18px; overflow: hidden;
+      gap: 1.5px; background: var(--border);
+    }
+    .about-card {
+      background: var(--bg); padding: 2.25rem;
+    }
+    .about-card:first-child { background: var(--white); }
+    .about-num {
+      font-family: 'JetBrains Mono', 'JetBrains Mono Fallback', monospace; font-size: .68rem; font-weight: 500;
+      color: var(--blue); letter-spacing: .1em; margin-bottom: 1.1rem;
+      display: flex; align-items: center; gap: 10px;
+    }
+    .about-num::after { content:''; flex:1; height:1px; background:var(--border); }
+    .about-card h3 {
+      font-family: 'Inter', 'Inter Fallback', sans-serif; font-size: 1.05rem; font-weight: 700;
+      letter-spacing: -.02em; color: var(--navy); margin-bottom: .6rem;
+    }
+    .about-card p { font-size: .875rem; color: var(--muted); line-height: 1.7; }
+
+    /* ── FEATURES ── */
+    .feat-grid {
+      display: grid; grid-template-columns: repeat(auto-fit,minmax(300px,1fr)); gap: 1.1rem;
+    }
+    .feat-card {
+      background: var(--bg); border: 1.5px solid var(--border); border-radius: var(--radius);
+      padding: 1.75rem; position: relative; overflow: hidden;
+      transition: transform .2s, border-color .2s, box-shadow .2s;
+    }
+    .feat-card::after {
+      content:''; position:absolute; top:0; left:0; right:0; height:2px;
+      background: linear-gradient(90deg, var(--blue), rgba(29,78,216,0));
+      opacity:0; transition:opacity .3s;
+    }
+    .feat-card:hover { transform:translateY(-4px); border-color:rgba(29,78,216,.3); box-shadow:0 12px 40px rgba(29,78,216,.08); }
+    .feat-card:hover::after { opacity:1; }
+    .feat-id {
+      font-family: 'JetBrains Mono', 'JetBrains Mono Fallback', monospace; font-size: .68rem; font-weight: 500;
+      color: var(--blue); letter-spacing: .06em; margin-bottom: .9rem;
+    }
+    .feat-card h3 {
+      font-family: 'Inter', 'Inter Fallback', sans-serif; font-size: 1rem; font-weight: 700;
+      letter-spacing: -.01em; color: var(--navy); margin-bottom: .55rem;
+    }
+    .feat-card p { font-size: .86rem; color: var(--muted); line-height: 1.68; }
+
+    /* ── PRIMITIVES (dark) ── */
+    .prim-sec {
+      background: var(--navy); padding: 6rem max(1.5rem, calc(50% - 640px));
+      position: relative; overflow: hidden;
+    }
+    .prim-sec .sec-label { color: rgba(255,255,255,.4); }
+    .prim-sec .sec-title { color: #fff; }
+    .prim-sec .sec-sub   { color: rgba(255,255,255,.5); }
+    .prim-bg {
+      position: absolute; right:-120px; top:-100px; width:520px; height:520px;
+      clip-path: polygon(50% 0%,100% 25%,100% 75%,50% 100%,0% 75%,0% 25%);
+      background: rgba(29,78,216,.1); pointer-events:none;
+    }
+    .prim-bg2 {
+      position: absolute; left:-80px; bottom:-140px; width:380px; height:380px;
+      clip-path: polygon(50% 0%,100% 25%,100% 75%,50% 100%,0% 75%,0% 25%);
+      background: rgba(29,78,216,.06); pointer-events:none;
+    }
+    .prim-wrap { display:flex; flex-wrap:wrap; gap:8px; margin-top:.5rem; }
+    .prim-tag {
+      font-family: 'JetBrains Mono', 'JetBrains Mono Fallback', monospace; font-size: .8rem;
+      background: rgba(255,255,255,.07); border: 1px solid rgba(255,255,255,.12);
+      color: rgba(255,255,255,.82); padding: .4rem .95rem; border-radius: 8px;
+      transition: background .2s, border-color .2s;
+    }
+    .prim-tag.gen {
+      background: rgba(29,78,216,.22); border-color: rgba(29,78,216,.4); color: #93C5FD;
+    }
+    .prim-tag:hover { background:rgba(255,255,255,.13); border-color:rgba(255,255,255,.25); }
+
+    /* ── NASSSCRIPT ── */
+    .script-workflow { margin:2rem 0; max-width:880px; }
+    .script-workflow p { font-size:.92rem; color:var(--muted); line-height:1.72; margin-bottom:1.25rem; }
+    .script-workflow strong { color:var(--navy); }
+    .script-workflow .script-ul { margin-bottom:0; }
+    .script-demos { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:1.25rem; }
+    .script-demo { border:1px solid var(--line); border-radius:var(--radius); overflow:hidden; background:#fff; }
+    .script-demo-image { display:block; background:#0e1621; }
+    .script-demo-image img { display:block; width:100%; height:auto; aspect-ratio:16/10; object-fit:contain; }
+    .script-demo-body { padding:1.6rem; }
+    .script-demo h3 { font-family:'Inter',sans-serif; font-size:1.7rem; font-weight:800; letter-spacing:-.035em; color:var(--blue); margin-bottom:.6rem; }
+    .script-demo p { font-size:.82rem; line-height:1.55; color:var(--muted); margin-bottom:1.25rem; }
+    .script-demo-body a { color:var(--blue); font-size:.875rem; font-weight:600; text-decoration:none; }
+    .script-demo-body a:hover { text-decoration:underline; }
+    .script-resources { display:flex; flex-wrap:wrap; align-items:center; gap:1.25rem; margin-top:2rem; }
+    .script-resources p { color:var(--muted); font-size:.82rem; line-height:1.55; max-width:440px; }
+    @media(max-width:700px){ .script-demos { grid-template-columns:1fr; } }
+
+    .script-grid {
+      display: grid; grid-template-columns: 1.1fr 1fr; gap: 4.5rem; align-items: center;
+    }
+    .code-win {
+      background: #0C1A2E; border: 1px solid rgba(255,255,255,.07);
+      border-radius: var(--radius); overflow: hidden; box-shadow: var(--shadow-lg);
+    }
+    .code-bar {
+      display:flex; align-items:center; gap:6px;
+      background: #0A1525; padding:.8rem 1.1rem;
+      border-bottom: 1px solid rgba(255,255,255,.06);
+    }
+    .cd { width:10px; height:10px; border-radius:50%; }
+    .code-bar span {
+      font-family:'JetBrains Mono',monospace; font-size:.68rem;
+      color:rgba(255,255,255,.28); margin-left:10px; letter-spacing:.06em;
+    }
+    .code-body {
+      padding: 1.4rem 1.5rem; overflow:auto;
+      font-family:'JetBrains Mono',monospace; font-size:.78rem; line-height:1.8;
+      color:#CBD5E1; white-space:pre;
+    }
+    .ck  { color:#93C5FD; }   /* keyword */
+    .cf  { color:#F9A8D4; }   /* function */
+    .cs  { color:#86EFAC; }   /* string */
+    .cn  { color:#FDE68A; }   /* number */
+    .cc  { color:#3D5269; }   /* comment */
+
+    .script-info .sec-label { margin-bottom:.5rem; }
+    .script-info h2 {
+      font-family:'Inter',sans-serif; font-size:clamp(1.7rem,3vw,2.5rem);
+      font-weight:800; letter-spacing:-.035em; line-height:1.05;
+      color:var(--navy); margin-bottom:1rem;
+    }
+    .script-info p { font-size:.92rem; color:var(--muted); line-height:1.72; margin-bottom:1.5rem; }
+    .script-ul { list-style:none; margin-bottom:2rem; display:flex; flex-direction:column; gap:.55rem; }
+    .script-ul li {
+      display:flex; align-items:flex-start; gap:10px;
+      font-size:.875rem; color:var(--navy); line-height:1.5;
+    }
+    .script-ul li::before { content:'→'; color:var(--blue); font-weight:700; flex-shrink:0; }
+
+    /* ── EXPORT ── */
+    .export-grid {
+      display:grid; grid-template-columns:repeat(auto-fit,minmax(210px,1fr)); gap:1.1rem;
+      margin-bottom:2.5rem;
+    }
+    .exp-card {
+      background:var(--white); border:1.5px solid var(--border); border-radius:var(--radius);
+      padding:1.6rem; transition:transform .2s, box-shadow .2s;
+    }
+    .exp-card:hover { transform:translateY(-3px); box-shadow:var(--shadow-lg); }
+    .exp-ext {
+      font-family:'Inter',sans-serif; font-size:1.7rem; font-weight:800;
+      letter-spacing:-.03em; color:var(--blue); margin-bottom:.4rem;
+    }
+    .exp-card p { font-size:.82rem; color:var(--muted); line-height:1.5; }
+    .exp-card strong { color:var(--navy-mid); }
+    .exp-badge {
+      display:inline-block; font-family:'JetBrains Mono', monospace; font-size:.6rem;
+      font-weight:600; letter-spacing:.06em; text-transform:uppercase;
+      color:var(--orange); border:1px solid var(--orange); border-radius:5px;
+      padding:.1rem .4rem; margin-left:.5rem; vertical-align:middle;
+    }
+
+    .cta-box {
+      background:linear-gradient(135deg,var(--blue-dim),rgba(29,78,216,.02));
+      border:1.5px solid rgba(29,78,216,.15); border-radius:18px;
+      padding:3.5rem; text-align:center;
+    }
+    .cta-box h3 {
+      font-family:'Inter',sans-serif; font-size:clamp(1.4rem,2.5vw,2rem);
+      font-weight:800; letter-spacing:-.03em; color:var(--navy); margin-bottom:.75rem;
+    }
+    .cta-box p { color:var(--muted); font-size:.92rem; margin-bottom:2rem; line-height:1.65; }
+
+    /* ── FOOTER ── */
+    footer {
+      background:var(--navy); color:rgba(255,255,255,.45);
+      padding:2.25rem max(1.5rem, calc(50% - 640px));
+      display:flex; align-items:center; justify-content:space-between; gap:.75rem;
+      flex-wrap:wrap; font-size:.8rem;
+    }
+    .foot-logo {
+      font-family:'Inter',sans-serif; font-weight:800; font-size:1.05rem;
+      color:#fff; text-decoration:none; letter-spacing:-.02em;
+    }
+    footer a { color:rgba(255,255,255,.55); text-decoration:none; transition:color .2s; }
+    footer a:hover { color:#fff; }
+    footer .sep { opacity:.3; margin:0 .4rem; }
+
+
+    /* ── IN ACTION ── */
+    .action-sec {
+      padding: 6rem max(1.5rem, calc(50% - 640px));
+      background: var(--navy);
+    }
+    .action-sec .sec-label { color: rgba(255,255,255,.4); }
+    .action-sec .sec-title { color: #fff; }
+    .action-sec .sec-sub   { color: rgba(255,255,255,.5); }
+
+    .action-hero {
+      width: 100%; border-radius: var(--radius);
+      overflow: hidden; margin-bottom: 1.2rem;
+      box-shadow: 0 16px 60px rgba(0,0,0,.5);
+      position: relative;
+    }
+    .action-hero img {
+      width: 100%; display: block;
+      aspect-ratio: 16/10; object-fit: cover;
+      background: rgba(255,255,255,.04);
+      border-radius: var(--radius);
+      transition: transform .6s ease;
+    }
+    .action-hero:hover img { transform: scale(1.015); }
+    .action-hero-caption {
+      position: absolute; bottom: 0; left: 0; right: 0;
+      padding: 1rem 1.4rem;
+      background: linear-gradient(transparent, rgba(0,0,0,.7));
+      color: rgba(255,255,255,.85);
+      font-family: 'JetBrains Mono', 'JetBrains Mono Fallback', monospace; font-size: .72rem;
+      border-radius: 0 0 var(--radius) var(--radius);
+    }
+
+    .action-grid {
+      display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1.2rem;
+    }
+    @media(max-width:860px){ .action-grid { grid-template-columns: 1fr 1fr; } }
+    .action-card {
+      border-radius: var(--radius); overflow: hidden; position: relative;
+      box-shadow: 0 8px 32px rgba(0,0,0,.4);
+    }
+    .action-card img {
+      width: 100%; display: block;
+      aspect-ratio: 4/3; object-fit: cover;
+      background: rgba(255,255,255,.04);
+      transition: transform .5s ease;
+    }
+    .action-card:hover img { transform: scale(1.02); }
+    .action-credit {
+      margin-top: 2.2rem; padding-top: 1.4rem;
+      border-top: 1px solid rgba(255,255,255,.12);
+      font-size: .78rem; line-height: 1.65;
+      color: rgba(255,255,255,.42);
+      max-width: 900px;
+    }
+    .action-credit .ac-label {
+      font-family: 'JetBrains Mono', 'JetBrains Mono Fallback', monospace; font-size: .68rem;
+      letter-spacing: .06em; text-transform: uppercase;
+      color: rgba(255,255,255,.55); display: block; margin-bottom: .5rem;
+    }
+    .action-credit a { color: rgba(255,255,255,.62); text-decoration: underline; text-underline-offset: 2px; }
+    .action-credit a:hover { color: #fff; }
+    .action-credit p { margin: 0 0 .55rem; }
+    .action-credit p:last-child { margin-bottom: 0; }
+
+    .action-card-caption {
+      position: absolute; bottom: 0; left: 0; right: 0;
+      padding: .8rem 1rem;
+      background: linear-gradient(transparent, rgba(0,0,0,.72));
+      color: rgba(255,255,255,.8);
+      font-family: 'JetBrains Mono', 'JetBrains Mono Fallback', monospace; font-size: .68rem;
+    }
+    @media(max-width:600px){ .action-grid { grid-template-columns: 1fr; } }
+
+
+    /* ── LIGHTBOX ── */
+    .lb-overlay {
+      display:none; position:fixed; inset:0; z-index:9999;
+      background:rgba(0,0,0,.92); cursor:zoom-out;
+      align-items:center; justify-content:center;
+    }
+    .lb-overlay.open { display:flex; }
+    .lb-overlay img {
+      max-width:94vw; max-height:94vh;
+      border-radius:8px; box-shadow:0 24px 80px rgba(0,0,0,.7);
+      animation: lbIn .2s ease;
+    }
+    .lb-close {
+      position:absolute; top:18px; right:24px;
+      color:#fff; font-size:2rem; cursor:pointer;
+      opacity:.7; transition:opacity .2s; line-height:1;
+      background:none; border:none; padding:0;
+    }
+    .lb-close:hover { opacity:1; }
+    @keyframes lbIn { from{opacity:0;transform:scale(.94)} to{opacity:1;transform:scale(1)} }
+    .action-card { cursor:zoom-in; }
+    .action-hero { cursor:zoom-in; }
+
+
+    /* ── NASSSCRIPT IN THE HERO ── */
+    .hero-script {
+      max-width: 570px; padding: .8rem 1rem; border-radius: 10px;
+      background: rgba(93,146,255,.11); border: 1px solid rgba(93,146,255,.3);
+      color: rgba(255,255,255,.82); font-size: .85rem; line-height: 1.55;
+    }
+    .hero-script strong { color: #fff; }
+    .hero-script a { color: #b9d0ff; text-decoration: underline; text-underline-offset: 2px; }
+    .hero-script a:hover { color: #fff; }
+
+    /* ── REVEAL ── */
+    .rev {
+      opacity:0; transform:translateY(26px);
+      transition:opacity .65s ease, transform .65s ease;
+    }
+    .rev.on { opacity:1; transform:none; }
+
+    /* ── RESPONSIVE ── */
+    @media(max-width:860px){
+      .script-grid { grid-template-columns:1fr; }
+      .code-win { order:-1; }
+      nav .nav-links li:not(:last-child) { display:none; }
+    }
+    @media(max-width:540px){
+      .sec { padding:4rem 1.25rem; }
+      .hero { padding:90px 1.25rem 56px; }
+    }
+
+    /* ── ÉDITIONS ── */
+    .editions-grid {
+      display:grid; grid-template-columns:1fr 1fr; gap:1.5rem;
+      max-width:940px; margin:0 auto;
+    }
+    @media(max-width:720px){ .editions-grid{grid-template-columns:1fr;} }
+    .ed-card {
+      border-radius:20px; padding:2.5rem;
+      display:flex; flex-direction:column; gap:1.2rem;
+    }
+    .ed-standard {
+      background:var(--white); border:1.5px solid var(--border);
+    }
+    .ed-meduse {
+      background:linear-gradient(145deg,#0b1220 0%,#0d1128 55%,#100c1e 100%);
+      border:1.5px solid rgba(139,92,246,.28);
+      position:relative; overflow:hidden;
+    }
+    .ed-meduse::before {
+      content:''; position:absolute; top:-100px; left:50%; transform:translateX(-50%);
+      width:380px; height:260px;
+      background:radial-gradient(ellipse,rgba(139,92,246,.13) 0%,transparent 70%);
+      pointer-events:none;
+    }
+    .ed-meduse::after {
+      content:''; position:absolute; bottom:-60px; right:-60px;
+      width:220px; height:220px; border-radius:50%;
+      background:radial-gradient(circle,rgba(99,58,200,.07) 0%,transparent 70%);
+      pointer-events:none;
+    }
+    .ed-badge {
+      font-family:'JetBrains Mono',monospace; font-size:.68rem; font-weight:700;
+      letter-spacing:.14em; text-transform:uppercase;
+      display:inline-flex; align-items:center; gap:7px; width:fit-content;
+      padding:.3rem .9rem; border-radius:20px;
+    }
+    .ed-badge-std {
+      background:var(--blue-dim); color:var(--blue);
+      border:1px solid rgba(29,78,216,.18);
+    }
+    .ed-badge-med {
+      font-family:'Inter', ui-sans-serif, system-ui, sans-serif; font-size:.8rem; font-weight:700; letter-spacing:.02em;
+      background:rgba(139,92,246,.1); color:#b4a0ff;
+      border:1px solid rgba(139,92,246,.32);
+      box-shadow:0 0 18px rgba(139,92,246,.12);
+    }
+    .ed-price {
+      font-family:'Inter',sans-serif; font-size:1.9rem; font-weight:800;
+      letter-spacing:-.04em; color:var(--navy); line-height:1;
+    }
+    .ed-price-med { color:#fff; }
+    .ed-edition-desc { font-size:.82rem; color:var(--muted); margin-top:-4px; }
+    .ed-edition-desc-med { color:rgba(255,255,255,.38); }
+    .ed-divider { height:1px; background:var(--border); margin:.3rem 0; }
+    .ed-divider-med { background:rgba(139,92,246,.15); }
+    .ed-features {
+      list-style:none; display:flex; flex-direction:column; gap:.7rem;
+      margin:0; padding:0; flex:1;
+    }
+    .ed-features li {
+      display:flex; align-items:flex-start; gap:10px;
+      font-size:.875rem; color:var(--navy); line-height:1.5;
+    }
+    .ed-features li::before {
+      content:'✓'; color:var(--blue); font-weight:700;
+      flex-shrink:0; margin-top:2px; font-size:.8rem;
+    }
+    .ed-features-med li { color:rgba(255,255,255,.72); }
+    .ed-features-med li::before { content:'✦'; color:#9d7fff; font-size:.72rem; }
+    .ed-features-med li strong { color:#fff; display:block; font-size:.88rem; }
+    .ed-features-med li em { color:rgba(255,255,255,.38); font-style:normal; font-size:.78rem; display:block; margin-top:2px; }
+    .ed-features-med .ed-first { color:#e2e8f0; font-weight:600; }
+    .ed-locked {
+      opacity:.35 !important; font-style:italic;
+    }
+    .ed-cta-std {
+      display:inline-flex; align-items:center; justify-content:center;
+      background:var(--orange); color:#fff; text-decoration:none;
+      font-weight:600; font-size:.9rem; padding:.85rem 1.6rem;
+      border-radius:10px; margin-top:auto;
+      box-shadow:0 4px 14px rgba(234,88,12,.25);
+      transition:background .2s, transform .15s, box-shadow .2s;
+    }
+    .ed-cta-std:hover { background:#c94e09; transform:translateY(-2px); box-shadow:0 8px 24px rgba(234,88,12,.32); }
+    .ed-cta-med {
+      display:inline-flex; align-items:center; justify-content:center;
+      background:linear-gradient(135deg,#5b21b6,#4c1d95);
+      color:#fff; text-decoration:none; font-weight:600; font-size:.9rem;
+      padding:.85rem 1.6rem; border-radius:10px; margin-top:auto;
+      border:1px solid rgba(139,92,246,.35);
+      box-shadow:0 4px 20px rgba(91,33,182,.4), 0 0 40px rgba(91,33,182,.08);
+      transition:background .2s, transform .15s, box-shadow .2s;
+    }
+    .ed-cta-med:hover {
+      background:linear-gradient(135deg,#6d28d9,#5b21b6);
+      transform:translateY(-2px);
+      box-shadow:0 8px 30px rgba(91,33,182,.5), 0 0 60px rgba(91,33,182,.12);
+    }
+/* Purpose and practical facts: visible static content for readers and search engines. */
+.nass-purpose{background:var(--bg);padding:6rem max(1.5rem,calc(50% - 640px));color:var(--muted)}
+.nass-purpose-card{max-width:1280px;margin:0 auto 3rem;padding:0;background:transparent;border:0;text-align:left}
+.nass-purpose-label{font-family:'JetBrains Mono',monospace;font-size:.68rem;font-weight:500;letter-spacing:.14em;color:var(--blue);margin-bottom:.7rem;text-transform:uppercase}
+.nass-purpose h2{font-family:'Inter',sans-serif;font-size:clamp(1.8rem,3.5vw,2.8rem);font-weight:800;line-height:1.05;letter-spacing:-.035em;color:var(--navy);margin-bottom:.8rem}
+.nass-purpose p{font-size:.95rem;line-height:1.65}
+.nass-facts dd{font-size:.82rem;line-height:1.5}
+.nass-purpose-card>p{max-width:1000px}
+.nass-purpose-card p+p{margin-top:1rem}
+.nass-purpose strong{color:var(--navy);font-weight:600}
+.nass-purpose a{color:var(--blue);text-decoration:underline;text-underline-offset:3px;overflow-wrap:anywhere}
+.nass-purpose a:hover{color:#1640b0}
+.nass-purpose a:focus-visible,footer a:focus-visible{outline:2px solid #1d4ed8;outline-offset:5px;border-radius:3px}
+.nass-facts{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1.1rem;margin-top:3rem}
+.nass-facts>div{min-width:0;padding:1.6rem;background:var(--white);border:1.5px solid var(--border);border-radius:var(--radius)}
+.nass-facts dt{font-family:'Inter',sans-serif;font-size:1.7rem;font-weight:800;line-height:1.2;letter-spacing:-.03em;color:var(--blue);margin-bottom:.4rem}
+.nass-future{max-width:900px;margin:2rem auto 1.5rem;text-align:center;color:var(--muted)}
+.nass-purpose-links{text-align:center}
+.nass-purpose .nass-youtube{display:inline-flex;justify-content:center;align-items:center;gap:8px;max-width:100%;padding:13px 20px;border:1px solid var(--blue);border-radius:8px;background:var(--blue);color:#fff;text-decoration:none;font-size:16px;font-weight:600;line-height:1.5}
+.nass-purpose .nass-youtube:hover{background:#1640b0}
+footer a{color:#bdcde3}
+footer a:hover{text-decoration:underline;text-underline-offset:3px}
+@media(max-width:700px){.nass-facts{grid-template-columns:1fr}}
+@media(max-width:540px){.nass-purpose{padding:4rem 1.25rem}}
+
+footer{flex-direction:column;justify-content:center;align-items:center;gap:1rem;text-align:center}
+.foot-heading{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:.5rem 1.25rem;line-height:1.6}
+.foot-links{max-width:100%;line-height:1.9;overflow-wrap:anywhere}
+
+/* Documentation uses the landing page's existing type, colours and card language. */
+.doc-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1.2rem}
+.doc-card{padding:2rem;border:1.5px solid var(--border);border-radius:var(--radius);background:var(--bg);display:flex;flex-direction:column}
+.doc-card h3{font-family:'Inter',sans-serif;font-size:1.7rem;font-weight:800;letter-spacing:-.03em;line-height:1.2;color:var(--blue);margin-bottom:.7rem}
+.doc-card p{font-size:.95rem;line-height:1.65;color:var(--muted);margin-bottom:1rem}
+.doc-card strong{color:var(--navy)}
+.doc-meta{font-family:'JetBrains Mono',monospace;font-size:.72rem!important;color:var(--blue)!important}
+.doc-actions{display:flex;flex-wrap:wrap;gap:.75rem;margin-top:auto;padding-top:.5rem}
+.doc-actions a{font-size:.9rem;text-align:center}
+.doc-actions .btn-primary{background:var(--blue);box-shadow:none}
+.doc-actions .btn-primary:hover{background:#1640b0}
+.doc-actions a:focus-visible{outline:2px solid var(--blue);outline-offset:4px}
+@media(max-width:860px){nav .nav-links li.nav-docs-item,nav .nav-links li.nav-feedback-item{display:list-item}}
+@media(max-width:540px){nav .nav-links li.nav-docs-item{display:none}}
+@media(max-width:700px){.doc-grid{grid-template-columns:1fr}.doc-card{padding:1.5rem}.doc-actions a{width:100%}}
+
+</style>
+<!-- GA4 — audience measurement on nasscad.com only; never on local copies or other hosts. -->
+<script>
+  (function() {
+    if (!/^(?:www\.)?nasscad\.com$/i.test(window.location.hostname)) return;
+    window.dataLayer = window.dataLayer || [];
+    window.gtag = window.gtag || function(){ window.dataLayer.push(arguments); };
+    window.nasscadTrackEvent = function(name, parameters){
+      try { window.gtag('event', name, parameters); } catch (_) { /* Analytics must not interrupt CAD. */ }
+    };
+    window.gtag('js', new Date());
+    window.gtag('config', 'G-3181YHN32V', { allow_google_signals: false, allow_ad_personalization_signals: false });
+    var s = document.createElement('script');
+    s.src = 'https://www.googletagmanager.com/gtag/js?id=G-3181YHN32V';
+    s.async = true;
+    document.head.appendChild(s);
+  })();
+</script>
+<link rel="stylesheet" href="nasscad-license.css">
+<script defer src="nasscad-license.js"></script>
+</head>
+<body>
+
+<!-- ── NAV ── -->
+<nav id="nav">
+  <a href="https://www.nasscad.com/" class="nav-logo">
+    <div class="nav-hex"></div>
+    NASSLAB
+  </a>
+  <ul class="nav-links">
+    <li><a href="#what">About</a></li>
+    <li><a href="#desktop">Windows Desktop</a></li>
+        <li><a href="#features">Features</a></li>
+    <li><a href="#scripting">NassScript</a></li>
+    <li><a href="#export">Export / Import</a></li>
+    <li><a href="#education">Education</a></li>
+    <li class="nav-docs-item"><a href="#documentation">Docs</a></li>
+    <li class="nav-feedback-item"><a href="feedback.html" rel="noreferrer">Feedback</a></li>
+    <li class="nav-news-item">
+      <button class="nav-news" id="newsBtn" aria-expanded="false" aria-controls="newsPanel">
+        <span class="news-dot"></span> News
+      </button>
+      <div class="news-panel" id="newsPanel" role="region" aria-label="Latest news">
+        <ul id="newsList"></ul>
+      </div>
+    </li>
+  </ul>
+</nav>
+
+<!-- ── HERO ── -->
+<section class="hero">
+  <div class="hero-deco"></div>
+
+  <!-- ── texte gauche ── -->
+  <div class="hero-content">
+    <div class="hero-tag"><span class="dot"></span> NassLab · Browser AND Windows Desktop · v4.7.0 · Manifold CSG</div>
+    <div class="hero-heading-row"><h1 class="hero-title"><span class="hero-brand">NASSCAD</span></h1>
+      <details class="nass-license nass-license--landing" id="nass-license-info"><summary aria-label="NASSCAD license: AGPLv3; personal and commercial use allowed"><span><strong>Open source · AGPLv3</strong><small>Free for personal &amp; commercial use</small></span></summary><div class="nass-license-panel"><h2>GNU AGPLv3 · Free to use</h2><ul><li>Personal, educational and commercial use allowed.</li><li>Your original models and exports remain yours.</li><li>Share corresponding source when distributing the software or offering a modified network version, as required by the AGPL.</li></ul><p class="nass-license-links"><a href="license.html" target="_blank" rel="noopener">Full license</a><a href="https://github.com/Nx-Nass/NassCAD/releases/tag/v4.7.0-agpl" target="_blank" rel="noopener">Source code</a></p></div></details>
+    </div>
+    <p class="blue hero-tagline">CAD IN YOUR BROWSER AND ON WINDOWS</p>
+    <div class="hero-spec">
+      <span class="hero-spec-rule l"></span>
+      <span class="hero-spec-txt">STEP · AP203 · AP214 · AP242 · IFC</span>
+      <span class="hero-spec-rule"></span>
+    </div>
+    <p class="hero-sub">
+      Free 3D CAD with local model processing and no account required.
+      Create mechanical parts and export STL or 3MF for 3D printing.
+      View and inspect STEP assemblies and IFC building models,
+      with available names, colours and annotations.
+    </p>
+    <div class="hero-cta-block">
+      <div class="hero-ctas">
+        <a href="NASSCAD_V4_7_0.htm" class="btn-primary">Launch in browser →</a>
+        <a href="NASSCAD-4.7.0-Setup-x64.exe" class="btn-download" download>⬇ Windows Setup · 165 MB</a>
+        <a href="#features" class="btn-secondary">See what it does</a>
+      </div>
+      <div class="hero-note">
+        <span class="hn-ico">i</span>
+        <p><strong>Choose your edition:</strong> launch in your browser with no installation, or get the <a href="#desktop">Windows x64 All-in-One pack — Setup or Portable</a> to work offline with <strong>MEDUSA already included</strong>. Both desktop editions start and stop the native engine automatically. Browser users can still run the <a href="#medusa">optional standalone MEDUSA engine</a>.</p>
+      </div>
+    </div>
+
+    <p class="hero-script" style="margin-top:1.2rem;">
+      <strong>Build 3D scenes with an AI assistant and NassScript.</strong>
+      Give a language model the script reference, review its JavaScript, then run it in NASSCAD.
+      <a href="#scripting">See the four-cylinder engine →</a>
+    </p>
+    <div class="hero-pills">
+      <span class="pill">Free</span>
+      <span class="pill">AGPLv3 · Commercial use allowed</span>
+      <span class="pill">Browser: no install</span>
+      <span class="pill">No account</span>
+      <span class="pill">Offline-ready</span>
+      <span class="pill">STEP AP203 · AP214 · AP242</span>
+      <span class="pill">IFC · BIM</span>
+      <span class="pill">Fillet &amp; chamfer</span>
+      <span class="pill">STL · OBJ · 3MF · GLB · PLY</span>
+      <span class="pill">Manifold C++</span>
+      <span class="pill">CSG Tree</span>
+      <span class="pill">NassScript</span>
+      <span class="pill">WebGL</span>
+    </div>
+  </div>
+
+  <!-- ── visuel droite : viewport B-Rep vivant (moteur canvas) ── -->
+  <div class="hero-brep">
+    <div class="brep-stage" id="brepStage">
+      <canvas id="brepCanvas" role="img"
+        aria-label="Live STEP B-Rep solid analysis — analytical edges, vertices, cylindrical surfaces, PMI annotation and section view"></canvas>
+      <div class="brep-hint">DRAG TO ORBIT · DOUBLE-CLICK TO RESET</div>
+    </div>
+    <p class="hero-visual-caption">NASSCAD v4.7.0 · STEP AP242 B-Rep · NassLab</p>
+  </div>
+
+</section>
+
+<!-- ── WHAT ── -->
+<section class="sec white" id="what">
+  <div class="rev">
+    <div class="sec-label">// What is NASSCAD</div>
+    <h2 class="sec-title">Free 3D CAD.<br>In your browser.</h2>
+  </div>
+  <div class="about-grid rev">
+    <div class="about-card" style="transition-delay: 0ms;">
+      <div class="about-num">01</div>
+      <h3>A real CAD tool in your browser</h3>
+      <p>A 3D parametric CAD application with an HTML entry point and companion JavaScript and WebAssembly files. No account or installation required. Model processing runs locally; install the Windows desktop edition for offline use.</p>
+    </div>
+    <div class="about-card" style="transition-delay: 80ms;">
+      <div class="about-num">02</div>
+      <h3>Built for makers and engineers</h3>
+      <p>Designed for people who actually build things — FDM printing,
+CNC, mechanical assembly. Every primitive, every export format, every
+workflow decision was made to get from idea to slicer fast.</p>
+    </div>
+    <div class="about-card" style="transition-delay: 160ms;">
+      <div class="about-num">03</div>
+      <h3>Scriptable from the ground up</h3>
+      <p>NassScript exposes every internal function via an integrated JS
+ console. Automate complex geometries, create procedural parts, chain
+boolean operations — all in the same window as your model.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ── WINDOWS DESKTOP ── -->
+<section class="sec white" id="desktop">
+  <style>
+    #desktop .desktop-intro { display:grid; grid-template-columns:minmax(0,1fr) auto; align-items:center; gap:3rem; }
+    #desktop .desktop-credit { border-left:1px solid var(--border); padding-left:1.5rem; color:var(--muted); font-size:.82rem; line-height:1.7; }
+    #desktop .desktop-credit a { color:inherit; text-decoration:none; }
+    #desktop .desktop-credit a:hover { color:var(--blue); text-decoration:underline; text-underline-offset:3px; }
+    #desktop .desktop-credit strong { display:block; color:var(--navy); font-size:1rem; font-weight:600; }
+    @media (max-width:760px) {
+      #desktop .desktop-intro { grid-template-columns:1fr; gap:0; }
+      #desktop .desktop-credit { margin:0 0 2rem; }
+    }
+  </style>
+  <div class="rev desktop-intro">
+    <div>
+      <div class="sec-label">// New · Windows x64 desktop edition</div>
+      <h2 class="sec-title">NASSCAD MEDUSA.<br>One All-in-One pack.</h2>
+      <p class="sec-sub">The Windows All-in-One pack brings NASSCAD and MEDUSA together in an Electron desktop application. Choose the Setup installer or the Portable executable; both include JavaScript, WebAssembly and runtime DLLs, and work offline on your computer.</p>
+    </div>
+    <div class="desktop-credit" aria-label="Desktop application technology">
+      <strong><a href="https://www.electronjs.org/" target="_blank" rel="noopener noreferrer">Built with Electron</a></strong>
+      <a href="https://www.electron.build/" target="_blank" rel="noopener noreferrer">Packaged with electron-builder</a>
+    </div>
+  </div>
+  <div class="about-grid rev">
+    <div class="about-card"><div class="about-num">01</div><h3>Choose Setup or Portable</h3><p>Setup uses an English installer, defaults to all users of this computer, and lets you choose the installation folder and shortcuts. All-user installation requires administrator approval. Prefer no installation? Download Portable and open its executable directly.</p></div>
+    <div class="about-card"><div class="about-num">02</div><h3>Open one application</h3><p>Launch NASSCAD. MEDUSA starts automatically as a separate native process managed by the application. Its status and colored log are accessible inside NASSCAD. There is no BAT launcher and no separate engine to start.</p></div>
+    <div class="about-card"><div class="about-num">03</div><h3>Work locally</h3><p>NASSCAD communicates with its bundled MEDUSA through an internal pipe, without a local HTTP server. Use the native file dialogs to open and save your work. When you close NASSCAD, its MEDUSA process stops automatically.</p></div>
+  </div>
+  <div class="rev" style="margin-top:2rem;">
+    <div class="hero-ctas" style="margin-bottom:1rem;">
+      <a href="NASSCAD-4.7.0-Setup-x64.exe" class="btn-download" download>⬇ Windows Setup · 165 MB</a>
+      <a href="NASSCAD-4.7.0-Portable-x64.exe" class="btn-secondary" download>⬇ Windows Portable · 165 MB</a>
+    </div>
+    <p style="color:var(--text-muted,#526579);font-size:.9rem;line-height:1.65;">Windows x64 · NASSCAD 4.7.0 · All-in-One · MEDUSA and dependencies included · No account required.<br>Setup installs NASSCAD. Portable runs without installation. Both manage MEDUSA automatically.<br>The browser edition remains available above. The standalone MEDUSA download below is intended for browser users.</p>
+  </div>
+</section>
+
+
+
+<!-- ── STEP AP242 ── -->
+<section class="sec white" id="guides"><div class="sec-label">// Practical guides</div><h2 class="sec-title">Browser CAD, offline CAD and model viewers.</h2><p class="sec-sub">Download the Windows edition, prepare a printable part, or inspect a received assembly or building model.</p><div class="doc-grid"><article class="doc-card"><h3>Windows download</h3><p>Download NASSCAD 4.7.0 for Windows x64. Choose Setup or Portable with MEDUSA included, local file dialogs, offline modelling and no account.</p><div class="doc-actions"><a class="btn-secondary" href="windows.html">Download offline CAD for Windows →</a></div></article><article class="doc-card"><h3>CAD for 3D printing</h3><p>Create a dimensioned mounting block with a through-hole in NASSCAD, save its editable project and export STL or 3MF for your 3D printer slicer.</p><div class="doc-actions"><a class="btn-secondary" href="cad-for-3d-printing.html">Design a part for 3D printing →</a></div></article><article class="doc-card"><h3>STEP viewer</h3><p>View and inspect STEP assemblies in NASSCAD. Open AP203, AP214 and AP242 files, examine available parts, colours and PMI, and understand the export limits.</p><div class="doc-actions"><a class="btn-secondary" href="step-viewer.html">Open and inspect STEP files →</a></div></article><article class="doc-card"><h3>IFC viewer</h3><p>View IFC building models locally in NASSCAD. Inspect supported IFC2X3, IFC4 and IFC4X3 geometry, available names and colours, and the limits of IFC export.</p><div class="doc-actions"><a class="btn-secondary" href="ifc-viewer.html">View IFC building models →</a></div></article></div></section>
+<section class="sec" id="step" style="background:linear-gradient(160deg,#0a0f1e 0%,#0d1a3a 60%,#0a0f1e 100%);overflow:hidden;position:relative;">
+  <div style="position:absolute;top:-200px;left:-100px;width:700px;height:700px;border-radius:50%;background:radial-gradient(circle,rgba(29,78,216,.08) 0%,transparent 65%);pointer-events:none;"></div>
+  <div style="position:absolute;bottom:-150px;right:-80px;width:500px;height:500px;border-radius:50%;background:radial-gradient(circle,rgba(29,78,216,.06) 0%,transparent 65%);pointer-events:none;"></div>
+  <div class="rev" style="text-align:center;margin-bottom:3rem;position:relative;">
+    <div class="sec-label" style="color:rgba(99,149,255,.6);">// STEP AP203 · AP214 · AP242</div>
+    <h2 class="sec-title" style="color:#fff;font-size:clamp(2rem,5vw,3.8rem);">STEP assemblies.<br>View and inspect.</h2>
+    <p class="sec-sub" style="color:rgba(255,255,255,.5);max-width:640px;margin:0 auto;">OpenCASCADE and MEDUSA load STEP assemblies for viewing and inspection, with available colours, hierarchy and PMI. Native parallel processing handles large models. Imported bodies may remain open; keep the source file.</p>
+  </div>
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1.5rem;margin-bottom:3rem;position:relative;">
+    <div style="background:rgba(255,255,255,.04);border:1px solid rgba(99,149,255,.2);border-radius:14px;padding:1.8rem;">
+      <div style="font-size:1.7rem;margin-bottom:.8rem;">📥</div>
+      <h3 style="color:#fff;font-size:1rem;font-weight:700;margin-bottom:.5rem;">STEP Import — AP203 · AP214 · AP242</h3>
+      <p style="color:rgba(255,255,255,.45);font-size:.88rem;line-height:1.6;">Multi-body assemblies — names, positions, part and face colors, PMI / GD&amp;T. Thousands of solids: native parallel import with MEDUSA, OpenCASCADE WASM in the browser otherwise.</p>
+    </div>
+    <div style="background:rgba(255,255,255,.04);border:1px solid rgba(99,149,255,.2);border-radius:14px;padding:1.8rem;">
+      <div style="font-size:1.7rem;margin-bottom:.8rem;">📤</div>
+      <h3 style="color:#fff;font-size:1rem;font-weight:700;margin-bottom:.5rem;">STEP Export — AP203 · AP214 · AP242</h3>
+      <p style="color:rgba(255,255,255,.45);font-size:.88rem;line-height:1.6;">MEDUSA can reuse available referenced source B-Rep. Missing source data or unsupported transformations can require tessellation. Export does not guarantee repair, a closed solid or full preservation of CAD semantics.</p>
+    </div>
+    <div style="background:rgba(255,255,255,.04);border:1px solid rgba(99,149,255,.2);border-radius:14px;padding:1.8rem;">
+      <div style="font-size:1.7rem;margin-bottom:.8rem;">🔄</div>
+      <h3 style="color:#fff;font-size:1rem;font-weight:700;margin-bottom:.5rem;">Verify in the Receiving CAD Tool</h3>
+      <p style="color:rgba(255,255,255,.45);font-size:.88rem;line-height:1.6;">Keep the original STEP and inspect exported files in the receiving CAD tool. Check dimensions, body count, colours and whether each body is recognised as a closed solid.</p>
+    </div>
+    <div style="background:rgba(255,255,255,.04);border:1px solid rgba(99,149,255,.2);border-radius:14px;padding:1.8rem;">
+      <div style="font-size:1.7rem;margin-bottom:.8rem;">⚙️</div>
+      <h3 style="color:#fff;font-size:1rem;font-weight:700;margin-bottom:.5rem;">OpenCASCADE, twice</h3>
+      <p style="color:rgba(255,255,255,.45);font-size:.88rem;line-height:1.6;">OCCT compiled to WebAssembly inside the page, and OCCT 8 native inside MEDUSA — the kernel behind FreeCAD, in your browser and on your CPU.</p>
+    </div>
+  </div>
+  <div style="text-align:center;position:relative;">
+    <div style="display:flex;flex-wrap:wrap;justify-content:center;gap:.75rem;margin-bottom:2.5rem;">
+      <span style="background:rgba(29,78,216,.15);border:1px solid rgba(29,78,216,.4);color:#93b4ff;padding:.4rem 1rem;border-radius:20px;font-size:.82rem;font-weight:600;">Fusion 360 ✓</span>
+      <span style="background:rgba(29,78,216,.15);border:1px solid rgba(29,78,216,.4);color:#93b4ff;padding:.4rem 1rem;border-radius:20px;font-size:.82rem;font-weight:600;">FreeCAD ✓</span>
+      <span style="background:rgba(29,78,216,.15);border:1px solid rgba(29,78,216,.4);color:#93b4ff;padding:.4rem 1rem;border-radius:20px;font-size:.82rem;font-weight:600;">Autodesk Viewer ✓</span>
+      <span style="background:rgba(29,78,216,.15);border:1px solid rgba(29,78,216,.4);color:#93b4ff;padding:.4rem 1rem;border-radius:20px;font-size:.82rem;font-weight:600;">AP203 · AP214 · AP242</span>
+    </div>
+  </div>
+</section>
+
+<!-- ── IFC ── -->
+<section class="sec white" id="ifc">
+  <div class="rev">
+    <div class="sec-label">// IFC · BIM</div>
+    <h2 class="sec-title">Building models too.<br>View and inspect IFC.</h2>
+    <p class="sec-sub">View an architect's IFC file next to your mechanical parts. IFC4 export remains available for geometry exchange; imported IFC is a viewer workflow, with no guarantee of full BIM round-trip preservation.</p>
+  </div>
+  <div class="about-grid rev">
+    <div class="about-card" style="transition-delay: 0ms;">
+      <div class="about-num">01</div>
+      <h3>Open IFC2X3 · IFC4 · IFC4X3</h3>
+      <p>Supported building geometry becomes scene objects with available IFC names, colours and positions. The web-ifc engine processes model data locally. The result is an inspection scene, not an editable authoring model with all BIM relationships preserved.</p>
+    </div>
+    <div class="about-card" style="transition-delay: 80ms;">
+      <div class="about-num">02</div>
+      <h3>Write IFC4</h3>
+      <p>With the Project &rsaquo; Site &rsaquo; Building &rsaquo; Storey structure strict BIM software expects. Colours are kept face by face.</p>
+    </div>
+    <div class="about-card" style="transition-delay: 160ms;">
+      <div class="about-num">03</div>
+      <h3>True parametric solids</h3>
+      <p>Cubes, cylinders, tubes, hollow boxes, spheres and cones are written as real IFC solids; everything else as triangulated surfaces.</p>
+    </div>
+  </div>
+</section>
+
+
+<!-- ── FEATURES ── -->
+<section class="sec" id="features">
+  <div class="rev">
+    <div class="sec-label">// Core Features</div>
+    <h2 class="sec-title">Everything you need.<br>Nothing you don't.</h2>
+    <p class="sec-sub">Parametric modeling, boolean operations, advanced generators and memory management — in a browser application you can download as a complete offline package.</p>
+  </div>
+  <div class="feat-grid">
+    <div class="feat-card rev" style="transition-delay: 0ms;">
+      <div class="feat-id">F-01</div>
+      <h3>Boolean CSG — Manifold C++</h3>
+      <p>Union, subtraction, intersection — powered by Manifold, the open-source C++ CSG kernel developed at Google. It runs right in the browser, compiled to WebAssembly, and switches by itself to the MEDUSA companion engine when it is running — native, multi-threaded with Intel TBB, much faster on big models. Every boolean is logged in a re-runnable CSG tree.</p>
+    </div>
+    <div class="feat-card rev" style="transition-delay: 70ms;">
+      <div class="feat-id">F-02</div>
+      <h3>Advanced Parametric Generators</h3>
+      <p>ISO involute gears &amp; V-groove pulleys (Gear.Gen), hollow curved pipes with Bishop-frame path (Pipe.Gen), parametric screws ISO 68-1 / UNC·UNF (Screw.Gen), parametric nuts ISO 4032/4033 · ASME B18.2.2 (Nut.Gen), ultra-HD torii, chamfered/rounded cubes, solids of revolution, spherical sectors, threaded fasteners.</p>
+    </div>
+    <div class="feat-card rev" style="transition-delay: 140ms;">
+      <div class="feat-id">F-03</div>
+      <h3>Geometry Pool with GC</h3>
+      <p>A 2 GB ArrayBuffer with a custom mark-and-sweep garbage
+collector handles all geometry and scene snapshots. BVH/AABB caching on
+every mesh keeps raycasting fast on complex scenes.</p>
+    </div>
+    <div class="feat-card rev" style="transition-delay: 210ms;">
+      <div class="feat-id">F-04</div>
+      <h3>Full Scene Management</h3>
+      <p>Solid/Hole mode per object for automatic boolean detection.
+Box-select for bulk ops. Live XYZ transform. Dimension annotations in 3D
+ viewport. Project save/load as JSON. Hide any panel you don't need
+ &mdash; or all of them with <b>H</b> &mdash; and the model gets the whole screen.</p>
+    </div>
+    <div class="feat-card rev" style="transition-delay: 280ms;">
+      <div class="feat-id">F-05</div>
+      <h3>Export Quality Control</h3>
+      <p>STL export uses 128 segments by default — optimized for FDM.
+Quality slider goes higher for SLA or CNC. Hard-dimensions approach:
+what you model is what you export, 1:1, no scale surprises. Export the
+ whole design or only the selected shapes, in every format.</p>
+    </div>
+    <div class="feat-card rev" style="transition-delay: 350ms;">
+      <div class="feat-id">F-06</div>
+      <h3>Import STL · OBJ · 3MF · GLB · PLY · STEP · IFC</h3>
+      <p>File picker or drag-and-drop import. Imported meshes are first-class objects — boolean-combinable with native primitives, transformable, and re-exportable into any assembly.</p>
+    </div>
+    <div class="feat-card rev" style="transition-delay: 420ms;">
+      <div class="feat-id">F-07</div>
+      <h3>STEP &amp; IFC — OpenCASCADE + MEDUSA</h3>
+      <p>View and inspect STEP AP203 / AP214 / AP242 assemblies and IFC2X3 / IFC4 / IFC4X3 geometry. Available names, colours and annotations aid inspection. STEP and IFC4 export options remain available; verify the output and retain the source files.</p>
+    </div>
+    <div class="feat-card rev" style="transition-delay: 490ms;">
+      <div class="feat-id">F-08</div>
+      <h3>Real Fillet &amp; Chamfer</h3>
+      <p>True B-Rep fillet and chamfer computed by OpenCASCADE, on picked edges or on all edges at once &mdash; not a mesh approximation.</p>
+    </div>
+    <div class="feat-card rev" style="transition-delay: 560ms;">
+      <div class="feat-id">F-09</div>
+      <h3>Build Volume &mdash; 28 Printers</h3>
+      <p>Your printer's bed and build volume on the grid &mdash; Bambu Lab, Creality, Prusa, Elegoo, Anycubic, Voron, Sovol. A wall turns red when the part sticks out.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ── PRIMITIVES ── -->
+<section class="prim-sec" id="primitives">
+  <div class="prim-bg"></div>
+  <div class="prim-bg2"></div>
+  <div class="rev">
+    <div class="sec-label">// Primitives &amp; Generators</div>
+    <h2 class="sec-title">Start fast with<br>what you need</h2>
+    <p class="sec-sub">Core primitives are one click. Advanced generators open a live-preview modal with sliders. 19 watertight primitives total.</p>
+  </div>
+  <div class="prim-wrap rev">
+    <span class="prim-tag">Cube</span>
+    <span class="prim-tag">Sphere</span>
+    <span class="prim-tag">Cylinder</span>
+    <span class="prim-tag">Cone</span>
+    <span class="prim-tag">Triangular pyramid / Tetrahedron</span>
+    <span class="prim-tag">Half-Sphere</span>
+    <span class="prim-tag">Tube</span>
+    <span class="prim-tag">Roof</span>
+    <span class="prim-tag">Arc</span>
+    <span class="prim-tag gen">⚙ Gear.Gen — ISO Involute</span>
+    <span class="prim-tag gen">⚙ Gear.Gen — V-Groove Pulley</span>
+    <span class="prim-tag gen">⌁ Pipe.Gen — Bishop Frame</span>
+    <span class="prim-tag">◎ Torus Ultra-HD</span>
+    <span class="prim-tag">✦ Chamfered / Rounded Cube</span>
+    <span class="prim-tag">⌾ Truncated Cylinder · Double Chamfer</span>
+    <span class="prim-tag gen">⌀ RevSolid.Gen — Solid of Revolution</span>
+    <span class="prim-tag gen">◑ ArcSphere.Gen — Spherical Sector</span>
+    <span class="prim-tag gen">🔩 Screw.Gen — ISO 68-1 / UNC·UNF</span>
+    <span class="prim-tag gen">⬡ Nut.Gen — ISO 4032/4033 · ASME B18</span>
+    <span class="prim-tag gen">M Threaded Fastener</span>
+  </div>
+</section>
+
+<!-- ── NASSSCRIPT ── -->
+<section class="sec white" id="scripting">
+  <div class="rev">
+    <div class="sec-label">// NassScript</div>
+    <h2 class="sec-title">From an idea<br>to a working 3D scene.</h2>
+    <p class="sec-sub">NassScript is the bridge between a language model and NASSCAD's live 3D scene. An AI assistant can draft the geometry and motion; you review the code and run it locally. The four-cylinder engine below shows what this programmable workflow can build.</p>
+  </div>
+  <div class="script-workflow rev">
+    <p><strong>Your idea. An AI assistant. NassScript. NASSCAD.</strong><br>Share the NassScript reference with your assistant, describe what you want to create, then paste and run the generated JavaScript in NASSCAD. Refine the script as your idea evolves.</p>
+    <p><strong>The potential goes well beyond a single modelling command.</strong> An AI assistant can help combine many tools into a coherent program, define relationships between parts and write the logic that brings a scene to life. Ask for a different dimension, a new mechanism or revised motion, then iterate on the script. NASSCAD provides the modelling tools and execution; NassScript connects them into a programmable workflow.</p>
+    <ul class="script-ul">
+      <li>Combine modelling tools, transformations and boolean operations in one script</li>
+      <li>Use JavaScript and async/await to control motion, timing and scene behaviour</li>
+      <li>Build and animate complete scenes, as the two demonstrations below show</li>
+    </ul>
+  </div>
+  <div class="script-demos">
+    <article class="script-demo rev">
+      <a class="script-demo-image" href="nasscript_doc.html#engine-demo" aria-label="Explore the four-cylinder engine demo and its NassScript"><img src="nassscript-engine-preview.png" alt="NassScript four-cylinder engine with pistons, connecting rods, crankshaft, camshafts and a combustion effect" width="1600" height="1050" loading="lazy" decoding="async"></a>
+      <div class="script-demo-body">
+        <h3>Four-cylinder engine</h3>
+        <p>A complete mechanism built and animated with NassScript: pistons, connecting rods, crankshaft, camshafts, timing belt and combustion effects.</p>
+        <a href="nasscript_doc.html#engine-demo">Explore the demo &amp; script →</a>
+      </div>
+    </article>
+    <article class="script-demo rev">
+      <a class="script-demo-image" href="nasscript_doc.html#demo" aria-label="Explore the Solar System demo and its NassScript"><img src="solar-system-snapshot.png" alt="NassScript Solar System with planets, moons, orbital trails and date and playback controls" width="1600" height="942" loading="lazy" decoding="async"></a>
+      <div class="script-demo-body">
+        <h3>Solar System</h3>
+        <p>A date-driven Solar System with planets, moons, orbital trails and interactive playback controls, built and animated with NassScript.</p>
+        <a href="nasscript_doc.html#demo">Explore the demo &amp; script →</a>
+      </div>
+    </article>
+  </div>
+  <div class="script-resources rev"><a href="nasscript_doc.html" class="btn-secondary">Read the NassScript reference →</a><p>Both demos are also available from the <strong>NassScript demo</strong> button on the NASSCAD welcome screen.</p></div>
+</section>
+
+<!-- ── IN ACTION ── -->
+<section class="action-sec" id="inaction">
+  <div class="rev">
+    <div class="sec-label">// In Action</div>
+    <h2 class="sec-title">Real parts.<br>Real complexity.</h2>
+    <p class="sec-sub">Real STEP AP242 assemblies, imported straight into a browser tab — thousands of solids, source colors, full assembly tree.</p>
+  </div>
+
+  <div class="action-hero rev">
+    <img src="nasscad_screen3.jpg" width="1917" height="963" alt="NASSCAD — cruise ship STEP assembly: 2,813 solids imported in 48 seconds" onclick="lbOpen('nasscad_screen3.jpg','NASSCAD — cruise ship STEP assembly: 2,813 solids imported in 48 seconds')" loading="lazy">
+    <div class="action-hero-caption">STEP import · Cruise ship assembly · 2,813 solids · 773,669 faces · 48 s</div>
+  </div>
+
+  <div class="action-grid rev">
+    <div class="action-card">
+      <img src="nasscad_screen1.jpg" width="1918" height="965" alt="NASSCAD — Scania 8x4 STEP assembly imported in the browser: 1,449 solids, 2.8M faces, 1.9M vertices" onclick="lbOpen('nasscad_screen1.jpg','NASSCAD — Scania 8x4 STEP assembly imported in the browser: 1,449 solids, 2.8M faces, 1.9M vertices')" loading="lazy">
+      <div class="action-card-caption">STEP import · Scania 8x4 · 1,449 solids · 2,847,613 faces · 2 min 23 s</div>
+    </div>
+    <div class="action-card">
+      <img src="nasscad_screen2.jpg" width="1916" height="960" alt="NASSCAD — Scania V8 XT Turbo STEP import: 1,295 solids, 2.8M faces, source colors preserved" onclick="lbOpen('nasscad_screen2.jpg','NASSCAD — Scania V8 XT Turbo STEP import: 1,295 solids, 2.8M faces, source colors preserved')" loading="lazy">
+      <div class="action-card-caption">STEP import · Scania V8 XT Turbo · 1,295 solids · source colors preserved · 2 min 6 s</div>
+    </div>
+    <div class="action-card">
+      <img src="nasscad_screen4.jpg" width="1917" height="963" alt="NASSCAD — architectural STEP model: 161 solids, full assembly tree in the browser" onclick="lbOpen('nasscad_screen4.jpg','NASSCAD — architectural STEP model: 161 solids, full assembly tree in the browser')" loading="lazy">
+      <div class="action-card-caption">STEP import · Architectural model · 161 solids · full assembly tree · 13 s</div>
+    </div>
+  </div>
+
+  <div class="action-credit rev">
+    <span class="ac-label">// Model credits</span>
+    <p>The assemblies above are third-party CAD models, shown to demonstrate STEP import — they are not NASSCAD content and remain the property of their authors:</p>
+    <p>
+      <a href="https://grabcad.com/library/modern-cruise-ship-evita-1" target="_blank" rel="noopener">Modern Cruise Ship Evita</a> and
+      <a href="https://grabcad.com/library/rocky-house-1" target="_blank" rel="noopener">Rocky House</a> by Christian Spreafico ·
+      <a href="https://grabcad.com/library/scania-r620-v8-8x4-1" target="_blank" rel="noopener">Scania R620 V8 8x4</a> and
+      <a href="https://grabcad.com/library/engine-v8-turbo-hydrostatic-transmission-1" target="_blank" rel="noopener">Scania V8 XT Turbo Engine</a> by Ivo Jardim.
+    </p>
+    <p>All four are published on the <a href="https://grabcad.com/library" target="_blank" rel="noopener">GrabCAD Community Library</a> and redistributed as STEP test data by <a href="https://www.steptools.com/docs/stpfiles/bigassy/" target="_blank" rel="noopener">STEP Tools,&nbsp;Inc.</a> No model file is bundled with NASSCAD or hosted on this site.</p>
+  </div>
+</section>
+
+
+<!-- ── MEDUSA ── -->
+<section class="sec" id="medusa">
+  <div class="rev">
+    <div class="sec-label">// Optional companion for the browser edition · Windows x64</div>
+    <h2 class="sec-title">Native speed,<br>when you need it.</h2>
+    <p class="sec-sub"><strong>NASSCAD Desktop already includes MEDUSA; no separate download is needed.</strong> For the browser edition, import, model, combine, measure and export with nothing installed — booleans included, with Manifold compiled to WebAssembly. MEDUSA is the optional companion engine: the same Manifold in native C++ with Intel TBB, on every CPU core, for large booleans. It also imports large STEP assemblies in parallel and can reuse available source B-Rep on export. Imported STEP and IFC remain viewer/inspection workflows. The Windows ZIP contains the standalone engine, its required runtime files and the AGPL license and source information. Keep the supplied files together. Start the engine once and NASSCAD switches to it on its own.</p>
+  </div>
+
+  <div class="rev" style="text-align:center;margin:2.5rem 0 3rem;">
+    <a href="Medusa_Engine_3.1.zip" class="btn-download">&#11015; Download MEDUSA 3.1 &mdash; Windows x64 &middot; 21 MB ZIP</a>
+  </div>
+
+  <div class="export-grid rev">
+    <div class="exp-card" style="transition-delay: 0ms;">
+      <div class="exp-ext">1</div>
+      <p><strong>Download and unzip</strong> &mdash; anywhere you like.<br>Keep <strong>Nasscad_Medusa_Engine_3.1.exe</strong> and the supplied runtime files together. The ZIP also includes the full license and a link to the corresponding source.</p>
+    </div>
+    <div class="exp-card" style="transition-delay: 120ms;">
+      <div class="exp-ext">2</div>
+      <p><strong>Run the engine</strong> &mdash; double-click <strong>Nasscad_Medusa_Engine_3.1.exe</strong> and leave it running while you use NASSCAD.<br>It is not code-signed: SmartScreen shows a warning,<br>click More info &rarr; Run anyway.</p>
+    </div>
+    <div class="exp-card" style="transition-delay: 240ms;">
+      <div class="exp-ext">3</div>
+      <p><strong>Open NASSCAD</strong> &mdash; from this site or your own copy.<br>The CSG panel then reads<br><strong>ENGINE: MANIFOLD C++ &middot; MEDUSA</strong><br>instead of <strong>MANIFOLD WASM</strong>: booleans run natively.</p>
+    </div>
+  </div>
+</section>
+
+
+<!-- ── EDUCATION ── -->
+<section class="sec white" id="education">
+  <div class="rev">
+    <div class="sec-label">// Education</div>
+    <h2 class="sec-title">Free for education.<br>Open for everyone.</h2>
+    <p class="sec-sub">Schools &mdash; secondary, technical and vocational &mdash; their teachers and their students, public or private, can use, install, share and adapt NASSCAD free of charge, in class, at home and in paid training. The same goes for apprenticeship and training centres, associations, FabLabs, makerspaces and libraries. No registration, no license request, nothing to sign.</p>
+  </div>
+  <div class="about-grid rev">
+    <div class="about-card" style="transition-delay: 0ms;">
+      <div class="about-num">01</div>
+      <h3>Use it in class</h3>
+      <p>Open NASSCAD in any modern browser on the school computers &mdash; no account for pupils, no server to run, nothing uploaded. Teach 3D design, STEP, CSG and scripting with the same tool &mdash; booleans included, even on locked computers where nothing can be installed.</p>
+    </div>
+    <div class="about-card" style="transition-delay: 80ms;">
+      <div class="about-num">02</div>
+      <h3>Install it everywhere</h3>
+      <p>Install NASSCAD Desktop, with MEDUSA included, on each Windows x64 machine. Share it with students so they can work at home, and adapt it to your courses.</p>
+    </div>
+    <div class="about-card" style="transition-delay: 160ms;">
+      <div class="about-num">03</div>
+      <h3>Students own their work</h3>
+      <p>The models and files students and teachers create with NASSCAD belong to them. Using NASSCAD does not by itself place their original designs under the AGPL. Read the <a href="license.html" target="_blank" rel="noopener">AGPLv3 license</a>.</p>
+    </div>
+  </div>
+  <p class="rev" style="font-size:.9rem;color:var(--muted);max-width:720px;margin:2.2rem auto 0;line-height:1.7;text-align:center;">
+    NASSCAD is free for education, personal work and commercial use under <a href="license.html">AGPLv3</a>. Modification and redistribution, including paid distribution, are allowed under its source-sharing conditions.
+  </p>
+</section>
+
+
+<!-- ── EXPORT ── -->
+<section class="sec" id="export">
+  <div class="rev">
+    <div class="sec-label">// Export &amp; Import</div>
+    <h2 class="sec-title">From browser to<br>slicer, CNC, CAD or BIM</h2>
+    <p class="sec-sub">Nine export formats. Seven import formats. Check units and dimensions in the receiving tool. Section cuts for laser and CNC direct from the viewport. Export the whole design, or only the shapes you selected.</p>
+  </div>
+  <div class="export-grid rev">
+    <div class="exp-card" style="transition-delay: 0ms;">
+      <div class="exp-ext">.STL</div>
+      <p><strong>Binary</strong> — Cura, PrusaSlicer,<br>Bambu, Simplify3D</p>
+    </div>
+    <div class="exp-card" style="transition-delay: 60ms;">
+      <div class="exp-ext">.STL</div>
+      <p><strong>ASCII</strong> — Human-readable,<br>text-based format</p>
+    </div>
+    <div class="exp-card" style="transition-delay: 120ms;">
+      <div class="exp-ext">.OBJ</div>
+      <p><strong>Wavefront</strong> — Blender,<br>MeshLab, most 3D tools</p>
+    </div>
+    <div class="exp-card" style="transition-delay: 180ms;">
+      <div class="exp-ext">.3MF</div>
+      <p><strong>3MF</strong> — Bambu Studio,<br>PrusaSlicer, full metadata</p>
+    </div>
+    <div class="exp-card" style="transition-delay: 240ms;">
+      <div class="exp-ext">.GLB</div>
+      <p><strong>Binary GLTF 2.0</strong> — Sketchfab,<br>Blender, AR/VR, web 3D</p>
+    </div>
+    <div class="exp-card" style="transition-delay: 300ms;">
+      <div class="exp-ext">.PLY</div>
+      <p><strong>Stanford PLY</strong> — MeshLab,<br>CloudCompare, scan tools</p>
+    </div>
+    <div class="exp-card" style="transition-delay: 360ms;">
+      <div class="exp-ext">✂ Section</div>
+      <p><strong>SVG + DXF</strong> — 2D cut at any Y plane.<br>Laser cutters, CNC, LibreCAD</p>
+    </div>
+    <div class="exp-card" style="transition-delay: 420ms;">
+      <div class="exp-ext">.STEP</div>
+      <p><strong>AP203 · AP214 · AP242</strong> — FreeCAD, Fusion 360,<br>Autodesk Viewer<br><span style="font-size:.72rem;opacity:.7;">native OpenCASCADE writer in MEDUSA</span></p>
+    </div>
+    <div class="exp-card" style="transition-delay: 480ms;">
+      <div class="exp-ext">.IFC</div>
+      <p><strong>IFC4 — BIM</strong> — Project › Site › Building › Storey,<br>parametric solids, colors per face</p>
+    </div>
+  </div>
+  <div class="cta-box rev">
+    <h3>No account. No subscription. No cloud.</h3>
+    <p>A CAD application that runs in your browser and exports parts straight to your printer or CNC.<br>The tool gets out of the way. You build.</p>
+  </div>
+</section>
+
+<!-- DOCUMENTATION -->
+<section class="sec white" id="documentation" aria-labelledby="documentation-title">
+  <div class="rev">
+    <div class="sec-label">// Documentation</div>
+    <h2 class="sec-title" id="documentation-title">Know your tools.<br>Build with confidence.</h2>
+    <p class="sec-sub">Two complementary guides: learn the NASSCAD interface, or automate your work with NassScript. Both are in English.</p>
+  </div>
+  <div class="doc-grid rev">
+    <article class="doc-card">
+      <h3>NASSCAD user manual</h3>
+      <p class="doc-meta">54 PDF pages · 50 chapters · 37 illustrations</p>
+      <p>An extensive illustrated guide to the <strong>graphical interface</strong>: selection and the double-click cycle, dimensions, primitives, generators, sketching, boolean operations, fillets, STEP and IFC, project files, exports and MEDUSA.</p>
+      <p>Includes Windows Setup and Portable instructions, the <strong>Performances</strong> menu, worked examples, keyboard and mouse controls, and troubleshooting. Read online with chapter search and Day / Night mode, or download the PDF for offline reading.</p>
+      <div class="doc-actions">
+        <a class="btn-primary" href="nasscad_user_manual.html">Read the user manual →</a>
+        <a class="btn-secondary" href="NASSCAD_User_Manual_EN.pdf" download>Download PDF · 3.0 MB</a>
+      </div>
+    </article>
+    <article class="doc-card">
+      <h3>NassScript reference</h3>
+      <p class="doc-meta">Programming reference · Examples · Animated demos</p>
+      <p>The dedicated guide to <strong>scripting and automation</strong>: application access, modelling commands, transformations, scene control and JavaScript workflows.</p>
+      <p>Explore the original four-cylinder engine and real-date Solar System demonstrations, then use the reference to develop your own scripts, including with an AI assistant.</p>
+      <div class="doc-actions"><a class="btn-secondary" href="nasscript_doc.html">Read the NassScript reference →</a></div>
+    </article>
+  </div>
+</section>
+
+<!-- ── PURPOSE & PRACTICAL FACTS ── -->
+<section class="nass-purpose" id="purpose" aria-label="NASSCAD purpose and practical facts">
+  <article class="nass-purpose-card" aria-labelledby="purpose-title">
+    <div class="nass-purpose-label">// The NASSCAD approach</div>
+    <h2 id="purpose-title">A clear purpose. A different approach.</h2>
+    <p>NASSCAD was created to make practical 3D CAD accessible directly in a browser: create mechanical parts, work with STEP assemblies, prepare models for fabrication, and automate modelling with NassScript.</p>
+    <p><strong>It was never intended to replace or outperform the major players in the CAD industry.</strong> It occupies its own place: a free CAD tool with direct access to its tools, local model processing, and an optional native companion engine.</p>
+    <p>Its dense interface is a deliberate choice. Frequently used tools remain visible and immediately accessible. The integrated help and interactive tutorial guide new users through that interface.</p>
+  </article>
+  <article class="nass-purpose-card" aria-labelledby="facts-title">
+    <h2 id="facts-title">What to know about NASSCAD</h2>
+    <p>Need to choose an edition or check compatibility? Read the <a href="nasscad-faq.html">NASSCAD FAQ: browser vs Windows, formats, local processing and licensing</a>.</p>
+    <dl class="nass-facts">
+      <div><dt>Free use has published terms.</dt><dd>NassLab code is licensed under AGPL-3.0-only. Personal, educational, professional and commercial use are allowed without prior permission. Your original designs remain yours. Distribution and modified network versions carry source-sharing obligations under the license. Read the <a href="https://github.com/Nx-Nass/NassCAD/blob/main/LICENSE">full license</a>; third-party components retain their own licenses.</dd></div>
+      <div><dt>Boolean operations work in the browser.</dt><dd>Union, subtraction and intersection use Manifold compiled to WebAssembly. MEDUSA is optional for these operations: it adds native multicore acceleration and additional STEP capabilities. The currently offered MEDUSA download is for Windows x64.</dd></div>
+      <div><dt>Offline use requires the complete package.</dt><dd>Windows Setup and Portable include NASSCAD, MEDUSA and runtime dependencies. For a separate browser distribution, keep its HTML, JavaScript and WebAssembly files together.</dd></div>
+      <div><dt>Download size and memory use are different things.</dt><dd>The HTML entry point is approximately 1.25 MB. Its dependencies add to the total download size. Memory use and performance depend on model complexity, mesh resolution and the operations performed.</dd></div>
+      <div><dt>Different engines serve different purposes.</dt><dd>OpenCASCADE provides STEP and B-Rep capabilities, including fillets and chamfers. Manifold handles mesh boolean operations. web-ifc handles IFC import.</dd></div>
+      <div><dt>Your models are processed locally.</dt><dd>CAD processing takes place in your browser or in MEDUSA on your own machine. The hosted edition may use Google Analytics for usage statistics; this is separate from model processing. Analytics is disabled when the application is opened as a local copy.</dd></div>
+      <div><dt>Help and documentation are available.</dt><dd>NASSCAD includes integrated help, an interactive tutorial, an <a href="nasscad_user_manual.html">illustrated user manual</a> in HTML and PDF, and a detailed <a href="https://www.nasscad.com/nasscript_doc.html">NassScript reference</a> with examples and animated demonstrations. Documentation continues to grow.</dd></div>
+      <div><dt>An independent project.</dt><dd>NASSCAD is developed and maintained by Nasser / NassLab. <a href="feedback.html" rel="noreferrer">Send feedback without an account or email</a>, or write to <a href="mailto:contact@nasscad.com">contact@nasscad.com</a> if you need a reply.</dd></div>
+    </dl>
+  </article>
+  <div class="nass-purpose-links">
+    <a class="nass-youtube" href="https://www.youtube.com/@Nasscad" target="_blank" rel="noopener">&#9654; Visit the NASSCAD YouTube channel</a>
+  </div>
+</section>
+
+<!-- ── FOOTER ── -->
+<footer>
+  <div class="foot-heading">
+  <a href="https://www.nasscad.com/" class="foot-logo">⬡ NASSCAD</a>
+  <span>© 2026 NassLab — Nasser, France<span class="sep">·</span>AGPL-3.0-only<span class="sep">·</span><a href="#education">Education license</a></span>
+  </div>
+  <div class="foot-links">
+    Powered by <a href="https://threejs.org/" target="_blank">three.js</a> (MIT)
+    <span class="sep">·</span><a href="https://github.com/elalish/manifold" target="_blank" rel="noopener">Manifold</a> (Apache 2.0)
+    <span class="sep">·</span><a href="https://www.youtube.com/@Nasscad" target="_blank" rel="noopener">YouTube</a>
+    <span class="sep">·</span><a href="https://www.linkedin.com/in/nasser-z" target="_blank">LinkedIn</a>
+    <span class="sep">·</span><a href="mailto:contact@nasscad.com">contact@nasscad.com</a>
+    <span class="sep">·</span><a href="feedback.html" rel="noreferrer">Send feedback</a>
+    <span class="sep">·</span><a href="nasscad_user_manual.html">User manual</a>
+    <span class="sep">·</span><a href="nasscript_doc.html">NassScript docs</a>
+    <span class="sep">·</span><a href="nasscad-faq.html">FAQ &amp; compatibility</a>
+    <span class="sep">·</span><a href="https://github.com/Nx-Nass/NassCAD" target="_blank">GitHub</a>
+  </div>
+</footer>
+
+<script>
+  // Sticky nav shadow on scroll
+  const nav = document.getElementById('nav');
+  window.addEventListener('scroll', () => {
+    nav.classList.toggle('scrolled', scrollY > 20);
+  }, { passive: true });
+
+  // NEWS button — dropdown panel, content from ticker.txt (one announcement per line),
+  // falls back to an embedded default list if the file is missing or unreachable
+  // (e.g. opening index.html directly via file:// blocks the fetch — serve via a local
+  // server to test the real ticker.txt content). Fetched lazily on first open.
+  (function initNews() {
+    const btn = document.getElementById('newsBtn');
+    const panel = document.getElementById('newsPanel');
+    const list = document.getElementById('newsList');
+    if (!btn || !panel || !list) return;
+
+    const FALLBACK = [
+  "Dimensioning: the previous method is back. Measurements follow the workplane axes and show the object's occupied size. Existing gizmos and resize handles are preserved.",
+  "New: NASSCAD 4.7.0 Desktop is now available as an All-in-One Electron pack for Windows x64: Setup or Portable, with MEDUSA and runtime dependencies included. Setup defaults to all users; Portable runs without installation. MEDUSA starts and stops with NASSCAD through an internal pipe, with no local HTTP server.",
+  "Using NASSCAD in a school, university or FabLab? NassLab is one person — I read every message. Share criticism, bugs or feature requests without leaving an email: nasscad.com/feedback.html"
+];
+
+    function escapeHtml(s) {
+      return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    }
+
+    function populate(items) {
+      list.innerHTML = items.map(t =>
+        `<li><span class="dot"></span>${escapeHtml(t)}</li>`
+      ).join('');
+    }
+
+    let loaded = false;
+    function load() {
+      if (loaded) return;
+      loaded = true;
+      fetch('ticker.txt', { cache: 'no-store' })
+        .then(r => (r.ok ? r.text() : Promise.reject()))
+        .then(txt => {
+          const lines = txt.split('\n').map(l => l.trim()).filter(Boolean);
+          populate(lines.length ? lines : FALLBACK);
+        })
+        .catch(() => populate(FALLBACK));
+    }
+
+    function onDocClick(e) {
+      if (!panel.contains(e.target) && e.target !== btn) closePanel();
+    }
+    function onKeydown(e) {
+      if (e.key === 'Escape') { closePanel(); btn.focus(); }
+    }
+    function openPanel() {
+      load();
+      panel.classList.add('open');
+      btn.setAttribute('aria-expanded', 'true');
+      document.addEventListener('click', onDocClick);
+      document.addEventListener('keydown', onKeydown);
+    }
+    function closePanel() {
+      panel.classList.remove('open');
+      btn.setAttribute('aria-expanded', 'false');
+      document.removeEventListener('click', onDocClick);
+      document.removeEventListener('keydown', onKeydown);
+    }
+
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      panel.classList.contains('open') ? closePanel() : openPanel();
+    });
+  })();
+
+  // Reveal on scroll (IntersectionObserver)
+  const revEls = document.querySelectorAll('.rev');
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('on');
+        io.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+  revEls.forEach(el => io.observe(el));
+
+  // Staggered delay on grid children
+  document.querySelectorAll('.feat-grid .feat-card').forEach((c, i) => {
+    c.style.transitionDelay = `${i * 70}ms`;
+  });
+  document.querySelectorAll('.export-grid .exp-card').forEach((c, i) => {
+    c.style.transitionDelay = `${i * 60}ms`;
+  });
+  document.querySelectorAll('.about-grid .about-card').forEach((c, i) => {
+    c.style.transitionDelay = `${i * 80}ms`;
+  });
+</script>
+
+
+
+
+<!-- ── LIGHTBOX ── -->
+<div class="lb-overlay" id="lb" onclick="lbClose()">
+  <button class="lb-close" onclick="lbClose()">&#x2715;</button>
+  <img id="lb-img" src="" alt="">
+</div>
+<script>
+  function lbOpen(src,alt){
+    document.getElementById('lb-img').src=src;
+    document.getElementById('lb-img').alt=alt||'';
+    document.getElementById('lb').classList.add('open');
+    document.body.style.overflow='hidden';
+  }
+  function lbClose(){
+    document.getElementById('lb').classList.remove('open');
+    document.body.style.overflow='';
+  }
+  document.addEventListener('keydown',e=>{ if(e.key==='Escape') lbClose(); });
+</script>
+<script>
+/* ═══════════════════════════════════════════════════════════════════════
+   NASSCAD — moteur B-Rep du hero
+   Profil extrudé + perçages traversants · projection perspective ·
+   classification front/back exacte (solide convexe) → hidden-line réel ·
+   coupe analytique par plan · cotation PMI / GD&T.  Zéro dépendance.
+   ═══════════════════════════════════════════════════════════════════════ */
+(function () {
+'use strict';
+
+const stage  = document.getElementById('brepStage');
+const cv     = document.getElementById('brepCanvas');
+const ctx    = cv.getContext('2d');
+const REDUCE = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+/* ── constantes ─────────────────────────────────────────────────────── */
+const RAD = Math.PI / 180;
+const L = 132, W = 94, H = 26, R = 18;          // plaque : long · larg · épaisseur · rayon d'angle
+const BORES = [ { x: -33, y: 13, r: 15 }, { x: 31, y: -13, r: 15 } ];
+const ARC_N = 8, BORE_N = 26;
+const MONO = "'JetBrains Mono', ui-monospace, monospace";
+const COL = {
+  edge:'#6f9dff', edgeHi:'#c3d7ff', hidden:'rgba(111,157,255,.28)',
+  f0:[15,27,50], f1:[116,160,244],
+  acc:'#EA580C', accS:'#FDBA74', accD:'rgba(234,88,12,.6)',
+  mono:'rgba(255,255,255,.42)', lbl:'#93b4ff'
+};
+
+const clamp  = (v,a,b) => v<a?a:v>b?b:v;
+const lerp   = (a,b,t) => a+(b-a)*t;
+const smooth = t => t<=0?0:t>=1?1:t*t*(3-2*t);
+const ramp   = (t,t0,d) => smooth(clamp((t-t0)/d,0,1));
+const easeIO = t => t<.5 ? 4*t*t*t : 1-Math.pow(-2*t+2,3)/2;
+
+/* ═══ 1 · GÉOMÉTRIE ═══════════════════════════════════════════════════
+   Profil fermé CCW : 4 flancs plans + 4 congés cylindriques, extrudé
+   sur H, percé de 2 alésages traversants → 12 surfaces B-Rep.         */
+function buildProfile () {
+  const hx = L/2, hy = W/2;
+  const cs = [[hx-R,hy-R,0],[-(hx-R),hy-R,90],[-(hx-R),-(hy-R),180],[hx-R,-(hy-R),270]];
+  const pts = [];
+  for (let k = 0; k < 4; k++) {
+    const p = cs[(k+3)%4];
+    pts.push({ x:p[0]+R*Math.cos((p[2]+90)*RAD), y:p[1]+R*Math.sin((p[2]+90)*RAD),
+               grp:'P'+k, corner:true });                     // départ du flanc plan
+    const cx = cs[k][0], cy = cs[k][1], a0 = cs[k][2];
+    for (let i = 0; i < ARC_N; i++) {
+      const a = (a0 + 90*i/ARC_N) * RAD;
+      pts.push({ x:cx+R*Math.cos(a), y:cy+R*Math.sin(a), grp:'C'+k, corner:i===0 });
+    }
+  }
+  return pts;
+}
+const PROF = buildProfile(), NP = PROF.length;
+
+const V = [];
+const push = (x,y,z) => (V.push([x,y,z]), V.length-1);
+const topRing = PROF.map(p => push(p.x,p.y, H/2));
+const botRing = PROF.map(p => push(p.x,p.y,-H/2));
+const boreRings = BORES.map(b => {
+  const top = [], bot = [];
+  for (let i = 0; i < BORE_N; i++) {
+    const a = i/BORE_N*Math.PI*2, x = b.x+b.r*Math.cos(a), y = b.y+b.r*Math.sin(a);
+    top.push(push(x,y,H/2)); bot.push(push(x,y,-H/2));
+  }
+  return { top, bot, b };
+});
+
+const F = [];
+const addFace = (vi,n,grp,kind) => (F.push({vi,n,grp,kind}), F.length-1);
+const sideFace = [];
+for (let i = 0; i < NP; i++) {
+  const a = PROF[i], b = PROF[(i+1)%NP];
+  const dx = b.x-a.x, dy = b.y-a.y, ln = Math.hypot(dx,dy)||1;
+  sideFace[i] = addFace([topRing[i],topRing[(i+1)%NP],botRing[(i+1)%NP],botRing[i]],
+                        [dy/ln,-dx/ln,0], a.grp, 'side');
+}
+const F_TOP = addFace(topRing.slice(),           [0,0, 1], 'TOP', 'cap');
+const F_BOT = addFace(botRing.slice().reverse(), [0,0,-1], 'BOT', 'cap');
+const boreFace = boreRings.map((ring,k) => {
+  const arr = [];
+  for (let i = 0; i < BORE_N; i++) {
+    const j = (i+1)%BORE_N, am = (i+.5)/BORE_N*Math.PI*2;
+    arr[i] = addFace([ring.bot[i],ring.bot[j],ring.top[j],ring.top[i]],
+                     [-Math.cos(am),-Math.sin(am),0], 'B'+k, 'bore');
+  }
+  return arr;
+});
+
+/* arêtes B-Rep réelles (pas de facettisation) */
+const E = [];
+const addEdge = (a,b,f1,f2,kind,bore) => E.push({a,b,f1,f2,kind,bore:bore===undefined?-1:bore});
+for (let i = 0; i < NP; i++) addEdge(topRing[i], topRing[(i+1)%NP], F_TOP, sideFace[i], 'top');
+for (let i = 0; i < NP; i++) if (PROF[i].corner)
+  addEdge(topRing[i], botRing[i], sideFace[(i+NP-1)%NP], sideFace[i], 'vert');
+for (let i = 0; i < NP; i++) addEdge(botRing[i], botRing[(i+1)%NP], F_BOT, sideFace[i], 'bot');
+boreRings.forEach((ring,k) => {
+  for (let i = 0; i < BORE_N; i++) {
+    const j = (i+1)%BORE_N;
+    addEdge(ring.top[i], ring.top[j], F_TOP, boreFace[k][i], 'boreT', k);
+    addEdge(ring.bot[i], ring.bot[j], F_BOT, boreFace[k][i], 'boreB', k);
+  }
+});
+const WK = { top:0, vert:1, bot:2, boreT:3, boreB:4 };
+const EORDER = E.map((_,i)=>i).sort((i,j) => WK[E[i].kind]-WK[E[j].kind] || i-j);
+
+const GROUPS = ['TOP','P0','C0','P1','C1','P2','C2','P3','C3','B0','B1','BOT'];
+const GIDX = {}; GROUPS.forEach((g,i) => GIDX[g] = i);
+
+/* ═══ 2 · CAMÉRA ══════════════════════════════════════════════════════ */
+let yaw = 38*RAD, pitch = 30*RAD, spin = 1;
+let mx = 0, my = 0, tmx = 0, tmy = 0;
+let drag = null, vYaw = 0, vPitch = 0, userYaw = 0, userPitch = 0;
+const cam = { s:1, cx:0, cy:0, f:1200, ui:1 };
+const P = [], NW = [];
+let p3 = null;                                   // projection d'un point-monde
+
+function project () {
+  const ya = yaw + userYaw + mx*.34;
+  const cyw = Math.cos(ya), syw = Math.sin(ya);
+  const pt = clamp(pitch + userPitch - my*.20, -6*RAD, 76*RAD);
+  const cp = Math.cos(pt), sp = Math.sin(pt);
+  const s = cam.s, ox = cam.cx, oy = cam.cy, f = cam.f;
+
+  p3 = function (x,y,z) {
+    const x1 = x*cyw - y*syw, y1 = x*syw + y*cyw;
+    const y2 = y1*cp - z*sp,  z2 = y1*sp + z*cp;
+    const k = f/(f + y2*s*.9);
+    return { x: ox + x1*s*k, y: oy - z2*s*k, d: -y2 };
+  };
+  for (let i = 0; i < V.length; i++) {
+    const v = V[i], q = p3(v[0],v[1],v[2]);
+    P[i] = P[i] || {}; P[i].x = q.x; P[i].y = q.y; P[i].d = q.d;
+  }
+  for (let i = 0; i < F.length; i++) {
+    const n = F[i].n;
+    const x1 = n[0]*cyw - n[1]*syw, y1 = n[0]*syw + n[1]*cyw;
+    NW[i] = [x1, y1*cp - n[2]*sp, y1*sp + n[2]*cp];
+  }
+}
+const pw = v => p3(v[0],v[1],v[2]);
+const front = fi => NW[fi][1] < 0;               // normale tournée vers l'observateur
+const fdepth = fi => { const vi = F[fi].vi; let d = 0; for (const i of vi) d += P[i].d; return d/vi.length; };
+
+/* ═══ 3 · OMBRAGE ═════════════════════════════════════════════════════ */
+const LIGHT = (() => { const v = [-.36,-.72,.58], m = Math.hypot(v[0],v[1],v[2]); return v.map(c=>c/m); })();
+function shade (fi) {
+  const n = NW[fi];
+  let l = clamp(n[0]*LIGHT[0] + n[1]*LIGHT[1] + n[2]*LIGHT[2], 0, 1);
+  l = .16 + .84*Math.pow(l,.75);
+  const a = COL.f0, b = COL.f1;
+  return 'rgb('+Math.round(lerp(a[0],b[0],l))+','+Math.round(lerp(a[1],b[1],l))+','+Math.round(lerp(a[2],b[2],l))+')';
+}
+
+/* ═══ 4 · COUPE ANALYTIQUE ════════════════════════════════════════════
+   Section par le plan (x|y) = c : intervalles sur l'autre axe = inter-
+   section du profil avec la droite, moins les disques des alésages.
+   ax = 0 → plan de normale X ; ax = 1 → plan de normale Y.           */
+const AXK = ['x','y'], AXO = ['y','x'];
+const mk = (ax,c,u,z) => ax === 0 ? [c,u,z] : [u,c,z];
+
+function sectionIntervals (c, ax) {
+  const K = AXK[ax], O = AXO[ax], us = [];
+  for (let i = 0; i < NP; i++) {
+    const a = PROF[i], b = PROF[(i+1)%NP];
+    if ((a[K]-c)*(b[K]-c) < 0) us.push(a[O] + (b[O]-a[O])*(c-a[K])/(b[K]-a[K]));
+  }
+  us.sort((p,q) => p-q);
+  let iv = [];
+  for (let i = 0; i+1 < us.length; i += 2) iv.push([us[i], us[i+1]]);
+  for (const b of BORES) {
+    const d = c - b[K]; if (Math.abs(d) >= b.r) continue;
+    const e = Math.sqrt(b.r*b.r - d*d), h0 = b[O]-e, h1 = b[O]+e, out = [];
+    for (const seg of iv) {
+      const u0 = seg[0], u1 = seg[1];
+      if (h1 <= u0 || h0 >= u1) { out.push(seg); continue; }
+      if (h0 > u0) out.push([u0,h0]);
+      if (h1 < u1) out.push([h1,u1]);
+    }
+    iv = out;
+  }
+  return iv.filter(s => s[1]-s[0] > .4);
+}
+function clipPoly (pts, c, ax, sg) {              // Sutherland–Hodgman, demi-espace sg·u ≤ sg·c
+  const out = [], n = pts.length;
+  for (let i = 0; i < n; i++) {
+    const a = pts[i], b = pts[(i+1)%n], ia = sg*a[ax] <= sg*c, ib = sg*b[ax] <= sg*c;
+    if (ia) out.push(a);
+    if (ia !== ib) {
+      const t = (c-a[ax])/(b[ax]-a[ax]);
+      out.push([a[0]+(b[0]-a[0])*t, a[1]+(b[1]-a[1])*t, a[2]+(b[2]-a[2])*t]);
+    }
+  }
+  return out;
+}
+/* point dans polygone projeté — sert à savoir si un rebord d'alésage
+   est réellement visible à travers l'ouverture supérieure */
+function inPoly (px, py, poly) {
+  let inside = false;
+  for (let i = 0, j = poly.length-1; i < poly.length; j = i++) {
+    const a = poly[i], b = poly[j];
+    if ((a.y > py) !== (b.y > py) && px < (b.x-a.x)*(py-a.y)/(b.y-a.y) + a.x) inside = !inside;
+  }
+  return inside;
+}
+
+/* ═══ 5 · TEXTES ══════════════════════════════════════════════════════ */
+const STEP_IN = [
+  "ISO-10303-21;","HEADER;",
+  "FILE_SCHEMA(('AP242_MANAGED_MODEL_BASED_3D'));","DATA;",
+  "#12=CARTESIAN_POINT('',(0.,0.,0.));",
+  "#18=DIRECTION('',(0.,0.,1.));",
+  "#24=AXIS2_PLACEMENT_3D('',#12,#18,#20);",
+  "#41=PLANE('',#24);",
+  "#55=CYLINDRICAL_SURFACE('',#48,15.0);",
+  "#63=ADVANCED_FACE('',(#57),#41,.T.);",
+  "#77=EDGE_CURVE('',#70,#72,#75,.T.);",
+  "#88=CLOSED_SHELL('',(#63,#66,#69,#72));",
+  "#94=MANIFOLD_SOLID_BREP('PLATE',#88);"
+];
+const STEP_OUT = [
+  "occt.write(AP242) →",
+  "  12 ADVANCED_FACE",
+  "  6 PLANE · 6 CYLINDRICAL_SURFACE",
+  "  28 EDGE_CURVE · 16 VERTEX_POINT",
+  "  1 MANIFOLD_SOLID_BREP",
+  "  watertight ✓   exact ✓   18 kB"
+];
+
+/* ═══ 6 · PRIMITIVES DE DESSIN ════════════════════════════════════════ */
+function glow (pathFn, color, w, gw, alpha) {
+  ctx.save(); ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+  ctx.globalAlpha = alpha*.28; ctx.strokeStyle = color; ctx.lineWidth = gw;
+  ctx.beginPath(); pathFn(); ctx.stroke();
+  ctx.globalAlpha = alpha; ctx.lineWidth = w;
+  ctx.beginPath(); pathFn(); ctx.stroke();
+  ctx.restore();
+}
+function mono (text, x, y, size, color, align, ls) {
+  ctx.save();
+  ctx.font = '500 ' + (size*cam.ui) + 'px ' + MONO;
+  ctx.fillStyle = color; ctx.textBaseline = 'alphabetic';
+  if (ls) {
+    const chars = Array.from(text); const sp = ls*cam.ui;
+    let total = -sp; for (const c of chars) total += ctx.measureText(c).width + sp;
+    let cx = align === 'center' ? x-total/2 : align === 'right' ? x-total : x;
+    ctx.textAlign = 'left';
+    for (const c of chars) { ctx.fillText(c, cx, y); cx += ctx.measureText(c).width + sp; }
+  } else { ctx.textAlign = align || 'left'; ctx.fillText(text, x, y); }
+  ctx.restore();
+}
+const mw = (text,size,ls) => {
+  ctx.save(); ctx.font = '500 '+(size*cam.ui)+'px '+MONO;
+  let w; if (ls) { const sp = ls*cam.ui; w = -sp; for (const c of Array.from(text)) w += ctx.measureText(c).width+sp; }
+  else w = ctx.measureText(text).width;
+  ctx.restore(); return w;
+};
+function arrow (x, y, ang, size, color) {
+  ctx.save(); ctx.translate(x,y); ctx.rotate(ang); ctx.fillStyle = color;
+  ctx.beginPath(); ctx.moveTo(0,0); ctx.lineTo(-size,size*.32); ctx.lineTo(-size,-size*.32);
+  ctx.closePath(); ctx.fill(); ctx.restore();
+}
+
+/* ═══ 7 · SCÉNARIO ════════════════════════════════════════════════════ */
+const T = { parse:[0,2.0], cloud:[1.1,2.9], edges:[2.4,4.7], faces:[4.3,6.6], solid:[6.0,8.2], end:8.4 };
+const CYCLE = 15.5;
+const CY = { pmi:[2.6,6.6], sect:[7.0,11.6], xray:[12.0,14.4] };
+
+/* ═══ 8 · BOUCLE ══════════════════════════════════════════════════════ */
+let t0 = performance.now(), dpr = 1, raf = 0, rc = { width:640, height:560 };
+let sectAxis = 0, cutSign = 1, sectLock = false, spinDamp = 1;
+
+function resize () {
+  const r = stage.getBoundingClientRect();
+  rc = { width:r.width, height:r.height };
+  dpr = Math.min(window.devicePixelRatio || 1, 2);
+  cv.width  = Math.max(1, Math.round(r.width*dpr));
+  cv.height = Math.max(1, Math.round(r.height*dpr));
+  cam.s  = Math.min(r.width*.00445, r.height*.0062);
+  cam.cx = r.width*.405;
+  cam.cy = r.height*.475;
+  cam.f  = 1500*cam.s;
+  cam.ui = clamp(r.width/560, .74, 1.12);
+  if (REDUCE) { project(); render(11.0); }
+}
+
+function frame (now) {
+  raf = requestAnimationFrame(frame);
+  render((now - t0)/1000);
+}
+
+function render (t) {
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+  ctx.clearRect(0,0,rc.width,rc.height);
+
+  if (!REDUCE) {
+    const settle = clamp((t-1.2)/2.6, 0, 1);
+    yaw += (0.16 + 0.46*(1-settle)) * spin * spinDamp / 60;
+    if (!drag) { userYaw += vYaw; userPitch += vPitch; vYaw *= .93; vPitch *= .93; }
+    userPitch = clamp(userPitch, -.40, .55);
+    mx += (tmx-mx)*.07; my += (tmy-my)*.07;
+  }
+  project();
+
+  const intro  = !REDUCE && t < T.end;
+  const ct     = intro ? 0 : ((t - (REDUCE?0:T.end)) % CYCLE);
+  const aParse = intro ? 1 - ramp(t, T.parse[1]-.55, .6) : 0;
+  const aEdges = REDUCE ? 1 : ramp(t, T.edges[0], .35);
+  const pEdges = REDUCE ? 1 : clamp((t-T.edges[0])/(T.edges[1]-T.edges[0]), 0, 1);
+  const aVtx   = REDUCE ? 1 : ramp(t, T.cloud[0], .5);
+  const cloud  = REDUCE ? 0 : 1 - smooth(clamp((t-T.cloud[0])/(T.cloud[1]-T.cloud[0]), 0, 1));
+  const nGrp   = REDUCE ? 12 : Math.floor(clamp((t-T.faces[0])/(T.faces[1]-T.faces[0]),0,1)*12 + 1e-6);
+  const aHud   = REDUCE ? 1 : ramp(t, T.solid[0]+.3, .8);
+  let   aSolid = REDUCE ? 1 : ramp(t, T.solid[0], 1.5);
+
+  const pmi   = (intro||REDUCE) ? 0 : ramp(ct,CY.pmi[0],.5)*(1-ramp(ct,CY.pmi[1]-.5,.5));
+  const sectA = (intro||REDUCE) ? 0 : ramp(ct,CY.sect[0],.45)*(1-ramp(ct,CY.sect[1]-.45,.45));
+  const xray  = (intro||REDUCE) ? 0 : ramp(ct,CY.xray[0],.4)*(1-ramp(ct,CY.xray[1]-.5,.5));
+  aSolid *= (1 - .84*xray);
+
+  /* choix de l'axe de coupe : celui qui présente la section face caméra */
+  if (!intro && ct > CY.sect[0]-1.0 && ct < CY.sect[1]) {
+    if (!sectLock) {
+      const ya = yaw + userYaw + mx*.34;
+      sectAxis = Math.abs(Math.sin(ya)) >= Math.abs(Math.cos(ya)) ? 0 : 1;
+      // on retire la moitié proche → la face de coupe regarde la caméra
+      cutSign = (sectAxis === 0 ? Math.sin(ya) : Math.cos(ya)) < 0 ? 1 : -1;
+      sectLock = true;
+    }
+  } else sectLock = false;
+  spinDamp = 1 - .78*sectA;
+
+  /* le plan entre, s'immobilise un peu au-delà du centre, puis ressort */
+  const half  = (sectAxis === 0 ? L : W)/2 + 8;
+  const sweep = clamp((ct-CY.sect[0])/(CY.sect[1]-CY.sect[0]), 0, 1);
+  let u;
+  if (sweep < .40)      u = 1-Math.pow(1-sweep/.40, 3);
+  else if (sweep < .80) u = 1 + .05*Math.sin((sweep-.40)/.40*Math.PI);
+  else                  u = 1 - Math.pow((sweep-.80)/.20, 2);
+  const cutC = cutSign*lerp(half, -half*.24, u);
+  const cut  = sectA > .015 ? cutC : null;
+
+  drawGround(REDUCE ? 1 : ramp(t,.5,1.1), cut, aSolid);
+  if (aSolid > .01) drawSolid(aSolid, nGrp, cut);
+  if (cut !== null) drawSection(cut, sectA);
+  drawEdges(aEdges, pEdges, xray, cut, aSolid);
+  if (aVtx > .01) drawVertices(aVtx, cloud, cut);
+  if (aSolid > .25 && sectA < .12 && !REDUCE) drawFlow(t);
+  if (!REDUCE && t > T.faces[0] && t < T.solid[1]) drawDetect(t, nGrp);
+  if (pmi > .01) drawPMI(pmi);
+  if (aHud > .01) { drawCallouts(aHud*(1-sectA*.85)*(1-pmi*.72)); drawGizmo(aHud); }
+  drawHud(t, intro, nGrp, aHud, sectA, pmi, xray);
+  if (aParse > .01) drawStream(t, aParse);
+  if (xray > .01) drawExport(xray);
+}
+
+/* ── sol : grille + ombre de contact ────────────────────────────────── */
+function drawGround (a, cut, sh) {
+  if (a < .01) return;
+  const g = 52, n = 5, z = -H/2 - 32;
+  ctx.save();
+  ctx.globalAlpha = a*.42; ctx.strokeStyle = 'rgba(93,146,255,.30)'; ctx.lineWidth = 1;
+  ctx.beginPath();
+  for (let i = -n; i <= n; i++) {
+    let A = p3(-n*g, i*g, z), B = p3(n*g, i*g, z);
+    ctx.moveTo(A.x,A.y); ctx.lineTo(B.x,B.y);
+    A = p3(i*g, -n*g, z); B = p3(i*g, n*g, z);
+    ctx.moveTo(A.x,A.y); ctx.lineTo(B.x,B.y);
+  }
+  ctx.stroke();
+  // ombre de contact = silhouette aplatie (suit la coupe)
+  let sil = PROF.map(p => [p.x*1.04, p.y*1.04, z+1]);
+  if (cut !== null) sil = clipPoly(sil, cut, sectAxis, cutSign);
+  if (sil.length > 2 && sh > .01) {
+    ctx.globalAlpha = a*sh*.62;
+    try { ctx.filter = 'blur(13px)'; } catch (e) {}
+    ctx.fillStyle = 'rgba(2,6,16,.9)';
+    ctx.beginPath();
+    sil.forEach((v,i) => { const q = pw(v); i ? ctx.lineTo(q.x,q.y) : ctx.moveTo(q.x,q.y); });
+    ctx.closePath(); ctx.fill();
+  }
+  ctx.restore();
+}
+
+/* ── matière (peintre : alésages → flancs → capot) ──────────────────── */
+const RANK = { bore:0, side:1, cap:2 };
+function drawSolid (alpha, nGrp, cut) {
+  const order = [];
+  for (let i = 0; i < F.length; i++)
+    if (front(i) && GIDX[F[i].grp] < nGrp) order.push(i);
+  order.sort((a,b) => RANK[F[a].kind]-RANK[F[b].kind] || fdepth(a)-fdepth(b));
+
+  ctx.save(); ctx.globalAlpha = alpha; ctx.lineJoin = 'round';
+  for (const fi of order) {
+    const f = F[fi];
+    ctx.beginPath();
+    if (cut === null) {
+      f.vi.forEach((vi,i) => { const p = P[vi]; i ? ctx.lineTo(p.x,p.y) : ctx.moveTo(p.x,p.y); });
+      ctx.closePath();
+      if (f.kind === 'cap') boreRings.forEach(r => {
+        const ring = f.grp === 'TOP' ? r.top : r.bot;
+        ring.forEach((vi,i) => { const p = P[vi]; i ? ctx.lineTo(p.x,p.y) : ctx.moveTo(p.x,p.y); });
+        ctx.closePath();
+      });
+    } else {
+      const c = clipPoly(f.vi.map(i => V[i]), cut, sectAxis, cutSign);
+      if (c.length < 3) continue;
+      c.forEach((v,i) => { const p = pw(v); i ? ctx.lineTo(p.x,p.y) : ctx.moveTo(p.x,p.y); });
+      ctx.closePath();
+      if (f.kind === 'cap') boreRings.forEach(r => {
+        const cr = clipPoly((f.grp === 'TOP' ? r.top : r.bot).map(i => V[i]), cut, sectAxis, cutSign);
+        if (cr.length < 3) return;
+        cr.forEach((v,i) => { const p = pw(v); i ? ctx.lineTo(p.x,p.y) : ctx.moveTo(p.x,p.y); });
+        ctx.closePath();
+      });
+    }
+    const col = shade(fi);
+    ctx.fillStyle = col; ctx.fill('evenodd');
+    if (f.kind !== 'cap') { ctx.strokeStyle = col; ctx.lineWidth = 1; ctx.stroke(); } // coutures
+  }
+  ctx.restore();
+}
+
+/* ── coupe ──────────────────────────────────────────────────────────── */
+function drawSection (c, a) {
+  const ax = sectAxis, iv = sectionIntervals(c, ax);
+  const Q = (u,z) => { const v = mk(ax,c,u,z); return p3(v[0],v[1],v[2]); };
+  ctx.save();
+  for (const seg of iv) {
+    const u0 = seg[0], u1 = seg[1];
+    const q = [Q(u0,-H/2), Q(u1,-H/2), Q(u1,H/2), Q(u0,H/2)];
+    const path = () => { ctx.beginPath(); q.forEach((p,i)=> i?ctx.lineTo(p.x,p.y):ctx.moveTo(p.x,p.y)); ctx.closePath(); };
+    path(); ctx.globalAlpha = a*.95; ctx.fillStyle = 'rgba(234,88,12,.17)'; ctx.fill();
+
+    ctx.save(); path(); ctx.clip();                     // hachures 45° tracées DANS le plan
+    ctx.globalAlpha = a*.75; ctx.strokeStyle = 'rgba(255,158,92,.8)'; ctx.lineWidth = 1.05;
+    ctx.beginPath();
+    for (let k = u0-H; k <= u1; k += 6.5) {
+      const ua = Math.max(u0,k), ub = Math.min(u1,k+H);
+      if (ub <= ua) continue;
+      const A = Q(ua, ua-k-H/2), B = Q(ub, ub-k-H/2);
+      ctx.moveTo(A.x,A.y); ctx.lineTo(B.x,B.y);
+    }
+    ctx.stroke(); ctx.restore();
+
+    ctx.globalAlpha = a; ctx.strokeStyle = COL.acc; ctx.lineWidth = 2;
+    ctx.shadowColor = 'rgba(234,88,12,.9)'; ctx.shadowBlur = 12;
+    path(); ctx.stroke(); ctx.shadowBlur = 0;
+  }
+  const ext = (ax === 0 ? W : L)*.70, z = -H/2-32;
+  const v0 = mk(ax,c,-ext,z), v1 = mk(ax,c,ext,z);
+  const g0 = p3(v0[0],v0[1],v0[2]), g1 = p3(v1[0],v1[1],v1[2]);
+  ctx.globalAlpha = a*.6; ctx.strokeStyle = COL.accD; ctx.lineWidth = 1.2;
+  ctx.setLineDash([9,5]); ctx.beginPath(); ctx.moveTo(g0.x,g0.y); ctx.lineTo(g1.x,g1.y); ctx.stroke();
+  ctx.setLineDash([]); ctx.globalAlpha = a;
+  // repères A gardés dans le cadre
+  const mxp = (g0.x+g1.x)/2, myp = (g0.y+g1.y)/2;
+  const pad = 18*cam.ui, top = 40*cam.ui, bot = rc.height-46*cam.ui;
+  const keep = q => {
+    let k = 1;
+    const dx = q.x-mxp, dy = q.y-myp;
+    if (dx >  0) k = Math.min(k, (rc.width-pad-mxp)/dx);
+    if (dx <  0) k = Math.min(k, (pad-mxp)/dx);
+    if (dy >  0) k = Math.min(k, (bot-myp)/dy);
+    if (dy <  0) k = Math.min(k, (top-myp)/dy);
+    return { x: mxp+dx*clamp(k,0,1), y: myp+dy*clamp(k,0,1) };
+  };
+  const a0 = keep(g0), a1 = keep(g1);
+  mono('A', a0.x, a0.y+13*cam.ui, 11, COL.acc, 'center');
+  mono('A', a1.x, a1.y+13*cam.ui, 11, COL.acc, 'center');
+  ctx.restore();
+}
+
+/* ── arêtes : hidden-line exact ─────────────────────────────────────── */
+function drawEdges (alpha, prog, xray, cut, solid) {
+  if (alpha < .01) return;
+  const n = Math.round(prog*EORDER.length), vis = [], hid = [];
+  const ax = sectAxis;
+  const rings = boreRings.map(r => r.top.map(i => P[i]));   // ouvertures projetées
+  for (let oi = 0; oi < n; oi++) {
+    const e = E[EORDER[oi]];
+    let A = V[e.a], B = V[e.b];
+    if (cut !== null) {
+      const ia = cutSign*A[ax] <= cutSign*cut, ib = cutSign*B[ax] <= cutSign*cut;
+      if (!ia && !ib) continue;
+      if (ia !== ib) {
+        const k = (cut-A[ax])/(B[ax]-A[ax]);
+        const M = [A[0]+(B[0]-A[0])*k, A[1]+(B[1]-A[1])*k, A[2]+(B[2]-A[2])*k];
+        if (ia) B = M; else A = M;
+      }
+    }
+    const a = cut === null ? P[e.a] : pw(A), b = cut === null ? P[e.b] : pw(B);
+    let visible = front(e.f1) || front(e.f2);
+    // rebord inférieur d'alésage : visible seulement à travers l'ouverture du dessus
+    if (e.kind === 'boreB')
+      visible = front(e.f2) && inPoly((a.x+b.x)/2, (a.y+b.y)/2, rings[e.bore]);
+    (visible ? vis : hid).push([a,b]);
+  }
+  ctx.save();
+  ctx.globalAlpha = alpha*clamp(lerp(.85,.06,solid||0) + .85*xray, 0, 1); ctx.strokeStyle = COL.hidden;
+  ctx.lineWidth = 1.2; ctx.setLineDash([5.5,5]);
+  ctx.beginPath(); for (const s of hid) { ctx.moveTo(s[0].x,s[0].y); ctx.lineTo(s[1].x,s[1].y); }
+  ctx.stroke(); ctx.setLineDash([]); ctx.restore();
+  glow(() => { for (const s of vis) { ctx.moveTo(s[0].x,s[0].y); ctx.lineTo(s[1].x,s[1].y); } },
+       xray > .35 ? COL.edgeHi : COL.edge, 2.0 + xray*.6, 7.5, alpha);
+}
+
+/* ── sommets ────────────────────────────────────────────────────────── */
+const rnd = i => { const s = Math.sin(i*127.1)*43758.5453; return s - Math.floor(s); };
+function drawVertices (alpha, cloud, cut) {
+  ctx.save();
+  for (let i = 0; i < NP; i++) {
+    if (!PROF[i].corner) continue;
+    for (const vi of [topRing[i], botRing[i]]) {
+      if (cut !== null && cutSign*V[vi][sectAxis] > cutSign*cut) continue;
+      const p = P[vi], off = cloud*95;
+      const x = p.x + (rnd(vi)-.5)*off, y = p.y + (rnd(vi+97)-.5)*off;
+      const r = (3.2 + cloud*1.6)*cam.ui;
+      ctx.globalAlpha = alpha*(1-cloud*.3);
+      ctx.beginPath(); ctx.arc(x,y,r+3,0,6.2832); ctx.fillStyle = 'rgba(111,157,255,.18)'; ctx.fill();
+      ctx.beginPath(); ctx.arc(x,y,r,0,6.2832); ctx.fillStyle = '#0c162e'; ctx.fill();
+      ctx.lineWidth = 1.9; ctx.strokeStyle = COL.edgeHi; ctx.stroke();
+    }
+  }
+  ctx.restore();
+}
+
+/* ── pulse le long du contour supérieur ─────────────────────────────── */
+function drawFlow (t) {
+  const pts = topRing.map(i => P[i]); pts.push(pts[0]);
+  const seg = [], cum = [0];
+  for (let i = 0; i+1 < pts.length; i++) {
+    const d = Math.hypot(pts[i+1].x-pts[i].x, pts[i+1].y-pts[i].y);
+    seg.push(d); cum.push(cum[i]+d);
+  }
+  const total = cum[cum.length-1] || 1;
+  const head = ((t*.185)%1)*total, tail = 58*cam.ui;
+  const at = s => {
+    s = ((s%total)+total)%total;
+    let i = 0; while (i+1 < cum.length && cum[i+1] < s) i++;
+    const f = (s-cum[i])/(seg[i]||1);
+    return { x: lerp(pts[i].x,pts[i+1].x,f), y: lerp(pts[i].y,pts[i+1].y,f) };
+  };
+  ctx.save(); ctx.lineCap = 'round';
+  const N = 14;
+  for (let i = 0; i < N; i++) {
+    const a = at(head - tail*i/N), b = at(head - tail*(i+1)/N), k = 1-i/N;
+    ctx.globalAlpha = k*k*.9; ctx.strokeStyle = COL.edgeHi; ctx.lineWidth = (.8+2.6*k)*cam.ui;
+    ctx.shadowColor = '#6f9dff'; ctx.shadowBlur = 11*k;
+    ctx.beginPath(); ctx.moveTo(a.x,a.y); ctx.lineTo(b.x,b.y); ctx.stroke();
+  }
+  ctx.restore();
+}
+
+/* ── anneaux « surface détectée » ───────────────────────────────────── */
+function drawDetect (t, nGrp) {
+  const span = (T.faces[1]-T.faces[0])/12;
+  ctx.save();
+  for (let g = 0; g < Math.min(nGrp,12); g++) {
+    const age = t - (T.faces[0] + g*span);
+    if (age < 0 || age > 1.15) continue;
+    const k = age/1.15, fi = F.findIndex(f => f.grp === GROUPS[g]);
+    if (fi < 0) continue;
+    let x = 0, y = 0; for (const vi of F[fi].vi) { x += P[vi].x; y += P[vi].y; }
+    x /= F[fi].vi.length; y /= F[fi].vi.length;
+    ctx.globalAlpha = (1-k)*.85; ctx.strokeStyle = COL.edgeHi; ctx.lineWidth = 2*(1-k)+.5;
+    ctx.beginPath(); ctx.arc(x, y, (6+36*k)*cam.ui, 0, 6.2832); ctx.stroke();
+  }
+  ctx.restore();
+}
+
+/* ── cotation PMI / GD&T ────────────────────────────────────────────── */
+function drawPMI (a) {
+  const off = 46;
+  ctx.save(); ctx.globalAlpha = a;
+
+  /* on place chaque cote du côté où elle sort de la pièce À L'ÉCRAN,
+     pour qu'elle reste lisible quelle que soit la rotation courante. */
+  const O = p3(0,0,0);
+  const scr = (x,y,z) => { const q = p3(x,y,z); return { x:q.x-O.x, y:q.y-O.y }; };
+  const sy = scr(0,1,0).y >= 0 ? 1 : -1;          // +Y vers le bas de l'écran ?
+  const sx = scr(1,0,0).x >= 0 ? 1 : -1;          // +X vers la droite ?
+
+  const dim = (A,B,label,wa,wb) => {
+    const pa = p3(A[0],A[1],A[2]), pb = p3(B[0],B[1],B[2]);
+    ctx.strokeStyle = COL.accD; ctx.lineWidth = 1;
+    if (wa && wb) {
+      const qa = p3(wa[0],wa[1],wa[2]), qb = p3(wb[0],wb[1],wb[2]);
+      ctx.setLineDash([4,3]);
+      ctx.beginPath();
+      ctx.moveTo(qa.x,qa.y); ctx.lineTo(pa.x,pa.y);
+      ctx.moveTo(qb.x,qb.y); ctx.lineTo(pb.x,pb.y);
+      ctx.stroke(); ctx.setLineDash([]);
+    }
+    ctx.beginPath(); ctx.moveTo(pa.x,pa.y); ctx.lineTo(pb.x,pb.y); ctx.stroke();
+    const ang = Math.atan2(pb.y-pa.y, pb.x-pa.x);
+    arrow(pa.x,pa.y,ang+Math.PI,7*cam.ui,COL.acc);
+    arrow(pb.x,pb.y,ang,7*cam.ui,COL.acc);
+    ctx.save(); ctx.translate((pa.x+pb.x)/2,(pa.y+pb.y)/2);
+    let rot = ang; if (rot > Math.PI/2 || rot < -Math.PI/2) rot += Math.PI;
+    ctx.rotate(rot);
+    const w = mw(label,12);
+    ctx.fillStyle = 'rgba(9,14,28,.9)'; ctx.fillRect(-w/2-5,-16*cam.ui,w+10,15*cam.ui);
+    mono(label, 0, -4.5*cam.ui, 12, COL.accS, 'center');
+    ctx.restore();
+  };
+
+  const zb = -H/2, yd = sy*(W/2+off), xd = sx*(L/2+off), xh = -sx*(L/2+off*.62);
+  dim([-L/2,yd,zb], [L/2,yd,zb], '132.00', [-L/2,sy*W/2,zb], [L/2,sy*W/2,zb]);
+  dim([xd,-W/2,zb], [xd,W/2,zb],  '94.00',  [sx*L/2,-W/2,zb], [sx*L/2,W/2,zb]);
+  dim([xh,0,-H/2],  [xh,0,H/2],   '26.00',  [-sx*L/2,0,-H/2], [-sx*L/2,0,H/2]);
+
+  /* ⌀ + cadre de tolérance géométrique sur l'alésage */
+  const b = BORES[0];
+  const c = p3(b.x,b.y,H/2), e = p3(b.x+b.r*.71, b.y+b.r*.71, H/2);
+  const bw = 96*cam.ui, bh = 17*cam.ui;
+  const right = e.x + 40*cam.ui + bw < rc.width - 6;
+  const kx = right ? e.x + 40*cam.ui : e.x - 40*cam.ui - bw;
+  const ky = clamp(e.y - 34*cam.ui, 24*cam.ui + bh, rc.height - 40*cam.ui);
+  ctx.strokeStyle = COL.accD; ctx.lineWidth = 1;
+  ctx.beginPath(); ctx.moveTo(c.x,c.y); ctx.lineTo(e.x,e.y);
+  ctx.lineTo(right?kx:kx+bw, ky); ctx.lineTo(right?kx+bw:kx, ky); ctx.stroke();
+  ctx.beginPath(); ctx.arc(c.x,c.y,2*cam.ui,0,6.2832); ctx.fillStyle = COL.acc; ctx.fill();
+  ctx.fillStyle = 'rgba(9,14,28,.9)'; ctx.fillRect(kx, ky-bh-1, bw, bh);
+  mono('Ø30.00 H7', kx+5*cam.ui, ky-5*cam.ui, 12, COL.accS);
+  const gx = kx, gy = ky+2*cam.ui, gw = bw, gh = bh;
+  ctx.fillStyle = 'rgba(9,14,28,.9)'; ctx.fillRect(gx,gy,gw,gh);
+  ctx.strokeStyle = 'rgba(253,186,116,.85)'; ctx.lineWidth = 1;
+  ctx.strokeRect(gx,gy,gw,gh);
+  ctx.beginPath();
+  ctx.moveTo(gx+gw*.23,gy); ctx.lineTo(gx+gw*.23,gy+gh);
+  ctx.moveTo(gx+gw*.78,gy); ctx.lineTo(gx+gw*.78,gy+gh); ctx.stroke();
+  const px = gx+gw*.115, py = gy+gh/2, pr = 4.2*cam.ui;
+  ctx.beginPath(); ctx.arc(px,py,pr,0,6.2832);
+  ctx.moveTo(px-pr*1.7,py); ctx.lineTo(px+pr*1.7,py);
+  ctx.moveTo(px,py-pr*1.7); ctx.lineTo(px,py+pr*1.7); ctx.stroke();
+  mono('Ø0.05', gx+gw*.28, gy+gh*.72, 10.5, COL.accS);
+  mono('A',     gx+gw*.87, gy+gh*.72, 10.5, COL.accS, 'center');
+  ctx.restore();
+}
+
+/* ── labels ancrés sur la géométrie 3D ──────────────────────────────── */
+function drawCallouts (a) {
+  if (a < .01) return;
+  let cxp = 0, cyp = 0; for (const i of topRing) { cxp += P[i].x; cyp += P[i].y; }
+  cxp /= NP; cyp /= NP;
+  const wide = rc.width > 430;
+  const items = [
+    { p:P[topRing[0]],          txt:'VERTEX',                                y:.235 },
+    { p:P[boreRings[1].top[3]], txt:wide?'CYLINDRICAL_SURFACE':'CYL_SURFACE', y:.375 },
+    { p:{x:cxp,y:cyp},          txt:'PLANAR_FACE',                           y:.515 }
+  ];
+  ctx.save(); ctx.globalAlpha = a;
+  for (const it of items) {
+    const ly = rc.height*it.y;
+    const w  = mw(it.txt, 11.5, .55);
+    const tx = rc.width - 6 - w;
+    ctx.strokeStyle = 'rgba(111,157,255,.5)'; ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(it.p.x, it.p.y);
+    ctx.lineTo(tx-18, ly-3.5 + (it.p.y-ly)*.10);
+    ctx.lineTo(tx-8,  ly-3.5); ctx.stroke();
+    ctx.beginPath(); ctx.arc(it.p.x,it.p.y,2.3*cam.ui,0,6.2832); ctx.fillStyle = COL.edgeHi; ctx.fill();
+    mono(it.txt, tx, ly, 11.5, COL.lbl, 'left', .55);
+  }
+  ctx.restore();
+}
+
+/* ── trièdre ────────────────────────────────────────────────────────── */
+function drawGizmo (a) {
+  const gx = 46*cam.ui, gy = rc.height - 62*cam.ui, LEN = 27*cam.ui, U = 40;
+  const O = p3(0,0,0);
+  const ax = [p3(U,0,0), p3(0,U,0), p3(0,0,U)];
+  const cols = [COL.acc, '#4b7dff', 'rgba(255,255,255,.88)'], nm = ['X','Y','Z'];
+  ctx.save(); ctx.globalAlpha = a; ctx.lineCap = 'round';
+  for (let i = 0; i < 3; i++) {
+    const dx = ax[i].x-O.x, dy = ax[i].y-O.y;
+    const k = LEN/(U*cam.s);                       // conserve le raccourcissement 3D
+    const ex = gx+dx*k, ey = gy+dy*k;
+    ctx.strokeStyle = cols[i]; ctx.lineWidth = 1.9;
+    ctx.beginPath(); ctx.moveTo(gx,gy); ctx.lineTo(ex,ey); ctx.stroke();
+    mono(nm[i], gx+dx*k*1.28, gy+dy*k*1.28+3.4*cam.ui, 10, cols[i], 'center');
+  }
+  ctx.beginPath(); ctx.arc(gx,gy,2*cam.ui,0,6.2832); ctx.fillStyle = 'rgba(255,255,255,.6)'; ctx.fill();
+  ctx.restore();
+}
+
+/* ── HUD ────────────────────────────────────────────────────────────── */
+function drawHud (t, intro, nGrp, aHud, sectA, pmi, xray) {
+  let txt, col = COL.mono, dotCol = 'rgba(111,157,255,';
+  if (intro) {
+    if (t < T.edges[0])            txt = 'PARSING STEP AP242 · OCCT WASM';
+    else if (t < T.faces[0])       txt = 'BUILDING TOPOLOGY · EDGE_CURVE · VERTEX_POINT';
+    else if (nGrp < 12)            txt = 'ANALYZING B-REP · ' + nGrp + '/12 SURFACES · OCCT WASM';
+    else                           txt = 'MANIFOLD_SOLID_BREP · WATERTIGHT ✓';
+  } else if (sectA > .3) { txt = 'SECTION A-A · ANALYTICAL CUT PLANE'; col = COL.accS; }
+  else if (pmi > .3)     { txt = 'PMI / GD&T · SEMANTIC ANNOTATION AP242'; col = COL.accS; }
+  else if (xray > .3)    { txt = 'X-RAY · HIDDEN LINE · EXPORT AP242'; col = 'rgba(147,180,255,.85)'; }
+  else                     txt = 'MANIFOLD_SOLID_BREP · 12/12 SURFACES · EXACT';
+
+  const bl = .4 + .6*Math.abs(Math.sin(t*2.1));
+  ctx.save(); ctx.globalAlpha = intro ? 1 : Math.max(aHud,.001);
+  ctx.beginPath(); ctx.arc(12, rc.height-16.5*cam.ui, 3*cam.ui, 0, 6.2832);
+  ctx.fillStyle = col === COL.mono ? dotCol+bl+')' : col; ctx.fill();
+  mono(txt, 22, rc.height-13*cam.ui, 10.5, col, 'left', 1.0);
+  ctx.restore();
+
+  if (nGrp > 0 || !intro) {
+    const p = clamp(nGrp/12,0,1), x1 = rc.width-8, x0 = x1-66*cam.ui;
+    ctx.save(); ctx.globalAlpha = intro ? 1 : aHud*.92;
+    mono((nGrp<10?'0':'')+nGrp+'/12', x1, 20*cam.ui, 11, COL.lbl, 'right', .8);
+    ctx.lineWidth = 2; ctx.lineCap = 'round';
+    ctx.strokeStyle = 'rgba(111,157,255,.2)';
+    ctx.beginPath(); ctx.moveTo(x0,28*cam.ui); ctx.lineTo(x1,28*cam.ui); ctx.stroke();
+    ctx.strokeStyle = COL.edge;
+    ctx.beginPath(); ctx.moveTo(x0,28*cam.ui); ctx.lineTo(x0+(x1-x0)*p,28*cam.ui); ctx.stroke();
+    ctx.restore();
+  }
+}
+
+/* ── flux STEP ──────────────────────────────────────────────────────── */
+function drawStream (t, a) {
+  const n = clamp(Math.floor(t/.10), 0, STEP_IN.length);
+  ctx.save();
+  for (let i = 0; i < n; i++) {
+    ctx.globalAlpha = a*clamp(1-(n-1-i)/16, .34, 1);
+    mono(STEP_IN[i], 12, (24+i*14.5)*cam.ui, 10.5, i > 3 ? '#9dbcff' : 'rgba(255,255,255,.7)');
+  }
+  const p = clamp(t/(T.parse[1]-.25),0,1);
+  ctx.globalAlpha = a; ctx.lineWidth = 2; ctx.lineCap = 'round';
+  const y = rc.height-40*cam.ui, x0 = 12, ln = 180*cam.ui;
+  ctx.strokeStyle = 'rgba(111,157,255,.22)';
+  ctx.beginPath(); ctx.moveTo(x0,y); ctx.lineTo(x0+ln,y); ctx.stroke();
+  ctx.strokeStyle = COL.edgeHi; ctx.shadowColor = '#6f9dff'; ctx.shadowBlur = 9;
+  ctx.beginPath(); ctx.moveTo(x0,y); ctx.lineTo(x0+ln*p,y); ctx.stroke();
+  ctx.restore();
+}
+function drawExport (a) {
+  ctx.save();
+  for (let i = 0; i < STEP_OUT.length; i++) {
+    ctx.globalAlpha = a*(i?.78:.95);
+    mono(STEP_OUT[i], 12, (24+i*15)*cam.ui, 10.5, i ? 'rgba(147,180,255,.9)' : COL.edgeHi);
+  }
+  ctx.restore();
+}
+
+/* ═══ 9 · INTERACTION ═════════════════════════════════════════════════ */
+stage.addEventListener('pointermove', e => {
+  const r = stage.getBoundingClientRect();
+  tmx = ((e.clientX-r.left)/r.width - .5)*2;
+  tmy = ((e.clientY-r.top)/r.height - .5)*2;
+  if (drag) {
+    const dx = e.clientX-drag.x, dy = e.clientY-drag.y;
+    userYaw += dx*.0072; vYaw = dx*.0072;
+    userPitch += dy*.0055; vPitch = dy*.0055;
+    drag.x = e.clientX; drag.y = e.clientY;
+  }
+});
+stage.addEventListener('pointerleave', () => { tmx = 0; tmy = 0; });
+stage.addEventListener('pointerdown', e => {
+  drag = { x:e.clientX, y:e.clientY }; spin = 0;
+  stage.classList.add('dragging');
+  try { stage.setPointerCapture(e.pointerId); } catch (err) {}
+});
+const endDrag = () => { if (!drag) return; drag = null; stage.classList.remove('dragging'); setTimeout(() => spin = 1, 800); };
+stage.addEventListener('pointerup', endDrag);
+stage.addEventListener('pointercancel', endDrag);
+stage.addEventListener('dblclick', () => { userYaw = 0; userPitch = 0; vYaw = vPitch = 0; spin = 1; });
+document.addEventListener('visibilitychange', () => {   // rien ne tourne en arrière-plan
+  if (REDUCE) return;
+  if (document.hidden) { if (raf) { cancelAnimationFrame(raf); raf = 0; } }
+  else if (!raf) { t0 = performance.now() - (T.end+1)*1000; raf = requestAnimationFrame(frame); }
+});
+
+/* ═══ 10 · DÉMARRAGE ══════════════════════════════════════════════════ */
+resize();
+window.addEventListener('resize', resize);
+if (window.ResizeObserver) new ResizeObserver(resize).observe(stage);
+if (document.fonts && document.fonts.ready) document.fonts.ready.then(resize);
+
+if (!REDUCE) {
+  t0 = performance.now();
+  raf = requestAnimationFrame(frame);
+  // mise en veille hors écran
+  if (window.IntersectionObserver) {
+    const io = new IntersectionObserver(es => {
+      for (const en of es) {
+        if (en.isIntersecting && !raf) { t0 = performance.now() - (T.end+1)*1000; raf = requestAnimationFrame(frame); }
+        else if (!en.isIntersecting && raf) { cancelAnimationFrame(raf); raf = 0; }
+      }
+    }, { threshold:.02 });
+    setTimeout(() => io.observe(stage), 10000);
+  }
+}
+})();
+</script>
+<script>
+document.addEventListener('click', function(event) {
+  var link=event.target.closest && event.target.closest('a[href]');
+  if (!link || typeof window.nasscadTrackEvent !== 'function') return;
+  var name=link.pathname.endsWith('/NASSCAD_V4_7_0.htm') ? 'launch_browser' :
+    link.pathname.endsWith('/NASSCAD-4.7.0-Setup-x64.exe') ? 'download_setup' :
+    link.pathname.endsWith('/NASSCAD-4.7.0-Portable-x64.exe') ? 'download_portable' : null;
+  if (name) window.nasscadTrackEvent(name, {link_url:link.origin+link.pathname, event_category:'nasscad_edition'});
+});
+</script>
+</body></html>

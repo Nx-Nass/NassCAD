@@ -47,3 +47,9 @@ NASSCAD 4.7.0 bundles the components below. **All of them are local — zero CDN
 - SIL OFL 1.1 — https://openfontlicense.org/
 - MgOpen — https://www.ellak.gr/fonts/mgopen/license.html
 - AGPL-3.0-only — https://www.gnu.org/licenses/agpl-3.0.html
+
+## Windows desktop shell
+
+- Electron 44.6.0 — Electron contributors, MIT; includes Chromium and Node.js under their own notices: https://github.com/electron/electron/tree/v44.6.0
+- electron-builder 26.15.3 — Electron Builder contributors, MIT (build tool): https://github.com/electron-userland/electron-builder
+- Desktop internal MEDUSA source and build instructions: DESKTOP_SOURCE/native/ and DESKTOP_SOURCE/README.md. The standalone HTTP companion is in MEDUSA_SOURCE/.

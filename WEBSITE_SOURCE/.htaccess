@@ -1,0 +1,68 @@
+Options -Indexes
+
+# ── Moteur de réécriture ─────────────────────────────────────────────
+RewriteEngine On
+
+# ── Forcer HTTPS + www en UNE seule redirection ──────────────────────
+# Avant : http://nasscad.com → https://nasscad.com → https://www.nasscad.com
+# (deux 301 enchaînées). Ici : un seul saut vers l'URL canonique.
+RewriteCond %{HTTPS} off [OR]
+RewriteCond %{HTTP_HOST} ^nasscad\.com$ [NC]
+RewriteRule ^ https://www.nasscad.com%{REQUEST_URI} [L,R=301]
+
+# ── Redirections 301 : anciennes versions → V4.7.0 ────────────────────
+RewriteRule ^NASSCAD_V4_2_6\.htm$ https://www.nasscad.com/NASSCAD_V4_7_0.htm [R=301,L]
+RewriteRule ^NASSCAD_V4_2_7\.htm$ https://www.nasscad.com/NASSCAD_V4_7_0.htm [R=301,L]
+RewriteRule ^NASSCAD_V4_2_30\.htm$ https://www.nasscad.com/NASSCAD_V4_7_0.htm [R=301,L]
+RewriteRule ^NASSCAD_V4_3_0\.htm$ https://www.nasscad.com/NASSCAD_V4_7_0.htm [R=301,L]
+# NASSCAD_V4_3_0_AIO.htm retiré du site (29/09) : les anciens liens vont vers la landing
+RewriteRule ^NASSCAD_V4_3_0_AIO\.htm$ https://www.nasscad.com/ [R=301,L]
+
+# ── Fichiers de travail jamais servis (sauvegardes, sources de dev) ──
+RewriteRule \.(bak|orig|tmp)$ - [R=404,L]
+RewriteRule ^_avant_seo_ - [R=404,L]
+
+# ── Fichiers SEO toujours accessibles (Google, robots, sitemap) ──────
+<FilesMatch "^(robots\.txt|sitemap\.xml|google[a-z0-9]+\.html)$">
+    Order Allow,Deny
+    Allow from all
+</FilesMatch>
+
+# ── WebAssembly : bon type MIME ──────────────────────────────────────
+# Sans lui, le serveur envoie opencascade.wasm.wasm sans Content-Type :
+# WebAssembly.instantiateStreaming() le refuse et Emscripten retombe sur
+# une instanciation depuis un ArrayBuffer (plus lente, avertissement console).
+AddType application/wasm .wasm
+
+# ── Compression : le .wasm (65 Mo) partait non compressé ────────────
+<IfModule mod_deflate.c>
+  AddOutputFilterByType DEFLATE text/html text/css text/plain text/xml application/xml application/javascript text/javascript application/json application/wasm image/svg+xml
+</IfModule>
+
+# ── Cache navigateur ─────────────────────────────────────────────────
+# HTML et modules JS de l'appli : revalidation à chaque chargement (304 si
+# inchangé) — un .htm neuf ne tourne jamais avec un module JS périmé.
+# Bibliothèques lourdes et figées (noyau OCCT, web-ifc, Three.js, polices,
+# Draco) et images : 7 jours.
+<IfModule mod_headers.c>
+  <FilesMatch "^feedback\.(html|php)$">
+    Header always set Referrer-Policy "no-referrer"
+    Header always set X-Robots-Tag "noindex, nofollow"
+  </FilesMatch>
+  <FilesMatch "\.(html?|js|css|xml|txt|md)$">
+    Header set Cache-Control "no-cache"
+  </FilesMatch>
+  <FilesMatch "^(opencascade\.wasm\.(wasm|data\.js)|nasscad_occt_wasm\.js|nasscad-ifc-wasm\.js|web-ifc-api-iife\.js|occt-import-js\.js|occt-loader-b64\.js|three\.js|nasscad-fonts\.js|nasscad-draco\.js)$">
+    Header set Cache-Control "public, max-age=604800"
+  </FilesMatch>
+  <FilesMatch "\.(png|jpe?g|webp|svg|ico)$">
+    Header set Cache-Control "public, max-age=604800"
+  </FilesMatch>
+</IfModule>
+
+<Files "LICENSE">
+  ForceType text/plain
+  <IfModule mod_headers.c>
+    Header set Cache-Control "no-cache"
+  </IfModule>
+</Files>

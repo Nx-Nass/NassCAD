@@ -1,6 +1,9 @@
 <!DOCTYPE html>
 <html lang="en" data-theme="light">
 <head>
+<link rel="icon" href="/favicon.ico">
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+
 <script src="nasscad-medusa-bridge.js"></script>
 
 <meta charset="UTF-8">
@@ -8,8 +11,10 @@
 <meta name="2026012639">
 <meta name="license" content="AGPL-3.0-only — Personal, educational, professional and commercial use allowed. Corresponding source obligations apply to distribution and modified network versions.">
 <meta name="author" content="NassLab — Nasser, France">
+<meta name="copyright-sha256" content="06f622adb35267ade6d6bc90c7d612cd02762a0f2fc383099eba7a3070a64c0c">
+<meta name="copyright-b64" content="TkFTU0NBRCBWNC43LjAgwrcgTmFzc0xhYi9OYXNzZXIgwrcgMjAyNi0wOC0zMSDCtyBEU08yMDI2MDIyNDkz">
 <title>NASSCAD — Free 3D CAD in Your Browser · STEP · IFC</title>
-
+<!--​‌​​‌‌‌​​‌​​​​​‌​‌​‌​​‌‌​‌​‌​​‌‌​‌​​​​‌‌​‌​​​​​‌​‌​​​‌​​​​‌​​​​​​‌​‌​‌‌​​​‌‌​‌​​​​‌​‌‌‌​​​‌‌​‌‌‌​​‌​‌‌‌​​​‌‌​​​​​​‌​​​​​‌‌​​​​‌​‌​‌‌​‌‌‌​​‌​​​​​​‌​​‌‌‌​​‌‌​​​​‌​‌‌‌​​‌‌​‌‌‌​​‌‌​‌​​‌‌​​​‌‌​​​​‌​‌‌​​​‌​​​‌​‌‌‌‌​‌​​‌‌‌​​‌‌​​​​‌​‌‌‌​​‌‌​‌‌‌​​‌‌​‌‌​​‌​‌​‌‌‌​​‌​​​‌​​​​​‌‌​​​​‌​‌​‌‌​‌‌‌​​‌​​​​​​​‌‌​​‌​​​‌‌​​​​​​‌‌​​‌​​​‌‌​‌‌​​​‌​‌‌​‌​​‌‌​​​​​​‌‌‌​​​​​‌​‌‌​‌​​‌‌​​‌‌​​‌‌​​​‌​​‌​​​​​‌‌​​​​‌​‌​‌‌​‌‌‌​​‌​​​​​​‌​​​‌​​​‌​‌​​‌‌​‌​​‌‌‌‌​​‌‌​​‌​​​‌‌​​​​​​‌‌​​‌​​​‌‌​‌‌​​​‌‌​​​​​​‌‌​​‌​​​‌‌​​‌​​​‌‌​‌​​​​‌‌‌​​‌​​‌‌​​‌‌-->
 
 <!-- JSON-LD App Page ─────────────────────────────────────────────────── -->
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"WebApplication","name":"NASSCAD","url":"https://www.nasscad.com/NASSCAD_V4_7_0.htm","softwareVersion":"4.7.0","applicationCategory":"DesignApplication","applicationSubCategory":"3D CAD","operatingSystem":"Web browser","browserRequirements":"Requires WebGL 2 and WebAssembly (recent Chrome, Edge, Firefox or Safari)","softwareRequirements":"Boolean CSG runs in the browser (Manifold WebAssembly); the free MEDUSA engine (Windows x64) makes it native and multi-core, and is needed for exact B-Rep STEP export","isAccessibleForFree":true,"offers":{"@type":"Offer","price":"0","priceCurrency":"EUR"},"license":"https://www.gnu.org/licenses/agpl-3.0.html","image":"https://www.nasscad.com/og-image.png","description":"The NASSCAD application: parametric 3D modelling in the browser, 19 watertight primitives and parametric generators, boolean CSG, STEP AP203 / AP214 / AP242 and IFC import and export, STL / OBJ / 3MF / GLB / PLY for 3D printing, NassScript console.","author":{"@type":"Person","name":"Nasser","affiliation":{"@type":"Organization","name":"NassLab","url":"https://www.nasscad.com/"}},"isPartOf":{"@type":"WebSite","name":"NASSCAD","url":"https://www.nasscad.com/"}}</script>
@@ -709,10 +714,7 @@ html[data-theme="dark"] #help-overlay a,html[data-theme="dark"] #help-overlay a:
 }
 
 </style>
-<!-- GA4 — production host only. Never loaded when the visit comes from a school
-     portal (ClassLink, Clever, Google Classroom, Schoology, Canvas), with ?edu=1,
-     after an opt-out (?analytics=off or the switch on /privacy.html), or when the
-     browser sends Global Privacy Control / Do Not Track. See /privacy.html. -->
+<!-- GA4 — audience measurement on nasscad.com only; never on local copies or other hosts. -->
 <script>
   (function() {
     if (!/^(?:www\.)?nasscad\.com$/i.test(window.location.hostname)) return;
@@ -1103,6 +1105,8 @@ html[data-theme="dark"] #nass-welcome{background:rgba(35,37,56,.55);border-color
 #perfdd .perf-controls{display:inline-flex;align-items:center;gap:2px;}
 #perf-mi:focus-visible{outline:2px solid var(--accent);outline-offset:1px;}
 </style>
+<link rel="stylesheet" href="nasscad-license.css">
+<script defer src="nasscad-license.js"></script>
 </head>
 <body>
 
@@ -1153,6 +1157,7 @@ html[data-theme="dark"] #nass-welcome{background:rgba(35,37,56,.55);border-color
   <span class="mi" onclick="showScriptEditor()" title="Script Editor — run JS in NASSCAD">⚡ Script</span>
   <span class="mi" onclick="showHelp()" title="Help">❓ Help</span>
   <span class="mi" id="thm-btn" onclick="toggleTheme()">🌙 Night</span>
+  <details class="nass-license nass-license--app" id="nass-license-info"><summary aria-label="NASSCAD license: AGPLv3; personal and commercial use allowed"><span><strong>AGPLv3</strong></span></summary><div class="nass-license-panel"><h2>GNU AGPLv3 · Free to use</h2><ul><li>Personal, educational and commercial use allowed.</li><li>Your original models and exports remain yours.</li><li>Share corresponding source when distributing the software or offering a modified network version, as required by the AGPL.</li></ul><p class="nass-license-links"><a href="license.html" target="_blank" rel="noopener">Full license</a><a href="https://github.com/Nx-Nass/NassCAD/releases/tag/v4.7.0-agpl" target="_blank" rel="noopener">Source code</a></p></div></details>
 </div>
 
 <div id="help-overlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:500;align-items:center;justify-content:center;">
@@ -1605,7 +1610,7 @@ html[data-theme="dark"] #nass-welcome{background:rgba(35,37,56,.55);border-color
           · <strong>Clipper2</strong> 1.5.4 (Angus Johnson) — <em>Boost Software License 1.0</em> — 2D polygon clipping, used by Manifold<br>
           · <strong>hwloc</strong> 2.11.2 (Inria and the Open MPI project) — <em>BSD 3-Clause</em> — CPU topology detection, shipped with oneTBB<br>
           <em>Web version only (nasscad.com)</em><br>
-          · <strong>Google Analytics 4</strong> (Google) — audience measurement, loaded only when NASSCAD is opened from nasscad.com — never when the file is opened locally, from a school portal (ClassLink, Clever, Google Classroom…), with <code>?edu=1</code>, or when the browser sends Global Privacy Control / Do Not Track — <a href="https://www.nasscad.com/privacy.html" target="_blank" rel="noopener">Privacy</a><br>
+          · <strong>Google Analytics 4</strong> (Google) — audience measurement when NASSCAD is opened from nasscad.com. No analytics script is loaded when the file is opened locally or hosted elsewhere.<br>
           <em>Source code of the LGPL / MPL components</em><br>
           · <a href="https://github.com/Open-Cascade-SAS/OCCT" target="_blank" rel="noopener">OCCT</a> (tag V8_0_1) · <a href="https://github.com/donalffons/opencascade.js" target="_blank" rel="noopener">opencascade.js</a> (v1.1.1) · <a href="https://github.com/kovacsv/occt-import-js" target="_blank" rel="noopener">occt-import-js</a> · <a href="https://github.com/ThatOpen/engine_web-ifc" target="_blank" rel="noopener">web-ifc</a> (0.77)<br>
           Each component remains under its own license. Full texts: <a href="https://opensource.org/license/mit" target="_blank" rel="noopener">MIT</a> · <a href="https://www.apache.org/licenses/LICENSE-2.0" target="_blank" rel="noopener">Apache 2.0</a> · <a href="https://www.gnu.org/licenses/old-licenses/lgpl-2.1.html" target="_blank" rel="noopener">LGPL 2.1</a> · <a href="https://dev.opencascade.org/resources/licensing" target="_blank" rel="noopener">OCCT exception</a> · <a href="https://www.mozilla.org/MPL/2.0/" target="_blank" rel="noopener">MPL 2.0</a> · <a href="https://www.boost.org/LICENSE_1_0.txt" target="_blank" rel="noopener">BSL 1.0</a> · <a href="https://opensource.org/license/bsd-3-clause" target="_blank" rel="noopener">BSD 3-Clause</a> · <a href="https://openfontlicense.org/" target="_blank" rel="noopener">SIL OFL 1.1</a>
@@ -1619,7 +1624,7 @@ html[data-theme="dark"] #nass-welcome{background:rgba(35,37,56,.55);border-color
           · Modification and redistribution, including for a fee, are allowed under the AGPL; provide corresponding source as required.<br>
           · Modified versions used over a network must offer their corresponding source to those users under AGPL section 13.<br>
           · Your original models and exports remain yours; using NASSCAD does not by itself make them AGPL.<br>
-          · <a href="LICENSE" target="_blank" rel="noopener">Full license</a> · <a href="https://github.com/Nx-Nass/NassCAD" target="_blank" rel="noopener">Source code</a> · <a href="LICENSING.md" target="_blank" rel="noopener">Licensing details</a><br><br>
+          · <a href="license.html" target="_blank" rel="noopener">Full license</a> · <a href="https://github.com/Nx-Nass/NassCAD" target="_blank" rel="noopener">Source code</a> · <a href="license.html" target="_blank" rel="noopener">Licensing details</a><br><br>
           This license covers NassLab code only — the third-party components listed above remain under their own licenses.<br><br>
           No implied warranty. The author cannot be held liable for any damage resulting from the use of this software.
           </span>
@@ -3122,11 +3127,11 @@ html[data-theme="dark"] #nass-welcome{background:rgba(35,37,56,.55);border-color
  * ╔══════════════════════════════════════════════════════════════╗
  * ║              NASSCAD V4.3.0 — NassLab                      ║
  * ║                                                              ║
- * ║  Copyright (C) 2026 NassLab — Nasser, France                ║
+ * ║  Copyright (C) 2026 NassLab — Nasser, France                       ║
  * ║                                                              ║
- * ║  Licence : GNU AGPL v3 only (AGPL-3.0-only)                  ║
- * ║  → Personal, educational and commercial use: allowed        ║
- * ║  → Distribution / modified network use: source required     ║
+ * ║  Licence : GNU AGPL v3 only (AGPL-3.0-only)                       ║
+ * ║  → Personal, educational and commercial use: allowed                   ║
+ * ║  → Distribution / modified network use: source required               ║
  * ║                                                              ║
  * ║  Third-party libs (local, zero CDN):                        ║
  * ║  · three.js r128          — MIT (Mr.doob et al.)            ║
@@ -3134,7 +3139,7 @@ html[data-theme="dark"] #nass-welcome{background:rgba(35,37,56,.55);border-color
  * ║  · helvetiker r/b         — MgOpen License (MAGENTA Ltd)    ║
  * ║  · optimer r/b            — MgOpen License (MAGENTA Ltd)    ║
  * ║  · gentilis r/b           — SIL OFL 1.1 (SIL International) ║
- * ║  · nasscad_logs.js        — AGPL-3.0-only (NassLab)           ║
+ * ║  · nasscad_logs.js        — AGPL-3.0-only (NassLab)          ║
  * ╚══════════════════════════════════════════════════════════════╝
  */
 

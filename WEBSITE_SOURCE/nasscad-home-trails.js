@@ -1,0 +1,14 @@
+/* NASSCAD: long continuous world-space lines with slow perspective motion. */
+(()=>{'use strict';
+const c=document.querySelector('.hero-trails');if(!c)return;const g=c.getContext('2d');if(!g)return;
+const hero=c.parentElement,reduced=matchMedia('(prefers-reduced-motion: reduce)');let w=1,h=1,t=0,last=0,raf=0,visible=true,seed=470;
+const rnd=()=>{seed=(seed*1664525+1013904223)>>>0;return seed/4294967296;},tracks=[];
+for(let i=0;i<28;i++){const a=i*Math.PI/14+.11,r=650+rnd()*1000,x=Math.cos(a)*r,y=Math.sin(a)*r*.7;tracks.push({p:[[x,y,120],[x,y,9500]],phase:rnd()*40,life:40+rnd()*16,white:i%5===0});}
+for(let i=0;i<16;i++){const z=650+rnd()*6200,k=(rnd()-.5)*2400,s=i%2?-1:1;tracks.push({p:i%3===0?[[k,-3400*s,z],[k,300*s,z],[k+850,300*s,z+1300],[k+850,3400*s,z+1300]]:[[-4800*s,k,z],[300*s,k,z],[300*s,k+600,z+1400],[4800*s,k+600,z+1400]],phase:rnd()*40,life:46+rnd()*16,white:i%4===0});}
+function project(p){const yaw=.10*Math.sin(t*.025),pitch=.065*Math.cos(t*.02),roll=.07*Math.sin(t*.018);let x=p[0]-100*Math.sin(t*.04),y=p[1]-65*Math.cos(t*.035),z=p[2];const xx=x*Math.cos(yaw)+z*Math.sin(yaw);z=z*Math.cos(yaw)-x*Math.sin(yaw);x=xx;const yy=y*Math.cos(pitch)-z*Math.sin(pitch);z=y*Math.sin(pitch)+z*Math.cos(pitch);y=yy;if(z<55)return null;const f=Math.max(w,h)*.8/z;return[w*.64+(x*Math.cos(roll)-y*Math.sin(roll))*f,h*.43+(x*Math.sin(roll)+y*Math.cos(roll))*f];}
+function paint(){g.clearRect(0,0,w,h);g.setLineDash([]);g.lineCap='round';g.lineJoin='round';for(const q of tracks){const ph=reduced.matches?.65:((t+q.phase)%q.life)/q.life,reveal=Math.min(1,ph/.35),alpha=Math.min(1,ph/.12,(1-ph)/.16);const lens=q.p.slice(1).map((p,i)=>Math.hypot(...p.map((v,j)=>v-q.p[i][j]))),end=lens.reduce((a,b)=>a+b,0)*reveal;let distance=0,started=false;g.beginPath();for(let i=0;i<lens.length;i++){const u=Math.min(1,Math.max(0,(end-distance)/lens[i]));if(!u)break;const a=q.p[i],b=q.p[i+1],pa=project(a),pb=project(a.map((v,j)=>v+(b[j]-v)*u));if(pa&&pb){if(!started){g.moveTo(...pa);started=true;}g.lineTo(...pb);}distance+=lens[i];}g.strokeStyle=q.white?`rgba(210,235,255,${alpha*.32})`:`rgba(74,145,255,${alpha*.27})`;g.lineWidth=q.white?1.2:1;g.stroke();}}
+function resize(){const r=hero.getBoundingClientRect();w=r.width;h=r.height;const d=Math.min(devicePixelRatio||1,2);c.width=Math.round(w*d);c.height=Math.round(h*d);g.setTransform(d,0,0,d,0,0);paint();}
+function tick(now){raf=0;if(!visible||document.hidden||reduced.matches)return;if(last)t+=Math.min((now-last)/1000,.05);last=now;paint();raf=requestAnimationFrame(tick);}
+function resume(){cancelAnimationFrame(raf);last=0;if(reduced.matches)paint();else if(visible&&!document.hidden)raf=requestAnimationFrame(tick);}
+new ResizeObserver(resize).observe(hero);new IntersectionObserver(e=>{visible=e[0].isIntersecting;resume();}).observe(hero);document.addEventListener('visibilitychange',resume);reduced.addEventListener('change',resume);resize();resume();
+})();

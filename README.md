@@ -199,7 +199,9 @@ NassLab's own code in this revision is licensed under the **GNU Affero General P
 
 Read the full [LICENSE](LICENSE) and [LICENSING.md](LICENSING.md). Third-party components retain their respective licenses; see [THIRD-PARTY.md](THIRD-PARTY.md).
 
-**Release transition:** this change applies to the current source. Historical tags, existing Windows installers, portable executables and already-published release ZIPs retain their original notices until replaced by a new licensed build. The website is updated separately.
+**AGPL release:** the [20 October 2026 browser, Setup and Portable release](https://github.com/Nx-Nass/NassCAD/releases/tag/v4.7.0-agpl) includes the updated license information. [Download its complete corresponding source](https://github.com/Nx-Nass/NassCAD/releases/download/v4.7.0-agpl/NASSCAD-4.7.0-AGPL-source.zip). Earlier tags and downloads retain their original notices.
+
+The exact Windows shell, native internal engine and build instructions are in [DESKTOP_SOURCE](DESKTOP_SOURCE/). Public static landing-page sources are in [WEBSITE_SOURCE](WEBSITE_SOURCE/).
 
 No warranty is provided; see LICENSE sections 15 and 16.
 

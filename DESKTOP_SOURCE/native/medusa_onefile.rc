@@ -1,0 +1,58 @@
+// ============================================================================
+// medusa_onefile.rc -- ressources du stub auto-extracteur (all-in-one)
+//
+// Compilation :
+//   MSVC   rc /nologo /i "<dossier>" /d HAVE_ICON /fo medusa_onefile.res medusa_onefile.rc
+//   MinGW  windres --include-dir "<dossier>" -DHAVE_ICON medusa_onefile.rc -O coff -o medusa_onefile.res
+//
+// HAVE_ICON n'est defini par build_medusa_onefile.bat que si Nasscad_V4.ico est
+// presente a cote : sans elle le stub se compile quand meme, il herite juste de
+// l'icone Windows par defaut.
+//
+// Les valeurs de version sont alignees sur nasscad_medusa.rc -- le all-in-one
+// doit se presenter comme le moteur dans Proprietes > Details.
+// ============================================================================
+
+#include <winresrc.h>
+
+// ----------------------------------------------------------------------------
+// Icone -- la meme que le moteur, sinon l'exe tout-en-un sort blanc dans
+// l'explorateur alors que le moteur, lui, est bien decore.
+// ----------------------------------------------------------------------------
+
+#ifdef HAVE_ICON
+IDI_ICON1   ICON    "Nasscad_V4.ico"
+#endif
+
+// ----------------------------------------------------------------------------
+// Informations de version
+// ----------------------------------------------------------------------------
+
+VS_VERSION_INFO VERSIONINFO
+FILEVERSION     3, 1, 0, 0
+PRODUCTVERSION  3, 1, 0, 0
+FILEFLAGSMASK   VS_FFI_FILEFLAGSMASK
+FILEFLAGS       0
+FILEOS          VOS_NT_WINDOWS32
+FILETYPE        VFT_APP
+FILESUBTYPE     VFT_UNKNOWN
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+        BLOCK "040904B0"    // Langue : English (US) / Code page : Unicode
+        BEGIN
+            VALUE "FileDescription",  "Nasscad Medusa Engine"
+            VALUE "FileVersion",      "3.1.0.0"
+            VALUE "ProductName",      "Nasscad Medusa Engine"
+            VALUE "ProductVersion",   "3.1.0.0"
+            VALUE "LegalCopyright",   "Nasser Z."
+            VALUE "OriginalFilename", "Nasscad_Medusa_Engine_3.1.exe"
+            VALUE "InternalName",     "Nasscad_Medusa_Engine"
+            VALUE "Comments",         "Single-file self-contained build (all DLLs embedded)"
+        END
+    END
+    BLOCK "VarFileInfo"
+    BEGIN
+        VALUE "Translation", 0x0409, 0x04B0
+    END
+END

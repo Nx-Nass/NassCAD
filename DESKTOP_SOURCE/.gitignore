@@ -1,0 +1,5 @@
+node_modules/
+dist/
+work/
+runtime/medusa/*.exe
+runtime/medusa/*.dll
