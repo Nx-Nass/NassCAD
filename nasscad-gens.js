@@ -2449,7 +2449,7 @@ function _ccBuildFrustum(Rt, Rb, H, ct, cb, N, S, mode) {
 //                                                                    shared by every primitive dialog)
 // ══════════════════════════════════════════════════════════════════════════
 // ── TORE.GEN — Tore Ultra-HD intégré ─────────────────────────────────────
-// Algorithme watertight manifold — NassLab 2026 (CC BY-NC 4.0)
+// Algorithme watertight manifold — NassLab 2026 (AGPL-3.0-only)
 // Topologie torique périodique : pas de couture, maillage fermé garanti.
 // ─────────────────────────────────────────────────────────────────────────
 
@@ -2625,7 +2625,7 @@ function _toreBuild(R, r, N, M){
 //                                                                    shared by every primitive dialog)
 // ══════════════════════════════════════════════════════════════════════════
 // ═══════════════════════════════════════════════════════════════════════════
-// PIPE.GEN — Tuyau creux CatmullRom watertight — NassLab 2026 (CC BY-NC 4.0)
+// PIPE.GEN — Tuyau creux CatmullRom watertight — NassLab 2026 (AGPL-3.0-only)
 // Algo Pipe_Gen préservé intégralement : Shape+hole extrudée sur CatmullRomCurve3
 // toNonIndexed() appliqué avant insertion → Manifold WASM compatible
 // ═══════════════════════════════════════════════════════════════════════════

@@ -1,6 +1,6 @@
 # Third-party components
 
-NASSCAD 4.7.0 bundles the components below. **All of them are local — zero CDN.** Opened from your own disk, NASSCAD makes no network call at runtime. Each component stays under its own license; the CC BY-NC 4.0 license of NassLab's own code does not apply to them.
+NASSCAD 4.7.0 bundles the components below. **All of them are local — zero CDN.** Opened from your own disk, NASSCAD makes no network call at runtime. Each component stays under its own license; the AGPL-3.0-only license of NassLab's own code does not apply to them.
 
 ## In the browser
 
@@ -16,7 +16,7 @@ NASSCAD 4.7.0 bundles the components below. **All of them are local — zero CDN
 | **helvetiker** regular / bold | — | MAGENTA Ltd — MgOpen Modata | MgOpen License | Text geometry |
 | **optimer** regular / bold | — | MAGENTA Ltd — MgOpen Cosmetica | MgOpen License | Text geometry |
 | **gentilis** regular / bold | — | J. Victor Gaultney / SIL International | SIL OFL 1.1 | Text geometry |
-| **nasscad_logs.js** | — | NassLab | CC BY-NC 4.0 | Structured logging module |
+| **nasscad_logs.js** | — | NassLab | AGPL-3.0-only | Structured logging module |
 
 ## In the NASSCAD Engine (MEDUSA) — native processing on your own machine
 
@@ -46,4 +46,4 @@ NASSCAD 4.7.0 bundles the components below. **All of them are local — zero CDN
 - BSD 3-Clause — https://opensource.org/licenses/BSD-3-Clause
 - SIL OFL 1.1 — https://openfontlicense.org/
 - MgOpen — https://www.ellak.gr/fonts/mgopen/license.html
-- CC BY-NC 4.0 — https://creativecommons.org/licenses/by-nc/4.0/
+- AGPL-3.0-only — https://www.gnu.org/licenses/agpl-3.0.html

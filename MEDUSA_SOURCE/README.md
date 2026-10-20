@@ -14,3 +14,5 @@ It is the same file as in the three build bundles. To build it, extract the bund
 | Windows 11 (MSVC) | `DEPLOY_WINDOWS_11_MSVC/Medusa_Engine_MSVC.zip` | `BUILD.md` |
 | Ubuntu | `DEPLOY_UBUNTU_LINUX/DEPLOY_UBUNTU.zip` | `install-linux.sh` |
 | Windows through WSL | `DEPLOY_UBUNTU_WSL/DEPLOY_UBUNTU_WSL.zip` | `deploy.bat` |
+
+NassLab source in this revision is licensed under **AGPL-3.0-only**; see the root [LICENSE](../LICENSE) and [LICENSING.md](../LICENSING.md). Dependencies retain their own licenses.

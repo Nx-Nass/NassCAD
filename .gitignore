@@ -36,3 +36,9 @@ node_modules/
 /NASSCAD-4.7.0-*.exe
 /NASSCAD-4.7.0-*.exe.sha256
 /NASSCAD-4.7.0-*.exe.blockmap
+
+# Local backups and editor recovery files
+*.bak
+*.before-*
+*.orig
+*.rej

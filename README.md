@@ -4,7 +4,9 @@
 
 [Try NASSCAD](https://www.nasscad.com/) · [Download releases](https://github.com/Nx-Nass/NassCAD/releases) · [Report a bug](https://github.com/Nx-Nass/NassCAD/issues) · [Getting started](#getting-started)
 
-Create solids, sketch in 2D, apply fillets and chamfers, and exchange STEP, IFC and mesh files. NASSCAD is a personal project by Nasser / NassLab. Personal, non-commercial and educational use is free under the terms in [LICENSE](LICENSE); commercial use requires an agreement.
+Create solids, sketch in 2D, apply fillets and chamfers, and exchange STEP, IFC and mesh files. NASSCAD is a personal project by Nasser / NassLab. The current source is free software under **AGPL-3.0-only**, including for professional and commercial use. Your original designs remain yours. See [licensing details](LICENSING.md).
+
+[![License: AGPL v3](https://img.shields.io/badge/License-AGPL_v3-blue.svg)](LICENSE)
 
 ![Four-cylinder engine modeled in NASSCAD with NassScript](nassscript-engine-preview.png)
 
@@ -159,7 +161,7 @@ The C++ source is readable in [`MEDUSA_SOURCE/`](MEDUSA_SOURCE/). Build bundles 
 | `helvetiker` regular / bold | MAGENTA Ltd — MgOpen Modata | MgOpen License |
 | `optimer` regular / bold | MAGENTA Ltd — MgOpen Cosmetica | MgOpen License |
 | `gentilis` regular / bold | J. Victor Gaultney / SIL International | SIL OFL 1.1 |
-| `nasscad_logs.js` | NassLab | CC BY-NC 4.0 |
+| `nasscad_logs.js` (NASSCAD code) | NassLab | AGPL-3.0-only |
 
 **In the NASSCAD Engine companion**
 
@@ -188,19 +190,18 @@ Each third-party component stays under its own license. See [`THIRD-PARTY.md`](T
 
 © 2026 NassLab — Nasser, France
 
-NassLab's own code is distributed under the **Creative Commons BY-NC 4.0** license:
+NassLab's own code in this revision is licensed under the **GNU Affero General Public License v3.0 only (AGPL-3.0-only)**.
 
-- **Education license — free of charge** — schools (secondary, technical and vocational), their teachers and students, public or private, as well as apprenticeship and training centres, colleges, universities, associations, FabLabs, makerspaces and libraries, may use, install, share and adapt NASSCAD for teaching, learning and research, including in paid training. No registration, nothing to sign. Students and teachers own the models they create. (Additional permission in [`LICENSE`](LICENSE).)
-- **Personal and non-commercial use** — free, redistribution allowed with attribution
-- **Commercial use** — written agreement required from NassLab
+- **Personal, educational, professional and commercial use** is allowed without a prior agreement or license fee to NassLab.
+- **Modification and redistribution**, including paid distribution, are allowed under the AGPL's conditions. Distributors must preserve notices and provide the corresponding source.
+- **Modified network versions** must prominently offer their corresponding source to the users who interact with them remotely, as required by AGPL section 13.
+- **Your original models and exports remain yours**; using NASSCAD does not, by itself, put your designs under the AGPL.
 
-NASSCAD is a personal project, developed by one person on his own time. It doesn't earn its author a single cent.
+Read the full [LICENSE](LICENSE) and [LICENSING.md](LICENSING.md). Third-party components retain their respective licenses; see [THIRD-PARTY.md](THIRD-PARTY.md).
 
-[Full license →](https://creativecommons.org/licenses/by-nc/4.0/) · [`LICENSE`](LICENSE)
+**Release transition:** this change applies to the current source. Historical tags, existing Windows installers, portable executables and already-published release ZIPs retain their original notices until replaced by a new licensed build. The website is updated separately.
 
-Third-party components listed above are **not** covered by CC BY-NC 4.0 and remain under their respective licenses.
-
-> No implied warranty. The author cannot be held liable for any damage resulting from the use of this software.
+No warranty is provided; see LICENSE sections 15 and 16.
 
 ---
 

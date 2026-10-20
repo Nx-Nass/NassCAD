@@ -1,3 +1,7 @@
+// Copyright (C) 2026 NassLab — Nasser, France.
+// SPDX-License-Identifier: AGPL-3.0-only
+// See LICENSE and LICENSING.md. Third-party components retain their own licenses.
+
 // nasscad_medusa.cpp — NASSCAD MEDUSA ENGINE 3.1 : compagnon natif localhost (OCCT C++).
 // Un seul fichier, un seul binaire — ce fichier EST le moteur (parsing STEP,
 // tessellation, CSG, smoothing, repair), pas un "booster" separe greffe a
