@@ -917,7 +917,7 @@ footer{flex-direction:column;justify-content:center;align-items:center;gap:1rem;
 </script>
 <link rel="stylesheet" href="nasscad-license.css">
 <script defer src="nasscad-license.js"></script>
-<link rel="stylesheet" href="nasscad-home-engine.css?v=20261020">
+<link rel="stylesheet" href="nasscad-home-engine.css?v=20261020-paused">
 </head>
 <body>
 
@@ -1009,10 +1009,10 @@ footer{flex-direction:column;justify-content:center;align-items:center;gap:1rem;
     <div class="engine-stage" id="homeEngine" data-state="loading" tabindex="0" role="group"
       aria-label="Animated four-cylinder engine. Drag or use arrow keys to orbit, Space to pause and Home to reset the view."
       aria-keyshortcuts="ArrowLeft ArrowRight ArrowUp ArrowDown Space Home">
-      <img class="engine-poster" src="nasscad-home-engine.png" alt="NassLab inline-four engine with four pistons, connecting rods, crankshaft and twin overhead camshafts" width="840" height="750" fetchpriority="high">
+      <img class="engine-poster" src="nasscad-home-engine.png?v=20261020-paused" alt="NassLab inline-four engine with four pistons, connecting rods, crankshaft and twin overhead camshafts" width="840" height="750" fetchpriority="high">
     </div>
     <div class="engine-controls">
-      <button type="button" id="enginePause" aria-label="Pause engine animation" disabled>Ⅱ Pause</button>
+      <button type="button" id="enginePause" aria-label="Play engine animation" disabled>▶ Play</button>
       <button type="button" id="engineReset" aria-label="Reset engine view" disabled>↺ Reset view</button>
       <a class="engine-demo-link" href="nasscript_doc.html#engine-demo">Explore the engine →</a>
     </div>
@@ -1638,7 +1638,7 @@ what you model is what you export, 1:1, no scale surprises. Export the
   }
   document.addEventListener('keydown',e=>{ if(e.key==='Escape') lbClose(); });
 </script>
-<script src="nasscad-home-engine.js?v=20261020" defer></script>
+<script src="nasscad-home-engine.js?v=20261020-paused" defer></script>
 <script>
 document.addEventListener('click', function(event) {
   var link=event.target.closest && event.target.closest('a[href]');

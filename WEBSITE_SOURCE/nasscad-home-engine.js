@@ -78,7 +78,7 @@ function createEngine(THREE,data){
   const d=mod(cycle*180/Math.PI,720),start=type==='intake'?350:155,end=type==='intake'?590:375;
   return d<start||d>end?0:9*Math.pow(Math.sin(Math.PI*(d-start)/(end-start)),4);
  }
- let angle=35*Math.PI/180,yaw=-1.08,pitch=.24,raf=0,last=null,visible=false,playing=!motion.matches,drag=null,disposed=false;
+ let angle=35*Math.PI/180,yaw=-1.08,pitch=.24,raf=0,last=null,visible=false,playing=false,drag=null,disposed=false;
  function pose(){
   groups.crank.rotation.z=-angle;
   for(let i=0;i<4;i++){
@@ -116,7 +116,7 @@ function createEngine(THREE,data){
  stage.addEventListener('pointerdown',e=>{if(!e.isPrimary||e.button!==0)return;drag={x:e.clientX,y:e.clientY};stage.setPointerCapture(e.pointerId);stage.classList.add('dragging');});
  stage.addEventListener('pointermove',e=>{if(!drag)return;yaw-=(e.clientX-drag.x)*.006;pitch=Math.max(-.2,Math.min(.75,pitch+(e.clientY-drag.y)*.004));drag={x:e.clientX,y:e.clientY};draw();});
  const endDrag=()=>{drag=null;stage.classList.remove('dragging');};stage.addEventListener('pointerup',endDrag);stage.addEventListener('pointercancel',endDrag);stage.addEventListener('dblclick',reset);
- motion.addEventListener('change',()=>{playing=!motion.matches;sync();draw();});
+ motion.addEventListener('change',()=>{if(motion.matches)playing=false;sync();draw();});
  function resize(){const width=stage.clientWidth,height=stage.clientHeight;if(!width||!height)return;renderer.setSize(width,height,false);camera.aspect=width/height;camera.updateProjectionMatrix();draw();}
  new ResizeObserver(resize).observe(stage);resize();sync();
  function fail(){if(disposed)return;disposed=true;cancelAnimationFrame(raf);combustion.dispose();resources.forEach(r=>r.dispose());renderer.dispose();stage.dataset.state='fallback';pauseButton.hidden=true;resetButton.hidden=true;}

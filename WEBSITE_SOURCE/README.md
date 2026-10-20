@@ -18,6 +18,7 @@ The existing root `three.js` is also required. The model `.bin` is a gzip payloa
 decoded locally using `DecompressionStream`; serve it as an ordinary binary file,
 without a `Content-Encoding: gzip` header. The PNG remains visible while loading,
 when JavaScript or WebGL is unavailable, or when the model cannot be loaded.
+The engine starts paused; only an explicit Play action starts animation.
 The animation respects reduced-motion preferences and sleeps outside the viewport.
 Drag to orbit (including horizontal touch gestures); keyboard arrows, Space and
 Home also work. The combustion effect is an illustration, not a physics solver.
