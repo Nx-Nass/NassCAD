@@ -8,7 +8,9 @@
   "scripts": {
     "build:medusa": "powershell -NoProfile -ExecutionPolicy Bypass -File native/build.ps1",
     "pack": "electron-builder --win --x64 --dir",
-    "dist": "electron-builder --win --x64"
+    "dist": "electron-builder --win --x64",
+    "start": "electron .",
+    "test:ui": "node electron/test-current-ui.cjs"
   },
   "devDependencies": {
     "electron": "44.6.0",

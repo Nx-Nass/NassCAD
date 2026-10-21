@@ -1070,11 +1070,12 @@ html[data-theme="dark"] #help-overlay a,html[data-theme="dark"] #help-overlay a:
 
 </style>
 <style id="nass-welcome-style">
-/* Empty-scene welcome only. Existing NASSCAD panels and theme stay in place. */
+/* Welcome card, opened from 🚀 Start in the menubar. Existing NASSCAD panels and theme stay in place. */
 #nass-welcome{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:620px;max-width:calc(100vw - 32px);box-sizing:border-box;text-align:center;z-index:195;pointer-events:auto;color:var(--text);padding:26px 20px 24px;background:rgba(247,250,255,.55);border:1px solid rgba(140,175,208,.65);border-radius:12px;box-shadow:0 8px 30px var(--shadow);backdrop-filter:none}
 html[data-theme="dark"] #nass-welcome{background:rgba(35,37,56,.55);border-color:rgba(101,136,173,.65)}
 #nass-welcome .nass-welcome-brand{font-size:22px;font-weight:800;letter-spacing:2px;color:var(--accent);margin:0 0 10px}
 #nass-welcome[hidden],#nass-demo-progress[hidden]{display:none!important}
+#welcome-mi.on{background:var(--accent);color:#fff}
 #nass-welcome h1{font-size:25px;font-weight:600;letter-spacing:-.5px;margin:0 0 12px}
 #nass-welcome p{font-size:13px;color:var(--muted);margin:0 0 20px;line-height:1.5}
 #nass-welcome .nass-welcome-actions{display:flex;justify-content:center;flex-wrap:wrap;gap:8px}
@@ -1150,8 +1151,8 @@ html[data-theme="dark"] #nass-welcome{background:rgba(35,37,56,.55);border-color
       <option value="ft">ft</option>
     </select>
   </span>
-  <span style="flex:1"></span>
   <div class="msep"></div>
+  <span class="mi" id="welcome-mi" onclick="window.NASSWelcome&&NASSWelcome.toggle()" title="Start — interactive tutorial, import a model, open project, NassScript demos">🚀 Start</span>
   <span class="mi" id="pnl-mi" onclick="togglePanelsMenu(this)" title="Show or hide panels — H hides / shows them all">☰ Panels</span>
   <span class="mi" onclick="toggleLogWin()" title="Console logs">📋 Logs</span>
   <span class="mi" onclick="showScriptEditor()" title="Script Editor — run JS in NASSCAD">⚡ Script</span>
@@ -1167,7 +1168,7 @@ html[data-theme="dark"] #nass-welcome{background:rgba(35,37,56,.55);border-color
 
       <p style="margin:0 0 8px;padding:6px 10px;border:1px solid var(--lo);border-left:4px solid var(--accent);border-radius:var(--radius-sm);background:var(--input-bg)">🖥 <b>1920×1080 or higher is recommended for a spacious workspace.</b> On smaller screens, move, resize or hide panels with <b>☰ Panels</b> or <b>H</b>. The compact <b>Performances ▾</b> menu groups the advanced settings; the space available for modelling depends on the panels you keep open.</p>
 
-<div class="vb-grp"><span class="vb-grp-t">🚀 Getting started</span><table style="width:100%;border-collapse:collapse;"><tr><td style="width:26%;padding:3px 6px;font-weight:600">Empty-scene welcome</td><td style="padding:3px 6px">The centered welcome appears when the scene is empty. Choose <b>Interactive tutorial</b>, <b>Import a model</b>, <b>Open project</b> or <b>NassScript demo</b>. It hides when objects are present; the <b>×</b> dismisses it.</td></tr><tr><td style="width:26%;padding:3px 6px;font-weight:600">Choose a demo</td><td style="padding:3px 6px"><b>NassScript demo</b> offers <b>Solar system</b> and <b>Four-cylinder engine</b>. Only the chosen script is downloaded when launched. Your unfinished text in the Script editor is preserved.</td></tr><tr><td style="width:26%;padding:3px 6px;font-weight:600">Stop and edit</td><td style="padding:3px 6px">Open <b>⚡ Script</b> and press <b>Stop</b> to stop a running script. In the engine demo, Stop freezes the visible parts so you can select and edit them. The demo’s close/restore control cleans up its scene.</td></tr><tr><td style="width:26%;padding:3px 6px;font-weight:600">Save your work</td><td style="padding:3px 6px">Use <b>Save project as</b> for a NASSCAD JSON project; <b>Load project</b> reopens it. <b>Export ▾</b> writes a model for other tools.</td></tr></table></div>
+<div class="vb-grp"><span class="vb-grp-t">🚀 Getting started</span><table style="width:100%;border-collapse:collapse;"><tr><td style="width:26%;padding:3px 6px;font-weight:600">🚀 Start</td><td style="padding:3px 6px"><b>🚀 Start</b> in the menubar (left of ☰ Panels) opens the welcome card: <b>Interactive tutorial</b>, <b>Import a model</b>, <b>Open project</b> or <b>NassScript demo</b>. Click <b>🚀 Start</b> again, the <b>×</b> or Esc to close it.</td></tr><tr><td style="width:26%;padding:3px 6px;font-weight:600">Choose a demo</td><td style="padding:3px 6px"><b>NassScript demo</b> offers <b>Solar system</b> and <b>Four-cylinder engine</b>. Only the chosen script is downloaded when launched. Your unfinished text in the Script editor is preserved.</td></tr><tr><td style="width:26%;padding:3px 6px;font-weight:600">Stop and edit</td><td style="padding:3px 6px">Open <b>⚡ Script</b> and press <b>Stop</b> to stop a running script. In the engine demo, Stop freezes the visible parts so you can select and edit them. The demo’s close/restore control cleans up its scene.</td></tr><tr><td style="width:26%;padding:3px 6px;font-weight:600">Save your work</td><td style="padding:3px 6px">Use <b>Save project as</b> for a NASSCAD JSON project; <b>Load project</b> reopens it. <b>Export ▾</b> writes a model for other tools.</td></tr></table></div>
 
 <div class="vb-grp"><span class="vb-grp-t">📖 Illustrated user manual</span><p style="margin:3px 0 6px">Read the complete English guide: <a href="nasscad_user_manual.html" target="_blank" rel="noopener">Open HTML manual</a> · <a href="NASSCAD_User_Manual_EN.pdf" target="_blank" rel="noopener">Open PDF manual</a>. Both documents are included in the desktop package for offline reading.</p></div>
 
@@ -1183,7 +1184,7 @@ html[data-theme="dark"] #nass-welcome{background:rgba(35,37,56,.55);border-color
           <tr><td style="padding:3px 6px;font-weight:600"><i class="hic" data-tb="doCSG('union')"></i>Browser booleans</td><td style="padding:3px 6px">Union, Subtract and Intersect use <b>Manifold WASM</b> when no MEDUSA engine is connected. With MEDUSA, they use native C++ with CPU parallelism. The CSG panel shows <b>Manifold C++ · MEDUSA</b> or <b>Manifold WASM</b>.</td></tr>
           <tr><td style="padding:3px 6px;font-weight:600"><i class="hic" data-tb="toggleExp(this)"></i>Export the selection</td><td style="padding:3px 6px"><b>📤 Export ▾ › Include</b>: <b>All design</b> or <b>Selected shapes</b> — every format, STEP, IFC, section and JSON project included. With a single shape, the file takes its name.</td></tr>
           <tr style="background:var(--input-bg)"><td style="padding:3px 6px;font-weight:600">Hide the panels</td><td style="padding:3px 6px"><b>☰ Panels</b> in the menubar, or the <b>✕</b> of each panel: Tools, Objects, Properties / CSG and NassScript, one by one. <b>H</b> hides them all and brings back exactly what was shown.</td></tr>
-          <tr><td style="padding:3px 6px;font-weight:600">NassScript demos</td><td style="padding:3px 6px">Launch the <b>real-date Solar system</b> or our <b>original four-cylinder engine</b> from the empty-scene welcome. Complete scripts and explanations are also in the NassScript docs — <a href="https://www.nasscad.com/nasscript_doc.html" target="_blank" rel="noopener">nasscad.com/nasscript_doc.html</a></td></tr>
+          <tr><td style="padding:3px 6px;font-weight:600">NassScript demos</td><td style="padding:3px 6px">Launch the <b>real-date Solar system</b> or our <b>original four-cylinder engine</b> from <b>🚀 Start</b> in the menubar. Complete scripts and explanations are also in the NassScript docs — <a href="https://www.nasscad.com/nasscript_doc.html" target="_blank" rel="noopener">nasscad.com/nasscript_doc.html</a></td></tr>
         </table>
       </div>
 
@@ -2631,7 +2632,7 @@ html[data-theme="dark"] #nass-welcome{background:rgba(35,37,56,.55);border-color
         <button class="vb-btn tbb" onclick="toggleImp(this)" title="Import STL / OBJ / 3MF / GLB / PLY / STEP / IFC"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.8v10.6"/><path d="M8 9.6l4 4 4-4"/><path d="M3.2 15.4v3.2a2.2 2.2 0 002.2 2.2h13.2a2.2 2.2 0 002.2-2.2v-3.2" stroke-width="1.7"/></svg></button>
         <button class="vb-btn tbb" onclick="toggleExp(this)" title="Export"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 13.4V2.8"/><path d="M8 6.8l4-4 4 4"/><path d="M3.2 15.4v3.2a2.2 2.2 0 002.2 2.2h13.2a2.2 2.2 0 002.2-2.2v-3.2" stroke-width="1.7"/></svg></button>
         <button class="vb-btn tbb" onclick="flushPool()" title="Flush GeometryPool memory" style="color:var(--warn)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5.6" y="5.6" width="12.8" height="12.8" rx="2.2" stroke-width="1.7"/><path d="M9.4 5.6V2.9M14.6 5.6V2.9M9.4 21.1v-2.7M14.6 21.1v-2.7M5.6 9.4H2.9M5.6 14.6H2.9M21.1 9.4h-2.7M21.1 14.6h-2.7" stroke-width="1.4" opacity=".7"/><path d="M14.83 9.17A4 4 0 1 1 9.17 9.17" stroke-width="1.8"/><path d="M10.86 7.4L10.21 10.31L7.95 8.05Z" fill="currentColor" stroke="none"/></svg></button>
-        <span class="tbx-slot" aria-hidden="true"></span>
+        <button class="vb-btn tbb" onclick="window.stepCacheClear&&stepCacheClear()" title="Clear STEP import cache (NSTP + NSPG, IndexedDB) — next import parses from scratch" style="color:var(--danger)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="10.4" cy="5.4" rx="6.8" ry="2.6" stroke-width="1.7"/><path d="M3.6 5.4v12c0 1.44 3.04 2.6 6.8 2.6" stroke-width="1.7"/><path d="M17.2 5.4v6.2" stroke-width="1.7"/><path d="M3.6 11.4c0 1.44 3.04 2.6 6.8 2.6" stroke-width="1.4" opacity=".55"/><path d="M14.6 14.6l6.2 6.2M20.8 14.6l-6.2 6.2" stroke-width="2.2"/></svg></button>
         <span class="tbx-slot" aria-hidden="true"></span>
       </div>
     </fieldset>
@@ -15990,14 +15991,17 @@ let _cylN_val = 32;
   welcome.innerHTML='<button type="button" class="nass-welcome-dismiss" aria-label="Dismiss welcome" title="Dismiss welcome">×</button><div class="nass-welcome-brand">NASSCAD</div><h1>What will you create?</h1><p>Start with a shape, sketch a profile, or open your own model.</p><div class="nass-welcome-actions"></div>';
   const vp=$('vp');vp.append(welcome);
   function button(label,action,cls='vb-btn'){const el=document.createElement('button');el.type='button';el.className=cls;el.textContent=label;el.addEventListener('click',action);return el;}
-  const tutorialEntry=button('Interactive tutorial',()=>window.NASSTutorial.open(),'vb-btn nass-welcome-primary');tutorialEntry.id='nass-tutorial-entry';
+  // [21/10] Plus d'affichage automatique sur scène vide : la carte s'ouvre uniquement via 🚀 Start
+  // (barre de menu, à gauche de ☰ Panels). Chaque action la referme avant de s'exécuter.
+  const act=fn=>()=>{shown=false;sync();fn();};
+  const tutorialEntry=button('Interactive tutorial',act(()=>window.NASSTutorial.open()),'vb-btn nass-welcome-primary');tutorialEntry.id='nass-tutorial-entry';
   welcome.querySelector('.nass-welcome-actions').append(
     tutorialEntry,
-    button('Import a model',()=>doImp('.stl,.obj,.3mf,.glb,.gltf,.ply,.stp,.step,.stpz,.stpx,.stpxml,.p21,.ifc')),
-    button('Open project',()=>loadProject()),
-    button('NassScript demo',()=>openPicker())
+    button('Import a model',act(()=>doImp('.stl,.obj,.3mf,.glb,.gltf,.ply,.stp,.step,.stpz,.stpx,.stpxml,.p21,.ifc'))),
+    button('Open project',act(()=>loadProject())),
+    button('NassScript demo',act(()=>openPicker()))
   );
-  let dismissed=false,launching=false;
+  let shown=false,launching=false;
   const demoSources={solar:'nass-demo-solar.js?v=20261004',engine:'nass-demo-engine.js?v=20261004'};
   const demoCache=new Map();
   async function loadDemo(key){
@@ -16011,7 +16015,9 @@ let _cylN_val = 32;
       demoCache.set(key,code);return code;
     }finally{clearTimeout(timeout);}
   }
-  welcome.firstElementChild.addEventListener('click',()=>{dismissed=true;sync();});
+  welcome.firstElementChild.addEventListener('click',()=>{shown=false;sync();});
+  window.NASSWelcome={open(){shown=true;sync();},close(){shown=false;sync();},toggle(){shown=!shown;sync();}};
+  document.addEventListener('keydown',e=>{if(e.key==='Escape'&&shown&&!picker.open){shown=false;sync();}});
   const picker=document.createElement('dialog');picker.id='nass-demo-picker';picker.setAttribute('aria-labelledby','nass-demo-title');
   picker.innerHTML='<button type="button" class="nass-demo-close" aria-label="Close demo chooser">×</button><h2 id="nass-demo-title">Choose a NassScript demo</h2><p>Explore two models built and animated entirely with NassScript.</p><div class="nass-demo-choices"></div><p class="nass-demo-hint">Your chosen demo loads when you launch it. Stop the animation with Script → Stop, or use its own controls.</p>';
   picker.firstElementChild.addEventListener('click',()=>picker.close());
@@ -16040,8 +16046,8 @@ let _cylN_val = 32;
     finally{launching=false;progress.hidden=true;sync();}
   }
   function sync(){
-    if(objs.length) dismissed=false;
-    welcome.hidden=dismissed||launching||objs.length!==0||!$('script-stop-btn').disabled;
+    welcome.hidden=!shown||launching||!$('script-stop-btn').disabled;
+    $('welcome-mi')?.classList.toggle('on',!welcome.hidden);
     if(!welcome.hidden)place();
   }
   function place(){

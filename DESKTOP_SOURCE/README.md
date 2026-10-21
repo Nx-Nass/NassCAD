@@ -39,3 +39,14 @@ are obtained through npm; their licenses remain in force.
 
 Copyright (C) 2026 NassLab — Nasser, France. SPDX-License-Identifier: AGPL-3.0-only.
 Third-party components retain their own licenses. See ../LICENSE and ../LICENSING.md.
+
+## Development
+
+After building the native engine, run `npm start` from this directory.
+The browser resources are loaded from the repository root, and the native
+engine and DLLs from `runtime/medusa`. Generated files remain local and ignored
+by Git. Packaged apps retain their existing resource paths.
+
+Run `npm run test:ui` after installing dependencies and building the native
+engine. It uses an isolated profile under `work`, checks the Start menu,
+STEP cache clearing and safe MEDUSA progress rendering, and closes the app.

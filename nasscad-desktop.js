@@ -9,6 +9,11 @@
 #desktop-medusa header{display:flex;gap:8px;align-items:center;padding:10px;background:#192230;border-bottom:1px solid #455268;cursor:move;user-select:none;touch-action:none}
 #desktop-medusa-status{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#e0e8f1}
 #desktop-medusa pre{white-space:pre-wrap;overflow:auto;flex:1;min-height:0;margin:0;padding:12px;font:var(--medusa-font-size,13px)/1.35 Consolas,monospace;user-select:text;tab-size:4}
+#desktop-medusa .mdz-bar{display:flex;align-items:center;white-space:pre;min-width:0;overflow:hidden}
+#desktop-medusa .mdz-bar>span{flex:none}
+#desktop-medusa .mdz-bar-track{flex:0 4 24ch !important;min-width:8ch;height:1.05em;position:relative;background:repeating-conic-gradient(#5a5a5a 0 25%,transparent 0 50%) 0 0/2px 2px}
+#desktop-medusa .mdz-bar-fill{position:absolute;left:0;top:0;bottom:0;background:#ccc}
+#desktop-medusa .mdz-bar-text{flex:0 1 auto !important;min-width:0;overflow:hidden;text-overflow:ellipsis}
 #desktop-medusa button{cursor:pointer;background:#29384a;color:#e0e8f1;border:1px solid #53627a;border-radius:4px;padding:4px 8px;font:12px system-ui}
 #desktop-medusa button:disabled{opacity:.6;cursor:wait}#desktop-medusa footer{display:flex;align-items:center;gap:8px;padding:5px 16px 5px 10px;border-top:1px solid #455268;background:#192230;color:#b9c7d7}#desktop-medusa-updated{flex:1}
 `;
@@ -60,12 +65,34 @@
   function changeFont(delta){fontSize=Math.max(10,Math.min(24,fontSize+delta));panel.style.setProperty('--medusa-font-size',fontSize+'px');save()}
   smaller.onclick=()=>changeFont(-1);larger.onclick=()=>changeFont(1);
   // Render only text nodes: imported model names cannot become HTML.
+  // [21/10] Progress lines (drawBarLine côté moteur : "  LABEL [█████░░░] 92%  détail") ne sont plus
+  // rendues en texte brut : 24 blocs + suffixe jusqu'à 78 colonnes passaient à la ligne dès que la
+  // fenêtre était plus étroite que la ligne (pre-wrap) → barre coupée en deux, "]" orphelin.
+  // Rendu adaptatif : libellé fixe, piste CSS qui se rétrécit (24ch → 8ch, elle cède avant le détail), pourcentage toujours
+  // visible, détail tronqué en "…" — jamais de retour à la ligne, quelle que soit la largeur.
+  // \r : sémantique console — seule la dernière frame d'une ligne réécrite sur place est gardée.
+  const barLine=/^(.*?)\[([█-▓]{4,})\](.*)$/;
+  function renderBar(fragment,line){
+    const m=barLine.exec(line);const cells=[...m[2]];const filled=cells.filter(c=>c>='█'&&c<='▏').length;
+    const pm=/^(\s*)(\d+(?:\.\d+)?)%(.*)$/.exec(m[3]);const frac=Math.max(0,Math.min(1,pm?Number(pm[2])/100:filled/cells.length));
+    const row=document.createElement('span');row.className='mdz-bar';row.title=line.trim();
+    const part=(cls,value)=>{const s=document.createElement('span');if(cls)s.className=cls;if(value!=null)s.textContent=value;row.append(s);return s};
+    part('',m[1]+'[');const track=part('mdz-bar-track');const fill=document.createElement('span');fill.className='mdz-bar-fill';fill.style.width=(frac*100).toFixed(2)+'%';track.append(fill);
+    part('',']'+(pm?pm[1]+pm[2]+'%':''));part('mdz-bar-text',(pm?pm[3]:m[3]).trimEnd());fragment.append(row);
+  }
   function renderConsole(text) {
     const palette=['#0c0c0c','#c50f1f','#13a10e','#c19c00','#0037da','#881798','#3a96dd','#ccc','#767676','#e74856','#16c60c','#f9f1a5','#3b78ff','#b4009e','#61d6d6','#f2f2f2'];
-    const fragment=document.createDocumentFragment();let color='',bold=false,offset=0;const sgr=/\x1b\[([0-9;]*)m/g;let match;
+    const fragment=document.createDocumentFragment();let color='',bold=false;const sgr=/\x1b\[([0-9;]*)m/g;
     const append=value=>{if(!value)return;const span=document.createElement('span');span.textContent=value;if(color)span.style.color=color;if(bold)span.style.fontWeight='700';fragment.append(span)};
-    while((match=sgr.exec(text))){append(text.slice(offset,match.index));offset=sgr.lastIndex;for(const n of match[1].split(';').map(v=>Number(v||0))){if(n===0){color='';bold=false}else if(n===1)bold=true;else if(n===22)bold=false;else if(n===39)color='';else if(n>=30&&n<=37)color=palette[n-30];else if(n>=90&&n<=97)color=palette[n-90+8]}}
-    append(text.slice(offset));log.replaceChildren(fragment);
+    const flush=chunk=>{let offset=0,match;sgr.lastIndex=0;while((match=sgr.exec(chunk))){append(chunk.slice(offset,match.index));offset=sgr.lastIndex;for(const n of match[1].split(';').map(v=>Number(v||0))){if(n===0){color='';bold=false}else if(n===1)bold=true;else if(n===22)bold=false;else if(n===39)color='';else if(n>=30&&n<=37)color=palette[n-30];else if(n>=90&&n<=97)color=palette[n-90+8]}}append(chunk.slice(offset))};
+    const lines=text.split('\n');let chunk=[];
+    for(let line of lines){
+      if(line.includes('\r')){const frames=line.split('\r').filter(f=>f.length);line=frames.length?frames[frames.length-1]:''}
+      const plain=line.includes('\x1b')?line.replace(/\x1b\[[0-9;]*m/g,''):line;
+      if(barLine.test(plain)){if(chunk.length){flush(chunk.join('\n'));chunk=[]}renderBar(fragment,plain)}
+      else chunk.push(line);
+    }
+    if(chunk.length)flush(chunk.join('\n'));log.replaceChildren(fragment);
   }
   async function update(force=false) {
     if(refreshing){pendingForce ||= force;return}refreshing=true;
