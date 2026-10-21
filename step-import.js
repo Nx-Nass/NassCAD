@@ -446,6 +446,70 @@ function _stepCacheEvict(db){
   }catch(e){ /* best-effort */ }
 }
 
+// [21/10] PURGE MANUELLE — bouton « Clear STEP import cache » (Files · Utils).
+// Vide TOUT le magasin 'nstp' : entrées NSTP (résultat du parsing) ET NSPG
+// (géométrie finale, même magasin, cf. _geoCachePut). Purger l'un sans l'autre
+// ne servirait à rien : un réimport ressortirait du NSPG sans jamais reparser.
+// Fonctionne aussi quand _stepCacheOff vaut true (ouverture directe, refermée
+// ensuite) — c'est justement le cas où l'on veut repartir d'une base propre.
+// Le décompte passe par count() et non par un curseur : un curseur charge les
+// valeurs, soit jusqu'à 400 Mo de tampons lus pour rien avant de les jeter.
+// Le cache des B-Rep EXACTS de MEDUSA (mémoire du process natif) n'est pas
+// concerné : il vit et meurt avec le moteur.
+function _stepCacheOpenAny(){
+  if(!_stepCacheOff) return _stepCacheOpen().then(db => ({ db, own: false }));
+  return new Promise((resolve) => {
+    try{
+      const req = indexedDB.open(_STEP_CACHE_DB, 1);
+      req.onupgradeneeded = (ev) => {
+        const st = ev.target.result.createObjectStore(_STEP_CACHE_STORE, { keyPath: 'hash' });
+        st.createIndex('ts', 'ts');
+      };
+      req.onsuccess = () => resolve({ db: req.result, own: true });
+      req.onerror   = () => resolve({ db: null, own: false });
+    }catch(e){ resolve({ db: null, own: false }); }
+  });
+}
+function _stepCacheCount(){
+  return _stepCacheOpenAny().then(({ db, own }) => new Promise((resolve) => {
+    if(!db) return resolve(null);
+    try{
+      const rq = db.transaction(_STEP_CACHE_STORE, 'readonly').objectStore(_STEP_CACHE_STORE).count();
+      rq.onsuccess = () => { if(own) db.close(); resolve(rq.result); };
+      rq.onerror   = () => { if(own) db.close(); resolve(null); };
+    }catch(e){ if(own) db.close(); resolve(null); }
+  }));
+}
+async function stepCacheClear(opts){
+  const ask = !(opts && opts.confirm === false);
+  const n = await _stepCacheCount();
+  if(n === null){ nasLog('WARN', 'STEP import cache — IndexedDB unavailable, nothing to clear'); return false; }
+  if(n === 0){ nasLog('OK', 'STEP import cache already empty'); return true; }
+  if(ask && !confirm(`Clear the STEP import cache?\n\n${n} entr${n > 1 ? 'ies' : 'y'} (NSTP parsing + NSPG geometry).\nThe next import of each file will be parsed again from scratch.`)) return false;
+  let before = null;
+  try{ before = (await navigator.storage?.estimate?.())?.usage ?? null; }catch(e){ /* indicatif */ }
+  const { db, own } = await _stepCacheOpenAny();
+  const ok = await new Promise((resolve) => {
+    if(!db) return resolve(false);
+    try{
+      const tx = db.transaction(_STEP_CACHE_STORE, 'readwrite');
+      tx.objectStore(_STEP_CACHE_STORE).clear();
+      tx.oncomplete = () => resolve(true);
+      tx.onerror = tx.onabort = () => resolve(false);
+    }catch(e){ resolve(false); }
+  });
+  if(own) db.close();
+  if(!ok){ nasLog('ERROR', 'STEP import cache — clear failed (IndexedDB transaction aborted)'); return false; }
+  let freed = '';
+  try{
+    const after = (await navigator.storage?.estimate?.())?.usage ?? null;
+    if(before !== null && after !== null && before > after) freed = ` — ~${Math.round((before - after) / 1048576)} MB released`;
+  }catch(e){ /* indicatif */ }
+  nasLog('OK', `STEP import cache cleared — ${n} entr${n > 1 ? 'ies' : 'y'} removed${freed}`);
+  return true;
+}
+if(typeof window !== 'undefined') window.stepCacheClear = stepCacheClear;
+
 // Encode un résultat au format occt-import-js ({success, meshes:[...]}) en
 // NSTP v1 — miroir exact du writer du compagnon Node, consommé par le
 // _nstpDecode déjà présent dans ce fichier. Accepte indifféremment des
