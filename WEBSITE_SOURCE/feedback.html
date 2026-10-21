@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="en">
+<head>
+<link rel="icon" href="/favicon.ico">
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="referrer" content="no-referrer">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; script-src 'unsafe-inline'; connect-src 'self'; form-action 'self'; base-uri 'none'">
+  <title>Send feedback — NASSCAD</title>
+  <style>
+    :root{color-scheme:light;--bg:#f4f3ee;--card:#fff;--ink:#0b1628;--muted:#53627a;--blue:#1d4ed8;--line:#d8dfe9}
+    *{box-sizing:border-box}
+    body{margin:0;min-height:100vh;background:var(--bg);color:var(--ink);font:16px/1.55 system-ui,-apple-system,"Segoe UI",sans-serif}
+    .wrap{width:min(100% - 2rem,680px);margin:0 auto;padding:32px 0 70px}
+    header{display:flex;justify-content:space-between;align-items:center;gap:16px;margin-bottom:42px}
+    header a{color:var(--ink);text-decoration:none;font-weight:800}
+    header .home{font-size:14px;font-weight:500;color:var(--blue)}
+    .brand{display:flex;align-items:center;gap:9px;font-size:19px;letter-spacing:-.03em}
+    .hex{display:block;width:24px;height:24px;background:var(--blue);clip-path:polygon(50% 0,100% 25%,100% 75%,50% 100%,0 75%,0 25%)}
+    .eyebrow{color:var(--blue);font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.12em}
+    h1{font-size:clamp(30px,6vw,44px);line-height:1.12;letter-spacing:-.04em;margin:10px 0 12px}
+    .lead{color:var(--muted);font-size:17px;margin:0 0 26px}
+    .card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:clamp(20px,5vw,32px);box-shadow:0 8px 30px rgba(11,22,40,.06)}
+    label{display:block;font-size:14px;font-weight:700;margin:0 0 7px}
+    select,textarea,input[type=file]{display:block;width:100%;border:1px solid #aeb9c9;border-radius:9px;background:#fff;color:var(--ink);font:inherit;padding:12px 13px}
+    select{min-height:48px;margin-bottom:22px}
+    textarea{min-height:180px;resize:vertical}
+    input[type=file]{padding:10px 12px}
+    input[type=file]::file-selector-button{border:0;border-radius:6px;background:#eef3fd;color:var(--blue);font:inherit;font-weight:700;padding:8px 12px;margin-right:12px;cursor:pointer}
+    select:focus-visible,textarea:focus-visible,input:focus-visible,button:focus-visible,a:focus-visible{outline:3px solid #93b4ff;outline-offset:2px}
+    .help{font-size:13px;color:var(--muted);margin:8px 0 20px}
+    button{display:inline-block;min-height:48px;padding:11px 22px;border:0;border-radius:9px;background:var(--blue);color:#fff;font:inherit;font-weight:700;cursor:pointer}
+    button:hover{background:#1640b0}
+    button:disabled{opacity:.6;cursor:wait}
+    .note{font-size:13px;color:var(--muted);margin:16px 0 0}
+    .note a,.below a{color:var(--blue)}
+    #status{margin:16px 0 0;font-weight:600}
+    #status.error{color:#a11b1b}
+    #status.success{color:#166534}
+    .below{font-size:14px;color:var(--muted);margin:22px 0 0}
+    .trap{position:absolute;left:-10000px;width:1px;height:1px;overflow:hidden}
+    @media(max-width:520px){header{margin-bottom:32px}.wrap{padding-top:22px}.card{border-radius:12px}}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header><a class="brand" href="/"><span class="hex" aria-hidden="true"></span>NASSCAD</a><a class="home" href="/">Back to NASSCAD →</a></header>
+    <main>
+      <div class="eyebrow">Your feedback matters</div>
+      <h1>Tell me what you think.</h1>
+      <p class="lead">A bug, an idea or something confusing? Send a short message. No account, name or email address required.</p>
+      <div class="card">
+        <form id="feedback-form" action="feedback.php" method="post" enctype="multipart/form-data" accept-charset="utf-8">
+          <label for="category">What is it about?</label>
+          <select id="category" name="category" required>
+            <option value="bug">A bug</option>
+            <option value="idea">An idea</option>
+            <option value="other">Something else</option>
+          </select>
+          <label for="message">Your message</label>
+          <textarea id="message" name="message" required minlength="5" maxlength="4000" placeholder="What happened? What did you expect?" aria-describedby="message-help"></textarea>
+          <p class="help" id="message-help">Please avoid personal details and confidential model information.</p>
+          <label for="image">Add a JPG image (optional)</label>
+          <input id="image" name="image" type="file" accept=".jpg,.jpeg,image/jpeg" aria-describedby="image-help">
+          <p class="help" id="image-help">Maximum 2 MB. Standard photo metadata is removed before the image is emailed; check that the picture itself shows nothing private.</p>
+          <div class="trap" aria-hidden="true"><label for="extra_field">Leave this field empty</label><input id="extra_field" name="extra_field" type="text" tabindex="-1" autocomplete="off"></div>
+          <button id="send-button" type="submit">Send without email</button>
+          <p class="note">Your text and only the JPG you select are sent to NassLab by email. NASSCAD does not attach your model or logs. I cannot reply unless you contact me separately.</p>
+          <p id="status" role="status" aria-live="polite"></p>
+        </form>
+      </div>
+      <p class="below">Need a reply? You can still write to <a href="mailto:contact@nasscad.com">contact@nasscad.com</a>.</p>
+    </main>
+  </div>
+  <script>
+    (function () {
+      var form = document.getElementById('feedback-form');
+      var button = document.getElementById('send-button');
+      var status = document.getElementById('status');
+      var image = document.getElementById('image');
+      form.addEventListener('submit', async function (event) {
+        event.preventDefault();
+        if (!form.reportValidity()) return;
+        var selected = image.files && image.files[0];
+        if (selected && (selected.size > 2 * 1024 * 1024 || (selected.type && selected.type !== 'image/jpeg') || !/\.jpe?g$/i.test(selected.name))) {
+          status.className = 'error';
+          status.textContent = 'Please choose a JPG image no larger than 2 MB.';
+          return;
+        }
+        button.disabled = true;
+        status.className = '';
+        status.textContent = 'Sending…';
+        try {
+          var data = new FormData(form);
+          if (selected) data.set('image', selected, 'feedback.jpg');
+          var response = await fetch(form.action, {
+            method: 'POST', body: data,
+            headers: { Accept: 'application/json' },
+            cache: 'no-store', credentials: 'omit', referrerPolicy: 'no-referrer'
+          });
+          var result = await response.json();
+          if (!response.ok || !result.ok) throw new Error(result.message || 'The message could not be sent.');
+          form.reset();
+          status.className = 'success';
+          status.textContent = 'Thank you — your message was sent.';
+        } catch (error) {
+          status.className = 'error';
+          status.textContent = error && error.message ? error.message + ' Your text is still here.' : 'The message could not be sent. Please try again later. Your text is still here.';
+        } finally {
+          button.disabled = false;
+        }
+      });
+    })();
+  </script>
+</body>
+</html>
